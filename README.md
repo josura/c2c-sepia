@@ -8,14 +8,13 @@ A framework to work with scRNA-seq profiles is presented here, the algorithm wil
 ## BUILD
 ```bash
 mkdir build
-cd build
-cmake ../src
+cmake .
 make
 ```
 
 ## USAGE
 ```bash
-./c2c-sepia <???>
+./build/c2c-sepia <???>
 ```
 
 
