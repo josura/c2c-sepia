@@ -6,8 +6,18 @@ A framework to work with scRNA-seq profiles is presented here, the algorithm wil
 - The type for every cell.
 
 ## BUILD
+```bash
+mkdir build
+cd build
+cmake ../src
+make
+```
 
 ## USAGE
+```bash
+./c2c-sepia <???>
+```
+
 
 
 Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
