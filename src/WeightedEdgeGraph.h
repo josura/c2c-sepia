@@ -3,6 +3,8 @@
 #include <ostream>
 #include <string>
 #include <sys/types.h>
+#include <tuple>
+/*std::get<i>( tpl) to get the value or set it in a tuple*/
 #include <unordered_set>
 #include <iostream>
 #include <vector>
@@ -15,19 +17,19 @@ class WeightedEdgeGraph{
         double* nodeWeights;
         std::unordered_set<uint>* adjList;
         std::vector<uint>* adjVector;
-        std::vector<std::pair<uint, uint> > edgesVector;
-        std::pair<uint, uint>* edgesArray;
+        std::vector<std::tuple<uint, uint, float> > edgesVector;
+        std::tuple<uint, uint, float>* edgesArray;
 
     public:
         WeightedEdgeGraph();
 
-        WeightedEdgeGraph(uint numNodes, double* nodeWeights);
+        WeightedEdgeGraph(uint numNodes);
 
         ~WeightedEdgeGraph();
 
-        WeightedEdgeGraph* addEdge(uint node1, uint node2);
+        WeightedEdgeGraph* addEdge(uint node1, uint node2, float weight);
 
-        std::pair<uint, uint>* makeEdgesArray();
+        std::tuple<uint, uint, float>* makeEdgesArray(); //edge =(node, node, weight)
 
         // accessory functions
 

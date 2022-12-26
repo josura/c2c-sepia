@@ -15,17 +15,17 @@ class WeightedEdgeGraph{
         double* nodeWeights;
         std::unordered_set<uint>* adjList;
         std::vector<uint>* adjVector;
-        std::vector<std::pair<uint, uint> > edgesVector;
-        std::pair<uint, uint>* edgesArray;
+        std::vector<std::tuple<uint, uint, float> > edgesVector;
+        std::tuple<uint, uint, float>* edgesArray;
 
     public:
         WeightedEdgeGraph();
 
-        WeightedEdgeGraph(uint numNodes, double* nodeWeights);
+        WeightedEdgeGraph(uint numNodes);
 
         ~WeightedEdgeGraph();
 
-        WeightedEdgeGraph* addEdge(uint node1, uint node2);
+        WeightedEdgeGraph* addEdge(uint node1, uint node2, float weight);
 
         std::pair<uint, uint>* makeEdgesArray();
 
