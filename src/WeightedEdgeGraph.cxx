@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WeightedEdgeGraph.h"
 #include <ostream>
 #include <string>
 #include <sys/types.h>
@@ -7,6 +8,9 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+
+
+using uint = unsigned int;
 
 class WeightedEdgeGraph{
     private:
