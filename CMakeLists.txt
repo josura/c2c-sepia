@@ -47,6 +47,7 @@ add_executable(GraphTesting  "src/GraphTesting.cc")
 target_link_libraries(
   GraphTesting
   GTest::gtest_main
+  mysharedlib
 )
 
 include(GoogleTest)
