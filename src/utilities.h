@@ -19,10 +19,10 @@
 #include "WeightedEdgeGraph.h"
 
 //custom types
-typedef std::vector<uint> NodeList;
+typedef std::vector<int> NodeList;
 using NodeBitList = std::vector<bool>;
 using NodeBitArray = bool*;
-using NodeSet = std::unordered_set<uint>;
+using NodeSet = std::unordered_set<int>;
 
 
 std::ostream& operator<< (std::ostream &out, WeightedEdgeGraph const& data);
@@ -31,20 +31,20 @@ std::ostream& operator<< (std::ostream &out, NodeBitList const& data);
 std::ostream& operator<< (std::ostream &out, NodeList const& data);
 std::ostream& operator<< (std::ostream &out, NodeSet const& data);
 
-NodeList* nodeBitArrayToList(NodeBitArray const& nodeArray,uint arraySize);
-NodeSet* nodeBitArrayToSet(NodeBitArray const& nodeArray,uint arraySize);
+NodeList* nodeBitArrayToList(NodeBitArray const& nodeArray,int arraySize);
+NodeSet* nodeBitArrayToSet(NodeBitArray const& nodeArray,int arraySize);
 
-void printNodeBitArray(NodeBitArray nodeArray,uint size);
+void printNodeBitArray(NodeBitArray nodeArray,int size);
 
 int randomNumber(int min, int max);
 double randomRealNumber(double min, double max);
 
-std::vector<uint> randomVector(int min, int max , uint size);
+std::vector<int> randomVector(int min, int max , int size);
 
-NodeBitArray randomBooleanArray(uint size);
+NodeBitArray randomBooleanArray(int size);
 
 void printUsage(std::string execName);
 
-std::string nodeBitArrayToString(NodeBitArray nodeArray,uint size);
+std::string nodeBitArrayToString(NodeBitArray nodeArray,int size);
 
-std::unordered_set<uint> intersectionSet(std::unordered_set<uint> set1,std::unordered_set<uint> set2);
+std::unordered_set<int> intersectionSet(std::unordered_set<int> set1,std::unordered_set<int> set2);

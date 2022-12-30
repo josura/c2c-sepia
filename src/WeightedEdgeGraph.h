@@ -12,54 +12,54 @@
 
 class WeightedEdgeGraph{
     private:
-        uint numberOfNodes;
-        uint numberOfEdges=0;
+        int numberOfNodes;
+        int numberOfEdges=0;
         double* nodeWeights;
-        std::unordered_set<uint>* adjList;
-        std::vector<uint>* adjVector;
-        std::vector<std::tuple<uint, uint, float> > edgesVector;
-        std::tuple<uint, uint, float>* edgesArray;
+        std::unordered_set<int>* adjList;
+        std::vector<int>* adjVector;
+        std::vector<std::tuple<int, int, float> > edgesVector;
+        std::tuple<int, int, float>* edgesArray;
 
     public:
         WeightedEdgeGraph();
 
-        WeightedEdgeGraph(uint numNodes);
+        WeightedEdgeGraph(int numNodes);
 
         ~WeightedEdgeGraph();
 
-        WeightedEdgeGraph* addEdge(uint node1, uint node2, float weight);
+        WeightedEdgeGraph* addEdge(int node1, int node2, float weight);
 
-        std::tuple<uint, uint, float>* makeEdgesArray(); //edge =(node, node, weight)
+        std::tuple<int, int, float>* makeEdgesArray(); //edge =(node, node, weight)
 
         // accessory functions
 
-        uint getNumNodes()const ;
-        uint getNumEdges()const ;
-        uint degreeOfNode(uint node)const;
+        int getNumNodes()const ;
+        int getNumEdges()const ;
+        int degreeOfNode(int node)const;
 
         double* getNodeWeights()const;
 
         std::string getNodeWeightsStr()const;
 
-        std::unordered_set<uint>* getAdjList(uint node)const;
+        std::unordered_set<int>* getAdjList(int node)const;
 
-        std::string getAdjListStr(uint node)const;
+        std::string getAdjListStr(int node)const;
 
-        bool adjNodes(uint node1, uint node2);
+        bool adjNodes(int node1, int node2);
 
-        std::vector<std::pair<uint, uint>> getEdgesVector()const;
+        std::vector<std::tuple<int, int, float>> getEdgesVector()const;
 
-        std::pair<uint, uint>* getEdgesArray()const;
+        std::tuple<int, int, float>* getEdgesArray()const;
 
-        double getNodeWeight(uint node)const;
+        double getNodeWeight(int node)const;
 
         // optimization methods
 
         double costFunction(bool* NodeSubset);
 
-        std::vector<uint> getSharedAdjacentNodes(std::vector<uint>& nodes);
+        std::vector<int> getSharedAdjacentNodes(std::vector<int>& nodes);
 
-        uint getMaxDegree()const;
+        int getMaxDegree()const;
         double getAverageDegree()const;
 
 };
