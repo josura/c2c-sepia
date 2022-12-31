@@ -25,7 +25,7 @@ using NodeBitArray = bool*;
 using NodeSet = std::unordered_set<int>;
 
 
-std::ostream& operator<< (std::ostream &out, WeightedEdgeGraph const& data);
+std::ostream& operator<< (std::ostream &out, WeightedEdgeGraph const& data);  
 
 std::ostream& operator<< (std::ostream &out, NodeBitList const& data);
 std::ostream& operator<< (std::ostream &out, NodeList const& data);

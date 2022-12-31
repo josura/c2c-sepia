@@ -10,18 +10,20 @@
 
 
 WeightedEdgeGraph::WeightedEdgeGraph(){
-    numberOfNodes = 0;
+    this->numberOfNodes = 0;
     this->nodeWeights = nullptr;
-    adjList = nullptr;
-    adjVector = nullptr;
+    this->adjList = nullptr;
+    this->adjVector = nullptr;
+    this->edgesVector = new std::vector<std::tuple<int, int, float>>();
     
 }
 
 WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
-    numberOfNodes = numNodes;
+    this->numberOfNodes = numNodes;
     this->nodeWeights = new double[numNodes];
-    adjList = new std::unordered_set<int>[numNodes];
-    adjVector = new std::vector<int>[numNodes];
+    this->adjList = new std::unordered_set<int>[numNodes];
+    this->adjVector = new std::vector<int>[numNodes];
+    this->edgesVector = new std::vector<std::tuple<int, int, float>>();
     //edgesVector = new std::vector<std::pair<int, int>>;
     
 }
@@ -42,11 +44,17 @@ int WeightedEdgeGraph::degreeOfNode(int node)const{
 WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight){
     if(node1 >= numberOfNodes || node2 >= numberOfNodes){
         std::cerr << "add edge failed for edges " << node1 << " and " << node2 << std::endl;
+        if(node1 >= numberOfNodes){
+            std::cerr << "[ERROR] node1(number "<< node1 << ") is not in the graph that has " << numberOfNodes << " nodes"<<std::endl;
+        }
+        else{
+            std::cerr << "[ERROR] node2(number "<< node2 << ") is not in the graph that has " << numberOfNodes << " nodes"<<std::endl;
+        }
     } else if (adjNodes(node1, node2)) {
         //edge already added
     } else {
         numberOfEdges++;
-        edgesVector.push_back(std::tuple<int, int, float>(node1,node2, weight));
+        edgesVector->push_back(std::tuple<int, int, float>(node1,node2, weight));
         adjList[node1].insert(node2);
         adjList[node2].insert(node1);
         adjVector[node1].push_back(node2);
@@ -58,9 +66,12 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight
 
 
 std::tuple<int, int,float>* WeightedEdgeGraph::makeEdgesArray(){
+    //emptying old memory
+    delete[] edgesArray;
+    // new array
     edgesArray = new std::tuple<int, int, float>[numberOfEdges];
     for (int i =0 ; i<numberOfEdges; i++) {
-        edgesArray[i] = edgesVector.at(i);
+        edgesArray[i] = edgesVector->at(i);
     }
     return edgesArray;
 }
@@ -105,7 +116,7 @@ std::string WeightedEdgeGraph::getAdjListStr(int node)const{
     return stringa;
 }
 
-std::vector<std::tuple<int, int,float>> WeightedEdgeGraph::getEdgesVector()const{
+std::vector<std::tuple<int, int,float>>* WeightedEdgeGraph::getEdgesVector()const{
     return edgesVector;
 }
 
@@ -115,4 +126,26 @@ std::tuple<int, int,float>* WeightedEdgeGraph::getEdgesArray()const{
 
 bool WeightedEdgeGraph::adjNodes(int node1, int node2){
     return ( (adjList[node1].find(node2) != adjList[node1].end()) || (adjList[node2].find(node1) != adjList[node2].end())) ;
+}
+
+WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
+    this->numberOfNodes = g2.numberOfNodes;
+    //deleting old data
+    delete[] nodeWeights;
+    delete[] adjList;
+    delete[] adjVector;
+    delete[] edgesArray;
+    delete edgesVector;
+
+    //creating new data
+    this->nodeWeights = new double[g2.numberOfNodes];
+    this->adjList = new std::unordered_set<int>[g2.numberOfNodes];
+    this->adjVector = new std::vector<int>[g2.numberOfNodes];
+    this->edgesVector = new std::vector<std::tuple<int, int, float>>();
+
+    for(auto it = g2.edgesVector->cbegin(); it!=g2.edgesVector->cend();it++){
+        this->addEdge(std::get<0>(*it),std::get<1>(*it), std::get<2>(*it));
+    }
+    makeEdgesArray();
+    return *this;
 }

@@ -17,7 +17,7 @@ class WeightedEdgeGraph{
         double* nodeWeights;
         std::unordered_set<int>* adjList;
         std::vector<int>* adjVector;
-        std::vector<std::tuple<int, int, float> > edgesVector;
+        std::vector<std::tuple<int, int, float> >* edgesVector;
         std::tuple<int, int, float>* edgesArray;
 
     public:
@@ -47,11 +47,13 @@ class WeightedEdgeGraph{
 
         bool adjNodes(int node1, int node2);
 
-        std::vector<std::tuple<int, int, float>> getEdgesVector()const;
+        std::vector<std::tuple<int, int, float>>* getEdgesVector()const;
 
         std::tuple<int, int, float>* getEdgesArray()const;
 
         double getNodeWeight(int node)const;
+
+        WeightedEdgeGraph& operator=(const WeightedEdgeGraph& g2);
 
         // optimization methods
 
