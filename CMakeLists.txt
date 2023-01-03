@@ -19,6 +19,7 @@ set(EXEC_MAIN "src/main.cxx")
 set(LIB_SRCS 
     src/WeightedEdgeGraph.cxx
     src/utilities.cxx
+    src/Matrix.cxx
 )
 
 include(FetchContent)
