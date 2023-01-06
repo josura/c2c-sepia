@@ -22,6 +22,15 @@ set(LIB_SRCS
     src/Matrix.cxx
 )
 
+if(CUDAavailable)
+#using CUDA implementation
+elseif(OpenCLavailable)
+#using OpenCL implementation
+elseif(REPASTHPCavailable)
+#using Repast HPC implementation
+endif(CUDAavailable)
+
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
