@@ -18,6 +18,9 @@
 
 #include "WeightedEdgeGraph.h"
 
+#define INTMAX 100
+#define DOUBLEMAX 100.0
+
 //custom types
 typedef std::vector<int> NodeList;
 using NodeBitList = std::vector<bool>;
@@ -38,6 +41,7 @@ void printNodeBitArray(NodeBitArray nodeArray,int size);
 
 int randomNumber(int min, int max);
 double randomRealNumber(double min, double max);
+char generateRandomCharacter();
 
 std::vector<int> randomVector(int min, int max , int size);
 
@@ -48,3 +52,7 @@ void printUsage(std::string execName);
 std::string nodeBitArrayToString(NodeBitArray nodeArray,int size);
 
 std::unordered_set<int> intersectionSet(std::unordered_set<int> set1,std::unordered_set<int> set2);
+
+void createRandom(int& val);
+void createRandom(double& val);
+void createRandom(char& val);
