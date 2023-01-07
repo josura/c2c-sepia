@@ -15,10 +15,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(EXEC_MAIN "src/main.cxx")
-#set(EXPERIMENT_MAIN "experiments.cxx")
+set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
 set(LIB_SRCS 
     src/WeightedEdgeGraph.cxx
     src/utilities.cxx
+    src/optimization.cxx
     src/Matrix.cxx
 )
 
@@ -45,8 +46,8 @@ add_library( mysharedlib SHARED ${LIB_SRCS} )
 add_executable( c2c-sepia ${EXEC_MAIN} )
 target_link_libraries( c2c-sepia mysharedlib )
 
-#add_executable( experiments ${EXPERIMENT_MAIN})
-#target_link_libraries( experiments mysharedlib )
+add_executable( experiments ${EXPERIMENT_MAIN})
+target_link_libraries( experiments mysharedlib )
 
 
 # TESTING

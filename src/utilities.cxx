@@ -62,12 +62,12 @@ char generateRandomCharacter() {
   return randomCharacter;
 }
 
-void createRandom(int& val) { 
+void setRandom(int& val) { 
     val =  randomNumber(-INTMAX, INTMAX);
 }
-void createRandom(double& val) { 
+void setRandom(double& val) { 
     val = randomRealNumber(-DOUBLEMAX, DOUBLEMAX);
 }
-void createRandom(char& val) { 
+void setRandom(char& val) { 
     val = generateRandomCharacter();
 }

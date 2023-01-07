@@ -15,6 +15,7 @@ class Matrix {
         Matrix& operator=(const Matrix&);
 
         inline T& operator()(int x, int y) { return _matrix[x][y]; }
+        inline T& getValue(int x, int y)const{ return _matrix[x][y]; }
 
         Matrix& operator+=(const Matrix&);
         Matrix& operator-=(const Matrix&);
@@ -53,6 +54,10 @@ class Matrix {
         Matrix rowReduceGaussian();
         void readSolutionsFromRREF(std::ostream& os);
         Matrix inverse();  // to implement
+
+        //get functions
+        int getRows()const{return rows_;}
+        int getCols()const{return cols_;}
 
     private:
         int rows_, cols_;

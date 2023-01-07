@@ -11,6 +11,8 @@ void Matrix<T>::allocateMatrixSpace()
     }
 }
 
+template void Matrix<double>::allocateMatrixSpace();
+
 
 //constructors and destructors
 template<typename T>
@@ -23,6 +25,8 @@ Matrix<T>::Matrix(int rows, int cols) : rows_(rows), cols_(cols)
         }
     }
 }
+
+template Matrix<double>::Matrix(int rows, int cols);
 
 template<typename T>
 Matrix<T>::Matrix(T** a, int rows, int cols) : rows_(rows), cols_(cols)
@@ -68,11 +72,13 @@ Matrix<T> Matrix<T>::createRandom(int rows,int cols){
     Matrix<T> retMat=Matrix<T>(rows,cols);
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            createRandom(retMat(i,j));
+            setRandom(retMat(i,j));
         }
     }
     return retMat;
 }
+
+template Matrix<double> Matrix<double>::createRandom(int rows,int cols);
 
 //operators
 template<typename T>
@@ -101,6 +107,8 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     return *this;
 }
 
+template Matrix<double>& Matrix<double>::operator=(const Matrix<double>& m);
+
 template<typename T>
 Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
     /* Do Work */  // Here we may not need to allocate space
@@ -109,9 +117,13 @@ Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
     return *this;
 }
 
+template Matrix<double>& Matrix<double>::operator*=(const Matrix<double>& m);
+
 
 template<typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T>& rhs){
     Matrix<T> result(*this);
     return result *= rhs;
 }
+
+template Matrix<double> Matrix<double>::operator*(const Matrix<double>& rhs);

@@ -53,6 +53,6 @@ std::string nodeBitArrayToString(NodeBitArray nodeArray,int size);
 
 std::unordered_set<int> intersectionSet(std::unordered_set<int> set1,std::unordered_set<int> set2);
 
-void createRandom(int& val);
-void createRandom(double& val);
-void createRandom(char& val);
+void setRandom(int& val);
+void setRandom(double& val);
+void setRandom(char& val);

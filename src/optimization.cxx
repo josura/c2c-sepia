@@ -1,6 +1,7 @@
 #include "Matrix.h"
 #include <chrono>
 #include <functional>
+#include <stdexcept>
 
 template<typename F, typename M>
 double run(F f, M const& a, M const& b, M& c)
@@ -20,12 +21,18 @@ double run(F f, M const& a, M const& b, M& c)
 
 template<typename T>
 Matrix<T> MatMul(const Matrix<T>& lhs,const Matrix<T>& rhs,Matrix<T>& result){
-    for (int r = 0; r < lhs.dim(); r++) {
-                  for (int c = 0; c < lhs.dim(); c++) {
-                          result(r,c) = 0;
-                          for (int i = 0; i < lhs.dim(); i++)
-                                  result(r,c) += lhs(r,i) * rhs(i,c);
+    //TODO controls over the feasibility of the multiplication
+    if(lhs.getCols() == rhs.getRows()){
+        for (int r = 0; r < lhs.getRows(); r++) {
+                  for (int c = 0; c < lhs.getCols(); c++) {
+                          //result(r,c) = 0;   //already initialized at 0
+                          for (int i = 0; i < rhs.getRows(); i++)
+                                  result(r,c) += lhs.getValue(r,i) * rhs.getValue(i,c);
                   }
           }
     return result;
+    } else {
+        throw std::invalid_argument("column dimension of lhs is not equal to row dimension of lhs\n");
+    }
+    
 }
