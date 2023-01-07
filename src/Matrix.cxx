@@ -1,6 +1,7 @@
 #include "Matrix.h"
 
 
+// helper functions
 template<typename T>
 void Matrix<T>::allocateMatrixSpace()
 {
@@ -10,6 +11,8 @@ void Matrix<T>::allocateMatrixSpace()
     }
 }
 
+
+//constructors and destructors
 template<typename T>
 Matrix<T>::Matrix(int rows, int cols) : rows_(rows), cols_(cols)
 {
@@ -59,6 +62,19 @@ Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
     }
 }
 
+//static methods
+template<typename T>
+Matrix<T> Matrix<T>::createRandom(int rows,int cols){
+    Matrix<T> retMat=Matrix<T>(rows,cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            createRandom(retMat(i,j));
+        }
+    }
+    return retMat;
+}
+
+//operators
 template<typename T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 {
@@ -83,4 +99,19 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
         }
     }
     return *this;
+}
+
+template<typename T>
+Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
+    /* Do Work */  // Here we may not need to allocate space
+                   // for the result and it could potentially be done
+                   // in place
+    return *this;
+}
+
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*(const Matrix<T>& rhs){
+    Matrix<T> result(*this);
+    return result *= rhs;
 }

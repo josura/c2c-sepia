@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include "utilities.h"
 
 template <typename T>
 class Matrix {
@@ -38,6 +39,7 @@ class Matrix {
         Matrix transpose();
 
         static Matrix createIdentity(int);
+        static Matrix createRandom(int,int);
         static Matrix solve(Matrix, Matrix);
         static Matrix bandSolve(Matrix, Matrix, int);
 

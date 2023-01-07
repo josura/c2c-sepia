@@ -1,8 +1,9 @@
 #include "Matrix.h"
 #include <chrono>
+#include <functional>
 
-template<typename T, typename M>
-float run(T f, M const& a, M const& b, M& c)
+template<typename F, typename M>
+double run(F f, M const& a, M const& b, M& c)
 {
     double time = 0;
     for (int i = 0; i < 10; i++) {
