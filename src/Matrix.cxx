@@ -39,12 +39,16 @@ Matrix<T>::Matrix(T** a, int rows, int cols) : rows_(rows), cols_(cols)
     }
 }
 
+template Matrix<double>::Matrix(double** a, int rows, int cols);
+
 template<typename T>
 Matrix<T>::Matrix() : rows_(1), cols_(1)
 {
     allocateMatrixSpace();
     _matrix[0][0] = 0;
 }
+
+template Matrix<double>::Matrix();
 
 template<typename T>
 Matrix<T>::~Matrix()
@@ -54,6 +58,8 @@ Matrix<T>::~Matrix()
     }
     delete[] _matrix;
 }
+
+template Matrix<double>::~Matrix();
 
 template<typename T>
 Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
@@ -65,6 +71,8 @@ Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
         }
     }
 }
+
+template Matrix<double>::Matrix(const Matrix<double>& m);
 
 //static methods
 template<typename T>
@@ -111,10 +119,18 @@ template Matrix<double>& Matrix<double>::operator=(const Matrix<double>& m);
 
 template<typename T>
 Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
-    /* Do Work */  // Here we may not need to allocate space
-                   // for the result and it could potentially be done
-                   // in place
-    return *this;
+    if(getCols() == rhs.getRows()){
+        for (int r = 0; r < getRows(); r++) {
+                  for (int c = 0; c < rhs.getCols(); c++) {
+                          //result(r,c) = 0;   //already initialized at 0
+                          for (int i = 0; i < rhs.getRows(); i++)
+                                  _matrix[r][c] += getValue(r,i) * rhs.getValue(i,c);
+                  }
+          }
+        return *this;
+    } else {
+        throw std::invalid_argument("column dimension of lhs for operation *= is not equal to row dimension of lhs\n");
+    }
 }
 
 template Matrix<double>& Matrix<double>::operator*=(const Matrix<double>& m);
