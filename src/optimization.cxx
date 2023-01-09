@@ -51,16 +51,16 @@ std::vector<std::vector<T>> matrixMultiplyVector(const std::vector<std::vector<T
 }
 
 template<typename T>
-T* arrayMult(const Matrix<T>& rhs,T* vec,int size){
-    if (rhs.getCols()==size) {
+T* arrayMult(const Matrix<T>& lhs,T* vec,int size){
+    if (lhs.getCols()==size) {
         T* retvec = new T[size];
         for (int i = 0; i< size; i++) {
             retvec[i] = 0;  //not good if it is a non numerical value
         }
-        int m = rhs.getRows(), n = rhs.getCols();
+        int m = lhs.getRows(), n = lhs.getCols();
         for (int i = 0; i < m; i++) {
             for (int k = 0; k < n; k++) {
-                retvec[i] += rhs[i][k] * vec[k];
+                retvec[i] += lhs[i][k] * vec[k];
             }
         }
         return retvec;
