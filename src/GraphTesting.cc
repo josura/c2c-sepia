@@ -11,7 +11,7 @@ class GraphTesting : public ::testing::Test {
 
     
     g1_->addEdge(1,2,0.3)->addEdge(0,2,0.4);
-    //*g2_ = *g1_;   //Problem with the equal operator(assignment)
+    *g2_ = *g1_;   //Problem with the equal operator(assignment)
      
   }
   void TearDown() override{
@@ -38,7 +38,7 @@ TEST_F(GraphTesting, constructorWorksNumNodes) {
   EXPECT_EQ(g1_->getNumEdges(), 2);
 }
 
-/*TEST_F(GraphTesting, assignmentWorks) {
+TEST_F(GraphTesting, assignmentWorks) {
   EXPECT_EQ(g2_->getNumNodes(), 4);
   EXPECT_EQ(g2_->getNumEdges(), 2);
-}*/
+}

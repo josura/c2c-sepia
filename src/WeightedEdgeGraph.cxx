@@ -14,6 +14,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(){
     this->nodeWeights = nullptr;
     this->adjList = nullptr;
     this->adjVector = nullptr;
+    this->edgesArray = nullptr;
     this->edgesVector = new std::vector<std::tuple<int, int, float>>();
     
 }
@@ -25,6 +26,10 @@ WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
     this->adjVector = new std::vector<int>[numNodes];
     this->edgesVector = new std::vector<std::tuple<int, int, float>>();
     //edgesVector = new std::vector<std::pair<int, int>>;
+
+    for (int i = 0; i < numNodes; i++) {
+        nodeWeights[i]=0;
+    }
     
 }
 
