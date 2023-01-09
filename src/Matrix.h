@@ -11,6 +11,8 @@ class Matrix {
         Matrix(T**, int, int);
         Matrix();
         Matrix(const Matrix&);
+        Matrix(const T*);
+        Matrix(const std::vector<T>&);
         ~Matrix();
         Matrix& operator=(const Matrix&);
 
@@ -26,9 +28,14 @@ class Matrix {
         Matrix operator+(const Matrix<T>&);
         Matrix operator-(const Matrix<T>&);
         Matrix operator*(const Matrix<T>&);
+        Matrix operator*(const std::vector<T>&);
         Matrix operator*(T);
         template<typename U>
         friend Matrix<U> operator*(double, const Matrix<U>&);
+        template<typename U>
+        friend Matrix<U> operator*(U*,const Matrix<U>&);  //vector multiplication leftwise
+        template<typename U>
+        friend Matrix<U> operator*(std::vector<U>&,const Matrix<U>&);
         Matrix operator/(double);
         
         template<typename U>

@@ -71,3 +71,14 @@ void setRandom(double& val) {
 void setRandom(char& val) { 
     val = generateRandomCharacter();
 }
+
+int SizeToInt(size_t u)
+{
+    if (u > std::numeric_limits<int>::max())
+    {
+        throw std::overflow_error(
+            "size_t value cannot be stored in a variable of type int.");
+    }
+
+    return static_cast<int>(u);
+}

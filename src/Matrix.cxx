@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include "utilities.h"
 
 
 // helper functions
@@ -144,3 +145,19 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& rhs){
 }
 
 template Matrix<double> Matrix<double>::operator*(const Matrix<double>& rhs);
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs){
+    if (getCols()==SizeToInt(rhs.size())) {
+        Matrix<T> retvec = Matrix<T>(rows_,1);
+        int m = getRows(), n = getCols();
+        for (int i = 0; i < m; i++) {
+            for (int k = 0; k < n; k++) {
+                retvec(i,0) += _matrix[i][k] * rhs[k];
+            }
+        }
+        return retvec;
+    } else throw std::invalid_argument("arrayMult vector has not the right size to be multiplied");
+}
+
+template Matrix<double> Matrix<double>::operator*(const std::vector<double>& rhs);

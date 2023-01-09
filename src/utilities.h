@@ -15,6 +15,9 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <limits>    // for std::numeric_limits
+#include <stdexcept> // for std::overflow_error
+
 
 #include "WeightedEdgeGraph.h"
 
@@ -68,3 +71,5 @@ std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
     }
     return retMat;
 }
+
+int SizeToInt(size_t u);
