@@ -52,6 +52,17 @@ Matrix<T>::Matrix() : rows_(1), cols_(1)
 template Matrix<double>::Matrix();
 
 template<typename T>
+Matrix<T>::Matrix(const std::vector<T>& vec):rows_(vec.size()),cols_(1){
+    allocateMatrixSpace();
+    for (int i = 0; i < SizeToInt(vec.size()); i++) {
+        _matrix[i][0] = vec[i];
+    }
+}
+
+template Matrix<double>::Matrix(const std::vector<double>& vec);
+
+
+template<typename T>
 Matrix<T>::~Matrix()
 {
     for (int i = 0; i < rows_; ++i) {
@@ -149,14 +160,15 @@ template Matrix<double> Matrix<double>::operator*(const Matrix<double>& rhs);
 template<typename T>
 Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs){
     if (getCols()==SizeToInt(rhs.size())) {
-        Matrix<T> retvec = Matrix<T>(rows_,1);
-        int m = getRows(), n = getCols();
-        for (int i = 0; i < m; i++) {
-            for (int k = 0; k < n; k++) {
-                retvec(i,0) += _matrix[i][k] * rhs[k];
-            }
-        }
-        return retvec;
+        // Matrix<T> retvec = Matrix<T>(rows_,1);
+        // int m = getRows(), n = getCols();
+        // for (int i = 0; i < m; i++) {
+        //     for (int k = 0; k < n; k++) {
+        //         retvec(i,0) += _matrix[i][k] * rhs[k];
+        //     }
+        // }
+        Matrix<T> retvec = Matrix<T>(rhs);
+        return (*this)*retvec;
     } else throw std::invalid_argument("arrayMult vector has not the right size to be multiplied");
 }
 

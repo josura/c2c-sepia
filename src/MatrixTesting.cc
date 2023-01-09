@@ -85,7 +85,3 @@ TEST_F(MatrixTesting,multiplicationControlResults){
   }
 }
 
-/*TEST_F(GraphTesting, assignmentWorks) {
-  EXPECT_EQ(g2_->getNumNodes(), 4);
-  EXPECT_EQ(g2_->getNumEdges(), 2);
-}*/
