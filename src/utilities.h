@@ -56,3 +56,15 @@ std::unordered_set<int> intersectionSet(std::unordered_set<int> set1,std::unorde
 void setRandom(int& val);
 void setRandom(double& val);
 void setRandom(char& val);
+
+
+template<typename T>
+std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
+    std::vector<std::vector< T>> retMat=std::vector<std::vector<double>>(rows, std::vector<double>(cols));
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            setRandom(retMat[i][j]);
+        }
+    }
+    return retMat;
+}

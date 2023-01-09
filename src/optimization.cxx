@@ -36,3 +36,16 @@ Matrix<T> MatMul(const Matrix<T>& lhs,const Matrix<T>& rhs,Matrix<T>& result){
     }
     
 }
+
+template<typename T>
+std::vector<std::vector<T>> matrixMultiplyVector(const std::vector<std::vector<T>> &A,const std::vector<std::vector<T>> &B, std::vector<std::vector<T>> &C) {
+    int m = A.size(), n = A[0].size(), p = B[0].size();
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            for (int k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+    return C;
+}

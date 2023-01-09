@@ -54,12 +54,20 @@ target_link_libraries( experiments mysharedlib )
 enable_testing()
 
 add_executable(GraphTesting  "src/GraphTesting.cc")
-
 target_link_libraries(
   GraphTesting
   GTest::gtest_main
   mysharedlib
 )
 
+
+add_executable(MatrixTesting  "src/MatrixTesting.cc")
+target_link_libraries(
+  MatrixTesting
+  GTest::gtest_main
+  mysharedlib
+)
+
 include(GoogleTest)
 gtest_discover_tests(GraphTesting)
+gtest_discover_tests(MatrixTesting)

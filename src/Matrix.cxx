@@ -6,8 +6,13 @@ template<typename T>
 void Matrix<T>::allocateMatrixSpace()
 {
     _matrix = new T*[rows_];
-    for (int i = 0; i < rows_; ++i) {
+    for (int i = 0; i < rows_; i++) {
         _matrix[i] = new T[cols_];
+    }
+    for (int i = 0; i < rows_; i++) {
+        for (int j = 0; j < cols_; j++) {
+            _matrix[i][j] = 0;
+        }    
     }
 }
 
@@ -19,11 +24,6 @@ template<typename T>
 Matrix<T>::Matrix(int rows, int cols) : rows_(rows), cols_(cols)
 {
     allocateMatrixSpace();
-    for (int i = 0; i < rows_; ++i) {
-        for (int j = 0; j < cols_; ++j) {
-            _matrix[i][j] = 0;
-        }
-    }
 }
 
 template Matrix<double>::Matrix(int rows, int cols);
@@ -32,8 +32,8 @@ template<typename T>
 Matrix<T>::Matrix(T** a, int rows, int cols) : rows_(rows), cols_(cols)
 {
     allocateMatrixSpace();
-    for (int i = 0; i < rows_; ++i) {
-        for (int j = 0; j < cols_; ++j) {
+    for (int i = 0; i < rows_; i++) {
+        for (int j = 0; j < cols_; j++) {
             _matrix[i][j] = a[i][j];
         }
     }
@@ -65,8 +65,8 @@ template<typename T>
 Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
 {
     allocateMatrixSpace();
-    for (int i = 0; i < rows_; ++i) {
-        for (int j = 0; j < cols_; ++j) {
+    for (int i = 0; i < rows_; i++) {
+        for (int j = 0; j < cols_; j++) {
             _matrix[i][j] = m._matrix[i][j];
         }
     }
@@ -97,7 +97,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     }
 
     if (rows_ != m.rows_ || cols_ != m.cols_) {
-        for (int i = 0; i < rows_; ++i) {
+        for (int i = 0; i < rows_; i++) {
             delete[] _matrix[i];
         }
         delete[] _matrix;
@@ -107,8 +107,8 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
         allocateMatrixSpace();
     }
 
-    for (int i = 0; i < rows_; ++i) {
-        for (int j = 0; j < cols_; ++j) {
+    for (int i = 0; i < rows_; i++) {
+        for (int j = 0; j < cols_; j++) {
             _matrix[i][j] = m._matrix[i][j];
         }
     }
@@ -120,14 +120,15 @@ template Matrix<double>& Matrix<double>::operator=(const Matrix<double>& m);
 template<typename T>
 Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
     if(getCols() == rhs.getRows()){
-        for (int r = 0; r < getRows(); r++) {
-                  for (int c = 0; c < rhs.getCols(); c++) {
-                          //result(r,c) = 0;   //already initialized at 0
-                          for (int i = 0; i < rhs.getRows(); i++)
-                                  _matrix[r][c] += getValue(r,i) * rhs.getValue(i,c);
-                  }
-          }
-        return *this;
+        Matrix<T> tmp(rows_, rhs.cols_);
+        for (int i = 0; i < tmp.rows_; ++i) {
+            for (int j = 0; j < tmp.cols_; ++j) {
+                for (int k = 0; k < cols_; ++k) {
+                    tmp(i,j) += (_matrix[i][k] * rhs.getValue(k,j));
+                }
+            }
+        }
+        return (*this = tmp);
     } else {
         throw std::invalid_argument("column dimension of lhs for operation *= is not equal to row dimension of lhs\n");
     }
