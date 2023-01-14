@@ -1,5 +1,4 @@
 #include "Matrix.h"
-#include "utilities.h"
 
 
 // helper functions

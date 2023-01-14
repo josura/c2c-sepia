@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Matrix.h"  //circular dependency :'(
 #include <ostream>
 #include <string>
 #include <sys/types.h>
@@ -17,13 +18,19 @@ class WeightedEdgeGraph{
         double* nodeWeights;
         std::unordered_set<int>* adjList;
         std::vector<int>* adjVector;
-        std::vector<std::tuple<int, int, float> >* edgesVector;
         std::tuple<int, int, float>* edgesArray;
 
     public:
+
+        //public since they will be accessed a lot
+        //Matrix<double>* adjMatrix;
+        std::vector<std::tuple<int, int, float> > edgesVector;
+
         WeightedEdgeGraph();
 
         WeightedEdgeGraph(int numNodes);
+
+        WeightedEdgeGraph(const Matrix<double>& _adjMatrix);
 
         ~WeightedEdgeGraph();
 
@@ -47,13 +54,15 @@ class WeightedEdgeGraph{
 
         bool adjNodes(int node1, int node2);
 
-        std::vector<std::tuple<int, int, float>>* getEdgesVector()const;
+        std::vector<std::tuple<int, int, float>> getEdgesVector()const;
 
         std::tuple<int, int, float>* getEdgesArray()const;
 
         double getNodeWeight(int node)const;
 
+
         WeightedEdgeGraph& operator=(const WeightedEdgeGraph& g2);
+        //WeightedEdgeGraph& setAdjMatrix(Matrix<double>& mat);
 
         // optimization methods
 
@@ -65,3 +74,6 @@ class WeightedEdgeGraph{
         double getAverageDegree()const;
 
 };
+
+
+std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data); 

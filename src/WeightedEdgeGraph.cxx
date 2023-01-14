@@ -1,6 +1,7 @@
 #include "WeightedEdgeGraph.h"
-#include "utilities.h"
+//#include "utilities.h"
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <unordered_set>
@@ -15,7 +16,6 @@ WeightedEdgeGraph::WeightedEdgeGraph(){
     this->adjList = nullptr;
     this->adjVector = nullptr;
     this->edgesArray = nullptr;
-    this->edgesVector = new std::vector<std::tuple<int, int, float>>();
     
 }
 
@@ -24,11 +24,27 @@ WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
     this->nodeWeights = new double[numNodes];
     this->adjList = new std::unordered_set<int>[numNodes];
     this->adjVector = new std::vector<int>[numNodes];
-    this->edgesVector = new std::vector<std::tuple<int, int, float>>();
     //edgesVector = new std::vector<std::pair<int, int>>;
 
     for (int i = 0; i < numNodes; i++) {
         nodeWeights[i]=0;
+    }
+    
+}
+
+
+WeightedEdgeGraph::WeightedEdgeGraph(const Matrix<double>& _adjMatrix){
+    if (_adjMatrix.getCols()==_adjMatrix.getRows()) {
+        int numNodes = _adjMatrix.getCols();
+        this->numberOfNodes = numNodes;
+        this->nodeWeights = new double[numNodes];
+        this->adjList = new std::unordered_set<int>[numNodes];
+        this->adjVector = new std::vector<int>[numNodes];
+        for (int i = 0 ; i<numNodes; i++) {
+            for (int j = 0; j<numNodes; j++) {
+                addEdge(i, j, _adjMatrix.getValue(i, j));
+            }
+        }
     }
     
 }
@@ -48,18 +64,18 @@ int WeightedEdgeGraph::degreeOfNode(int node)const{
 
 WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight){
     if(node1 >= numberOfNodes || node2 >= numberOfNodes){
-        std::cerr << "add edge failed for edges " << node1 << " and " << node2 << std::endl;
+        std::cerr << "add edge failed for edges " << std::to_string(node1) << " and " << std::to_string(node2) << std::endl;
         if(node1 >= numberOfNodes){
-            std::cerr << "[ERROR] node1(number "<< node1 << ") is not in the graph that has " << numberOfNodes << " nodes"<<std::endl;
+            std::cerr << "[ERROR] node1(number "<< std::to_string(node1) << ") is not in the graph that has " << std::to_string(numberOfNodes) << " nodes"<<std::endl;
         }
         else{
-            std::cerr << "[ERROR] node2(number "<< node2 << ") is not in the graph that has " << numberOfNodes << " nodes"<<std::endl;
+            std::cerr << "[ERROR] node2(number "<< std::to_string(node2) << ") is not in the graph that has " << std::to_string(numberOfNodes) << " nodes"<<std::endl;
         }
     } else if (adjNodes(node1, node2)) {
         //edge already added
     } else {
         numberOfEdges++;
-        edgesVector->push_back(std::tuple<int, int, float>(node1,node2, weight));
+        edgesVector.push_back(std::tuple<int, int, float>(node1,node2, weight));
         adjList[node1].insert(node2);
         adjList[node2].insert(node1);
         adjVector[node1].push_back(node2);
@@ -76,7 +92,7 @@ std::tuple<int, int,float>* WeightedEdgeGraph::makeEdgesArray(){
     // new array
     edgesArray = new std::tuple<int, int, float>[numberOfEdges];
     for (int i =0 ; i<numberOfEdges; i++) {
-        edgesArray[i] = edgesVector->at(i);
+        edgesArray[i] = edgesVector.at(i);
     }
     return edgesArray;
 }
@@ -107,7 +123,7 @@ std::string WeightedEdgeGraph::getNodeWeightsStr()const{
 
 std::unordered_set<int>* WeightedEdgeGraph::getAdjList(int node)const{
     if(node>=numberOfNodes){
-        std::cerr << "trying to get an adjacent list of an unknown node: " << node << ">=" << numberOfNodes << std::endl;
+        std::cerr << "trying to get an adjacent list of an unknown node: " << std::to_string(node) << ">=" << std::to_string(numberOfNodes) << std::endl;
         return NULL;
     }
     return &adjList[node];
@@ -121,7 +137,7 @@ std::string WeightedEdgeGraph::getAdjListStr(int node)const{
     return stringa;
 }
 
-std::vector<std::tuple<int, int,float>>* WeightedEdgeGraph::getEdgesVector()const{
+std::vector<std::tuple<int, int,float>> WeightedEdgeGraph::getEdgesVector()const{
     return edgesVector;
 }
 
@@ -140,17 +156,57 @@ WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
     delete[] adjList;
     delete[] adjVector;
     delete[] edgesArray;
-    delete edgesVector;
 
     //creating new data
     this->nodeWeights = new double[g2.numberOfNodes];
     this->adjList = new std::unordered_set<int>[g2.numberOfNodes];
     this->adjVector = new std::vector<int>[g2.numberOfNodes];
-    this->edgesVector = new std::vector<std::tuple<int, int, float>>();
+    this->edgesVector.clear();
 
-    for(auto it = g2.edgesVector->cbegin(); it!=g2.edgesVector->cend();it++){
+    for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
         this->addEdge(std::get<0>(*it),std::get<1>(*it), std::get<2>(*it));
     }
     makeEdgesArray();
     return *this;
 }
+
+std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
+            out << data.getNumNodes() << " " << data.getNumEdges() <<std::endl;
+            std::string nodeweights = data.getNodeWeightsStr();
+            out << nodeweights << std::endl;
+            out << "Adj Lists" << std::endl;
+            for(int i = 0; i<data.getNumNodes(); i++){
+                out << "node " << i << " :" << data.getAdjListStr(i) << std::endl;
+            }
+            out << "Edges vector: {";
+            std::vector<std::tuple<int,int,float>> tmpVec= data.getEdgesVector();
+            for(auto it = tmpVec.cbegin();it!=tmpVec.cend();it++){
+                out << "(" << get<0>(*it)<< ","<< get<1>(*it)<< ","<< get<2>(*it)<< "," << ")," ;
+            }
+            out << "}"<< std::endl;
+            return out;
+        }
+
+
+// WeightedEdgeGraph& WeightedEdgeGraph::setAdjMatrix(Matrix<double>& mat){
+//     if (mat.getCols()==mat.getRows()) {
+//         this->numberOfNodes = mat.getCols();
+//         //deleting old data
+//         delete[] nodeWeights;
+//         delete[] adjList;
+//         delete[] adjVector;
+//         delete[] edgesArray;
+
+//         //creating new data
+//         this->nodeWeights = new double[numberOfNodes];
+//         this->adjList = new std::unordered_set<int>[this->numberOfNodes];
+//         this->adjVector = new std::vector<int>[this->numberOfNodes];
+//         this->edgesVector.clear();
+//         for (int i = 0 ; i<this->numberOfNodes; i++) {
+//             for (int j = 0; j<this->numberOfNodes; j++) {
+//                 addEdge(i, j, mat.getValue(i, j));
+//             }
+//         }
+//         return *this;
+//     } else throw std::invalid_argument("adjMatrix is not square(does not represent a graph)");
+// }

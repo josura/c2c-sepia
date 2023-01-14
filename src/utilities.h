@@ -19,8 +19,6 @@
 #include <stdexcept> // for std::overflow_error
 
 
-#include "WeightedEdgeGraph.h"
-
 #define INTMAX 100
 #define DOUBLEMAX 100.0
 
@@ -28,10 +26,7 @@
 typedef std::vector<int> NodeList;
 using NodeBitList = std::vector<bool>;
 using NodeBitArray = bool*;
-using NodeSet = std::unordered_set<int>;
-
-
-std::ostream& operator<< (std::ostream &out, WeightedEdgeGraph const& data);  
+using NodeSet = std::unordered_set<int>; 
 
 std::ostream& operator<< (std::ostream &out, NodeBitList const& data);
 std::ostream& operator<< (std::ostream &out, NodeList const& data);
