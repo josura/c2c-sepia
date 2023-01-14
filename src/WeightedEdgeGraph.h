@@ -23,7 +23,7 @@ class WeightedEdgeGraph{
     public:
 
         //public since they will be accessed a lot
-        //Matrix<double>* adjMatrix;
+        Matrix<double> adjMatrix;
         std::vector<std::tuple<int, int, float> > edgesVector;
 
         WeightedEdgeGraph();

@@ -1,4 +1,5 @@
 #include "WeightedEdgeGraph.h"
+#include "Matrix.h"
 //#include "utilities.h"
 #include <ostream>
 #include <stdexcept>
@@ -16,6 +17,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(){
     this->adjList = nullptr;
     this->adjVector = nullptr;
     this->edgesArray = nullptr;
+    this->adjMatrix = Matrix<double>();
     
 }
 
@@ -29,6 +31,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
     for (int i = 0; i < numNodes; i++) {
         nodeWeights[i]=0;
     }
+    this->adjMatrix = Matrix<double>(numNodes,numNodes);
     
 }
 
@@ -40,6 +43,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(const Matrix<double>& _adjMatrix){
         this->nodeWeights = new double[numNodes];
         this->adjList = new std::unordered_set<int>[numNodes];
         this->adjVector = new std::vector<int>[numNodes];
+        this->adjMatrix = Matrix<double>(numNodes,numNodes);
         for (int i = 0 ; i<numNodes; i++) {
             for (int j = 0; j<numNodes; j++) {
                 addEdge(i, j, _adjMatrix.getValue(i, j));
@@ -80,6 +84,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight
         adjList[node2].insert(node1);
         adjVector[node1].push_back(node2);
         adjVector[node2].push_back(node1);
+        adjMatrix(node1,node2) = weight;
     }
 
     return this;
@@ -162,6 +167,7 @@ WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
     this->adjList = new std::unordered_set<int>[g2.numberOfNodes];
     this->adjVector = new std::vector<int>[g2.numberOfNodes];
     this->edgesVector.clear();
+    this->adjMatrix = Matrix<double>(g2.numberOfNodes,g2.numberOfNodes);
 
     for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
         this->addEdge(std::get<0>(*it),std::get<1>(*it), std::get<2>(*it));
