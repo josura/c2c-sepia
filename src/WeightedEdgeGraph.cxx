@@ -1,5 +1,6 @@
 #include "WeightedEdgeGraph.h"
 #include "Matrix.h"
+#include "utilities.h"
 //#include "utilities.h"
 #include <ostream>
 #include <stdexcept>
@@ -41,12 +42,16 @@ WeightedEdgeGraph::WeightedEdgeGraph(const Matrix<double>& _adjMatrix){
         int numNodes = _adjMatrix.getCols();
         this->numberOfNodes = numNodes;
         this->nodeWeights = new double[numNodes];
+        for (int i = 0; i < numNodes; i++) {
+            nodeWeights[i]=0;
+        }
         this->adjList = new std::unordered_set<int>[numNodes];
         this->adjVector = new std::vector<int>[numNodes];
         this->adjMatrix = Matrix<double>(numNodes,numNodes);
         for (int i = 0 ; i<numNodes; i++) {
             for (int j = 0; j<numNodes; j++) {
-                addEdge(i, j, _adjMatrix.getValue(i, j));
+                if(!approximatelyEqual(_adjMatrix.getValue(i, j),0.0,0.0000000001)) 
+                    addEdge(i, j, _adjMatrix.getValue(i, j));
             }
         }
     }

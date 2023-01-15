@@ -68,3 +68,14 @@ std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
 }
 
 int SizeToInt(size_t u);
+
+bool approximatelyEqual(float a, float b, float epsilon);
+bool essentiallyEqual(float a, float b, float epsilon);
+bool definitelyGreaterThan(float a, float b, float epsilon);
+bool definitelyLessThan(float a, float b, float epsilon);
+
+
+bool approximatelyEqual(double a, double b, double epsilon);
+bool essentiallyEqual(double a, double b, double epsilon);
+bool definitelyGreaterThan(double a, double b, double epsilon);
+bool definitelyLessThan(double a, double b, double epsilon);
