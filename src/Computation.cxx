@@ -44,14 +44,15 @@ Computation::Computation(const std::vector<double>& _input,const Matrix<double>&
     cellTypes = _cellTypes;
 }
 
-void Computation::augmentW(std::vector<std::tuple<std::string, std::string, double>>& newEdgesList){
+void Computation::augmentMetapathway(std::vector<std::string>& _celltypes,std::vector<std::tuple<std::string, std::string, double>>& newEdgesList){
     for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
         std::string node1Name = std::get<0>(*it); 
         std::string node2Name = std::get<1>(*it);
         double edgeWeight = std::get<2>(*it);
-        geneMapToNode.insert({node1Name,2});
+        geneMapToNode.insert({node1Name,geneMapToNode.size()});
+        geneMapToNode.insert({node2Name,geneMapToNode.size()});
 
-        //this->addEdge(std::get<0>(*it),std::get<1>(*it), std::get<2>(*it));
+        augmentedMetapathway->addEdge(geneMapToNode[node1Name],geneMapToNode[node2Name], edgeWeight);
     }
     std::vector<std::tuple<std::string, std::string, double>> augmentedEdgesVector;
 }

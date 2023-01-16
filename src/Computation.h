@@ -19,7 +19,7 @@ class Computation{
         Computation(const std::vector<double>& _input);
         Computation(const std::vector<double>& _input, const Matrix<double>& _W);
         Computation(const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& _cellTypes);
-        void augmentW(std::vector<std::tuple<std::string,std::string,double>>&);
+        void augmentMetapathway(std::vector<std::string>&,std::vector<std::tuple<std::string,std::string,double>>&);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
 
