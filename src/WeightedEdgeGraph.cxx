@@ -71,7 +71,7 @@ int WeightedEdgeGraph::degreeOfNode(int node)const{
     return adjList[node].size();
 }
 
-WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight){
+WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weight){
     if(node1 >= numberOfNodes || node2 >= numberOfNodes){
         std::cerr << "add edge failed for edges " << std::to_string(node1) << " and " << std::to_string(node2) << std::endl;
         if(node1 >= numberOfNodes){
@@ -84,7 +84,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight
         //edge already added
     } else {
         numberOfEdges++;
-        edgesVector.push_back(std::tuple<int, int, float>(node1,node2, weight));
+        edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
         adjList[node2].insert(node1);
         adjVector[node1].push_back(node2);
@@ -96,11 +96,11 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, float weight
 }
 
 
-std::tuple<int, int,float>* WeightedEdgeGraph::makeEdgesArray(){
+std::tuple<int, int,double>* WeightedEdgeGraph::makeEdgesArray(){
     //emptying old memory
     delete[] edgesArray;
     // new array
-    edgesArray = new std::tuple<int, int, float>[numberOfEdges];
+    edgesArray = new std::tuple<int, int, double>[numberOfEdges];
     for (int i =0 ; i<numberOfEdges; i++) {
         edgesArray[i] = edgesVector.at(i);
     }
@@ -147,11 +147,11 @@ std::string WeightedEdgeGraph::getAdjListStr(int node)const{
     return stringa;
 }
 
-std::vector<std::tuple<int, int,float>> WeightedEdgeGraph::getEdgesVector()const{
+std::vector<std::tuple<int, int,double>> WeightedEdgeGraph::getEdgesVector()const{
     return edgesVector;
 }
 
-std::tuple<int, int,float>* WeightedEdgeGraph::getEdgesArray()const{
+std::tuple<int, int,double>* WeightedEdgeGraph::getEdgesArray()const{
     return edgesArray;
 }
 
@@ -190,7 +190,7 @@ std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
                 out << "node " << i << " :" << data.getAdjListStr(i) << std::endl;
             }
             out << "Edges vector: {";
-            std::vector<std::tuple<int,int,float>> tmpVec= data.getEdgesVector();
+            std::vector<std::tuple<int,int,double>> tmpVec= data.getEdgesVector();
             for(auto it = tmpVec.cbegin();it!=tmpVec.cend();it++){
                 out << "(" << get<0>(*it)<< ","<< get<1>(*it)<< ","<< get<2>(*it)<< "," << ")," ;
             }

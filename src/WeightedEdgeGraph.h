@@ -18,13 +18,14 @@ class WeightedEdgeGraph{
         double* nodeWeights;
         std::unordered_set<int>* adjList;
         std::vector<int>* adjVector;
-        std::tuple<int, int, float>* edgesArray;
+        std::vector<std::string> nameVector;
+        std::tuple<int, int, double>* edgesArray;
 
     public:
 
         //public since they will be accessed a lot
         Matrix<double> adjMatrix;
-        std::vector<std::tuple<int, int, float> > edgesVector;
+        std::vector<std::tuple<int, int, double> > edgesVector;
 
         WeightedEdgeGraph();
 
@@ -34,9 +35,16 @@ class WeightedEdgeGraph{
 
         ~WeightedEdgeGraph();
 
-        WeightedEdgeGraph* addEdge(int node1, int node2, float weight);
+        WeightedEdgeGraph* addEdge(int node1, int node2, double weight);
+        WeightedEdgeGraph* addEdge(std::string node1, std::string node2, double weight);
 
-        std::tuple<int, int, float>* makeEdgesArray(); //edge =(node, node, weight)
+        WeightedEdgeGraph* addNode(double value);
+        WeightedEdgeGraph* addNode(std::string name, double value);
+
+        WeightedEdgeGraph* setNodeValue(int node, double value);
+        WeightedEdgeGraph* setNodeValue(std::string node, double value);
+//TODO controls over nodes and other things
+        std::tuple<int, int, double>* makeEdgesArray(); //edge =(node, node, weight)
 
         // accessory functions
 
@@ -54,9 +62,9 @@ class WeightedEdgeGraph{
 
         bool adjNodes(int node1, int node2);
 
-        std::vector<std::tuple<int, int, float>> getEdgesVector()const;
+        std::vector<std::tuple<int, int, double>> getEdgesVector()const;
 
-        std::tuple<int, int, float>* getEdgesArray()const;
+        std::tuple<int, int, double>* getEdgesArray()const;
 
         double getNodeWeight(int node)const;
 
