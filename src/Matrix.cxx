@@ -99,6 +99,23 @@ Matrix<T> Matrix<T>::createRandom(int rows,int cols){
 
 template Matrix<double> Matrix<double>::createRandom(int rows,int cols);
 
+template<typename T>
+Matrix<T> Matrix<T>::createIdentity(int size)
+{
+    Matrix<T> temp(size, size);
+    for (int i = 0; i < temp.rows_; ++i) {
+        for (int j = 0; j < temp.cols_; ++j) {
+            if (i == j) {
+                temp(i,j) = 1;
+            } else {
+                temp(i,j) = 0;
+            }
+        }
+    }
+    return temp;
+}
+template Matrix<double> Matrix<double>::createIdentity(int size);
+
 //operators
 template<typename T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
