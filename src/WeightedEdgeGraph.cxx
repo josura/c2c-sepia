@@ -96,6 +96,33 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
 }
 
 
+WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1, std::string node2, double weight){
+
+}
+
+WeightedEdgeGraph* WeightedEdgeGraph::addNode(double value){
+
+}
+WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
+
+}
+
+
+WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<double> values){
+
+}
+WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<std::string> names, std::vector<double> values){
+    
+}
+
+WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(int node, double value){
+
+}
+WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(std::string node, double value){
+
+}
+
+
 std::tuple<int, int,double>* WeightedEdgeGraph::makeEdgesArray(){
     //emptying old memory
     delete[] edgesArray;
@@ -105,6 +132,13 @@ std::tuple<int, int,double>* WeightedEdgeGraph::makeEdgesArray(){
         edgesArray[i] = edgesVector.at(i);
     }
     return edgesArray;
+}
+
+//TODO complete
+Matrix<double> WeightedEdgeGraph::makeMatrix(){
+    //emptying old memory
+    // new array
+    return this->adjMatrix;
 }
 
 

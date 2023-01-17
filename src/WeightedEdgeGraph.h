@@ -41,10 +41,17 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addNode(double value);
         WeightedEdgeGraph* addNode(std::string name, double value);
 
+
+        WeightedEdgeGraph* addNodes(std::vector<double> values);
+        WeightedEdgeGraph* addNodes(std::vector<std::string> names, std::vector<double> values);
+
         WeightedEdgeGraph* setNodeValue(int node, double value);
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
 //TODO controls over nodes and other things
+
+        //optimization functions to make EdgesArray and new Matrix, SUGGESTED not using these functions
         std::tuple<int, int, double>* makeEdgesArray(); //edge =(node, node, weight)
+        Matrix<double> makeMatrix();
 
         // accessory functions
 

@@ -46,7 +46,7 @@ Computation::Computation(const std::vector<double>& _input,const Matrix<double>&
 
 void Computation::augmentMetapathway(std::vector<std::string>& _celltypes,std::vector<std::tuple<std::string, std::string, double>>& newEdgesList){
     delete augmentedMetapathway;
-    augmentedMetapathway = new WeightedEdgeGraph();
+    augmentedMetapathway = new WeightedEdgeGraph();//TODO
     for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
         std::string node1Name = std::get<0>(*it); 
         std::string node2Name = std::get<1>(*it);
