@@ -124,25 +124,25 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::addNode(double value){
-
+    return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
-
+    return this;
 }
 
 
 WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<double> values){
-
+    return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<std::string> names, std::vector<double> values){
-
+    return this;
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(int node, double value){
-
+    return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(std::string node, double value){
-
+    return this;
 }
 
 
