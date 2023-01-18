@@ -85,3 +85,4 @@ TEST_F(MatrixTesting,multiplicationControlResults){
   }
 }
 
+// TODO test all the functionalities of matrix, especially matrix multiplication, addition and copy with addition of rows

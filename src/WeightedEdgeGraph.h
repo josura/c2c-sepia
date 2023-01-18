@@ -16,7 +16,7 @@ class WeightedEdgeGraph{
     private:
         int numberOfNodes;
         int numberOfEdges=0;
-        double* nodeWeights;
+        double* nodeValues;
         std::unordered_set<int>* adjList;
         std::vector<int>* adjVector;
         std::vector<std::string> nameVector;
@@ -33,6 +33,9 @@ class WeightedEdgeGraph{
 
         WeightedEdgeGraph(int numNodes);
 
+        WeightedEdgeGraph(std::vector<std::string>& nodeNames);
+        WeightedEdgeGraph(std::vector<std::string>& nodeNames,std::vector<double>& nodeVal);
+
         WeightedEdgeGraph(const Matrix<double>& _adjMatrix);
 
         ~WeightedEdgeGraph();
@@ -44,11 +47,16 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addNode(std::string name, double value);
 
 
-        WeightedEdgeGraph* addNodes(std::vector<double> values);
-        WeightedEdgeGraph* addNodes(std::vector<std::string> names, std::vector<double> values);
+        WeightedEdgeGraph* addNodes(std::vector<double>& values);
+        WeightedEdgeGraph* addNodes(std::vector<std::string>& names, std::vector<double>& values);
 
         WeightedEdgeGraph* setNodeValue(int node, double value);
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
+
+        double getNodeValue(int node)const;
+        double getNodeValue(std::string node)const;
+        std::vector<double> getNodeValues(std::vector<int> node)const;
+        std::vector<double> getNodeValues(std::vector<std::string> node)const;
 //TODO controls over nodes and other things
 
         //optimization functions to make EdgesArray and new Matrix, SUGGESTED not using these functions
@@ -61,9 +69,8 @@ class WeightedEdgeGraph{
         int getNumEdges()const ;
         int degreeOfNode(int node)const;
 
-        double* getNodeWeights()const;
 
-        std::string getNodeWeightsStr()const;
+        std::string getnodeValuesStr()const;
 
         std::unordered_set<int>* getAdjList(int node)const;
 
@@ -75,8 +82,6 @@ class WeightedEdgeGraph{
         std::vector<std::tuple<int, int, double>> getEdgesVector()const;
 
         std::tuple<int, int, double>* getEdgesArray()const;
-
-        double getNodeWeight(int node)const;
 
 
         WeightedEdgeGraph& operator=(const WeightedEdgeGraph& g2);
@@ -90,6 +95,8 @@ class WeightedEdgeGraph{
 
         int getMaxDegree()const;
         double getAverageDegree()const;
+
+        std::map<std::string, int> getNodeToIndexMap()const {return nodeToIndex;}
 
 };
 
