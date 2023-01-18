@@ -96,8 +96,31 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
 }
 
 
-WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1, std::string node2, double weight){
+WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string node2name, double weight){
+    if(!(nodeToIndex.contains(node1name) && nodeToIndex.contains(node2name)) ){
+        std::cerr << "add edge failed for edges " << node1name << " and " << node2name << std::endl;
+        if(!nodeToIndex.contains(node1name)){
+            std::cerr << "[ERROR] node1 "<< node1name << " is not in the graph "<<std::endl;
+        }
+        else{
+            std::cerr << "[ERROR] node2 "<< node2name << " is not in the graph "<<std::endl;
+        }
+        throw std::invalid_argument("[ERROR] invalid argument when adding an edge");
+    } else if (adjNodes(node1name, node2name)) {
+        adjMatrix(nodeToIndex[node1name],nodeToIndex[node2name]) = weight;
+    } else {
+        int node1 = nodeToIndex[node1name];
+        int node2 = nodeToIndex[node2name];
+        numberOfEdges++;
+        edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
+        adjList[node1].insert(node2);
+        adjList[node2].insert(node1);
+        adjVector[node1].push_back(node2);
+        adjVector[node2].push_back(node1);
+        adjMatrix(node1,node2) = weight;
+    }
 
+    return this;
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::addNode(double value){
@@ -112,7 +135,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<double> values){
 
 }
 WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<std::string> names, std::vector<double> values){
-    
+
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(int node, double value){
@@ -191,6 +214,10 @@ std::tuple<int, int,double>* WeightedEdgeGraph::getEdgesArray()const{
 
 bool WeightedEdgeGraph::adjNodes(int node1, int node2){
     return ( (adjList[node1].find(node2) != adjList[node1].end()) || (adjList[node2].find(node1) != adjList[node2].end())) ;
+}
+
+bool WeightedEdgeGraph::adjNodes(std::string node1, std::string node2){
+    return ( (adjList[nodeToIndex[node1]].find(nodeToIndex[node2]) != adjList[nodeToIndex[node1]].end()) || (adjList[nodeToIndex[node2]].find(nodeToIndex[node1]) != adjList[nodeToIndex[node2]].end())) ;
 }
 
 WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){

@@ -37,10 +37,14 @@ NodeSet* nodeBitArrayToSet(NodeBitArray const& nodeArray,int arraySize);
 
 void printNodeBitArray(NodeBitArray nodeArray,int size);
 
+//random generation for integers
 int randomNumber(int min, int max);
+//random generation for doubles
 double randomRealNumber(double min, double max);
+//random generation for character
 char generateRandomCharacter();
 
+//generate random vector
 std::vector<int> randomVector(int min, int max , int size);
 
 NodeBitArray randomBooleanArray(int size);
@@ -55,7 +59,11 @@ void setRandom(int& val);
 void setRandom(double& val);
 void setRandom(char& val);
 
-
+//generate random matrix
+/*
+@param rows: number of rows
+@param cols: number of cols
+*/
 template<typename T>
 std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
     std::vector<std::vector< T>> retMat=std::vector<std::vector<double>>(rows, std::vector<double>(cols));
@@ -67,6 +75,7 @@ std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
     return retMat;
 }
 
+// convert size to int and  launch an exception if it is not possible
 int SizeToInt(size_t u);
 
 bool approximatelyEqual(float a, float b, float epsilon);

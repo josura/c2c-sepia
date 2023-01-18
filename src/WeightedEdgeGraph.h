@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Matrix.h"  //circular dependency :'(
+#include <map>
 #include <ostream>
 #include <string>
 #include <sys/types.h>
@@ -20,6 +21,7 @@ class WeightedEdgeGraph{
         std::vector<int>* adjVector;
         std::vector<std::string> nameVector;
         std::tuple<int, int, double>* edgesArray;
+        std::map<std::string, int> nodeToIndex;
 
     public:
 
@@ -36,7 +38,7 @@ class WeightedEdgeGraph{
         ~WeightedEdgeGraph();
 
         WeightedEdgeGraph* addEdge(int node1, int node2, double weight);
-        WeightedEdgeGraph* addEdge(std::string node1, std::string node2, double weight);
+        WeightedEdgeGraph* addEdge(std::string node1name, std::string node2name, double weight);
 
         WeightedEdgeGraph* addNode(double value);
         WeightedEdgeGraph* addNode(std::string name, double value);
@@ -68,6 +70,7 @@ class WeightedEdgeGraph{
         std::string getAdjListStr(int node)const;
 
         bool adjNodes(int node1, int node2);
+        bool adjNodes(std::string node1, std::string node2);
 
         std::vector<std::tuple<int, int, double>> getEdgesVector()const;
 
