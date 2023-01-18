@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include "gtest/gtest.h"
 
 
 // helper functions
@@ -189,3 +190,18 @@ Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs){
 }
 
 template Matrix<double> Matrix<double>::operator*(const std::vector<double>& rhs);
+
+
+template<typename T>
+Matrix<T> Matrix<T>::copyAndAddRowsCols(int additionalRows, int additionalCols)const{
+    Matrix<T> ret = Matrix<T>(this->getRows()+additionalRows,this->getCols()+additionalCols);
+    for (int i = 0 ; i<this->getRows(); i++) {
+        for (int j = 0 ; j<this->getRows(); j++) {
+            ret(i,j) = getValue(i, j);
+        }
+    }
+
+    return ret;
+}
+
+template Matrix<double> Matrix<double>::copyAndAddRowsCols(int additionalRows, int additionalCols)const;

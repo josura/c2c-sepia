@@ -66,6 +66,10 @@ class Matrix {
         int getRows()const{return rows_;}
         int getCols()const{return cols_;}
 
+        //functions to add rows and columns while mantaining the original data in the upperleft corner(these functions are bad, better use a vector when trying to work with dynamically instantiated data)
+        // also these functions create a copy and do not work on the original
+        Matrix copyAndAddRowsCols(int additionalRows, int additionalCols) const;
+
     private:
         int rows_, cols_;
         T **_matrix;
