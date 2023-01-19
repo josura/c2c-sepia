@@ -18,7 +18,6 @@ WeightedEdgeGraph::WeightedEdgeGraph(){
     this->nodeValues = nullptr;
     this->adjList = nullptr;
     this->adjVector = nullptr;
-    this->edgesArray = nullptr;
     this->adjMatrix = Matrix<double>();
     this->nodeToIndex = std::map<std::string, int>();
     
@@ -110,6 +109,7 @@ WeightedEdgeGraph::~WeightedEdgeGraph(){
     //}
     delete [] this->adjList;
     delete [] this->nodeValues;
+    delete[] adjVector;
     
 }
 
@@ -220,16 +220,6 @@ std::vector<double> WeightedEdgeGraph::getNodeValues(std::vector<std::string> no
 
 
 //functions to remove since they can be problematic
-std::tuple<int, int,double>* WeightedEdgeGraph::makeEdgesArray(){
-    //emptying old memory
-    delete[] edgesArray;
-    // new array
-    edgesArray = new std::tuple<int, int, double>[numberOfEdges];
-    for (int i =0 ; i<numberOfEdges; i++) {
-        edgesArray[i] = edgesVector.at(i);
-    }
-    return edgesArray;
-}
 
 //TODO complete
 Matrix<double> WeightedEdgeGraph::makeMatrix(){
@@ -281,9 +271,6 @@ std::vector<std::tuple<int, int,double>> WeightedEdgeGraph::getEdgesVector()cons
     return edgesVector;
 }
 
-std::tuple<int, int,double>* WeightedEdgeGraph::getEdgesArray()const{
-    return edgesArray;
-}
 
 bool WeightedEdgeGraph::adjNodes(int node1, int node2){
     return ( (adjList[node1].find(node2) != adjList[node1].end()) || (adjList[node2].find(node1) != adjList[node2].end())) ;
@@ -299,7 +286,6 @@ WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
     delete[] nodeValues;
     delete[] adjList;
     delete[] adjVector;
-    delete[] edgesArray;
 
     //creating new data
     this->nodeValues = new double[g2.numberOfNodes];
@@ -311,7 +297,10 @@ WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
     for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
         this->addEdge(std::get<0>(*it),std::get<1>(*it), std::get<2>(*it));
     }
-    makeEdgesArray();
+    this->nodeToIndex = g2.getNodeToIndexMap();
+    for (int i = 0; i < this->numberOfNodes; i++) {
+        nodeValues[i]=g2.getNodeValue(i);
+    }
     return *this;
 }
 
@@ -340,7 +329,6 @@ std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
 //         delete[] nodeValues;
 //         delete[] adjList;
 //         delete[] adjVector;
-//         delete[] edgesArray;
 
 //         //creating new data
 //         this->nodeValues = new double[numberOfNodes];

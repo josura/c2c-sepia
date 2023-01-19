@@ -16,11 +16,10 @@ class WeightedEdgeGraph{
     private:
         int numberOfNodes;
         int numberOfEdges=0;
-        double* nodeValues;
-        std::unordered_set<int>* adjList;
-        std::vector<int>* adjVector;
+        double* nodeValues;  //arrays of nodeValues
+        std::unordered_set<int>* adjList;  //adjList as array of unordered sets
+        std::vector<int>* adjVector;   //adjacency list as an array of integers vectors
         std::vector<std::string> nameVector;
-        std::tuple<int, int, double>* edgesArray;
         std::map<std::string, int> nodeToIndex;
 
     public:
@@ -43,6 +42,8 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addEdge(int node1, int node2, double weight);
         WeightedEdgeGraph* addEdge(std::string node1name, std::string node2name, double weight);
 
+        double getEdgeWeight(int node1, int node2)const{return adjMatrix.getValue(node1,node2);}
+
         WeightedEdgeGraph* addNode(double value);
         WeightedEdgeGraph* addNode(std::string name, double value);
 
@@ -59,8 +60,7 @@ class WeightedEdgeGraph{
         std::vector<double> getNodeValues(std::vector<std::string> node)const;
 //TODO controls over nodes and other things
 
-        //optimization functions to make EdgesArray and new Matrix, SUGGESTED not using these functions
-        std::tuple<int, int, double>* makeEdgesArray(); //edge =(node, node, weight)
+        //optimization functions to make new Matrix, SUGGESTED not using these functions
         Matrix<double> makeMatrix();
 
         // accessory functions
@@ -81,7 +81,6 @@ class WeightedEdgeGraph{
 
         std::vector<std::tuple<int, int, double>> getEdgesVector()const;
 
-        std::tuple<int, int, double>* getEdgesArray()const;
 
 
         WeightedEdgeGraph& operator=(const WeightedEdgeGraph& g2);
