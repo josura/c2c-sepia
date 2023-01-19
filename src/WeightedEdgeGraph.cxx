@@ -16,8 +16,7 @@
 WeightedEdgeGraph::WeightedEdgeGraph(){
     this->numberOfNodes = 0;
     this->nodeValues = nullptr;
-    this->adjList = nullptr;
-    this->adjVector = nullptr;
+    this->adjList = std::vector<std::unordered_set<int>>();
     this->adjMatrix = Matrix<double>();
     this->nodeToIndex = std::map<std::string, int>();
     
@@ -26,8 +25,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(){
 WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
     this->numberOfNodes = numNodes;
     this->nodeValues = new double[numNodes];
-    this->adjList = new std::unordered_set<int>[numNodes];
-    this->adjVector = new std::vector<int>[numNodes];
+    this->adjList = std::vector<std::unordered_set<int>>(numNodes);
     //edgesVector = new std::vector<std::pair<int, int>>;
 
     for (int i = 0; i < numNodes; i++) {
@@ -49,8 +47,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(const Matrix<double>& _adjMatrix){
         for (int i = 0; i < numNodes; i++) {
             nodeValues[i]=0;
         }
-        this->adjList = new std::unordered_set<int>[numNodes];
-        this->adjVector = new std::vector<int>[numNodes];
+        this->adjList = std::vector<std::unordered_set<int>>(numNodes);
         this->adjMatrix = Matrix<double>(numNodes,numNodes);
         for (int i = 0 ; i<numNodes; i++) {
             for (int j = 0; j<numNodes; j++) {
@@ -68,9 +65,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames){
     int numNodes = SizeToInt(nodeNames.size());
     this->numberOfNodes = numNodes;
     this->nodeValues = new double[numNodes];
-    this->adjList = new std::unordered_set<int>[numNodes];
-    this->adjVector = new std::vector<int>[numNodes];
-    //edgesVector = new std::vector<std::pair<int, int>>;
+    this->adjList = std::vector<std::unordered_set<int>>(numNodes);
 
     this->adjMatrix = Matrix<double>(numNodes,numNodes);
 
@@ -87,9 +82,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames,std::ve
         int numNodes = SizeToInt(nodeNames.size());
         this->numberOfNodes = numNodes;
         this->nodeValues = new double[numNodes];
-        this->adjList = new std::unordered_set<int>[numNodes];
-        this->adjVector = new std::vector<int>[numNodes];
-        //edgesVector = new std::vector<std::pair<int, int>>;
+        this->adjList = std::vector<std::unordered_set<int>>(numNodes);
 
         this->adjMatrix = Matrix<double>(numNodes,numNodes);
 
@@ -104,12 +97,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames,std::ve
 }
 
 WeightedEdgeGraph::~WeightedEdgeGraph(){
-    //for (int i=0; i<numberOfNodes; i++) {
-    //    delete this->adjList[i];
-    //}
-    delete [] this->adjList;
     delete [] this->nodeValues;
-    delete[] adjVector;
     
 }
 
@@ -133,8 +121,6 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
         edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
         adjList[node2].insert(node1);
-        adjVector[node1].push_back(node2);
-        adjVector[node2].push_back(node1);
         adjMatrix(node1,node2) = weight;
     }
 
@@ -161,8 +147,6 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
         edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
         adjList[node2].insert(node1);
-        adjVector[node1].push_back(node2);
-        adjVector[node2].push_back(node1);
         adjMatrix(node1,node2) = weight;
     }
 
@@ -251,12 +235,12 @@ std::string WeightedEdgeGraph::getnodeValuesStr()const{
 }
 
 
-std::unordered_set<int>* WeightedEdgeGraph::getAdjList(int node)const{
+std::unordered_set<int> WeightedEdgeGraph::getAdjList(int node)const{
     if(node>=numberOfNodes){
         std::cerr << "trying to get an adjacent list of an unknown node: " << std::to_string(node) << ">=" << std::to_string(numberOfNodes) << std::endl;
-        return NULL;
+        throw std::invalid_argument("adjacent list of an unknown node");
     }
-    return &adjList[node];
+    return adjList[node];
 }
 
 std::string WeightedEdgeGraph::getAdjListStr(int node)const{
@@ -284,13 +268,10 @@ WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
     this->numberOfNodes = g2.numberOfNodes;
     //deleting old data
     delete[] nodeValues;
-    delete[] adjList;
-    delete[] adjVector;
 
     //creating new data
     this->nodeValues = new double[g2.numberOfNodes];
-    this->adjList = new std::unordered_set<int>[g2.numberOfNodes];
-    this->adjVector = new std::vector<int>[g2.numberOfNodes];
+    this->adjList = std::vector<std::unordered_set<int>>(g2.numberOfNodes);
     this->edgesVector.clear();
     this->adjMatrix = Matrix<double>(g2.numberOfNodes,g2.numberOfNodes);
 
@@ -328,12 +309,10 @@ std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
 //         //deleting old data
 //         delete[] nodeValues;
 //         delete[] adjList;
-//         delete[] adjVector;
 
 //         //creating new data
 //         this->nodeValues = new double[numberOfNodes];
 //         this->adjList = new std::unordered_set<int>[this->numberOfNodes];
-//         this->adjVector = new std::vector<int>[this->numberOfNodes];
 //         this->edgesVector.clear();
 //         for (int i = 0 ; i<this->numberOfNodes; i++) {
 //             for (int j = 0; j<this->numberOfNodes; j++) {

@@ -14,8 +14,6 @@ class MatrixTesting : public ::testing::Test {
     m2_ = new Matrix<double>(tmp, 10, 12);
     m3_ = new Matrix<double>(*m2_);
 
-    
-    //*g2_ = *g1_;   //Problem with the equal operator(assignment)
      
   }
   void TearDown() override{
@@ -82,6 +80,17 @@ TEST_F(MatrixTesting,multiplicationControlResults){
       for (int j=0;j<matrixres.getCols() ;j++) {
           EXPECT_FLOAT_EQ( matrixres.getValue(i,j),0);
       }
+  }
+}
+
+TEST_F(MatrixTesting,assignmentWorksMatrix){
+  Matrix<double> matrixres = *m2_;
+  EXPECT_EQ(matrixres.getCols(), 12);
+  EXPECT_EQ(matrixres.getRows(), 10);
+  for (int i = 0; i<m2_->getRows(); i++) {
+    for (int j = 0; j<matrixres.getCols(); j++) {
+      EXPECT_FLOAT_EQ(matrixres.getValue(i,j), 0);
+    }
   }
 }
 

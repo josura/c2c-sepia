@@ -17,8 +17,7 @@ class WeightedEdgeGraph{
         int numberOfNodes;
         int numberOfEdges=0;
         double* nodeValues;  //arrays of nodeValues
-        std::unordered_set<int>* adjList;  //adjList as array of unordered sets
-        std::vector<int>* adjVector;   //adjacency list as an array of integers vectors
+        std::vector<std::unordered_set<int>> adjList;  //adjList as vector of unordered sets
         std::vector<std::string> nameVector;
         std::map<std::string, int> nodeToIndex;
 
@@ -43,6 +42,8 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addEdge(std::string node1name, std::string node2name, double weight);
 
         double getEdgeWeight(int node1, int node2)const{return adjMatrix.getValue(node1,node2);}
+        double getEdgeWeight(std::string node1, std::string node2)const{return adjMatrix.getValue(nodeToIndex.at(node1),nodeToIndex.at(node2));}
+        int getIndexFromName(std::string name)const {return nodeToIndex.at(name);}
 
         WeightedEdgeGraph* addNode(double value);
         WeightedEdgeGraph* addNode(std::string name, double value);
@@ -72,7 +73,7 @@ class WeightedEdgeGraph{
 
         std::string getnodeValuesStr()const;
 
-        std::unordered_set<int>* getAdjList(int node)const;
+        std::unordered_set<int> getAdjList(int node)const;
 
         std::string getAdjListStr(int node)const;
 
