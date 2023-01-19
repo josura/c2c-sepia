@@ -115,11 +115,11 @@ TEST_F(GraphTesting, constructorNodeNamesAndValues) {
 }
 
 TEST_F(GraphTesting, addingEdgesIndex){
-  //WeightedEdgeGraph graphTest = *g5_;
+  // WeightedEdgeGraph graphTest = *g5_;
 
-  //graphTest.addEdge(1,2,0.1)->addEdge(1,3,0.2)->addEdge(3,0,0.4);
+  // graphTest.addEdge(1,2,0.1)->addEdge(1,3,0.2)->addEdge(3,0,0.4);
 
-  //EXPECT_EQ(graphTest.getNumEdges(), 3);
+  // EXPECT_EQ(graphTest.getNumEdges(), 3);
   // EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(1, 2), 0.1);
   // EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(1, 3), 0.2);
   // EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(3, 0), 0.4);

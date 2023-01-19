@@ -35,6 +35,10 @@ WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
 
     this->nodeToIndex = std::map<std::string, int>();
     // ADDING NODE NAMES AS INTEGERS CAST TO STRING?
+
+    for(int i = 0; i < numNodes; i++){
+        nodeToIndex[std::to_string(i)] = i;
+    }
     
 }
 
@@ -57,6 +61,10 @@ WeightedEdgeGraph::WeightedEdgeGraph(const Matrix<double>& _adjMatrix){
         }
 
         // ADDING NODE NAMES AS INTEGERS CAST TO STRING?
+
+        for(int i = 0; i < numNodes; i++){
+            nodeToIndex[std::to_string(i)] = i;
+        }
     }
     
 }
@@ -120,7 +128,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
         numberOfEdges++;
         edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
-        adjList[node2].insert(node1);
+        //adjList[node2].insert(node1);  //graph is directed
         adjMatrix(node1,node2) = weight;
     }
 
@@ -146,7 +154,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
         numberOfEdges++;
         edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
-        adjList[node2].insert(node1);
+        //adjList[node2].insert(node1); //undirected graph addition
         adjMatrix(node1,node2) = weight;
     }
 
@@ -264,34 +272,68 @@ bool WeightedEdgeGraph::adjNodes(std::string node1, std::string node2){
     return ( (adjList[nodeToIndex[node1]].find(nodeToIndex[node2]) != adjList[nodeToIndex[node1]].end()) || (adjList[nodeToIndex[node2]].find(nodeToIndex[node1]) != adjList[nodeToIndex[node2]].end())) ;
 }
 
+//non copy and swap to not reallocate some of the resources (doesn't get called with g1 = g2 but its called when invocking *g1=*g2 on pointers)
 WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
-    this->numberOfNodes = g2.numberOfNodes;
-    //deleting old data
-    delete[] nodeValues;
+    if (this!=&g2) {
+        this->numberOfNodes = g2.numberOfNodes;
+        //deleting old data
+        if(nodeValues)delete[] nodeValues;
 
-    //creating new data
-    this->nodeValues = new double[g2.numberOfNodes];
-    this->adjList = std::vector<std::unordered_set<int>>(g2.numberOfNodes);
-    this->edgesVector.clear();
-    this->adjMatrix = Matrix<double>(g2.numberOfNodes,g2.numberOfNodes);
+        //creating new data
+        this->nodeValues = new double[g2.numberOfNodes];
+        this->adjList = std::vector<std::unordered_set<int>>(g2.numberOfNodes);
+        this->edgesVector.clear();
+        this->adjMatrix = Matrix<double>(g2.numberOfNodes,g2.numberOfNodes);
 
-    for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
-        this->addEdge(std::get<0>(*it),std::get<1>(*it), std::get<2>(*it));
-    }
-    this->nodeToIndex = g2.getNodeToIndexMap();
-    for (int i = 0; i < this->numberOfNodes; i++) {
-        nodeValues[i]=g2.getNodeValue(i);
+        for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
+            int node1 = std::get<0>(*it);
+            int node2 = std::get<1>(*it);
+            double weight = std::get<2>(*it);
+            this->addEdge(node1,node2,weight);
+        }
+        this->nodeToIndex = g2.getNodeToIndexMap();   //maybe the error is here
+        for (int i = 0; i < this->numberOfNodes; i++) {
+            nodeValues[i]=g2.getNodeValue(i);
+        }
     }
     return *this;
 }
 
+// copy and swap
+// WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph g2){
+//     if (this!=&g2) {
+//         this->numberOfNodes = g2.numberOfNodes;
+//         //deleting old data
+//         if(nodeValues)delete[] nodeValues;
+
+//         //creating new data
+//         this->nodeValues = new double[g2.numberOfNodes];
+//         this->adjList = std::vector<std::unordered_set<int>>(g2.numberOfNodes);
+//         this->edgesVector.clear();
+//         this->adjMatrix = Matrix<double>(g2.numberOfNodes,g2.numberOfNodes);
+
+//         for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
+//             int node1 = std::get<0>(*it);
+//             int node2 = std::get<1>(*it);
+//             double weight = std::get<2>(*it);
+//             this->addEdge(node1,node2,weight);
+//         }
+//         this->nodeToIndex = g2.getNodeToIndexMap();   //maybe the error is here
+//         for (int i = 0; i < this->numberOfNodes; i++) {
+//             nodeValues[i]=g2.getNodeValue(i);
+//         }
+//     }
+//     return *this;
+// }
+
 std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
-            out << data.getNumNodes() << " " << data.getNumEdges() <<std::endl;
+            out << "number of nodes: "<<data.getNumNodes() << "  and of edges:" << data.getNumEdges() <<std::endl;
             std::string nodeValues = data.getnodeValuesStr();
-            out << nodeValues << std::endl;
+            out <<"node values: "<< nodeValues << std::endl;
             out << "Adj Lists" << std::endl;
-            for(int i = 0; i<data.getNumNodes(); i++){
-                out << "node " << i << " :" << data.getAdjListStr(i) << std::endl;
+            std::map<std::string,int> nodeNamesAndIndexes = data.getNodeToIndexMap();
+            for(auto it=nodeNamesAndIndexes.cbegin();it!= nodeNamesAndIndexes.cend();it++){
+                out << "node " << it->second << "("<< it->first <<") :" << data.getAdjListStr(it->second) << std::endl;
             }
             out << "Edges vector: {";
             std::vector<std::tuple<int,int,double>> tmpVec= data.getEdgesVector();
