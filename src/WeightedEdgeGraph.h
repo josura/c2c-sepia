@@ -87,6 +87,7 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph& operator=(const WeightedEdgeGraph& g2);
         //WeightedEdgeGraph& operator=(const WeightedEdgeGraph g2);
         //WeightedEdgeGraph& setAdjMatrix(Matrix<double>& mat);
+        void assign(const WeightedEdgeGraph& g2);
 
         // optimization methods
 

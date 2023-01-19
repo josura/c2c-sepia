@@ -74,20 +74,21 @@ TEST_F(GraphTesting, assignmentWorks1) {
   EXPECT_EQ(g2_->getNumEdges(), 2);
 }
 
-// TEST_F(GraphTesting, assignmentWorks2) {
-//   WeightedEdgeGraph graphTest = *g4_;
+TEST_F(GraphTesting, assignmentWorks2) {
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g4_);  //assignment is done in this way since the = operator is working only on dereferenced objects, that is *obj1=*obj2
 
-//   ASSERT_EQ(graphTest.getNumNodes(), 5);
-//   ASSERT_EQ(graphTest.getNumEdges(), 2);
+  ASSERT_EQ(graphTest.getNumNodes(), 5);
+  ASSERT_EQ(graphTest.getNumEdges(), 2);
 
-//   EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node1", "node3"), 2.3);
-//   EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node3", "node2"), 0.3);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node1", "node3"), 2.3);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node3", "node2"), 0.3);
 
 
-//   EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node1") , graphTest.getIndexFromName("node3")), 2.3);
-//   EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node3"), graphTest.getIndexFromName("node2")), 0.3);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node1") , graphTest.getIndexFromName("node3")), 2.3);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node3"), graphTest.getIndexFromName("node2")), 0.3);
 
-// }
+}
 
 TEST_F(GraphTesting, assignmentAdjMatrixWorks) {
   EXPECT_EQ(g3_->getNumNodes(), 4);
@@ -115,16 +116,31 @@ TEST_F(GraphTesting, constructorNodeNamesAndValues) {
 }
 
 TEST_F(GraphTesting, addingEdgesIndex){
-  // WeightedEdgeGraph graphTest = *g5_;
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
 
-  // graphTest.addEdge(1,2,0.1)->addEdge(1,3,0.2)->addEdge(3,0,0.4);
+  graphTest.addEdge(1,2,0.1)->addEdge(1,3,0.2)->addEdge(3,0,0.4);
 
-  // EXPECT_EQ(graphTest.getNumEdges(), 3);
-  // EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(1, 2), 0.1);
-  // EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(1, 3), 0.2);
-  // EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(3, 0), 0.4);
+  EXPECT_EQ(graphTest.getNumEdges(), 3);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(1, 2), 0.1);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(1, 3), 0.2);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(3, 0), 0.4);
 }
 
-// TEST_F(GraphTesting, addingEdgesNames){
+TEST_F(GraphTesting, addingEdgesNames){
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
 
-// }
+  graphTest.addEdge("node2","node3",0.1)->addEdge("node2","node4",0.2)->addEdge("node4","node1",0.4);
+
+  EXPECT_EQ(graphTest.getNumEdges(), 3);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node2", "node3"), 0.1);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node2", "node4"), 0.2);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight("node4", "node1"), 0.4);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node2"),graphTest.getIndexFromName("node3") ), 0.1);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node2"), graphTest.getIndexFromName("node4")), 0.2);
+  EXPECT_FLOAT_EQ(graphTest.getEdgeWeight(graphTest.getIndexFromName("node4"), graphTest.getIndexFromName("node1")), 0.4);
+
+}
+
+//throws and unexpected behaviour management TODO

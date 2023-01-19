@@ -299,6 +299,33 @@ WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph& g2){
     return *this;
 }
 
+
+void WeightedEdgeGraph::assign(const WeightedEdgeGraph& g2){
+    if (this!=&g2) {
+        this->numberOfNodes = g2.numberOfNodes;
+        //deleting old data
+        if(nodeValues)delete[] nodeValues;
+
+        //creating new data
+        this->nodeValues = new double[g2.numberOfNodes];
+        this->adjList = std::vector<std::unordered_set<int>>(g2.numberOfNodes);
+        this->edgesVector.clear();
+        this->adjMatrix = Matrix<double>(g2.numberOfNodes,g2.numberOfNodes);
+
+        for(auto it = g2.edgesVector.cbegin(); it!=g2.edgesVector.cend();it++){
+            int node1 = std::get<0>(*it);
+            int node2 = std::get<1>(*it);
+            double weight = std::get<2>(*it);
+            this->addEdge(node1,node2,weight);
+        }
+        this->nodeToIndex = g2.getNodeToIndexMap();   //maybe the error is here
+        for (int i = 0; i < this->numberOfNodes; i++) {
+            nodeValues[i]=g2.getNodeValue(i);
+        }
+    }
+    return;
+}
+
 // copy and swap
 // WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph g2){
 //     if (this!=&g2) {

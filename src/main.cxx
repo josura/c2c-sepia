@@ -19,7 +19,8 @@ int main() {
     std::vector<double> nodeValues{0.3,4.1,3.8,8.2,9.5};
     WeightedEdgeGraph g4 = WeightedEdgeGraph(nodeNames);
     WeightedEdgeGraph g5 = WeightedEdgeGraph(nodeNames,nodeValues);
-    //WeightedEdgeGraph g6 = g5;
+    WeightedEdgeGraph g6;
+    g6.assign(g5);
 
     g5.addEdge("node1","node3",2.3)->addEdge("node3","node2",0.3);
 
