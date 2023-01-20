@@ -201,19 +201,70 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
 
 
 WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<double>& values){
+    int oldNumberOfNodes = this->numberOfNodes; 
+    this->numberOfNodes += values.size();
+    adjMatrix = adjMatrix.copyAndAddRowsCols(values.size(), values.size());
+    double* tmp = nodeValues;
+    nodeValues = new double[this->numberOfNodes];
+    std::copy(tmp,tmp+(oldNumberOfNodes),nodeValues);
+    delete [] tmp;
     
+    int i = 0;
+    for(auto it = values.cbegin();it != values.cend();it++,i++){
+        adjList.push_back(std::unordered_set<int>());
+        nameVector.push_back(std::to_string(oldNumberOfNodes+i));
+        nodeToIndex[std::to_string(oldNumberOfNodes+i)] = oldNumberOfNodes + i;
+        nodeValues[oldNumberOfNodes+i]=*it;
+    }
     return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& names, const std::vector<double>& values){
     //how to handle some names already present in the graph?
     auto controlMapContainsValue = [this](std::string name){return this->nodeToIndex.contains(name);};
-    std::vector<bool> tmpVec;
+    std::vector<bool> tmpVec = std::vector<bool>(names.size(),false);  // initialization is necessary when working with transformation
     std::transform(names.cbegin(),names.cend(),tmpVec.begin(),controlMapContainsValue);
     if(std::reduce(tmpVec.cbegin(),tmpVec.cend(),false,[](bool num1, bool num2){return num1 || num2;})){
         throw std::invalid_argument("[ERROR] some names in the new nodes are already present in the graph, aborting operation of augmentation of the graph");
     }
-    else {
+    else if (values.size()==0) {
+        //default values
+        int oldNumberOfNodes = this->numberOfNodes; 
+        this->numberOfNodes += names.size();
+        adjMatrix = adjMatrix.copyAndAddRowsCols(names.size(), names.size());
+        double* tmp = nodeValues;
+        nodeValues = new double[this->numberOfNodes];
+        std::copy(tmp,tmp+(oldNumberOfNodes),nodeValues);
+        delete [] tmp;
         
+        int i = 0;
+        for(auto it = names.cbegin();it != names.cend();it++,i++){
+            adjList.push_back(std::unordered_set<int>());
+            nameVector.push_back(*it);
+            nodeToIndex[*it] = oldNumberOfNodes + i;
+            nodeValues[oldNumberOfNodes+i]=0;
+        }
+
+    }
+    else if( names.size() != values.size()){
+        throw std::invalid_argument("[ERROR] values are not the same size as names when adding nodes");
+    }
+    else {
+        int oldNumberOfNodes = this->numberOfNodes; 
+        this->numberOfNodes += names.size();
+        adjMatrix = adjMatrix.copyAndAddRowsCols(names.size(), names.size());
+        double* tmp = nodeValues;
+        nodeValues = new double[this->numberOfNodes];
+        std::copy(tmp,tmp+(oldNumberOfNodes),nodeValues);
+        delete [] tmp;
+        
+        //std::copy(nodeValues + oldNumberOfNodes,nodeValues+this->numberOfNodes,values.cbegin());
+        int i = 0;
+        for(auto it = names.cbegin();it != names.cend();it++,i++){
+            adjList.push_back(std::unordered_set<int>());
+            nameVector.push_back(*it);
+            nodeToIndex[*it] = oldNumberOfNodes + i;
+            nodeValues[oldNumberOfNodes+i]=values[i];
+        }
     }
     return this;
 }

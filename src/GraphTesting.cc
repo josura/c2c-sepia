@@ -192,9 +192,98 @@ TEST_F(GraphTesting, addingNodeNameAndValue){
   EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
   EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
 }
+
+
+TEST_F(GraphTesting, addingNodesOnlyValues){
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
+  std::vector<double> values{4.0,8.0,3.2};
+  graphTest.addEdge("node2","node3",0.1)->addEdge("node2","node4",0.2)->addEdge("node4","node1",0.4);
+  graphTest.addNodes(values);
+  int nodesStartIndex = graphTest.getNumNodes()-3;
+  std::vector<std::string> nodeStartName{std::to_string(nodesStartIndex),std::to_string(nodesStartIndex+1),std::to_string(nodesStartIndex+2)};
+  ASSERT_EQ(graphTest.getNumEdges(), 3);
+  ASSERT_EQ(graphTest.getNumNodes(), 8);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+1),8.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+2),3.2);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeStartName[0]),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeStartName[1]),8.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeStartName[2]),3.2);
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+1);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+2);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeStartName[0]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeStartName[1]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeStartName[2]);});
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
+
+}
+
+TEST_F(GraphTesting, addingNodesNamesAndValuesAndDefault){
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
+  std::vector<double> values{4.0,8.0,3.2};
+  std::vector<std::string> namesWithVal{"nodetest1","nodetest2","nodetest3"};
+  std::vector<std::string> namesWithDefault{"nodetest4","nodetest5","nodetest6","nodetest7"};
+
+  graphTest.addEdge("node2","node3",0.1)->addEdge("node2","node4",0.2)->addEdge("node4","node1",0.4);
+  graphTest.addNodes(namesWithVal,values);
+
+
+  int nodesStartIndex = graphTest.getNumNodes()-3;
+
+  ASSERT_EQ(graphTest.getNumNodes(), 8);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+1),8.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+2),3.2);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithVal[0]),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithVal[1]),8.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithVal[2]),3.2);
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
+
+  graphTest.addNodes(namesWithDefault);
+  nodesStartIndex = graphTest.getNumNodes()-7;
+
+  
+  ASSERT_EQ(graphTest.getNumNodes(), 12);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+1),8.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+2),3.2);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+3),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+4),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+5),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodesStartIndex+6),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithVal[0]),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithVal[1]),8.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithVal[2]),3.2);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithDefault[0]),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithDefault[1]),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithDefault[2]),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(namesWithDefault[3]),0.0);
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+1);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+2);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+3);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+4);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+5);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodesStartIndex+6);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithVal[0]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithVal[1]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithVal[2]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithDefault[0]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithDefault[1]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithDefault[2]);});
+  EXPECT_NO_THROW({graphTest.getAdjList(namesWithDefault[3]);});
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
+}
 //throws and unexpected behaviour management TODO
 
 TEST_F(GraphTesting, gettingNodeValueOfNotPresentNode){}
+TEST_F(GraphTesting, gettingNodesValuesOfAtLeastOneNotPresentNode){}
 TEST_F(GraphTesting, addingEdgeOfNotPresentNode){}
 TEST_F(GraphTesting, addingEdgeOfNotPresentNodes){}
 TEST_F(GraphTesting, gettingAdjListOfNotPresentNode){}
