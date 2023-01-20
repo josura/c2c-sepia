@@ -55,6 +55,9 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* setNodeValue(int node, double value);
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
 
+        WeightedEdgeGraph* setNodeName(std::string nodenameTarget, std::string nodenameSet);
+        WeightedEdgeGraph* setNodesNames(const std::vector<std::string>& nodenameSets, const std::vector<std::string>& nodenameTargets = std::vector<std::string>());
+
         double getNodeValue(int node)const;
         double getNodeValue(std::string node)const;
         std::vector<double> getNodeValues(const std::vector<int>& node)const;
