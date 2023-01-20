@@ -287,17 +287,25 @@ double WeightedEdgeGraph::getNodeValue(std::string node)const{
         return nodeValues[nodeToIndex.at(node)];
     else throw std::invalid_argument("[ERROR] node value cannot be retrieved: node not in the list (as name)");
 }
-std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<int>& node)const{
+std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<int>& nodes)const{
     std::vector<double> ret;
-    for (auto it = node.cbegin(); it != node.cend(); it++) {
+    for (auto it = nodes.cbegin(); it != nodes.cend(); it++) {
         ret.push_back(getNodeValue(*it));
     }
     return ret;
 }
-std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<std::string>& node)const{
+std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<std::string>& nodes)const{
+    
     std::vector<double> ret;
-    for (auto it = node.cbegin(); it != node.cend(); it++) {
-        ret.push_back(getNodeValue(*it));
+    if (nodes.size()==0) {
+        //default means all node values return as vector of double
+        for (int i = 0; i < numberOfNodes; i++) {
+            ret.push_back(getNodeValue(i));
+        }
+    } else{
+        for (auto it = nodes.cbegin(); it != nodes.cend(); it++) {
+            ret.push_back(getNodeValue(*it));
+        }
     }
     return ret;
 }

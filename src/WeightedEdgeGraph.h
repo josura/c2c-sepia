@@ -58,7 +58,7 @@ class WeightedEdgeGraph{
         double getNodeValue(int node)const;
         double getNodeValue(std::string node)const;
         std::vector<double> getNodeValues(const std::vector<int>& node)const;
-        std::vector<double> getNodeValues(const std::vector<std::string>& node)const;
+        std::vector<double> getNodeValues(const std::vector<std::string>& node=std::vector<std::string>())const;
 //TODO controls over nodes and other things
 
         //optimization functions to make new Matrix, SUGGESTED not using these functions

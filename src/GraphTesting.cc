@@ -219,6 +219,11 @@ TEST_F(GraphTesting, addingNodesOnlyValues){
   EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
   EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
 
+  std::vector<double> graphNodeValues = graphTest.getNodeValues(nodeStartName);
+  for (uint i = 0; i < nodeStartName.size(); i++) {
+    EXPECT_FLOAT_EQ(graphNodeValues[i], values[i]) << "Vectors nodevalues and graphtest differ at index " << i << " at node:" << nodeStartName[i];
+  }
+
 }
 
 TEST_F(GraphTesting, addingNodesNamesAndValuesAndDefault){
@@ -279,6 +284,14 @@ TEST_F(GraphTesting, addingNodesNamesAndValuesAndDefault){
   EXPECT_NO_THROW({graphTest.getAdjList(namesWithDefault[3]);});
   EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
   EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
+  //also test if getNodeValues with default argument returns all the nodes with the right values
+  std::vector<double> graphNodeValues = graphTest.getNodeValues();
+  for (uint i = 0; i < namesWithVal.size(); i++) {
+    EXPECT_FLOAT_EQ(graphNodeValues[nodesStartIndex + i], values[i]) << "Vectors nodevalues and graphtest differ at index " << i << " at node:" << namesWithVal[i];
+  }
+  for (int i = 0; i < nodesStartIndex; i++) {
+    EXPECT_FLOAT_EQ(graphNodeValues[i],nodeValues[i]);
+  }
 }
 //throws and unexpected behaviour management TODO
 
