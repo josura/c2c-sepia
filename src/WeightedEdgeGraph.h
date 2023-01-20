@@ -50,15 +50,15 @@ class WeightedEdgeGraph{
 
 
         WeightedEdgeGraph* addNodes(std::vector<double>& values);
-        WeightedEdgeGraph* addNodes(std::vector<std::string>& names, std::vector<double>& values);
+        WeightedEdgeGraph* addNodes(const std::vector<std::string>& names, const std::vector<double>& values=std::vector<double>());
 
         WeightedEdgeGraph* setNodeValue(int node, double value);
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
 
         double getNodeValue(int node)const;
         double getNodeValue(std::string node)const;
-        std::vector<double> getNodeValues(std::vector<int> node)const;
-        std::vector<double> getNodeValues(std::vector<std::string> node)const;
+        std::vector<double> getNodeValues(const std::vector<int>& node)const;
+        std::vector<double> getNodeValues(const std::vector<std::string>& node)const;
 //TODO controls over nodes and other things
 
         //optimization functions to make new Matrix, SUGGESTED not using these functions

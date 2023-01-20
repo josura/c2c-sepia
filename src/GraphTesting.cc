@@ -163,6 +163,8 @@ TEST_F(GraphTesting, addingNodeOnlyValueAndDefualt){
   EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultIndex);});
   EXPECT_NO_THROW({graphTest.getAdjList(nodeValueName);});
   EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultName);});
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
 
 }
 
@@ -187,8 +189,12 @@ TEST_F(GraphTesting, addingNodeNameAndValue){
   EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultIndex);});
   EXPECT_NO_THROW({graphTest.getAdjList(nodeValueName);});
   EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultName);});
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
 }
 //throws and unexpected behaviour management TODO
 
-
+TEST_F(GraphTesting, gettingNodeValueOfNotPresentNode){}
+TEST_F(GraphTesting, addingEdgeOfNotPresentNode){}
+TEST_F(GraphTesting, addingEdgeOfNotPresentNodes){}
 TEST_F(GraphTesting, gettingAdjListOfNotPresentNode){}

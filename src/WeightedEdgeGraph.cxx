@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <map>
+#include <numeric>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -178,25 +179,42 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNode(double value){
     return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
-    this->numberOfNodes++;
-    adjMatrix = adjMatrix.copyAndAddRowsCols(1, 1);
-    double* tmp = nodeValues;
-    nodeValues = new double[this->numberOfNodes];
-    std::copy(tmp,tmp+(this->numberOfNodes-1),nodeValues);
-    delete [] tmp;
-    nodeValues[this->numberOfNodes-1]=value;
+    if(nodeToIndex.contains(name)){
+        //throw exceptions or handle it differently, like incrementing a counter or changing-adding the last characters to the string
+        // for now it just throws an exception
+        throw std::invalid_argument("node name already present");
+    }else{
+        this->numberOfNodes++;
+        adjMatrix = adjMatrix.copyAndAddRowsCols(1, 1);
+        double* tmp = nodeValues;
+        nodeValues = new double[this->numberOfNodes];
+        std::copy(tmp,tmp+(this->numberOfNodes-1),nodeValues);
+        delete [] tmp;
+        nodeValues[this->numberOfNodes-1]=value;
 
-    adjList.push_back(std::unordered_set<int>());
-    nameVector.push_back(name);
-    nodeToIndex[name] = this->numberOfNodes-1;
+        adjList.push_back(std::unordered_set<int>());
+        nameVector.push_back(name);
+        nodeToIndex[name] = this->numberOfNodes-1;
+    }
     return this;
 }
 
 
 WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<double>& values){
+    
     return this;
 }
-WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<std::string>& names, std::vector<double>& values){
+WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& names, const std::vector<double>& values){
+    //how to handle some names already present in the graph?
+    auto controlMapContainsValue = [this](std::string name){return this->nodeToIndex.contains(name);};
+    std::vector<bool> tmpVec;
+    std::transform(names.cbegin(),names.cend(),tmpVec.begin(),controlMapContainsValue);
+    if(std::reduce(tmpVec.cbegin(),tmpVec.cend(),false,[](bool num1, bool num2){return num1 || num2;})){
+        throw std::invalid_argument("[ERROR] some names in the new nodes are already present in the graph, aborting operation of augmentation of the graph");
+    }
+    else {
+        
+    }
     return this;
 }
 
@@ -218,14 +236,14 @@ double WeightedEdgeGraph::getNodeValue(std::string node)const{
         return nodeValues[nodeToIndex.at(node)];
     else throw std::invalid_argument("[ERROR] node value cannot be retrieved: node not in the list (as name)");
 }
-std::vector<double> WeightedEdgeGraph::getNodeValues(std::vector<int> node)const{
+std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<int>& node)const{
     std::vector<double> ret;
     for (auto it = node.cbegin(); it != node.cend(); it++) {
         ret.push_back(getNodeValue(*it));
     }
     return ret;
 }
-std::vector<double> WeightedEdgeGraph::getNodeValues(std::vector<std::string> node)const{
+std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<std::string>& node)const{
     std::vector<double> ret;
     for (auto it = node.cbegin(); it != node.cend(); it++) {
         ret.push_back(getNodeValue(*it));
