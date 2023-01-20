@@ -103,7 +103,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames,std::ve
             nodeToIndex[nodeNames[i]] = i;
         }
     }
-    else throw std::invalid_argument("[ERROR] invalid argument for graph constructor, nodeNames and nodeValues have not the same length");
+    else throw std::invalid_argument("[ERROR] WeightedEdgeGraph::WeightedEdgeGraph(constructor): invalid argument for graph constructor, nodeNames and nodeValues have not the same length");
     
 }
 
@@ -143,12 +143,12 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
     if(!(nodeToIndex.contains(node1name) && nodeToIndex.contains(node2name)) ){
         std::cerr << "add edge failed for edges " << node1name << " and " << node2name << std::endl;
         if(!nodeToIndex.contains(node1name)){
-            std::cerr << "[ERROR] node1 "<< node1name << " is not in the graph "<<std::endl;
+            std::cerr << "[ERROR] WeightedEdgeGraph::addEdge: node1 "<< node1name << " is not in the graph "<<std::endl;
         }
         else{
-            std::cerr << "[ERROR] node2 "<< node2name << " is not in the graph "<<std::endl;
+            std::cerr << "[ERROR] WeightedEdgeGraph::addEdge: node2 "<< node2name << " is not in the graph "<<std::endl;
         }
-        throw std::invalid_argument("[ERROR] invalid argument when adding an edge");
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addEdge: invalid argument when adding an edge");
     } else if (adjNodes(node1name, node2name)) {
         adjMatrix(nodeToIndex[node1name],nodeToIndex[node2name]) = weight;
     } else {
@@ -182,7 +182,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
     if(nodeToIndex.contains(name)){
         //throw exceptions or handle it differently, like incrementing a counter or changing-adding the last characters to the string
         // for now it just throws an exception
-        throw std::invalid_argument("node name already present");
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addNode: node name already present");
     }else{
         this->numberOfNodes++;
         adjMatrix = adjMatrix.copyAndAddRowsCols(1, 1);
@@ -224,7 +224,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& n
     std::vector<bool> tmpVec = std::vector<bool>(names.size(),false);  // initialization is necessary when working with transformation
     std::transform(names.cbegin(),names.cend(),tmpVec.begin(),controlMapContainsValue);
     if(std::reduce(tmpVec.cbegin(),tmpVec.cend(),false,[](bool num1, bool num2){return num1 || num2;})){
-        throw std::invalid_argument("[ERROR] some names in the new nodes are already present in the graph, aborting operation of augmentation of the graph");
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addNodes: some names in the new nodes are already present in the graph, aborting operation of augmentation of the graph");
     }
     else if (values.size()==0) {
         //default values
@@ -246,7 +246,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& n
 
     }
     else if( names.size() != values.size()){
-        throw std::invalid_argument("[ERROR] values are not the same size as names when adding nodes");
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addNodes: values are not the same size as names when adding nodes");
     }
     else {
         int oldNumberOfNodes = this->numberOfNodes; 
@@ -270,9 +270,19 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& n
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(int node, double value){
+    if (node < numberOfNodes) {
+        nodeValues[node] = value;
+    } else{
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodeValue: node index not in the graph");
+    }
     return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(std::string node, double value){
+    if ( nodeToIndex.contains(node)) {
+        nodeValues[nodeToIndex[node]] = value;
+    } else{
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodeValue: node name not in the graph");
+    }
     return this;
 }
 
@@ -280,12 +290,12 @@ WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(std::string node, double valu
 double WeightedEdgeGraph::getNodeValue(int node)const{
     if(node >= 0 && node < numberOfNodes)
         return nodeValues[node];
-    else throw std::invalid_argument("[ERROR] node value cannot be retrieved: node not in the list (as index)"); 
+    else throw std::invalid_argument("[ERROR] WeightedEdgeGraph::getNodeValue: node value cannot be retrieved: node not in the list (as index)"); 
 }
 double WeightedEdgeGraph::getNodeValue(std::string node)const{
     if(nodeToIndex.contains(node))
         return nodeValues[nodeToIndex.at(node)];
-    else throw std::invalid_argument("[ERROR] node value cannot be retrieved: node not in the list (as name)");
+    else throw std::invalid_argument("[ERROR] WeightedEdgeGraph::getNodeValue: node value cannot be retrieved: node not in the list (as name)");
 }
 std::vector<double> WeightedEdgeGraph::getNodeValues(const std::vector<int>& nodes)const{
     std::vector<double> ret;
@@ -346,8 +356,8 @@ std::string WeightedEdgeGraph::getnodeValuesStr()const{
 
 std::unordered_set<int> WeightedEdgeGraph::getAdjList(int node)const{
     if(node>=numberOfNodes){
-        std::cerr << "trying to get an adjacent list of an unknown node: " << std::to_string(node) << ">=" << std::to_string(numberOfNodes) << std::endl;
-        throw std::invalid_argument("adjacent list of an unknown node");
+        std::cerr << "[ERROR] getAdjList: trying to get an adjacent list of an unknown node: " << std::to_string(node) << ">=" << std::to_string(numberOfNodes) << std::endl;
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::getAdjList: adjacent list of an unknown node");
     }
     return adjList[node];
 }
