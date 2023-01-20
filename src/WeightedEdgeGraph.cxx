@@ -2,6 +2,8 @@
 #include "Matrix.h"
 #include "utilities.h"
 //#include "utilities.h"
+#include <algorithm>
+#include <iterator>
 #include <map>
 #include <ostream>
 #include <stdexcept>
@@ -162,9 +164,31 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::addNode(double value){
+    this->numberOfNodes++;
+    adjMatrix = adjMatrix.copyAndAddRowsCols(1, 1);
+    double* tmp = nodeValues;
+    nodeValues = new double[this->numberOfNodes];
+    std::copy(tmp,tmp+(this->numberOfNodes-1),nodeValues);
+    delete [] tmp;
+    nodeValues[this->numberOfNodes-1]=value;
+
+    adjList.push_back(std::unordered_set<int>());
+    nameVector.push_back(std::to_string(this->numberOfNodes-1));
+    nodeToIndex[std::to_string(this->numberOfNodes-1)] = this->numberOfNodes-1;
     return this;
 }
 WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
+    this->numberOfNodes++;
+    adjMatrix = adjMatrix.copyAndAddRowsCols(1, 1);
+    double* tmp = nodeValues;
+    nodeValues = new double[this->numberOfNodes];
+    std::copy(tmp,tmp+(this->numberOfNodes-1),nodeValues);
+    delete [] tmp;
+    nodeValues[this->numberOfNodes-1]=value;
+
+    adjList.push_back(std::unordered_set<int>());
+    nameVector.push_back(name);
+    nodeToIndex[name] = this->numberOfNodes-1;
     return this;
 }
 
@@ -251,12 +275,21 @@ std::unordered_set<int> WeightedEdgeGraph::getAdjList(int node)const{
     return adjList[node];
 }
 
+std::unordered_set<int> WeightedEdgeGraph::getAdjList(std::string node)const{
+    return getAdjList(nodeToIndex.at(node));
+}
+
 std::string WeightedEdgeGraph::getAdjListStr(int node)const{
     std::string stringa;
     for(auto it = adjList[node].cbegin(); it != adjList[node].cend();it++){
                 stringa += std::to_string(*it) + " ";
             }
     return stringa;
+}
+
+
+std::string WeightedEdgeGraph::getAdjListStr(std::string node)const{
+    return getAdjListStr(nodeToIndex.at(node));
 }
 
 std::vector<std::tuple<int, int,double>> WeightedEdgeGraph::getEdgesVector()const{

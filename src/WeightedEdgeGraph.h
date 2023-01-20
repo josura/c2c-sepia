@@ -14,9 +14,9 @@
 
 class WeightedEdgeGraph{
     private:
-        int numberOfNodes;
+        int numberOfNodes=0;
         int numberOfEdges=0;
-        double* nodeValues;  //arrays of nodeValues
+        double* nodeValues=nullptr;  //arrays of nodeValues
         std::vector<std::unordered_set<int>> adjList;  //adjList as vector of unordered sets
         std::vector<std::string> nameVector;
         std::map<std::string, int> nodeToIndex;
@@ -45,8 +45,8 @@ class WeightedEdgeGraph{
         double getEdgeWeight(std::string node1, std::string node2)const{return adjMatrix.getValue(nodeToIndex.at(node1),nodeToIndex.at(node2));}
         int getIndexFromName(std::string name)const {return nodeToIndex.at(name);}
 
-        WeightedEdgeGraph* addNode(double value);
-        WeightedEdgeGraph* addNode(std::string name, double value);
+        WeightedEdgeGraph* addNode(double value=0);
+        WeightedEdgeGraph* addNode(std::string name, double value=0);
 
 
         WeightedEdgeGraph* addNodes(std::vector<double>& values);
@@ -74,8 +74,10 @@ class WeightedEdgeGraph{
         std::string getnodeValuesStr()const;
 
         std::unordered_set<int> getAdjList(int node)const;
+        std::unordered_set<int> getAdjList(std::string node)const;
 
         std::string getAdjListStr(int node)const;
+        std::string getAdjListStr(std::string node)const;
 
         bool adjNodes(int node1, int node2);
         bool adjNodes(std::string node1, std::string node2);

@@ -143,4 +143,52 @@ TEST_F(GraphTesting, addingEdgesNames){
 
 }
 
+TEST_F(GraphTesting, addingNodeOnlyValueAndDefualt){
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
+
+  graphTest.addEdge("node2","node3",0.1)->addEdge("node2","node4",0.2)->addEdge("node4","node1",0.4);
+  graphTest.addNode(4.0)->addNode();
+  int nodeDefaultIndex = graphTest.getNumNodes()-1;
+  int nodeValueIndex = nodeDefaultIndex-1;
+  std::string nodeValueName = std::to_string(nodeValueIndex);
+  std::string nodeDefaultName =  std::to_string(nodeDefaultIndex);
+  ASSERT_EQ(graphTest.getNumEdges(), 3);
+  ASSERT_EQ(graphTest.getNumNodes(), 7);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeValueIndex),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeDefaultIndex),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeValueName),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeDefaultName),0.0);
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeValueIndex);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultIndex);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeValueName);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultName);});
+
+}
+
+TEST_F(GraphTesting, addingNodeNameAndValue){
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
+  std::string nodeValueName = "nodetest";
+  std::string nodeDefaultName =  "nodetest2";
+
+  graphTest.addEdge("node2","node3",0.1)->addEdge("node2","node4",0.2)->addEdge("node4","node1",0.4);
+  graphTest.addNode("nodetest",4.0)->addNode("nodetest2");
+  
+  int nodeValueIndex = graphTest.getIndexFromName(nodeValueName);
+  int nodeDefaultIndex = graphTest.getIndexFromName(nodeDefaultName);
+  ASSERT_EQ(graphTest.getNumEdges(), 3);
+  ASSERT_EQ(graphTest.getNumNodes(), 7);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeValueIndex),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeDefaultIndex),0.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeValueName),4.0);
+  EXPECT_FLOAT_EQ(graphTest.getNodeValue(nodeDefaultName),0.0);
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeValueIndex);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultIndex);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeValueName);});
+  EXPECT_NO_THROW({graphTest.getAdjList(nodeDefaultName);});
+}
 //throws and unexpected behaviour management TODO
+
+
+TEST_F(GraphTesting, gettingAdjListOfNotPresentNode){}
