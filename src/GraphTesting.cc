@@ -295,7 +295,11 @@ TEST_F(GraphTesting, addingNodesNamesAndValuesAndDefault){
 }
 //throws and unexpected behaviour management TODO
 
-TEST_F(GraphTesting, gettingNodeValueOfNotPresentNode){}
+TEST_F(GraphTesting, gettingNodeValueOfNotPresentNode){
+  EXPECT_ANY_THROW(g5_->getNodeValue("nodenotPresent"));
+  EXPECT_ANY_THROW(g5_->getNodeValue(g5_->getNumNodes()));
+  EXPECT_ANY_THROW(g5_->getNodeValue(-1));
+}
 TEST_F(GraphTesting, gettingNodesValuesOfAtLeastOneNotPresentNode){}
 TEST_F(GraphTesting, addingEdgeOfNotPresentNode){}
 TEST_F(GraphTesting, addingEdgeOfNotPresentNodes){}
