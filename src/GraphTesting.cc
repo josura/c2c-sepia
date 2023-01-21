@@ -304,6 +304,15 @@ TEST_F(GraphTesting, gettingNodesValuesOfAtLeastOneNotPresentNode){
   EXPECT_ANY_THROW(g5_->getNodeValues(std::vector<std::string>{"nodeNotInpis","node1","node2"}));
   EXPECT_NO_THROW(g5_->getNodeValues(std::vector<std::string>{"node1","node2"}));
 }
-TEST_F(GraphTesting, addingEdgeOfNotPresentNode){}
-TEST_F(GraphTesting, addingEdgeOfNotPresentNodes){}
-TEST_F(GraphTesting, gettingAdjListOfNotPresentNode){}
+TEST_F(GraphTesting, addingEdgeOfNotPresentNode){
+  EXPECT_ANY_THROW(g5_->addEdge("node1","nodeNot",3.2));
+}
+TEST_F(GraphTesting, addingEdgeOfNotPresentNodes){
+  EXPECT_ANY_THROW(g5_->addEdge("nodenot1","nodeNot",4.2));
+}
+TEST_F(GraphTesting, gettingAdjListOfNotPresentNode){
+  EXPECT_ANY_THROW(g5_->getAdjList(6));
+  EXPECT_ANY_THROW(g5_->getAdjList(5));
+  EXPECT_ANY_THROW(g5_->getAdjList(-1));
+  EXPECT_ANY_THROW(g5_->getAdjList("nodenot"));
+}

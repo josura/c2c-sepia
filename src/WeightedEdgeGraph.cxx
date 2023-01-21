@@ -358,6 +358,9 @@ std::unordered_set<int> WeightedEdgeGraph::getAdjList(int node)const{
     if(node>=numberOfNodes){
         std::cerr << "[ERROR] getAdjList: trying to get an adjacent list of an unknown node: " << std::to_string(node) << ">=" << std::to_string(numberOfNodes) << std::endl;
         throw std::invalid_argument("[ERROR] WeightedEdgeGraph::getAdjList: adjacent list of an unknown node");
+    } else if(node < 0){
+        std::cerr << "[ERROR] getAdjList: trying to get an adjacent list of negative index node: " << std::to_string(node) << std::endl;
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::getAdjList: adjacent list of an negative index node");    
     }
     return adjList[node];
 }
