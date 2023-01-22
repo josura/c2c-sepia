@@ -293,6 +293,15 @@ TEST_F(GraphTesting, addingNodesNamesAndValuesAndDefault){
     EXPECT_FLOAT_EQ(graphNodeValues[i],nodeValues[i]);
   }
 }
+
+TEST_F(GraphTesting, setNodeValueIndex){
+  g5_->setNodeValue(1,0.2);
+  EXPECT_FLOAT_EQ(g5_->getNodeValue(1),0.2);
+}
+TEST_F(GraphTesting, setNodeValueName){
+  g5_->setNodeValue("node2",4.5);
+  EXPECT_FLOAT_EQ(g5_->getNodeValue("node2"),4.5);
+}
 //throws and unexpected behaviour management TODO
 
 TEST_F(GraphTesting, gettingNodeValueOfNotPresentNode){
@@ -315,4 +324,10 @@ TEST_F(GraphTesting, gettingAdjListOfNotPresentNode){
   EXPECT_ANY_THROW(g5_->getAdjList(5));
   EXPECT_ANY_THROW(g5_->getAdjList(-1));
   EXPECT_ANY_THROW(g5_->getAdjList("nodenot"));
+}
+
+TEST_F(GraphTesting, setNodeValueOfNotPresentNode){
+  EXPECT_ANY_THROW(g5_->setNodeValue(-1,0.2));
+  EXPECT_ANY_THROW(g5_->setNodeValue(6,0.2));
+  EXPECT_ANY_THROW(g5_->setNodeValue(5,0.2));
 }

@@ -270,7 +270,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& n
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(int node, double value){
-    if (node < numberOfNodes) {
+    if (node < numberOfNodes && node >= 0) {
         nodeValues[node] = value;
     } else{
         throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodeValue: node index not in the graph");
