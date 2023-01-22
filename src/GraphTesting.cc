@@ -331,3 +331,8 @@ TEST_F(GraphTesting, setNodeValueOfNotPresentNode){
   EXPECT_ANY_THROW(g5_->setNodeValue(6,0.2));
   EXPECT_ANY_THROW(g5_->setNodeValue(5,0.2));
 }
+
+
+TEST_F(GraphTesting, setNodeValueOfNotPresentNodeName){
+  EXPECT_ANY_THROW(g5_->setNodeValue("nodeNotPresent",0.2));
+}
