@@ -36,11 +36,16 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     cellTypes = std::vector<std::string>();
 }
 
-void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::tuple<std::string, std::string, double>>& newEdgesList){
+void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::tuple<std::string, std::string, double>>& newEdgesList, bool includeSelfVirtual){
     delete augmentedMetapathway;
     try {
         //TODO controls over nodes and edges added? It should be redundand though since the methods of WeightedEdgeGraph are already controlled
-        augmentedMetapathway = metapathway->addNodes(_celltypes);
+        auto cellFind = std::find(_celltypes.begin(), _celltypes.end(), localCellType); 
+        std::vector<std::string> tmpcelltypes = _celltypes;
+        if (cellFind != _celltypes.end() && !includeSelfVirtual){
+            tmpcelltypes.erase(cellFind);
+        }
+        augmentedMetapathway = metapathway->addNodes(tmpcelltypes);
         for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
             std::string node1Name = std::get<0>(*it); 
             std::string node2Name = std::get<1>(*it);

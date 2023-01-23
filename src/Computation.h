@@ -33,7 +33,7 @@ class Computation{
         @param const std::vector<std::string>& _cellTypes: the celltypes other than this celltype, the other agents in the network
         @param 
         */
-        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>&);
+        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>&,bool includeSelfVirtual=false);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
 
