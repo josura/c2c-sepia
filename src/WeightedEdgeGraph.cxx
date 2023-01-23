@@ -125,6 +125,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
         else{
             std::cerr << "[ERROR] node2(number "<< std::to_string(node2) << ") is not in the graph that has " << std::to_string(numberOfNodes) << " nodes"<<std::endl;
         }
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addEdge: failed to add an edge, see error logs");
     } else if (adjNodes(node1, node2)) {
         //edge already added
     } else {
