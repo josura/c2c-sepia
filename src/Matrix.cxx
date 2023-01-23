@@ -164,17 +164,95 @@ Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
 
 template Matrix<double>& Matrix<double>::operator*=(const Matrix<double>& m);
 
+template<typename T>
+Matrix<T>& Matrix<T>::operator*=(T rhs) {
+    for (int i = 0; i < rows_; ++i) {
+        for (int j = 0; j < cols_; ++j) {
+            _matrix[i][j] *= rhs;
+        }
+    }
+    return *this;
+}
+
+template Matrix<double>& Matrix<double>::operator*=(double m);
+
 
 template<typename T>
-Matrix<T> Matrix<T>::operator*(const Matrix<T>& rhs){
+Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& m)
+{
+    if(getCols() == m.getRows()){
+        for (int i = 0; i < rows_; ++i) {
+            for (int j = 0; j < cols_; ++j) {
+                _matrix[i][j] += m.getValue(i,j);
+            }
+        }
+        return *this;
+    } else {
+        throw std::invalid_argument("column dimension of lhs for operation += is not equal to row dimension of lhs\n");
+    }
+}
+
+template Matrix<double>& Matrix<double>::operator+=(const Matrix<double>& m);
+
+
+template<typename T>
+Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& m)
+{
+    if(getCols() == m.getRows()){
+        for (int i = 0; i < rows_; ++i) {
+            for (int j = 0; j < cols_; ++j) {
+                _matrix[i][j] -= m.getValue(i,j);
+            }
+        }
+        return *this;
+    } else {
+        throw std::invalid_argument("column dimension of lhs for operation -= is not equal to row dimension of lhs\n");
+    }
+}
+
+template Matrix<double>& Matrix<double>::operator-=(const Matrix<double>& m);
+
+template<typename T>
+Matrix<T>& Matrix<T>::operator/=(T num)
+{
+    for (int i = 0; i < rows_; ++i) {
+        for (int j = 0; j < cols_; ++j) {
+            _matrix[i][j] /= num;
+        }
+    }
+    return *this;
+}
+
+template Matrix<double>& Matrix<double>::operator/=(double m);
+
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*(const Matrix<T>& rhs)const{
     Matrix<T> result(*this);
     return result *= rhs;
 }
 
-template Matrix<double> Matrix<double>::operator*(const Matrix<double>& rhs);
+template Matrix<double> Matrix<double>::operator*(const Matrix<double>& rhs)const;
 
 template<typename T>
-Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs){
+Matrix<T> Matrix<T>::operator-(const Matrix<T>& rhs)const{
+    Matrix<T> result(*this);
+    return result -= rhs;
+}
+
+template Matrix<double> Matrix<double>::operator-(const Matrix<double>& rhs)const;
+
+template<typename T>
+Matrix<T> Matrix<T>::operator+(const Matrix<T>& rhs)const{
+    Matrix<T> result(*this);
+    return result += rhs;
+}
+
+template Matrix<double> Matrix<double>::operator+(const Matrix<double>& rhs)const;
+
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs)const{
     if (getCols()==SizeToInt(rhs.size())) {
         // Matrix<T> retvec = Matrix<T>(rows_,1);
         // int m = getRows(), n = getCols();
@@ -188,7 +266,21 @@ Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs){
     } else throw std::invalid_argument("arrayMult vector has not the right size to be multiplied");
 }
 
-template Matrix<double> Matrix<double>::operator*(const std::vector<double>& rhs);
+template Matrix<double> Matrix<double>::operator*(const std::vector<double>& rhs)const;
+
+
+
+template<typename T>
+Matrix<T> Matrix<T>::transpose()
+{
+    Matrix ret(cols_, rows_);
+    for (int i = 0; i < rows_; ++i) {
+        for (int j = 0; j < cols_; ++j) {
+            ret._matrix[j][i] = _matrix[i][j];
+        }
+    }
+    return ret;
+}
 
 
 template<typename T>

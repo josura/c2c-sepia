@@ -55,5 +55,16 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         }
     } catch (...) {
         std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
+        return;
     }
+}
+
+
+std::vector<double> Computation::computePerturbation(){
+    Matrix<double> Wtrans = metapathway->adjMatrix.transpose();
+    (Matrix<double>::createIdentity(metapathway->getNumNodes()) - Wtrans) ;
+    return std::vector<double>();
+}
+std::vector<double> Computation::computeAugmentedPerturbation(){
+    return std::vector<double>();
 }

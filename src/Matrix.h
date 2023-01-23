@@ -25,11 +25,11 @@ class Matrix {
         Matrix& operator*=(T);
         Matrix& operator/=(T);
         Matrix operator^(int);  //integer power
-        Matrix operator+(const Matrix<T>&);
-        Matrix operator-(const Matrix<T>&);
-        Matrix operator*(const Matrix<T>&);
-        Matrix operator*(const std::vector<T>&);
-        Matrix operator*(T);
+        Matrix operator+(const Matrix<T>&)const;
+        Matrix operator-(const Matrix<T>&)const;
+        Matrix operator*(const Matrix<T>&)const;
+        Matrix operator*(const std::vector<T>&)const;
+        Matrix operator*(T)const;
         template<typename U>
         friend Matrix<U> operator*(double, const Matrix<U>&);
         template<typename U>
