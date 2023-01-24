@@ -45,7 +45,7 @@ class Matrix {
         friend std::istream& operator>>(std::istream&, Matrix<U>&);
 
         void swapRows(int, int);
-        Matrix transpose();
+        Matrix transpose()const;
 
         static Matrix createIdentity(int);
         static Matrix createRandom(int,int);
@@ -54,13 +54,15 @@ class Matrix {
 
         // functions on vectors
         static double dotProduct(Matrix, Matrix);
+        static Matrix getMinor(const Matrix<T>&,int, int,int);
+        static T determinant(const Matrix<T>& A);
         Matrix& operator*=(const std::vector<T>&);
 
         // functions for reduction and inverse
         Matrix concatenateRight(const Matrix&)const;
+        T determinant()const;
         Matrix gaussianElimination();
         Matrix rowReduceGaussian();
-        void readSolutionsFromRREF(std::ostream& os);
         Matrix inverse();  // to implement
 
         //get functions

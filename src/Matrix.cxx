@@ -273,7 +273,7 @@ template Matrix<double> Matrix<double>::operator*(const std::vector<double>& rhs
 
 
 template<typename T>
-Matrix<T> Matrix<T>::transpose()
+Matrix<T> Matrix<T>::transpose()const
 {
     Matrix ret(cols_, rows_);
     for (int i = 0; i < rows_; ++i) {
@@ -283,6 +283,8 @@ Matrix<T> Matrix<T>::transpose()
     }
     return ret;
 }
+
+template Matrix<double> Matrix<double>::transpose()const;
 
 
 template<typename T>
@@ -306,8 +308,14 @@ std::vector<T> Matrix<T>::asVector()const{
         for (int i = 0; i<rows_; i++) {
             ret[i]=_matrix[i][0];
         }
+        return ret;
+    } else {
+        throw std::domain_error("[ERROR] Matrix::asVector: the matrix is not a vector (1 column, n rows)");
     }
 }
+
+template std::vector<double> Matrix<double>::asVector()const;
+
 
 template<typename T>
 Matrix<T> Matrix<T>::concatenateRight(const Matrix<T>& rhs)const{
@@ -325,8 +333,86 @@ Matrix<T> Matrix<T>::concatenateRight(const Matrix<T>& rhs)const{
     }
 }
 
+
+template Matrix<double> Matrix<double>::concatenateRight(const Matrix<double>& rhs)const;
+
+
+//minor
+template<typename T>
+Matrix<T> Matrix<T>::getMinor(const Matrix<T>& A,int p, int q,int n) {
+    int i = 0, j = 0;
+    Matrix minor(n-1,n-1);
+    for (int row = 0; row < n; row++){
+        for (int col = 0; col<n; col++){
+            if (row != p && col != q){
+                minor(i,j++) = A.getValue(row,col);
+                if (j == n - 1){
+                    j = 0;
+                    i++;
+                }
+            }
+        }
+    }
+    return minor;
+}
+
+template Matrix<double> Matrix<double>::getMinor(const Matrix<double>& A,int p, int q,int n);
+
+//determinant
+template<typename T>
+T Matrix<T>::determinant(const Matrix<T>& A){
+    T deter=0;
+    int n = A.getRows();
+    switch (n) {
+        case (1):
+            return A.getValue(0, 0);
+        case (2):
+            return((A.getValue(0,0)*A.getValue(1,1))-(A.getValue(0,1)*A.getValue(1,0))); 
+        case (3):
+            return((A.getValue(0,0)*A.getValue(1,1)*A.getValue(2,2))+(A.getValue(1,0)*A.getValue(1,2)*A.getValue(2,0))+(A.getValue(1,0)*A.getValue(2,1)*A.getValue(0,2))-(A.getValue(0,2)*A.getValue(1,1)*A.getValue(2,0))-(A.getValue(0,1)*A.getValue(1,0)*A.getValue(2,2))-(A.getValue(1,2)*A.getValue(2,1)*A.getValue(0,0)));
+    }
+    Matrix tempCofactor(n,0.0); 
+    int sign = 1;  // To store sign multiplier 
+     // first row fixed
+    for (int f = 0; f < n; f++){
+        tempCofactor=getMinor(A,0, f, n);
+        deter += sign * A.getValue(0,f) * determinant(tempCofactor);         //cofactor =sign * A[0][f] * determinant(tempCofactor, n - 1)
+        sign = -sign;
+    } 
+    return deter;
+}
+
+template double Matrix<double>::determinant(const Matrix<double>& A);
+
+template<typename T>
+T Matrix<T>::determinant()const{
+    T deter=0;
+    switch (rows_) {
+        case (1):
+            return _matrix[0][0];
+        case (2):
+            return((_matrix[0][0]*_matrix[1][1])-(_matrix[0][1]*_matrix[1][0])); 
+        case (3):
+            return((_matrix[0][0]*_matrix[1][1]*_matrix[2][2])+(_matrix[1][0]*_matrix[1][2]*_matrix[2][0])+(_matrix[1][0]*_matrix[2][1]*_matrix[0][2])-(_matrix[0][2]*_matrix[1][1]*_matrix[2][0])-(_matrix[0][1]*_matrix[1][0]*_matrix[2][2])-(_matrix[1][2]*_matrix[2][1]*_matrix[0][0]));
+    }
+    Matrix tempCofactor(rows_,rows_); 
+    int sign = 1;  // To store sign multiplier 
+     // first row fixed
+    for (int f = 0; f < rows_; f++){
+    	Matrix whygod=*this;
+        tempCofactor=getMinor(whygod, 0, f, rows_);
+        deter += sign * _matrix[0][f] * determinant(tempCofactor);         //cofactor =sign * A[0][f] * determinant(tempCofactor, n - 1)
+        sign = -sign;
+    } 
+    return deter;
+}
+
+template double Matrix<double>::determinant()const;
+
 template<typename T>
 Matrix<T> Matrix<T>::inverse(){
     auto ret = Matrix<T>();
     return ret;
 }
+
+template Matrix<double> Matrix<double>::inverse();
