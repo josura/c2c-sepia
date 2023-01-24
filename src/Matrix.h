@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iterator>
 #include <vector>
 #include "utilities.h"
 
@@ -56,7 +57,7 @@ class Matrix {
         Matrix& operator*=(const std::vector<T>&);
 
         // functions for reduction and inverse
-        static Matrix augment(Matrix, Matrix);
+        Matrix concatenateRight(const Matrix&)const;
         Matrix gaussianElimination();
         Matrix rowReduceGaussian();
         void readSolutionsFromRREF(std::ostream& os);
@@ -65,6 +66,8 @@ class Matrix {
         //get functions
         int getRows()const{return rows_;}
         int getCols()const{return cols_;}
+        bool isVector()const{return (rows_ > 1 && cols_ == 1); }
+        std::vector<T> asVector()const; 
 
         //functions to add rows and columns while mantaining the original data in the upperleft corner(these functions are bad, better use a vector when trying to work with dynamically instantiated data)
         // also these functions create a copy and do not work on the original

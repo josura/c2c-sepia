@@ -1,4 +1,6 @@
 #include "Matrix.h"
+#include <stdexcept>
+#include <vector>
 
 
 // helper functions
@@ -296,3 +298,35 @@ Matrix<T> Matrix<T>::copyAndAddRowsCols(int additionalRows, int additionalCols)c
 }
 
 template Matrix<double> Matrix<double>::copyAndAddRowsCols(int additionalRows, int additionalCols)const;
+
+template<typename T>
+std::vector<T> Matrix<T>::asVector()const{
+    if(this->isVector()){
+        std::vector<T> ret(rows_,0);
+        for (int i = 0; i<rows_; i++) {
+            ret[i]=_matrix[i][0];
+        }
+    }
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::concatenateRight(const Matrix<T>& rhs)const{
+    if(rhs.getRows()==rows_){
+        Matrix<T> ret = this->copyAndAddRowsCols(0, rhs.cols_);
+        for (int i = 0; i<rows_; i++) {
+            for (int j = 0; j<rhs.getCols(); j++) {
+                ret(i,j+cols_) = rhs.getValue(i,j);    
+            }
+            
+        }
+        return ret;
+    } else {
+        throw std::invalid_argument("[ERROR] Matrix::concatenateRight: rhs is not of the same size(rows)");
+    }
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::inverse(){
+    auto ret = Matrix<T>();
+    return ret;
+}
