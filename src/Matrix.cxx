@@ -399,9 +399,9 @@ T Matrix<T>::determinant()const{
     int sign = 1;  // To store sign multiplier 
      // first row fixed
     for (int f = 0; f < rows_; f++){
-    	Matrix whygod=*this;
-        tempCofactor=getMinor(whygod, 0, f, rows_);
-        deter += sign * _matrix[0][f] * determinant(tempCofactor);         //cofactor =sign * A[0][f] * determinant(tempCofactor, n - 1)
+    	Matrix minor=*this;
+        tempCofactor=getMinor(minor, 0, f, rows_);
+        deter += sign * _matrix[0][f] * determinant(tempCofactor);         
         sign = -sign;
     } 
     return deter;
@@ -412,6 +412,7 @@ template double Matrix<double>::determinant()const;
 template<typename T>
 Matrix<T> Matrix<T>::inverse(){
     auto ret = Matrix<T>();
+    //TODO choose between Gaussian elimination method and adjugate method, also controls on determinant after reduction to triangular form?
     return ret;
 }
 
