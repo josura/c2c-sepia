@@ -32,6 +32,10 @@ elseif(REPASTHPCavailable)
 endif(CUDAavailable)
 
 
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
