@@ -28,7 +28,7 @@ jobs:
     - name: Download dependencies
       env:
         CACHE_HIT: ${{steps.cache-dependencies.outputs.cache-hit}}
-      run: apt install libopenblas-dev, liblapack-dev, libarpack2-dev, libsuperlu-dev && wget http://sourceforge.net/projects/arma/files/armadillo-11.4.3.tar.xz && tar -xvf armadillo-11.4.3.tar.xz && cd armadillo-11.4.3.tar.xz && ./configure && make && sudo make install
+      run:  sudo apt-get install libopenblas-dev, liblapack-dev, libarpack2-dev, libsuperlu-dev && wget http://sourceforge.net/projects/arma/files/armadillo-11.4.3.tar.xz && tar -xvf armadillo-11.4.3.tar.xz && cd armadillo-11.4.3.tar.xz && ./configure && make && sudo make install
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
