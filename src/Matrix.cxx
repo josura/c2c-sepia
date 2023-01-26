@@ -7,13 +7,11 @@
 template<typename T>
 void Matrix<T>::allocateMatrixSpace()
 {
-    _matrix = new T*[rows_];
-    for (int i = 0; i < rows_; i++) {
-        _matrix[i] = new T[cols_];
-    }
+    _matrix = new T[rows_ * cols_]; //columns first
+    
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i][j] = 0;
+            _matrix[i*rows_ + j] = 0;
         }    
     }
 }
@@ -36,7 +34,7 @@ Matrix<T>::Matrix(T** a, int rows, int cols) : rows_(rows), cols_(cols)
     allocateMatrixSpace();
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i][j] = a[i][j];
+            _matrix[i*rows_ + j] = a[i][j];
         }
     }
 }
@@ -47,7 +45,7 @@ template<typename T>
 Matrix<T>::Matrix() : rows_(1), cols_(1)
 {
     allocateMatrixSpace();
-    _matrix[0][0] = 0;
+    _matrix[0] = 0;
 }
 
 template Matrix<double>::Matrix();
@@ -56,7 +54,7 @@ template<typename T>
 Matrix<T>::Matrix(const std::vector<T>& vec):rows_(vec.size()),cols_(1){
     allocateMatrixSpace();
     for (int i = 0; i < SizeToInt(vec.size()); i++) {
-        _matrix[i][0] = vec[i];
+        _matrix[i * rows_ + 0] = vec[i];
     }
 }
 
@@ -66,9 +64,6 @@ template Matrix<double>::Matrix(const std::vector<double>& vec);
 template<typename T>
 Matrix<T>::~Matrix()
 {
-    for (int i = 0; i < rows_; ++i) {
-        delete[] _matrix[i];
-    }
     delete[] _matrix;
 }
 
@@ -80,7 +75,7 @@ Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
     allocateMatrixSpace();
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i][j] = m._matrix[i][j];
+            _matrix[i*rows_ + j] = m.getValue(i,j);
         }
     }
 }
@@ -127,9 +122,6 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     }
 
     if (rows_ != m.rows_ || cols_ != m.cols_) {
-        for (int i = 0; i < rows_; i++) {
-            delete[] _matrix[i];
-        }
         delete[] _matrix;
 
         rows_ = m.rows_;
@@ -139,7 +131,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i][j] = m._matrix[i][j];
+            _matrix[i*rows_ + j] = m.getValue(i,j);
         }
     }
     return *this;
@@ -154,7 +146,7 @@ Matrix<T>& Matrix<T>::operator*=(Matrix<T> const& rhs) {
         for (int i = 0; i < tmp.rows_; ++i) {
             for (int j = 0; j < tmp.cols_; ++j) {
                 for (int k = 0; k < cols_; ++k) {
-                    tmp(i,j) += (_matrix[i][k] * rhs.getValue(k,j));
+                    tmp(i,j) += (getValue(i, k) * rhs.getValue(k,j));
                 }
             }
         }
@@ -170,7 +162,7 @@ template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T rhs) {
     for (int i = 0; i < rows_; ++i) {
         for (int j = 0; j < cols_; ++j) {
-            _matrix[i][j] *= rhs;
+            _matrix[i * rows_ + j] *= rhs;
         }
     }
     return *this;
@@ -185,7 +177,7 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& m)
     if(getCols() == m.getRows()){
         for (int i = 0; i < rows_; ++i) {
             for (int j = 0; j < cols_; ++j) {
-                _matrix[i][j] += m.getValue(i,j);
+                _matrix[i * rows_ + j] += m.getValue(i,j);
             }
         }
         return *this;
@@ -203,7 +195,7 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& m)
     if(getCols() == m.getRows()){
         for (int i = 0; i < rows_; ++i) {
             for (int j = 0; j < cols_; ++j) {
-                _matrix[i][j] -= m.getValue(i,j);
+                _matrix[i * rows_ + j] -= m.getValue(i,j);
             }
         }
         return *this;
@@ -219,7 +211,7 @@ Matrix<T>& Matrix<T>::operator/=(T num)
 {
     for (int i = 0; i < rows_; ++i) {
         for (int j = 0; j < cols_; ++j) {
-            _matrix[i][j] /= num;
+            _matrix[i * rows_ + j] /= num;
         }
     }
     return *this;
@@ -260,7 +252,7 @@ Matrix<T> Matrix<T>::operator*(const std::vector<T>& rhs)const{
         // int m = getRows(), n = getCols();
         // for (int i = 0; i < m; i++) {
         //     for (int k = 0; k < n; k++) {
-        //         retvec(i,0) += _matrix[i][k] * rhs[k];
+        //         retvec(i,0) += getValue(i, k) * rhs[k];
         //     }
         // }
         Matrix<T> retvec = Matrix<T>(rhs);
@@ -278,7 +270,7 @@ Matrix<T> Matrix<T>::transpose()const
     Matrix ret(cols_, rows_);
     for (int i = 0; i < rows_; ++i) {
         for (int j = 0; j < cols_; ++j) {
-            ret._matrix[j][i] = _matrix[i][j];
+            ret(j,i) = getValue(i, j);
         }
     }
     return ret;
@@ -306,7 +298,7 @@ std::vector<T> Matrix<T>::asVector()const{
     if(this->isVector()){
         std::vector<T> ret(rows_,0);
         for (int i = 0; i<rows_; i++) {
-            ret[i]=_matrix[i][0];
+            ret[i]=getValue(i,0);
         }
         return ret;
     } else {
@@ -389,11 +381,11 @@ T Matrix<T>::determinant()const{
     T deter=0;
     switch (rows_) {
         case (1):
-            return _matrix[0][0];
+            return getValue(0, 0);
         case (2):
-            return((_matrix[0][0]*_matrix[1][1])-(_matrix[0][1]*_matrix[1][0])); 
+            return((getValue(0, 0)*getValue(1, 1))-(getValue(0, 1)*getValue(1, 0))); 
         case (3):
-            return((_matrix[0][0]*_matrix[1][1]*_matrix[2][2])+(_matrix[1][0]*_matrix[1][2]*_matrix[2][0])+(_matrix[1][0]*_matrix[2][1]*_matrix[0][2])-(_matrix[0][2]*_matrix[1][1]*_matrix[2][0])-(_matrix[0][1]*_matrix[1][0]*_matrix[2][2])-(_matrix[1][2]*_matrix[2][1]*_matrix[0][0]));
+            return((getValue(0, 0)*getValue(1, 1)*getValue(2, 2))+(getValue(1, 0)*getValue(1, 2)*getValue(2, 0))+(getValue(1, 0)*getValue(2, 1)*getValue(0, 2))-(getValue(0, 2)*getValue(1, 1)*getValue(2, 0))-(getValue(0, 1)*getValue(1, 0)*getValue(2, 2))-(getValue(1, 2)*getValue(2, 1)*getValue(0, 0)));
     }
     Matrix tempCofactor(rows_,rows_); 
     int sign = 1;  // To store sign multiplier 
@@ -401,7 +393,7 @@ T Matrix<T>::determinant()const{
     for (int f = 0; f < rows_; f++){
     	Matrix minor=*this;
         tempCofactor=getMinor(minor, 0, f, rows_);
-        deter += sign * _matrix[0][f] * determinant(tempCofactor);         
+        deter += sign * getValue(0, f) * determinant(tempCofactor);         
         sign = -sign;
     } 
     return deter;

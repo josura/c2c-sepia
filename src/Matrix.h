@@ -18,8 +18,8 @@ class Matrix {
         ~Matrix();
         Matrix& operator=(const Matrix&);
 
-        inline T& operator()(int x, int y) { return _matrix[x][y]; }
-        inline T& getValue(int x, int y)const{ return _matrix[x][y]; }
+        inline T& operator()(int x, int y) { return _matrix[x*rows_ + y]; }
+        inline T& getValue(int x, int y)const{ return _matrix[x*rows_ +y]; }
 
         Matrix& operator+=(const Matrix&);
         Matrix& operator-=(const Matrix&);
@@ -80,7 +80,7 @@ class Matrix {
 
     protected:
         int rows_, cols_;
-        T **_matrix;
+        T *_matrix;
 
         void allocateMatrixSpace();
         Matrix expHelper(const Matrix&, int);
