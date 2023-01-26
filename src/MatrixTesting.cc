@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Matrix.h"
+#include "utilities.h"
 
 class MatrixTesting : public ::testing::Test {
  protected:
@@ -95,3 +96,18 @@ TEST_F(MatrixTesting,assignmentWorksMatrix){
 }
 
 // TODO test all the functionalities of matrix, especially matrix multiplication, addition and copy with addition of rows
+
+
+// TEST_F(MatrixTesting,conversionToArmadilloMat){
+//   Matrix<double> matrixres = *m2_;
+//   matrixres(2,3)=4.0;
+//   matrixres(4,3)=5.0;
+//   arma::Mat<double> test = matrixres.asArmadilloMatrix();
+//   EXPECT_EQ(test.n_cols, 12);
+//   EXPECT_EQ(test.n_rows, 10);
+//   for (int i = 0; i<SizeToInt( test.n_rows); i++) {
+//     for (int j = 0; j<SizeToInt(test.n_rows); j++) {
+//       EXPECT_FLOAT_EQ(test(i,j), 0);
+//     }
+//   }
+// }

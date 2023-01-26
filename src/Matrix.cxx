@@ -420,5 +420,8 @@ template Matrix<double> Matrix<double>::inverse();
 
 template<typename T>
 arma::Mat<T> Matrix<T>::asArmadilloMatrix()const{
-    return arma::Mat<T>(_matrix,getRows(),getCols());
+    return arma::Mat<T>(getRows(),getCols());  //filled with zeros
+    //return arma::Mat<T>(_matrix,getRows(),getCols());
 }
+
+template arma::Mat<double> Matrix<double>::asArmadilloMatrix()const;
