@@ -77,6 +77,8 @@ class Matrix {
         Matrix copyAndAddRowsCols(int additionalRows, int additionalCols) const;
 
         arma::Mat<T> asArmadilloMatrix()const;
+        arma::Col<T> asArmadilloColumnVector()const;
+        arma::Row<T> asArmadilloRowVector()const;
 
     protected:
         int rows_, cols_;

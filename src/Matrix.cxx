@@ -423,3 +423,19 @@ arma::Mat<T> Matrix<T>::asArmadilloMatrix()const{
 }
 
 template arma::Mat<double> Matrix<double>::asArmadilloMatrix()const;
+
+
+template<typename T>
+arma::Col<T> Matrix<T>::asArmadilloColumnVector()const{
+    return arma::Col<T>(asVector());
+}
+
+template arma::Col<double> Matrix<double>::asArmadilloColumnVector()const;
+
+
+template<typename T>
+arma::Row<T> Matrix<T>::asArmadilloRowVector()const{
+    return arma::Row<T>(asVector());
+}
+
+template arma::Row<double> Matrix<double>::asArmadilloRowVector()const;

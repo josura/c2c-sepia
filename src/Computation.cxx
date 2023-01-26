@@ -34,6 +34,13 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
     //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
     cellTypes = std::vector<std::string>();
+
+
+    WtransArma = metapathway->adjMatrix.transpose().asArmadilloMatrix();
+    IdentityArma = Matrix<double>::createIdentity(metapathway->getNumNodes()).asArmadilloMatrix();
+    InputArma = Matrix<double>(input).asArmadilloColumnVector();
+    pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
+    armaInitializedNotAugmented = true;
 }
 
 void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::tuple<std::string, std::string, double>>& newEdgesList, bool includeSelfVirtual){
@@ -45,7 +52,8 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         if (cellFind != _celltypes.end() && !includeSelfVirtual){
             tmpcelltypes.erase(cellFind);
         }
-        augmentedMetapathway = metapathway->addNodes(tmpcelltypes);
+        augmentedMetapathway = metapathway->addNodes(tmpcelltypes);  //these are only one set of nodes
+        //TODO differentiate between virtual inputs and virtual outputs
         for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
             std::string node1Name = std::get<0>(*it); 
             std::string node2Name = std::get<1>(*it);
@@ -53,6 +61,12 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
             augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
         }
+        WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
+        IdentityAugmentedArma = Matrix<double>::createIdentity(augmentedMetapathway->getNumNodes()).asArmadilloMatrix();
+        //TODO augment input with virtual inputs and virtual outputs
+        InputAugmentedArma = Matrix<double>(input).asArmadilloColumnVector();
+        pseudoInverseAugmentedArma = arma::pinv(IdentityArma - WtransArma);
+        armaInitializedAugmented = true;
     } catch (...) {
         std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
         return;
@@ -61,10 +75,10 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
 
 std::vector<double> Computation::computePerturbation(){
-    Matrix<double> Wtrans = metapathway->adjMatrix.transpose();
-    (Matrix<double>::createIdentity(metapathway->getNumNodes()) - Wtrans) ;
+    arma::Col<double> outputArma =  pseudoInverseArma * InputArma;
     return std::vector<double>();
 }
 std::vector<double> Computation::computeAugmentedPerturbation(){
+    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     return std::vector<double>();
 }

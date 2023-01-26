@@ -14,6 +14,15 @@ class Computation{
         WeightedEdgeGraph* augmentedMetapathway;
         std::vector<std::string> cellTypes;
         std::string localCellType;
+        bool armaInitializedNotAugmented = false, armaInitializedAugmented = false;
+        arma::Mat<double> WtransArma;
+        arma::Mat<double> IdentityArma;
+        arma::Col<double> InputArma;
+        arma::Mat<double> pseudoInverseArma;
+        arma::Mat<double> WtransAugmentedArma;
+        arma::Mat<double> IdentityAugmentedArma;
+        arma::Col<double> InputAugmentedArma;
+        arma::Mat<double> pseudoInverseAugmentedArma;
     public:
         Computation();
         Computation(std::string _thisCellType, const std::vector<double>& _input);   // useless???
