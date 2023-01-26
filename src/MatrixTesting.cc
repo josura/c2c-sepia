@@ -98,16 +98,18 @@ TEST_F(MatrixTesting,assignmentWorksMatrix){
 // TODO test all the functionalities of matrix, especially matrix multiplication, addition and copy with addition of rows
 
 
-// TEST_F(MatrixTesting,conversionToArmadilloMat){
-//   Matrix<double> matrixres = *m2_;
-//   matrixres(2,3)=4.0;
-//   matrixres(4,3)=5.0;
-//   arma::Mat<double> test = matrixres.asArmadilloMatrix();
-//   EXPECT_EQ(test.n_cols, 12);
-//   EXPECT_EQ(test.n_rows, 10);
-//   for (int i = 0; i<SizeToInt( test.n_rows); i++) {
-//     for (int j = 0; j<SizeToInt(test.n_rows); j++) {
-//       EXPECT_FLOAT_EQ(test(i,j), 0);
-//     }
-//   }
-// }
+TEST_F(MatrixTesting,conversionToArmadilloMat){
+  Matrix<double> matrixres = *m2_;
+  matrixres(2,3)=4.0;
+  matrixres(4,3)=5.0;
+  arma::Mat<double> test = matrixres.asArmadilloMatrix();
+  EXPECT_EQ(test.n_cols, 12);
+  EXPECT_EQ(test.n_rows, 10);
+  for (int i = 0; i<SizeToInt( test.n_rows); i++) {
+    for (int j = 0; j<SizeToInt(test.n_rows); j++) {
+      if(i==2 && j==3) EXPECT_FLOAT_EQ(test(i,j), 4.0);
+      else if(i==4 && j==3) EXPECT_FLOAT_EQ(test(i,j), 5.0);
+      else EXPECT_FLOAT_EQ(test(i,j), 0);
+    }
+  }
+}
