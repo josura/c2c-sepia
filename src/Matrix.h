@@ -4,6 +4,7 @@
 #include <iterator>
 #include <vector>
 #include "utilities.h"
+#include <armadillo>
 
 template <typename T>
 class Matrix {
@@ -75,7 +76,9 @@ class Matrix {
         // also these functions create a copy and do not work on the original
         Matrix copyAndAddRowsCols(int additionalRows, int additionalCols) const;
 
-    private:
+        arma::Mat<T> asArmadilloMatrix()const;
+
+    protected:
         int rows_, cols_;
         T **_matrix;
 

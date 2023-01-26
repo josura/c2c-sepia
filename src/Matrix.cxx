@@ -417,3 +417,8 @@ Matrix<T> Matrix<T>::inverse(){
 }
 
 template Matrix<double> Matrix<double>::inverse();
+
+template<typename T>
+arma::Mat<T> Matrix<T>::asArmadilloMatrix()const{
+    return arma::Mat<T>(_matrix,getRows(),getCols());
+}

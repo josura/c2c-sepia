@@ -1,12 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <iterator>
-#include <vector>
-#include "utilities.h"
+#include "Matrix.h"
 
 template <typename T>
-class MatrixArmadillo {
+class MatrixArmadillo : public Matrix<T> {
     public:
         MatrixArmadillo(int, int);
         MatrixArmadillo(T**, int, int);
