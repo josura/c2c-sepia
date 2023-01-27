@@ -3,6 +3,7 @@
 #include "Computation.h"
 #include "Matrix.h"
 #include "WeightedEdgeGraph.h"
+#include "armaUtilities.h"
 #include <iostream>
 #include <map>
 #include <tuple>
@@ -76,9 +77,9 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
 std::vector<double> Computation::computePerturbation(){
     arma::Col<double> outputArma =  pseudoInverseArma * InputArma;
-    return std::vector<double>();
+    return armaColumnToVector(outputArma);
 }
 std::vector<double> Computation::computeAugmentedPerturbation(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-    return std::vector<double>();
+    return armaColumnToVector(outputArma);
 }
