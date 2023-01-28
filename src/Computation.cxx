@@ -64,8 +64,8 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         }
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
         IdentityAugmentedArma = Matrix<double>::createIdentity(augmentedMetapathway->getNumNodes()).asArmadilloMatrix();
-        //TODO augment input with virtual inputs and virtual outputs
-        InputAugmentedArma = Matrix<double>(input).asArmadilloColumnVector();
+        //TODO augment input(inputAugmented) with virtual inputs and virtual outputs
+        InputAugmentedArma = Matrix<double>(inputAugmented).asArmadilloColumnVector();
         pseudoInverseAugmentedArma = arma::pinv(IdentityArma - WtransArma);
         armaInitializedAugmented = true;
     } catch (...) {
@@ -82,15 +82,28 @@ std::vector<double> Computation::computePerturbation(){
 }
 std::vector<double> Computation::computeAugmentedPerturbation(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-    output = armaColumnToVector(outputArma);
-    return output;
+    outputAugmented = armaColumnToVector(outputArma);
+    return outputAugmented;
 }
 
-void Computation::updateInput(const std::vector<double>& newInp){
-    if (newInp.size() == 0) {
-        InputArma = Matrix<double>(output).asArmadilloColumnVector();
-        input = output;    
+void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
+    if (!augmented) {
+        if (newInp.size() == 0) {
+            InputArma = Matrix<double>(output).asArmadilloColumnVector();
+            input = output;    
+        }
+        else {
+            InputArma = Matrix<double>(newInp).asArmadilloColumnVector();
+            input = newInp;
+        }
+    } else {
+        if (newInp.size() == 0) {
+            InputAugmentedArma = Matrix<double>(outputAugmented).asArmadilloColumnVector();
+            inputAugmented = outputAugmented;    
+        }
+        else {
+            InputAugmentedArma = Matrix<double>(newInp).asArmadilloColumnVector();
+            inputAugmented = newInp;
+        }
     }
-    InputArma = Matrix<double>(newInp).asArmadilloColumnVector();
-    input = newInp; 
 }

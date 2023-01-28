@@ -9,7 +9,7 @@
 
 class Computation{
     private:
-        std::vector<double> input,output;
+        std::vector<double> input,output,inputAugmented,outputAugmented;
         WeightedEdgeGraph* metapathway;
         WeightedEdgeGraph* augmentedMetapathway;
         std::vector<std::string> cellTypes;
@@ -45,7 +45,7 @@ class Computation{
         void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>&,bool includeSelfVirtual=false);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
-        void updateInput(const std::vector<double>& newInp = std::vector<double>());
+        void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 
         
 };
