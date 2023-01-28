@@ -45,6 +45,7 @@ class Computation{
         void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>&,bool includeSelfVirtual=false);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
+        void updateInput(const std::vector<double>& newInp = std::vector<double>());
 
         
 };

@@ -77,9 +77,20 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
 std::vector<double> Computation::computePerturbation(){
     arma::Col<double> outputArma =  pseudoInverseArma * InputArma;
-    return armaColumnToVector(outputArma);
+    output = armaColumnToVector(outputArma);
+    return output;
 }
 std::vector<double> Computation::computeAugmentedPerturbation(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-    return armaColumnToVector(outputArma);
+    output = armaColumnToVector(outputArma);
+    return output;
+}
+
+void Computation::updateInput(const std::vector<double>& newInp){
+    if (newInp.size() == 0) {
+        InputArma = Matrix<double>(output).asArmadilloColumnVector();
+        input = output;    
+    }
+    InputArma = Matrix<double>(newInp).asArmadilloColumnVector();
+    input = newInp; 
 }
