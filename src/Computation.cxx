@@ -47,7 +47,6 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
 void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::tuple<std::string, std::string, double>>& newEdgesList, bool includeSelfVirtual){
     delete augmentedMetapathway;
     try {
-        //TODO controls over nodes and edges added? It should be redundand though since the methods of WeightedEdgeGraph are already controlled
         auto cellFind = std::find(_celltypes.begin(), _celltypes.end(), localCellType); 
         std::vector<std::string> tmpcelltypes = _celltypes;
         if (cellFind != _celltypes.end() && !includeSelfVirtual){
@@ -58,8 +57,7 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             virtualNodes[i] = "v-in:" + virtualNodes[i];
             virtualNodes.push_back("v-out:" + virtualNodes[i]);
         }
-        augmentedMetapathway = metapathway->addNodes(virtualNodes);  //these are only one set of nodes
-        //TODO differentiate between virtual inputs and virtual outputs
+        augmentedMetapathway = metapathway->addNodes(virtualNodes);
         for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
             std::string node1Name = std::get<0>(*it); 
             std::string node2Name = std::get<1>(*it);
@@ -70,6 +68,9 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
         IdentityAugmentedArma = Matrix<double>::createIdentity(augmentedMetapathway->getNumNodes()).asArmadilloMatrix();
         //TODO augment input(inputAugmented) with virtual inputs and virtual outputs
+        inputAugmented = input;
+        std::vector<double> zerosVirtualNodes = std::vector<double>(tmpcelltypes.size()*2,0);
+        inputAugmented.insert(input.end(),zerosVirtualNodes.begin(),zerosVirtualNodes.end());
         InputAugmentedArma = Matrix<double>(inputAugmented).asArmadilloColumnVector();
         pseudoInverseAugmentedArma = arma::pinv(IdentityArma - WtransArma);
         armaInitializedAugmented = true;
