@@ -53,7 +53,12 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         if (cellFind != _celltypes.end() && !includeSelfVirtual){
             tmpcelltypes.erase(cellFind);
         }
-        augmentedMetapathway = metapathway->addNodes(tmpcelltypes);  //these are only one set of nodes
+        auto virtualNodes = tmpcelltypes;
+        for (int i = 0; i < tmpcelltypes.size(); i++) {
+            virtualNodes[i] = "v-in:" + virtualNodes[i];
+            virtualNodes.push_back("v-out:" + virtualNodes[i]);
+        }
+        augmentedMetapathway = metapathway->addNodes(virtualNodes);  //these are only one set of nodes
         //TODO differentiate between virtual inputs and virtual outputs
         for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
             std::string node1Name = std::get<0>(*it); 
