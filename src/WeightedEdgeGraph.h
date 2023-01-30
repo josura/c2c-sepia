@@ -56,6 +56,10 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
 
         WeightedEdgeGraph* setNodeName(std::string nodenameTarget, std::string nodenameSet);
+        /*
+        If provided with one parameter, controls the vector size and sets the node names if they are of the same size.
+        If provided with two parameters, changes the nodes in nodenameTargets with the values in nodenameSets 
+        */
         WeightedEdgeGraph* setNodesNames(const std::vector<std::string>& nodenameSets, const std::vector<std::string>& nodenameTargets = std::vector<std::string>());
 
         double getNodeValue(int node)const;
