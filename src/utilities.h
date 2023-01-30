@@ -75,6 +75,21 @@ std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
     return retMat;
 }
 
+template<typename T>
+int getIndex(std::vector<T> v, T K)
+{
+    auto it = find(v.begin(), v.end(), K);
+  
+    // If element was found
+    if (it != v.end()) 
+    {
+        return (it - v.begin());
+    }
+    else {
+        return -1;
+    }
+}
+
 // convert size to int and  launch an exception if it is not possible
 int SizeToInt(size_t u);
 
