@@ -5,6 +5,12 @@ A framework to work with scRNA-seq profiles is presented here, the algorithm wil
 - The scRNA-seq profiles and log2fold-change
 - The type for every cell.
 
+## DEPENDENCIES
+- armadillo
+- mlpack(latest)
+- FUTURE repast HPC
+- FUTURE RELOGO
+
 ## BUILD
 ```bash
 mkdir build
