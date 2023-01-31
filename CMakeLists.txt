@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.24)
 project(c2c-sepia)
 
 if (UNIX)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 ")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lblas -llapack")
 endif ()
 
+add_definitions(-DARMA_DONT_USE_WRAPPER)
 set (CMAKE_BINARY_DIR "build")
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
@@ -21,6 +22,7 @@ set(LIB_SRCS
     src/utilities.cxx
     src/optimization.cxx
     src/Matrix.cxx
+    src/Computation.cxx
 )
 
 if(CUDAavailable)
@@ -35,6 +37,11 @@ endif(CUDAavailable)
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
+find_package(BLAS)
+find_package(LAPACK)
+if(LAPACK_FOUND AND BLAS_FOUND)
+  set(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+endif()
 
 include(FetchContent)
 FetchContent_Declare(
@@ -72,6 +79,14 @@ target_link_libraries(
   mysharedlib
 )
 
+add_executable(ComputationTesting  "src/ComputationTesting.cc")
+target_link_libraries(
+  ComputationTesting
+  GTest::gtest_main
+  mysharedlib
+)
+
 include(GoogleTest)
 gtest_discover_tests(GraphTesting)
 gtest_discover_tests(MatrixTesting)
+gtest_discover_tests(ComputationTesting)

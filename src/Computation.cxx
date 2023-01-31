@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "WeightedEdgeGraph.h"
 #include "armaUtilities.h"
+#include "utilities.h"
 #include <iostream>
 #include <map>
 #include <tuple>
@@ -53,7 +54,7 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             tmpcelltypes.erase(cellFind);
         }
         auto virtualNodes = tmpcelltypes;
-        for (int i = 0; i < tmpcelltypes.size(); i++) {
+        for (int i = 0; i < SizeToInt( tmpcelltypes.size()); i++) {
             virtualNodes[i] = "v-in:" + virtualNodes[i];
             virtualNodes.push_back("v-out:" + virtualNodes[i]);
         }

@@ -41,6 +41,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(int numNodes){
 
     for(int i = 0; i < numNodes; i++){
         nodeToIndex[std::to_string(i)] = i;
+        nameVector.push_back(std::to_string(i));
     }
     
 }
@@ -67,6 +68,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(const Matrix<double>& _adjMatrix){
 
         for(int i = 0; i < numNodes; i++){
             nodeToIndex[std::to_string(i)] = i;
+            nameVector.push_back(std::to_string(i));
         }
     }
     
@@ -84,6 +86,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames){
     for (int i = 0; i < numNodes; i++) {
         nodeValues[i]=0;
         nodeToIndex[nodeNames[i]] = i;
+        nameVector.push_back(nodeNames[i]);
     }
     
 }
@@ -101,6 +104,7 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames,std::ve
         for (int i = 0; i < numNodes; i++) {
             nodeValues[i]=nodeVal[i];
             nodeToIndex[nodeNames[i]] = i;
+            nameVector.push_back(nodeNames[i]);
         }
     }
     else throw std::invalid_argument("[ERROR] WeightedEdgeGraph::WeightedEdgeGraph(constructor): invalid argument for graph constructor, nodeNames and nodeValues have not the same length");
@@ -286,6 +290,44 @@ WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(std::string node, double valu
     }
     return this;
 }
+
+WeightedEdgeGraph* WeightedEdgeGraph::setNodeName(std::string nodenameTarget, std::string nodenameSet){
+    int index = getIndex(nameVector, nodenameTarget);
+    if(index > 0){
+        nameVector[index] = nodenameSet;
+        auto node = nodeToIndex.extract(nodenameTarget);
+        node.key() = nodenameSet;
+        nodeToIndex.insert(std::move(node));
+    }
+    else{
+        std::cerr << "[ERROR] WeightedEdgeGraph::setNodeName: node name not found: "<< nodenameTarget<<std::endl;
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodeName: node name not found");
+    } 
+    return this;
+}
+
+WeightedEdgeGraph* WeightedEdgeGraph::setNodesNames(const std::vector<std::string>& nodenameSets, const std::vector<std::string>& nodenameTargets){
+    if(nodenameSets.size() == nodenameTargets.size()){
+        if (nodenameTargets.size() > 0) {
+            for (int i = 0; i < SizeToInt(nodenameSets.size());i++) {
+                setNodeName(nodenameTargets[i], nodenameSets[i]);
+            }
+        }
+        else {
+            if(nodenameSets.size()==nodeToIndex.size() && nameVector.size() == nodenameSets.size()){
+                nodeToIndex = std::map<std::string, int>(); //getting rid of the old mapping
+                nameVector = nodenameSets;
+                for (int i = 0; i < SizeToInt( nodenameSets.size()); i++) {
+                    nodeToIndex[nodenameSets[i]] = i;
+                }
+            }
+        }
+    } else{
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodesNames: nodes to set and nodes to change are not of the same size");
+    }
+    return this;
+}
+
 
 
 double WeightedEdgeGraph::getNodeValue(int node)const{
