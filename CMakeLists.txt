@@ -7,7 +7,7 @@ if (UNIX)
   #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lopenblas") 
 endif ()
 
-#add_definitions(-DARMA_DONT_USE_WRAPPER)
+add_definitions(-DARMA_DONT_USE_WRAPPER)
 set (CMAKE_BINARY_DIR "build")
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
