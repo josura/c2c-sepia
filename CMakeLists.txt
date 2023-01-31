@@ -2,10 +2,9 @@ cmake_minimum_required(VERSION 3.24)
 
 project(c2c-sepia)
 
-if (UNIX)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lblas -llapack")   #blas is very fast for me on this machine
-  #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lopenblas") 
-endif ()
+#if (UNIX)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")   #  -lblas -llapack are included directly #blas is very fast for me on this machine
+#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lopenblas")
 
 add_definitions(-DARMA_DONT_USE_WRAPPER)
 set (CMAKE_BINARY_DIR "build")
@@ -15,6 +14,17 @@ set(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+
+find_package(BLAS)
+find_package(LAPACK)
+if(LAPACK_FOUND AND BLAS_FOUND)
+  set(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+else()
+  message( SEND_ERROR "lapack or blas not found")
+endif()
 
 set(EXEC_MAIN "src/main.cxx")
 set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
@@ -34,16 +44,6 @@ elseif(REPASTHPCavailable)
 #using Repast HPC implementation
 endif(CUDAavailable)
 
-
-find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
-
-find_package(BLAS)
-find_package(LAPACK)
-if(LAPACK_FOUND AND BLAS_FOUND)
-  set(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
-endif()
-
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -56,10 +56,14 @@ FetchContent_MakeAvailable(googletest)
 add_library( mysharedlib SHARED ${LIB_SRCS} )
 
 add_executable( c2c-sepia ${EXEC_MAIN} )
-target_link_libraries( c2c-sepia mysharedlib )
+target_link_libraries( c2c-sepia 
+                       mysharedlib
+                       ${lapackblas_libraries})
 
 add_executable( experiments ${EXPERIMENT_MAIN})
-target_link_libraries( experiments mysharedlib )
+target_link_libraries( experiments 
+                       mysharedlib  
+                       ${lapackblas_libraries})
 
 
 # TESTING
@@ -70,6 +74,7 @@ target_link_libraries(
   GraphTesting
   GTest::gtest_main
   mysharedlib
+  ${lapackblas_libraries}
 )
 
 
@@ -78,6 +83,7 @@ target_link_libraries(
   MatrixTesting
   GTest::gtest_main
   mysharedlib
+  ${lapackblas_libraries}
 )
 
 add_executable(ComputationTesting  "src/ComputationTesting.cc")
@@ -85,6 +91,7 @@ target_link_libraries(
   ComputationTesting
   GTest::gtest_main
   mysharedlib
+  ${lapackblas_libraries}
 )
 
 include(GoogleTest)
