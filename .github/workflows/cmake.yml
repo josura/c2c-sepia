@@ -31,10 +31,10 @@ jobs:
       run:  | 
         sudo apt-get install gfortran
         sudo apt-cache search blas && sudo apt-get install -y libblas-dev
-        sudo apt-cache search lapack && sudo apt-get install -y liblapacke-dev
-        sudo apt-cache search arpack && sudo apt-get install -y libarpack2-dev 
-        sudo apt-cache search superlu && sudo apt-get install -y libsuperlu-dev 
-        sudo apt-get install -y libarmadillo11 libarmadillo-dev
+        sudo apt-get install -y liblapack-dev liblapacke-dev
+        sudo apt-get install -y libarpack2-dev 
+        sudo apt-get install -y libsuperlu-dev 
+        sudo apt-cache search armadillo && sudo apt-get install -y libarmadillo11 libarmadillo-dev
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
