@@ -7,6 +7,9 @@ if (UNIX)
 endif ()
 
 add_definitions(-DARMA_DONT_USE_WRAPPER)
+add_definitions(-DARMA_USE_BLAS)
+add_definitions(-DARMA_USE_LAPACK)
+set(OPENBLAS_PROVIDES_LAPACK true)
 set (CMAKE_BINARY_DIR "build")
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 

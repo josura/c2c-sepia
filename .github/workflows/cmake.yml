@@ -30,7 +30,9 @@ jobs:
         CACHE_HIT: ${{steps.cache-dependencies.outputs.cache-hit}}
       run:  | 
         sudo apt-cache search openblas && sudo apt-get install -y libopenblas-dev
-        sudo apt-cache search && lapack liblapack-dev, libarpack2-dev, libsuperlu-dev 
+        sudo apt-cache search lapack && sudo apt-get install -y liblapack-dev
+        sudo apt-cache search arpack && sudo apt-get install -y libarpack2-dev 
+        sudo apt-cache search superlu && sudo apt-get install -y libsuperlu-dev 
         wget http://sourceforge.net/projects/arma/files/armadillo-11.4.3.tar.xz && tar -xvf armadillo-11.4.3.tar.xz 
         cd armadillo-11.4.3 && ./configure && make && sudo make install
 
