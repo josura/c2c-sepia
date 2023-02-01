@@ -47,5 +47,25 @@ class Computation{
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 
+        // get sets
+        
+        std::vector<double> getInput()const{return input;}
+        std::vector<double> getOutput()const{return output;}
+        std::vector<double> getInputAugmented()const{return inputAugmented;}
+        std::vector<double> getOutputAugmented()const{return outputAugmented;}
+        WeightedEdgeGraph getMetapathway()const{return *metapathway;}
+        WeightedEdgeGraph getAugmentedMetapathway()const{return *augmentedMetapathway;}
+        std::vector<std::string> getCellTypes()const{return cellTypes;}
+        std::string getLocalCellType()const{return localCellType;}
+        bool isInitializedArmaNotAugmented()const{return armaInitializedNotAugmented;}
+        bool isInitializedArmaAugmented()const{return armaInitializedAugmented;}
+        arma::Mat<double> getWtransArma()const{return WtransArma;}
+        arma::Mat<double> getIdentityArma()const{return IdentityArma;}
+        arma::Col<double> getInputArma()const{return InputArma;}
+        arma::Mat<double> getPseudoInverseArma()const{return pseudoInverseArma;}
+        arma::Mat<double> getWtransAugmentedArma()const{return WtransArma;}
+        arma::Mat<double> getIdentityAugmentedArma()const{return IdentityAugmentedArma;}
+        arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
+        arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseArma;}
         
 };
