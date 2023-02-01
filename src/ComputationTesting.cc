@@ -2,19 +2,29 @@
 #include <string>
 #include <vector>
 #include "Computation.h"
+#include "Matrix.h"
 
 class ComputationTesting : public ::testing::Test {
- protected:
-  void SetUp() override {
-    // q0_ remains empty
-    c0  = new Computation();
-     
-  }
-  void TearDown() override{
-    delete c0;
-  }
+    protected:
+        void SetUp() override {
+            // q0_ remains empty
+            c0  = new Computation();
+            c1  = new Computation();
+            
+        }
+        void TearDown() override{
+            delete c0;
+            delete c1;
+        }
 
-  Computation* c0;       //testing default constructor
+
+        std::string thisCellType = "testCell";
+        std::vector<double> input= {0.1,0.3,0.5,0.62,0.34,0.87}; 
+        Matrix<double> _W=Matrix<double>::createRandom(5, 5); 
+        std::vector<std::string> metapathwayNames = {"testCell","testCell2","testCell3","testCell4","testCell5"};
+
+        Computation* c0;       //testing default constructor
+        Computation* c1;       //testing general constructor
   
 };
 
