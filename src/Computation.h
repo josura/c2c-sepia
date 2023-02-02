@@ -42,7 +42,8 @@ class Computation{
         @param const std::vector<std::string>& _cellTypes: the celltypes other than this celltype, the other agents in the network
         @param 
         */
-        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>&,bool includeSelfVirtual=false);
+        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList =std::vector<std::tuple<std::string,std::string,double>>(),bool includeSelfVirtual=false);
+        void addEdges(const std::vector<std::tuple<std::string,std::string,double>>&);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
@@ -71,5 +72,6 @@ class Computation{
         // operators
         Computation& operator=( const Computation& );
         Computation copy()const;
+        void assign(const Computation&);
         
 };

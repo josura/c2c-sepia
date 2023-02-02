@@ -84,6 +84,16 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
     }
 }
 
+void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList){
+    for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
+        std::string node1Name = std::get<0>(*it); 
+        std::string node2Name = std::get<1>(*it);
+        double edgeWeight = std::get<2>(*it);
+
+        augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+    }
+}
+
 
 std::vector<double> Computation::computePerturbation(){
     arma::Col<double> outputArma =  pseudoInverseArma * InputArma;
@@ -120,10 +130,48 @@ void Computation::updateInput(const std::vector<double>& newInp, bool augmented)
 
 
 Computation& Computation::operator=( const Computation& rhs){
-    rhs.getAugmentedMetapathway()->copyNew();
+    metapathway =  rhs.getMetapathway()->copyNew();
+    augmentedMetapathway =  rhs.getAugmentedMetapathway()->copyNew();
+    input = rhs.getInput();
+    output = rhs.getOutput();
+    inputAugmented = rhs.getInputAugmented();
+    outputAugmented = rhs.getOutputAugmented();
+    cellTypes = rhs.getCellTypes();
+    localCellType = rhs.getLocalCellType();
+    armaInitializedNotAugmented = rhs.isInitializedArmaNotAugmented();
+    armaInitializedAugmented = rhs.isInitializedArmaAugmented();
+    WtransArma = rhs.getWtransArma();
+    IdentityArma = rhs.getIdentityArma();
+    InputArma = rhs.getInputArma();
+    pseudoInverseArma = rhs.getPseudoInverseArma();
+    WtransAugmentedArma = rhs.getWtransAugmentedArma();
+    IdentityAugmentedArma = rhs.getIdentityAugmentedArma();
+    InputAugmentedArma = rhs.getInputAugmentedArma();
+    pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
     return *this;
 }
 
 Computation Computation::copy()const{
     return *this;
+}
+
+void Computation::assign(const Computation & rhs){
+    metapathway =  rhs.getMetapathway()->copyNew();
+    augmentedMetapathway =  rhs.getAugmentedMetapathway()->copyNew();
+    input = rhs.getInput();
+    output = rhs.getOutput();
+    inputAugmented = rhs.getInputAugmented();
+    outputAugmented = rhs.getOutputAugmented();
+    cellTypes = rhs.getCellTypes();
+    localCellType = rhs.getLocalCellType();
+    armaInitializedNotAugmented = rhs.isInitializedArmaNotAugmented();
+    armaInitializedAugmented = rhs.isInitializedArmaAugmented();
+    WtransArma = rhs.getWtransArma();
+    IdentityArma = rhs.getIdentityArma();
+    InputArma = rhs.getInputArma();
+    pseudoInverseArma = rhs.getPseudoInverseArma();
+    WtransAugmentedArma = rhs.getWtransAugmentedArma();
+    IdentityAugmentedArma = rhs.getIdentityAugmentedArma();
+    InputAugmentedArma = rhs.getInputAugmentedArma();
+    pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
 }
