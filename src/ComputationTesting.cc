@@ -54,3 +54,18 @@ TEST_F(ComputationTesting, constructorWorksGeneral) {
     
     EXPECT_EQ(c1->getCellTypes().size(),0);
 }
+
+TEST_F(ComputationTesting, testingAugmentingPathway) {
+    
+    EXPECT_EQ(c1->getInput().size(),6);
+    EXPECT_EQ(c1->getOutput().size(),0);
+    EXPECT_EQ(c1->getLocalCellType(),"testCell");
+    auto meta = c1->getMetapathway();
+    auto augMeta = c1->getAugmentedMetapathway();
+    ASSERT_TRUE(meta != nullptr);
+    EXPECT_EQ(meta->getNumNodes(),6);
+    ASSERT_TRUE(augMeta != nullptr);
+    EXPECT_EQ(augMeta->getNumNodes(),0);
+    
+    EXPECT_EQ(c1->getCellTypes().size(),0);
+}

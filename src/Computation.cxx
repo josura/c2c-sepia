@@ -117,3 +117,13 @@ void Computation::updateInput(const std::vector<double>& newInp, bool augmented)
         }
     }
 }
+
+
+Computation& Computation::operator=( const Computation& rhs){
+    rhs.getAugmentedMetapathway()->copyNew();
+    return *this;
+}
+
+Computation Computation::copy()const{
+    return *this;
+}

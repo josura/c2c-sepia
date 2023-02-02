@@ -67,5 +67,9 @@ class Computation{
         arma::Mat<double> getIdentityAugmentedArma()const{return IdentityAugmentedArma;}
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseArma;}
+
+        // operators
+        Computation& operator=( const Computation& );
+        Computation copy()const;
         
 };

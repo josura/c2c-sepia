@@ -103,3 +103,8 @@ bool approximatelyEqual(double a, double b, double epsilon);
 bool essentiallyEqual(double a, double b, double epsilon);
 bool definitelyGreaterThan(double a, double b, double epsilon);
 bool definitelyLessThan(double a, double b, double epsilon);
+
+template<typename T>
+std::vector<T> arrayToVector(T* array, int size){
+    return std::vector<T>(array, array + size);
+}

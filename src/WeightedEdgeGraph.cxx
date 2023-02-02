@@ -496,6 +496,24 @@ void WeightedEdgeGraph::assign(const WeightedEdgeGraph& g2){
     return;
 }
 
+WeightedEdgeGraph* WeightedEdgeGraph::copyNew()const{
+    WeightedEdgeGraph* g2 = new WeightedEdgeGraph(adjMatrix);
+    //creating new data
+    g2->setNodesNames(nameVector);
+    
+    for (int i = 0; i < this->numberOfNodes; i++) {
+        g2->setNodeValue(i,getNodeValue(i));
+    }
+
+    for(auto it = edgesVector.cbegin(); it!=edgesVector.cend();it++){
+        int node1 = std::get<0>(*it);
+        int node2 = std::get<1>(*it);
+        double weight = std::get<2>(*it);
+        g2->addEdge(node1,node2,weight);
+    }
+    return g2;
+}
+
 // copy and swap
 // WeightedEdgeGraph& WeightedEdgeGraph::operator=(const WeightedEdgeGraph g2){
 //     if (this!=&g2) {

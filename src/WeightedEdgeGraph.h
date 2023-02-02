@@ -54,6 +54,7 @@ class WeightedEdgeGraph{
 
         WeightedEdgeGraph* setNodeValue(int node, double value);
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
+        //WeightedEdgeGraph* setNodesValues(std::vector< double> value,const std::vector<std::string> node = std::vector<std::string>());
 
         WeightedEdgeGraph* setNodeName(std::string nodenameTarget, std::string nodenameSet);
         /*
@@ -97,6 +98,7 @@ class WeightedEdgeGraph{
         //WeightedEdgeGraph& operator=(const WeightedEdgeGraph g2);
         //WeightedEdgeGraph& setAdjMatrix(Matrix<double>& mat);
         void assign(const WeightedEdgeGraph& g2);
+        WeightedEdgeGraph* copyNew()const;
 
         // optimization methods
 
