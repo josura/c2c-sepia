@@ -314,16 +314,20 @@ WeightedEdgeGraph* WeightedEdgeGraph::setNodesNames(const std::vector<std::strin
             }
         }
         else {
-            if(nodenameSets.size()==nodeToIndex.size() && nameVector.size() == nodenameSets.size()){
-                nodeToIndex = std::map<std::string, int>(); //getting rid of the old mapping
-                nameVector = nodenameSets;
-                for (int i = 0; i < SizeToInt( nodenameSets.size()); i++) {
-                    nodeToIndex[nodenameSets[i]] = i;
-                }
-            }
+            
         }
-    } else{
-        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodesNames: nodes to set and nodes to change are not of the same size");
+    } else if( (nodenameTargets.size() == 0)){
+        if ((nodenameSets.size()==nodeToIndex.size() && nameVector.size() == nodenameSets.size())) {
+            nodeToIndex = std::map<std::string, int>(); //getting rid of the old mapping
+            nameVector = nodenameSets;
+            for (int i = 0; i < SizeToInt( nodenameSets.size()); i++) {
+                nodeToIndex[nodenameSets[i]] = i;
+            }
+        } else {
+            throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodesNames: nodes to set are not all : " + std::to_string(nodenameSets.size()) + " =/=" + std::to_string(nodeToIndex.size()));    
+        }
+    } else {
+        throw std::invalid_argument("[ERROR] WeightedEdgeGraph::setNodesNames: nodes to set and nodes to change are not of the same size : " + std::to_string(nodenameSets.size()) + " =/=" + std::to_string(nodenameTargets.size()) );
     }
     return this;
 }

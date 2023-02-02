@@ -53,8 +53,8 @@ class Computation{
         std::vector<double> getOutput()const{return output;}
         std::vector<double> getInputAugmented()const{return inputAugmented;}
         std::vector<double> getOutputAugmented()const{return outputAugmented;}
-        WeightedEdgeGraph getMetapathway()const{return *metapathway;}
-        WeightedEdgeGraph getAugmentedMetapathway()const{return *augmentedMetapathway;}
+        WeightedEdgeGraph* getMetapathway()const{return metapathway;}
+        WeightedEdgeGraph* getAugmentedMetapathway()const{return augmentedMetapathway;}
         std::vector<std::string> getCellTypes()const{return cellTypes;}
         std::string getLocalCellType()const{return localCellType;}
         bool isInitializedArmaNotAugmented()const{return armaInitializedNotAugmented;}

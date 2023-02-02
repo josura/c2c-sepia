@@ -23,6 +23,7 @@ Computation::Computation(){
 Computation::Computation(std::string _thisCellType,const std::vector<double>& _input){
     input=_input;
     output=std::vector<double>();
+    localCellType = _thisCellType;
     metapathway = new WeightedEdgeGraph();
     augmentedMetapathway = new WeightedEdgeGraph();
     cellTypes = std::vector<std::string>();
@@ -32,7 +33,9 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
 Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& metapathwayNames){
     input=_input;
     output=std::vector<double>();
+    localCellType = _thisCellType;
     metapathway = new WeightedEdgeGraph(_W);
+    augmentedMetapathway = new WeightedEdgeGraph();
     metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
     //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
     cellTypes = std::vector<std::string>();
