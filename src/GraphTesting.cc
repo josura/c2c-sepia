@@ -294,6 +294,31 @@ TEST_F(GraphTesting, addingNodesNamesAndValuesAndDefault){
   }
 }
 
+
+TEST_F(GraphTesting, addingNodesEmptyVector){
+  WeightedEdgeGraph graphTest;
+  graphTest.assign(*g5_);
+  std::vector<double> values{};
+  std::vector<std::string> namesWithVal{};
+  std::vector<std::string> namesWithDefault{};
+
+  graphTest.addNodes(namesWithVal,values);
+
+  ASSERT_EQ(graphTest.getNumNodes(), 5);
+  ASSERT_EQ(graphTest.getNumEdges(), 0);
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
+
+  graphTest.addNodes(namesWithDefault);
+
+  
+  ASSERT_EQ(graphTest.getNumNodes(), 5);
+  ASSERT_EQ(graphTest.getNumEdges(), 0);
+  EXPECT_EQ(graphTest.adjMatrix.getCols(), graphTest.getNumNodes());
+  EXPECT_EQ(graphTest.adjMatrix.getRows(), graphTest.getNumNodes());
+}
+
+
 TEST_F(GraphTesting, setNodeValueIndex){
   g5_->setNodeValue(1,0.2);
   EXPECT_FLOAT_EQ(g5_->getNodeValue(1),0.2);

@@ -82,7 +82,7 @@ class Matrix {
 
     protected:
         int rows_, cols_;
-        T *_matrix;
+        T *_matrix=nullptr;
 
         void allocateMatrixSpace();
         Matrix expHelper(const Matrix&, int);

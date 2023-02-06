@@ -25,6 +25,7 @@ class Computation{
         arma::Mat<double> pseudoInverseAugmentedArma;
     public:
         Computation();
+        ~Computation();
         Computation(std::string _thisCellType, const std::vector<double>& _input);   // useless???
 
         /*
@@ -42,8 +43,8 @@ class Computation{
         @param const std::vector<std::string>& _cellTypes: the celltypes other than this celltype, the other agents in the network
         @param 
         */
-        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList =std::vector<std::tuple<std::string,std::string,double>>(),bool includeSelfVirtual=false);
-        void addEdges(const std::vector<std::tuple<std::string,std::string,double>>&);
+        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
+        void addEdges(const std::vector<std::pair<std::string,std::string>>& , const std::vector<double>& );
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);

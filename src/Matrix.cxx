@@ -7,7 +7,12 @@
 template<typename T>
 void Matrix<T>::allocateMatrixSpace()
 {
-    _matrix = new T[rows_ * cols_]; //columns first
+    if(_matrix) {
+        delete[] _matrix;
+        _matrix=nullptr;
+    }
+    int totalLength = rows_ * cols_;
+    _matrix = new T[totalLength]; //columns first
     
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
@@ -122,7 +127,10 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
     }
 
     if (rows_ != m.rows_ || cols_ != m.cols_) {
-        delete[] _matrix;
+        if(_matrix){
+            delete[] _matrix;
+            _matrix = nullptr;
+        }
 
         rows_ = m.rows_;
         cols_ = m.cols_;

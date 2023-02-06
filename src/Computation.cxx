@@ -20,6 +20,11 @@ Computation::Computation(){
     cellTypes = std::vector<std::string>();
 }
 
+Computation::~Computation(){
+    if(metapathway) delete metapathway;
+    if(augmentedMetapathway) delete augmentedMetapathway;
+}
+
 Computation::Computation(std::string _thisCellType,const std::vector<double>& _input){
     input=_input;
     output=std::vector<double>();
@@ -48,13 +53,14 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     armaInitializedNotAugmented = true;
 }
 
-void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::tuple<std::string, std::string, double>>& newEdgesList, bool includeSelfVirtual){
-    delete augmentedMetapathway;
+void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
+    if(augmentedMetapathway) {delete augmentedMetapathway;augmentedMetapathway = nullptr;}
     try {
         auto cellFind = std::find(_celltypes.begin(), _celltypes.end(), localCellType); 
         std::vector<std::string> tmpcelltypes = _celltypes;
         if (cellFind != _celltypes.end() && !includeSelfVirtual){
-            tmpcelltypes.erase(cellFind);
+            tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
+            /// this function erases the first element of newEdgesList also
         }
         auto virtualNodes = tmpcelltypes;
         for (int i = 0; i < SizeToInt( tmpcelltypes.size()); i++) {
@@ -62,10 +68,10 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             virtualNodes.push_back("v-out:" + virtualNodes[i]);
         }
         augmentedMetapathway = metapathway->addNodes(virtualNodes);
-        for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
-            std::string node1Name = std::get<0>(*it); 
-            std::string node2Name = std::get<1>(*it);
-            double edgeWeight = std::get<2>(*it);
+        for(uint it = 0; it < newEdgesList.size(); it++){
+            std::string node1Name = newEdgesList[it].first; 
+            std::string node2Name = newEdgesList[it].second;
+            double edgeWeight = newEdgesValue[it];
 
             augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
         }
@@ -73,9 +79,10 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         IdentityAugmentedArma = Matrix<double>::createIdentity(augmentedMetapathway->getNumNodes()).asArmadilloMatrix();
         //TODO augment input(inputAugmented) with virtual inputs and virtual outputs
         inputAugmented = input;
-        std::vector<double> zerosVirtualNodes = std::vector<double>(tmpcelltypes.size()*2,0);
-        inputAugmented.insert(input.end(),zerosVirtualNodes.begin(),zerosVirtualNodes.end());
-        InputAugmentedArma = Matrix<double>(inputAugmented).asArmadilloColumnVector();
+        for(uint i = 0; i < tmpcelltypes.size()*2; i++){
+            inputAugmented.push_back(0.0);
+        }
+        InputAugmentedArma = arma::Col<double>(inputAugmented);
         pseudoInverseAugmentedArma = arma::pinv(IdentityArma - WtransArma);
         armaInitializedAugmented = true;
     } catch (...) {
@@ -84,11 +91,13 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
     }
 }
 
-void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList){
+void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>& newEdgesList, const std::vector<double>& newEdgesValues){
+    //TODO control over the same length
+    int itVal = 0;
     for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
-        std::string node1Name = std::get<0>(*it); 
-        std::string node2Name = std::get<1>(*it);
-        double edgeWeight = std::get<2>(*it);
+        std::string node1Name = it->first; 
+        std::string node2Name = it->second;
+        double edgeWeight = newEdgesValues[itVal++];
 
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
@@ -100,6 +109,7 @@ std::vector<double> Computation::computePerturbation(){
     output = armaColumnToVector(outputArma);
     return output;
 }
+
 std::vector<double> Computation::computeAugmentedPerturbation(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
@@ -156,6 +166,15 @@ Computation Computation::copy()const{
 }
 
 void Computation::assign(const Computation & rhs){
+    //delete old data in dynamic memory
+    if(metapathway){
+        delete metapathway;
+        metapathway = nullptr;
+    }if(augmentedMetapathway){
+        delete augmentedMetapathway;
+        augmentedMetapathway = nullptr;
+    }
+    //copy and allocate new structures
     metapathway =  rhs.getMetapathway()->copyNew();
     augmentedMetapathway =  rhs.getAugmentedMetapathway()->copyNew();
     input = rhs.getInput();
