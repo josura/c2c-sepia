@@ -49,8 +49,11 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addNode(std::string name, double value=0);
 
 
-        WeightedEdgeGraph* addNodes(std::vector<double>& values);
+        WeightedEdgeGraph* addNodes(const std::vector<double>& values);
         WeightedEdgeGraph* addNodes(const std::vector<std::string>& names, const std::vector<double>& values=std::vector<double>());
+
+        WeightedEdgeGraph* addNodesAndCopyNew(const std::vector<double>& values);
+        WeightedEdgeGraph* addNodesAndCopyNew(const std::vector<std::string>& names, const std::vector<double>& values=std::vector<double>());
 
         WeightedEdgeGraph* setNodeValue(int node, double value);
         WeightedEdgeGraph* setNodeValue(std::string node, double value);

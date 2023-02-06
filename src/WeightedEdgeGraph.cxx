@@ -205,7 +205,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNode(std::string name, double value){
 }
 
 
-WeightedEdgeGraph* WeightedEdgeGraph::addNodes(std::vector<double>& values){
+WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<double>& values){
     int oldNumberOfNodes = this->numberOfNodes; 
     this->numberOfNodes += values.size();
     adjMatrix = adjMatrix.copyAndAddRowsCols(values.size(), values.size());
@@ -272,6 +272,16 @@ WeightedEdgeGraph* WeightedEdgeGraph::addNodes(const std::vector<std::string>& n
         }
     }
     return this;
+}
+
+WeightedEdgeGraph* WeightedEdgeGraph::addNodesAndCopyNew(const std::vector<double>& values){
+    WeightedEdgeGraph* retPointer = this->copyNew();
+    return retPointer->addNodes(values);
+}
+
+WeightedEdgeGraph* WeightedEdgeGraph::addNodesAndCopyNew(const std::vector<std::string>& names, const std::vector<double>& values){
+    WeightedEdgeGraph* retPointer = this->copyNew();
+    return retPointer->addNodes(names,values);
 }
 
 WeightedEdgeGraph* WeightedEdgeGraph::setNodeValue(int node, double value){

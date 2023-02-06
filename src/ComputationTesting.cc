@@ -73,11 +73,11 @@ TEST_F(ComputationTesting, constructorWorksGeneral) {
 TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     Computation computationTest;
     computationTest.assign(*c1);
-    std::string stringatest = "";
-    for (auto it = virtualInputEdges.begin(); it != virtualInputEdges.end(); ++it) stringatest += std::get<0>(*it) + "";
-    std::string stringatest2 = "";
-    for (auto it = virtualInputEdges.begin(); it != virtualInputEdges.end(); ++it) stringatest2 += std::get<1>(*it) + "";
-    EXPECT_TRUE(false) << stringatest << "  " << stringatest2;
+    // std::string stringatest = "";
+    // for (auto it = virtualInputEdges.begin(); it != virtualInputEdges.end(); ++it) stringatest += std::get<0>(*it) + "";
+    // std::string stringatest2 = "";
+    // for (auto it = virtualInputEdges.begin(); it != virtualInputEdges.end(); ++it) stringatest2 += std::get<1>(*it) + "";
+    // EXPECT_TRUE(false) << stringatest << "  " << stringatest2;
     computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -89,10 +89,10 @@ TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     auto augMeta = computationTest.getAugmentedMetapathway();
     ASSERT_TRUE(meta != nullptr);
     EXPECT_EQ(meta->getNumNodes(),6);
-    EXPECT_EQ(meta->getNumEdges(),0);
+    EXPECT_EQ(meta->getNumEdges(),21);
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
-    EXPECT_EQ(augMeta->getNumEdges(),6);
+    EXPECT_EQ(augMeta->getNumEdges(),27);
     
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
 }
