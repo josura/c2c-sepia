@@ -21,7 +21,14 @@ class ComputationTesting : public ::testing::Test {
 
         std::string thisCellType = "testCell";
         std::vector<double> input{0.1,0.3,0.5,0.62,0.34,0.87}; 
-        Matrix<double> _W=Matrix<double>::createRandom(6, 6); 
+        //Matrix<double> _W=Matrix<double>::createRandom(6, 6); 
+        std::vector<double> matrixVector{0,0.2,0.4,0.5,0.23,0.67,
+                                         0.2,0,0.4,0.5,0.23,0.67,
+                                         0.3,0.2,0,0.5,0.23,0.67,
+                                         0.43,0.2,0.4,0,0.23,0.67,
+                                         0.54,0.2,0.4,0.5,0,0.67,
+                                         0.25,0.2,0.4,0.5,0.23,0,};
+        Matrix<double> _W = Matrix<double>(matrixVector,6,6);
         std::vector<std::string> metapathwayNames{"testGene1","testGene2","testGene3","testGene4","testGene5","testGene6"};
 
         const std::vector<std::string> cellTypes{"testCell","testCell2","testCell3","testCell4"};
@@ -89,10 +96,10 @@ TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     auto augMeta = computationTest.getAugmentedMetapathway();
     ASSERT_TRUE(meta != nullptr);
     EXPECT_EQ(meta->getNumNodes(),6);
-    EXPECT_EQ(meta->getNumEdges(),21);
+    EXPECT_EQ(meta->getNumEdges(),15);
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
-    EXPECT_EQ(augMeta->getNumEdges(),27);
+    EXPECT_EQ(augMeta->getNumEdges(),21);
     
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
 }
@@ -116,10 +123,10 @@ TEST_F(ComputationTesting, testingAugmentingPathwaySelf) {
     auto augMeta = computationTest.getAugmentedMetapathway();
     ASSERT_TRUE(meta != nullptr);
     EXPECT_EQ(meta->getNumNodes(),6);
-    EXPECT_EQ(meta->getNumEdges(),21);
+    EXPECT_EQ(meta->getNumEdges(),15);
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),14);
-    EXPECT_EQ(augMeta->getNumEdges(),27);
+    EXPECT_EQ(augMeta->getNumEdges(),21);
     
     EXPECT_EQ(computationTest.getCellTypes().size(),4);
 }

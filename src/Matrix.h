@@ -14,12 +14,12 @@ class Matrix {
         Matrix();
         Matrix(const Matrix&);
         Matrix(const T*);
-        Matrix(const std::vector<T>&);
+        Matrix(const std::vector<T>& _wvector, uint nrows=0, uint ncols=1);
         ~Matrix();
         Matrix& operator=(const Matrix&);
 
-        inline T& operator()(int x, int y) { return _matrix[x*rows_ + y]; }
-        inline T& getValue(int x, int y)const{ return _matrix[x*rows_ +y]; }
+        inline T& operator()(int x, int y) { return _matrix[x*cols_ + y]; }
+        inline T& getValue(int x, int y)const{ return _matrix[x*cols_ +y]; }
 
         Matrix& operator+=(const Matrix&);
         Matrix& operator-=(const Matrix&);

@@ -1,4 +1,6 @@
 #include "Matrix.h"
+#include "utilities.h"
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -56,14 +58,37 @@ Matrix<T>::Matrix() : rows_(1), cols_(1)
 template Matrix<double>::Matrix();
 
 template<typename T>
-Matrix<T>::Matrix(const std::vector<T>& vec):rows_(vec.size()),cols_(1){
-    allocateMatrixSpace();
-    for (int i = 0; i < SizeToInt(vec.size()); i++) {
-        _matrix[i * rows_ + 0] = vec[i];
+Matrix<T>::Matrix(const std::vector<T>& vec, uint nrows, uint ncols):rows_(vec.size()),cols_(ncols){
+    bool isAvector = false;
+    if((nrows == vec.size() || nrows == 0) && ncols == 1){
+        isAvector=true;
     }
+    else if( (nrows != vec.size() && (approximatelyEqual(vec.size()/(double)nrows, (double)ncols, std::numeric_limits<T>::epsilon())))){
+        rows_ = nrows;
+    } else {
+        std::cerr << "[ERROR] Matrix<T>::Matrix(vec,nrows=0,ncols=1): the number of resulting columns from the division of rows is not equal to the one passed in the ncols parameter: vec.size="<< vec.size() << " nrows=" << nrows << " ncols="<<ncols; 
+        throw std::invalid_argument("[ERROR] Matrix<T>::Matrix(vec,nrows=0,ncols=1): the number of resulting columns from the division of rows is not equal to the one passed in the ncols parameter");
+    }
+    allocateMatrixSpace();
+    if(isAvector){
+        for (int i = 0; i < rows_; i++) {
+            for (int j = 0; j < cols_;j++) {
+                int index = i * cols_ + j; 
+                _matrix[index] = vec[index];
+            }
+        }
+    }else {
+        for (int i = 0; i < rows_; i++) {
+            for (int j = 0; j < cols_;j++) {
+                int index = i * cols_ + j; 
+                _matrix[index] = vec[index];
+            }
+        }
+    }
+    
 }
 
-template Matrix<double>::Matrix(const std::vector<double>& vec);
+template Matrix<double>::Matrix(const std::vector<double>& vec,uint nrows, uint ncols);
 
 
 template<typename T>
@@ -139,7 +164,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i*rows_ + j] = m.getValue(i,j);
+            _matrix[i*cols_ + j] = m.getValue(i,j);
         }
     }
     return *this;
@@ -170,7 +195,7 @@ template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T rhs) {
     for (int i = 0; i < rows_; ++i) {
         for (int j = 0; j < cols_; ++j) {
-            _matrix[i * rows_ + j] *= rhs;
+            _matrix[i * cols_ + j] *= rhs;
         }
     }
     return *this;
@@ -185,7 +210,7 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& m)
     if(getCols() == m.getRows()){
         for (int i = 0; i < rows_; ++i) {
             for (int j = 0; j < cols_; ++j) {
-                _matrix[i * rows_ + j] += m.getValue(i,j);
+                _matrix[i * cols_ + j] += m.getValue(i,j);
             }
         }
         return *this;
@@ -203,7 +228,7 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& m)
     if(getCols() == m.getRows()){
         for (int i = 0; i < rows_; ++i) {
             for (int j = 0; j < cols_; ++j) {
-                _matrix[i * rows_ + j] -= m.getValue(i,j);
+                _matrix[i * cols_ + j] -= m.getValue(i,j);
             }
         }
         return *this;
@@ -219,7 +244,7 @@ Matrix<T>& Matrix<T>::operator/=(T num)
 {
     for (int i = 0; i < rows_; ++i) {
         for (int j = 0; j < cols_; ++j) {
-            _matrix[i * rows_ + j] /= num;
+            _matrix[i * cols_ + j] /= num;
         }
     }
     return *this;
