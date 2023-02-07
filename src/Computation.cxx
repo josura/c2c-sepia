@@ -97,7 +97,7 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             inputAugmented.push_back(0.0);
         }
         InputAugmentedArma = arma::Col<double>(inputAugmented);
-        pseudoInverseAugmentedArma = arma::pinv(IdentityArma - WtransArma);
+        pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         armaInitializedAugmented = true;
     } catch (...) {
         std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
