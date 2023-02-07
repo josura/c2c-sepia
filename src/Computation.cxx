@@ -57,9 +57,10 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
 void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
     if(augmentedMetapathway) {delete augmentedMetapathway;augmentedMetapathway = nullptr;}
     try {
-        // auto cellFind = std::find(_celltypes.begin(), _celltypes.end(), localCellType); 
+        // 
         // std::vector<std::string> tmpcelltypes = _celltypes;
-        // if (cellFind != _celltypes.end() && !includeSelfVirtual){
+        // auto cellFind = std::find(tmpcelltypes.begin(), tmpcelltypes.end(), localCellType); 
+        // if (cellFind != tmpcelltypes.end() && !includeSelfVirtual){
         //     tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
         //     /// this function erases the first element of newEdgesList
         // }
@@ -70,6 +71,8 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             }
             //tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
             /// this function erases the first element of newEdgesList also
+        } else {
+            tmpcelltypes = _celltypes;
         }
         cellTypes = tmpcelltypes;
         auto virtualNodes = tmpcelltypes;
