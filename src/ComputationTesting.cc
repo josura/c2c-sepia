@@ -165,3 +165,50 @@ TEST_F(ComputationTesting, testComputeAugmentedPerturbation){
     EXPECT_EQ(augMeta->getNumEdges(),21);
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
 }
+
+
+TEST_F(ComputationTesting, testComputePerturbationSelf){
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    auto perturbation = computationTest.computePerturbation();
+    EXPECT_EQ( perturbation.size(), 6);
+    EXPECT_EQ(computationTest.getInput().size(),6);
+    EXPECT_EQ(computationTest.getOutput().size(),6);
+    EXPECT_EQ(computationTest.getInputAugmented().size(),14);
+    EXPECT_EQ(computationTest.getOutputAugmented().size(),0);
+    EXPECT_EQ(computationTest.getLocalCellType(),"testCell");
+    auto meta = computationTest.getMetapathway();
+    auto augMeta = computationTest.getAugmentedMetapathway();
+    ASSERT_TRUE(meta != nullptr);
+    EXPECT_EQ(meta->getNumNodes(),6);
+    EXPECT_EQ(meta->getNumEdges(),15);
+    ASSERT_TRUE(augMeta != nullptr);
+    EXPECT_EQ(augMeta->getNumNodes(),14);
+    EXPECT_EQ(augMeta->getNumEdges(),21);
+    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+}
+
+TEST_F(ComputationTesting, testComputeAugmentedPerturbationSelf){
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    auto perturbation = computationTest.computeAugmentedPerturbation();
+    EXPECT_EQ( perturbation.size(), 14);
+    EXPECT_EQ(computationTest.getInput().size(),6);
+    EXPECT_EQ(computationTest.getOutput().size(),0);
+    EXPECT_EQ(computationTest.getInputAugmented().size(),14);
+    EXPECT_EQ(computationTest.getOutputAugmented().size(),14);
+    EXPECT_EQ(computationTest.getLocalCellType(),"testCell");
+    auto meta = computationTest.getMetapathway();
+    auto augMeta = computationTest.getAugmentedMetapathway();
+    ASSERT_TRUE(meta != nullptr);
+    EXPECT_EQ(meta->getNumNodes(),6);
+    EXPECT_EQ(meta->getNumEdges(),15);
+    ASSERT_TRUE(augMeta != nullptr);
+    EXPECT_EQ(augMeta->getNumNodes(),14);
+    EXPECT_EQ(augMeta->getNumEdges(),21);
+    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+}
