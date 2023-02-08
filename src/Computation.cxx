@@ -48,7 +48,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
 
 
     WtransArma = metapathway->adjMatrix.transpose().asArmadilloMatrix();
-    IdentityArma = Matrix<double>::createIdentity(metapathway->getNumNodes()).asArmadilloMatrix();
+    IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     armaInitializedNotAugmented = true;
@@ -90,7 +90,7 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
         }
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
-        IdentityAugmentedArma = Matrix<double>::createIdentity(augmentedMetapathway->getNumNodes()).asArmadilloMatrix();
+        IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
         //TODO augment input(inputAugmented) with virtual inputs and virtual outputs
         inputAugmented = input;
         for(uint i = 0; i < tmpcelltypes.size()*2; i++){
@@ -115,6 +115,9 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
 
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
+    WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
+    IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+    pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
 }
 
 
@@ -133,20 +136,20 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {
         if (newInp.size() == 0) {
-            InputArma = Matrix<double>(output).asArmadilloColumnVector();
+            InputArma = arma::Col<double>(output);
             input = output;    
         }
         else {
-            InputArma = Matrix<double>(newInp).asArmadilloColumnVector();
+            InputArma = arma::Col<double>(newInp);
             input = newInp;
         }
     } else {
         if (newInp.size() == 0) {
-            InputAugmentedArma = Matrix<double>(outputAugmented).asArmadilloColumnVector();
+            InputAugmentedArma = arma::Col<double>(outputAugmented);
             inputAugmented = outputAugmented;    
         }
         else {
-            InputAugmentedArma = Matrix<double>(newInp).asArmadilloColumnVector();
+            InputAugmentedArma = arma::Col<double>(newInp);
             inputAugmented = newInp;
         }
     }
