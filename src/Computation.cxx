@@ -105,14 +105,16 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
     }
 }
 
-void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>& newEdgesList, const std::vector<double>& newEdgesValues){
+void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>& newEdgesList, const std::vector<double>& newEdgesValues,bool bothDirections){
     //TODO control over the same length
     int itVal = 0;
     for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
         std::string node1Name = it->first; 
         std::string node2Name = it->second;
         double edgeWeight = newEdgesValues[itVal++];
-
+        if (bothDirections) {
+            augmentedMetapathway->addEdge(node2Name,node1Name, edgeWeight);
+        }
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();

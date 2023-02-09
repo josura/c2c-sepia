@@ -44,7 +44,7 @@ class Computation{
         @param 
         */
         void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
-        void addEdges(const std::vector<std::pair<std::string,std::string>>& , const std::vector<double>& );
+        void addEdges(const std::vector<std::pair<std::string,std::string>>& , const std::vector<double>& , bool bothDirections = false);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
