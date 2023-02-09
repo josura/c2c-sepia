@@ -79,7 +79,6 @@ TEST_F(ComputationTesting, constructorWorksGeneral) {
 TEST_F(ComputationTesting, testingAddingEdges) {
     Computation computationTest;
     computationTest.assign(*c1);
-    
     computationTest.augmentMetapathway(cellTypes);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
@@ -106,6 +105,44 @@ TEST_F(ComputationTesting, testingAddingEdges) {
 }
 
 
+TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathway(cellTypes);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    EXPECT_EQ(computationTest.getInput().size(),6);
+    EXPECT_EQ(computationTest.getOutput().size(),0);
+    EXPECT_EQ(computationTest.getInputAugmented().size(),12);
+    EXPECT_EQ(computationTest.getOutputAugmented().size(),0);
+    EXPECT_EQ(computationTest.getLocalCellType(),"testCell");
+    auto meta = computationTest.getMetapathway();
+    auto augMeta = computationTest.getAugmentedMetapathway();
+    ASSERT_TRUE(meta != nullptr);
+    EXPECT_EQ(meta->getNumNodes(),6);
+    EXPECT_EQ(meta->getNumEdges(),15);
+    ASSERT_TRUE(augMeta != nullptr);
+    EXPECT_EQ(augMeta->getNumNodes(),12);
+    EXPECT_EQ(augMeta->getNumEdges(),21);
+    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    auto inputArma = computationTest.getInputAugmentedArma();
+    auto identityArma = computationTest.getIdentityAugmentedArma();
+    auto wtransArma = computationTest.getWtransAugmentedArma();
+    EXPECT_EQ(inputArma.n_cols, 1);
+    EXPECT_EQ(inputArma.n_rows, 12);
+    EXPECT_EQ(identityArma.n_rows, 12);
+    EXPECT_EQ(identityArma.n_cols, 12);
+    EXPECT_EQ(wtransArma.n_cols, 12);
+    EXPECT_EQ(wtransArma.n_rows, 12);
+    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene2"),
+                         augMeta->getIndexFromName("v-in:testCell2")),0.4); //inverted since the matrix is transposed
+    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene2"),
+                         augMeta->getIndexFromName("v-in:testCell4")),0.5);
+    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene3"),
+                         augMeta->getIndexFromName("v-in:testCell4")),0.7);
+    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene6"),
+                         augMeta->getIndexFromName("v-in:testCell4")),0.2);
+}
 
 TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     Computation computationTest;
@@ -363,3 +400,5 @@ TEST_F(ComputationTesting, testUpdateInputAugmentedSelf){
 }
 
 //TESTING IF NODE VALUES FOR v-input nodes are the same as the previous iteration
+
+//TODO TESTING FOR THROWS
