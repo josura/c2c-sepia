@@ -130,7 +130,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
             std::cerr << "[ERROR] node2(number "<< std::to_string(node2) << ") is not in the graph that has " << std::to_string(numberOfNodes) << " nodes"<<std::endl;
         }
         throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addEdge: failed to add an edge, see error logs");
-    } else if (adjNodes(node1, node2)) {
+    } else if (connectedNodes(node1, node2)) {
         //edge already added
     } else {
         numberOfEdges++;
@@ -154,7 +154,7 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
             std::cerr << "[ERROR] WeightedEdgeGraph::addEdge: node2 "<< node2name << " is not in the graph "<<std::endl;
         }
         throw std::invalid_argument("[ERROR] WeightedEdgeGraph::addEdge: invalid argument when adding an edge");
-    } else if (adjNodes(node1name, node2name)) {
+    } else if (connectedNodes(node1name, node2name)) {
         adjMatrix(nodeToIndex[node1name],nodeToIndex[node2name]) = weight;
     } else {
         int node1 = nodeToIndex[node1name];
@@ -450,6 +450,15 @@ bool WeightedEdgeGraph::adjNodes(int node1, int node2){
 
 bool WeightedEdgeGraph::adjNodes(std::string node1, std::string node2){
     return ( (adjList[nodeToIndex[node1]].find(nodeToIndex[node2]) != adjList[nodeToIndex[node1]].end()) || (adjList[nodeToIndex[node2]].find(nodeToIndex[node1]) != adjList[nodeToIndex[node2]].end())) ;
+}
+
+
+bool WeightedEdgeGraph::connectedNodes(int node1, int node2){
+    return ( (adjList[node1].find(node2) != adjList[node1].end()) ) ;
+}
+
+bool WeightedEdgeGraph::connectedNodes(std::string node1, std::string node2){
+    return ( (adjList[nodeToIndex[node1]].find(nodeToIndex[node2]) != adjList[nodeToIndex[node1]].end())) ;
 }
 
 //non copy and swap to not reallocate some of the resources (doesn't get called with g1 = g2 but its called when invocking *g1=*g2 on pointers)

@@ -92,6 +92,8 @@ class WeightedEdgeGraph{
 
         bool adjNodes(int node1, int node2);
         bool adjNodes(std::string node1, std::string node2);
+        bool connectedNodes(int node1, int node2);
+        bool connectedNodes(std::string node1, std::string node2);
 
         std::vector<std::tuple<int, int, double>> getEdgesVector()const;
 
