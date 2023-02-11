@@ -48,17 +48,42 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addNode(double value=0);
         WeightedEdgeGraph* addNode(std::string name, double value=0);
 
-
+        /*
+        add n nodes, where n is the size of the vector passed as input, and assign to each node its corrispondent value
+        */
         WeightedEdgeGraph* addNodes(const std::vector<double>& values);
+        /*
+        add n nodes with names, where n is the size of the vector passed as input, and assign to each node its corrispondent value
+        */
         WeightedEdgeGraph* addNodes(const std::vector<std::string>& names, const std::vector<double>& values=std::vector<double>());
 
+        /*
+        add n nodes, where n is the size of the vector passed as input, and assign to each node its corrispondent value
+        and copy the graph into a new graph in dynamic memory
+        */
         WeightedEdgeGraph* addNodesAndCopyNew(const std::vector<double>& values);
+        
+        /*
+        add n nodes with names, where n is the size of the vector passed as input, and assign to each node its corrispondent value
+        and copy the graph into a new graph in dynamic memory
+        */
         WeightedEdgeGraph* addNodesAndCopyNew(const std::vector<std::string>& names, const std::vector<double>& values=std::vector<double>());
 
+
+        /*
+        set node values by index
+        */
         WeightedEdgeGraph* setNodeValue(int node, double value);
+        
+        /*
+        set node values by name
+        */
         WeightedEdgeGraph* setNodeValue(std::string node, double value);
         //WeightedEdgeGraph* setNodesValues(std::vector< double> value,const std::vector<std::string> node = std::vector<std::string>());
 
+        /*
+        change node name
+        */
         WeightedEdgeGraph* setNodeName(std::string nodenameTarget, std::string nodenameSet);
         /*
         If provided with one parameter, controls the vector size and sets the node names if they are of the same size.
