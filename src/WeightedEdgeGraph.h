@@ -115,9 +115,14 @@ class WeightedEdgeGraph{
         std::string getAdjListStr(int node)const;
         std::string getAdjListStr(std::string node)const;
 
+
+        //return true if the nodes are adjacent (by index)
         bool adjNodes(int node1, int node2);
+        //return true if the nodes are adjacent (by name)
         bool adjNodes(std::string node1, std::string node2);
+        //return true if the nodes are connected (by index)
         bool connectedNodes(int node1, int node2);
+        //return true if the nodes are connected (by name)
         bool connectedNodes(std::string node1, std::string node2);
 
         std::vector<std::tuple<int, int, double>> getEdgesVector()const;
