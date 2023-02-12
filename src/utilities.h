@@ -8,6 +8,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -108,3 +109,5 @@ template<typename T>
 std::vector<T> arrayToVector(T* array, int size){
     return std::vector<T>(array, array + size);
 }
+
+std::vector<std::tuple<int,int,double>> filestreamToEdgesList();
