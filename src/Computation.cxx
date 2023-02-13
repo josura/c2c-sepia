@@ -118,7 +118,6 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
-    IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
 }
 

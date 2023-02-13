@@ -97,12 +97,12 @@ TEST_F(ComputationTesting, testingAddingEdges) {
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell2","testGene2"), 0.4);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene2"), 0.5);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene3"), 0.7);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene6"), 0.2);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene2","v-out:testCell2"), 0.4);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene4","v-out:testCell3"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell2","testGene2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene2"), 0.5);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene3"), 0.7);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene6"), 0.2);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-out:testCell2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene4","v-out:testCell3"), 0.4);
 }
 
 TEST_F(ComputationTesting, testingAddingEdgesUndirected) {
@@ -125,16 +125,16 @@ TEST_F(ComputationTesting, testingAddingEdgesUndirected) {
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),42);
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell2","testGene2"), 0.4);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene2"), 0.5);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene3"), 0.7);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene6"), 0.2);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene2","v-in:testCell2"), 0.4);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene2","v-in:testCell4"), 0.5);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene3","v-in:testCell4"), 0.7);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene6","v-in:testCell4"), 0.2);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene2","v-out:testCell2"), 0.4);
-    EXPECT_FLOAT_EQ(augMeta->getEdgeWeight("testGene4","v-out:testCell3"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell2","testGene2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene2"), 0.5);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene3"), 0.7);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene6"), 0.2);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-in:testCell2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-in:testCell4"), 0.5);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene3","v-in:testCell4"), 0.7);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene6","v-in:testCell4"), 0.2);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-out:testCell2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene4","v-out:testCell3"), 0.4);
 }
 
 
@@ -223,24 +223,15 @@ TEST_F(ComputationTesting, testingAugmentingPathwaySelf) {
 TEST_F(ComputationTesting, testComputePerturbation){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues);
-    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computePerturbation();
     EXPECT_EQ( perturbation.size(), 6);
     EXPECT_EQ(computationTest.getInput().size(),6);
     EXPECT_EQ(computationTest.getOutput().size(),6);
-    EXPECT_EQ(computationTest.getInputAugmented().size(),12);
-    EXPECT_EQ(computationTest.getOutputAugmented().size(),0);
     EXPECT_EQ(computationTest.getLocalCellType(),"testCell");
     auto meta = computationTest.getMetapathway();
-    auto augMeta = computationTest.getAugmentedMetapathway();
     ASSERT_TRUE(meta != nullptr);
     EXPECT_EQ(meta->getNumNodes(),6);
     EXPECT_EQ(meta->getNumEdges(),30);
-    ASSERT_TRUE(augMeta != nullptr);
-    EXPECT_EQ(augMeta->getNumNodes(),12);
-    EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
 }
 
 TEST_F(ComputationTesting, testComputeAugmentedPerturbation){
@@ -324,7 +315,7 @@ TEST_F(ComputationTesting, testUpdateInputDefault){
     auto computationInputAfter = computationTest.getInput();
     EXPECT_EQ(computationInputAfter.size(), perturbation.size());
     for (uint i = 0; i< computationInputAfter.size(); i++) {
-        EXPECT_FLOAT_EQ(perturbation[i], computationInputAfter[i]);
+        EXPECT_DOUBLE_EQ(perturbation[i], computationInputAfter[i]);
     }
     EXPECT_EQ( perturbation.size(), 6);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -353,7 +344,7 @@ TEST_F(ComputationTesting, testUpdateInputPerturbation){
     auto computationInputAfter = computationTest.getInput();
     EXPECT_EQ(computationInputAfter.size(), perturbation.size());
     for (uint i = 0; i< computationInputAfter.size(); i++) {
-        EXPECT_FLOAT_EQ(perturbation[i], computationInputAfter[i]);
+        EXPECT_DOUBLE_EQ(perturbation[i], computationInputAfter[i]);
     }
     EXPECT_EQ( perturbation.size(), 6);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -384,7 +375,7 @@ TEST_F(ComputationTesting, testUpdateInputAugmentedDefaultSelf){
     auto computationInputAfter = computationTest.getInputAugmented();
     EXPECT_EQ(computationInputAfter.size(), perturbation.size());
     for (uint i = 0; i< computationInputAfter.size(); i++) {
-        EXPECT_FLOAT_EQ(perturbation[i], computationInputAfter[i]);
+        EXPECT_DOUBLE_EQ(perturbation[i], computationInputAfter[i]);
     }
     EXPECT_EQ( perturbation.size(), 14);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -413,7 +404,7 @@ TEST_F(ComputationTesting, testUpdateInputAugmentedSelf){
     auto computationInputAfter = computationTest.getInputAugmented();
     EXPECT_EQ(computationInputAfter.size(), perturbation.size());
     for (uint i = 0; i< computationInputAfter.size(); i++) {
-        EXPECT_FLOAT_EQ(perturbation[i], computationInputAfter[i]);
+        EXPECT_DOUBLE_EQ(perturbation[i], computationInputAfter[i]);
     }
     EXPECT_EQ( perturbation.size(), 14);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -430,6 +421,44 @@ TEST_F(ComputationTesting, testUpdateInputAugmentedSelf){
     EXPECT_EQ(augMeta->getNumNodes(),14);
     EXPECT_EQ(augMeta->getNumEdges(),36);
     EXPECT_EQ(computationTest.getCellTypes().size(),4);
+}
+
+
+TEST_F(ComputationTesting, testAugmentedVinputZeros){
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathway(cellTypes);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    auto perturbation = computationTest.computeAugmentedPerturbation();
+    computationTest.updateInput(perturbation,true);
+    auto computationInputAfter = computationTest.getInputAugmented();
+    EXPECT_EQ(computationInputAfter.size(), perturbation.size());
+    for (uint i = 0; i< computationInputAfter.size(); i++) {
+        EXPECT_DOUBLE_EQ(perturbation[i], computationInputAfter[i]);
+    }
+    EXPECT_EQ( perturbation.size(), 12);
+    EXPECT_EQ(computationTest.getInput().size(),6);
+    EXPECT_EQ(computationTest.getOutput().size(),0);
+    EXPECT_EQ(computationTest.getInputAugmented().size(),12);
+    EXPECT_EQ(computationTest.getOutputAugmented().size(),12);
+    EXPECT_EQ(computationTest.getLocalCellType(),"testCell");
+    auto meta = computationTest.getMetapathway();
+    auto augMeta = computationTest.getAugmentedMetapathway();
+    ASSERT_TRUE(meta != nullptr);
+    EXPECT_EQ(meta->getNumNodes(),6);
+    EXPECT_EQ(meta->getNumEdges(),30);
+    ASSERT_TRUE(augMeta != nullptr);
+    EXPECT_EQ(augMeta->getNumNodes(),12);
+    EXPECT_EQ(augMeta->getNumEdges(),36);
+    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell") < 0);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell2") >= 0 && augMeta->getIndexFromName("v-in:testCell2") < 12);
+    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:testCell2")], 0, 1e-12);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell2") >= 0 && augMeta->getIndexFromName("v-in:testCell3") < 12);
+    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:testCell3")], 0,1e-12);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell2") >= 0 && augMeta->getIndexFromName("v-in:testCell4") < 12);
+    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:testCell4")], 0,1e-12);
 }
 
 //TESTING IF NODE VALUES FOR v-input nodes are the same as the previous iteration
