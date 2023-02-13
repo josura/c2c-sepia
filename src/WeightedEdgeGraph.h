@@ -3,6 +3,7 @@
 #include "Matrix.h"  //circular dependency :'(
 #include <map>
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <tuple>
@@ -41,9 +42,27 @@ class WeightedEdgeGraph{
         WeightedEdgeGraph* addEdge(int node1, int node2, double weight);
         WeightedEdgeGraph* addEdge(std::string node1name, std::string node2name, double weight);
 
-        double getEdgeWeight(int node1, int node2)const{return adjMatrix.getValue(node1,node2);}
-        double getEdgeWeight(std::string node1, std::string node2)const{return adjMatrix.getValue(nodeToIndex.at(node1),nodeToIndex.at(node2));}
-        int getIndexFromName(std::string name)const {return nodeToIndex.at(name);}
+        double getEdgeWeight(int node1, int node2)const{
+            if(node1 >= 0 && node2 >= 0)
+                return adjMatrix.getValue(node1,node2);
+            else throw std::out_of_range("WeightedEdgeGraph::getEdgeWeight: one of the nodes is out of range(index)");
+        }
+        double getEdgeWeight(std::string node1, std::string node2)const{
+            if(getIndexFromName(node1) >= 0 && getIndexFromName(node2) >= 0)
+                return adjMatrix.getValue(nodeToIndex.at(node1),nodeToIndex.at(node2));
+            else throw std::out_of_range("WeightedEdgeGraph::getEdgeWeight: one of the nodes is out of range(string)");
+        }
+        
+        //return -1 if the name is not found, so be careful
+        int getIndexFromName(std::string name)const {
+            try {
+                return nodeToIndex.at(name);
+            }
+            catch (const std::out_of_range&) {
+                return -1;
+                // TODO: Deal with the missing element.
+            }
+        }
 
         WeightedEdgeGraph* addNode(double value=0);
         WeightedEdgeGraph* addNode(std::string name, double value=0);
