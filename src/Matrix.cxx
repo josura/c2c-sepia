@@ -18,7 +18,7 @@ void Matrix<T>::allocateMatrixSpace()
     
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i*rows_ + j] = 0;
+            _matrix[i*cols_ + j] = 0;
         }    
     }
 }
@@ -41,7 +41,7 @@ Matrix<T>::Matrix(T** a, int rows, int cols) : rows_(rows), cols_(cols)
     allocateMatrixSpace();
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i*rows_ + j] = a[i][j];
+            _matrix[i*cols_ + j] = a[i][j];
         }
     }
 }
@@ -105,7 +105,7 @@ Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
     allocateMatrixSpace();
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
-            _matrix[i*rows_ + j] = m.getValue(i,j);
+            _matrix[i*cols_ + j] = m.getValue(i,j);
         }
     }
 }

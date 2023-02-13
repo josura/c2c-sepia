@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <iterator>
+#include <stdexcept>
 #include <vector>
 #include "utilities.h"
 #include <armadillo>
@@ -18,8 +19,8 @@ class Matrix {
         ~Matrix();
         Matrix& operator=(const Matrix&);
 
-        inline T& operator()(int x, int y) { return _matrix[x*cols_ + y]; }
-        inline T& getValue(int x, int y)const{ return _matrix[x*cols_ +y]; }
+        inline T& operator()(int x, int y) { if(x>=0 && y>=0 && x < rows_ && y < cols_)return _matrix[x*cols_ +y]; else throw std::invalid_argument("Matrix::getValue: x or y not in range"); }
+        inline T& getValue(int x, int y)const{ if(x>=0 && y>=0 && x < rows_ && y < cols_)return _matrix[x*cols_ +y]; else throw std::invalid_argument("Matrix::getValue: x or y not in range"); }
 
         Matrix& operator+=(const Matrix&);
         Matrix& operator-=(const Matrix&);
