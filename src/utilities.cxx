@@ -178,6 +178,7 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
         ifstream myfile (filename);
         if (myfile.is_open())
         {
+            getline (myfile,line);  // first line is header IMPORTANT
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
@@ -201,7 +202,7 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
             myfile.close();
         }
     } else {
-        throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists");
+        throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists " + filename);
     }
     return std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> (nameRet,ret);
 }
