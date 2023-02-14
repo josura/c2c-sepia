@@ -3,7 +3,11 @@
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 
-int main() {
+void printHelp(){
+    std::cout << "usage: ./c2c-sepia <metapathway>.tsv <logfoldPerCell>.tsv <celltypesInteraction>.tsv <subcelltypes>.txt\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\nlogfoldPerCell.tsv\n\tcell1\tcell2\t...\tcellN\ngene1\t<lfc_cell1:gene1>\t<lfc_cell2:gene1>\t...\t<lfc_cellN:gene1>\ngene1\t<lfc_cell1:gene2>\t<lfc_cell2:gene2>\t...\t<lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell\tendCell\tweight\n<cell1>\t<cell2>\t <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n..."<<std::endl;
+}
+
+int main(int argc, char** argv ) {
     WeightedEdgeGraph* g1 = new WeightedEdgeGraph(4);
     WeightedEdgeGraph* g2 = new WeightedEdgeGraph();
     std::cout << " testing "<< g2->getNumEdges()<<std::endl;
@@ -64,6 +68,25 @@ int main() {
     auto perturbation = c1->computeAugmentedPerturbation();
     c1->updateInput(perturbation,true);
     auto computationInputAfter = c1->getInputAugmented();
+
+    std::string filename,celltypesFilename,celltypesInteractionFilename,cellLogFoldMatrixFilename;
+    if(argc < 2){
+        printHelp();
+        return 0;
+    }else{
+        if(argc >= 2)
+            filename = argv[1];
+        if(argc >= 3){
+            cellLogFoldMatrixFilename = argv[2];  // first row is cell types, so default means all the celltypes are used
+        }
+        if(argc >= 4){
+            celltypesInteractionFilename = argv[3];
+        }
+        if(argc >= 5){
+            celltypesFilename = argv[4]; //all the celltypes or a subset will be used
+        }
+    }
+    auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     
     return 0;
 }
