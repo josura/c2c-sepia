@@ -18,6 +18,9 @@
 #include <algorithm>
 #include <limits>    // for std::numeric_limits
 #include <stdexcept> // for std::overflow_error
+#include <sys/stat.h>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string.hpp>
 
 
 #define INTMAX 100
@@ -110,4 +113,8 @@ std::vector<T> arrayToVector(T* array, int size){
     return std::vector<T>(array, array + size);
 }
 
-std::vector<std::tuple<int,int,double>> filestreamToEdgesList();
+inline bool file_exists (const std::string& name);
+std::vector<std::string> splitString(std::string toSplit , std::string delimiter);
+
+std::vector<std::tuple<int,int,double>> edgesFileToEdgesListByIndex();
+std::vector<std::tuple<std::string,std::string,double>> edgesFileToEdgesListByName();
