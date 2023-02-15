@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <iterator>
 #include <random>
 #include <stdexcept>
 #include <string>
@@ -170,6 +171,79 @@ std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToE
 }
 
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesFileToEdgesListAndNodesByName(std::string filename){
+    string line;
+    std::vector<std::tuple<std::string,std::string,double>> ret;
+    std::vector<std::string> nameRet;
+    std::unordered_set<std::string> presentNames;
+    if(file_exists(filename)){
+        ifstream myfile (filename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitString(line, "\t");
+                if(entries.size()==3){
+                    std::string node1 = entries[0];
+                    std::string node2 = entries[1];
+                    double weight = std::stod( entries[2]);
+                    std::tuple<std::string,std::string,double> edge(node1,node2,weight);
+                    ret.push_back(edge);
+                    if(!presentNames.contains(node1)){
+                        nameRet.push_back(node1);
+                        presentNames.insert(node1);
+                    }
+                    if(!presentNames.contains(node2)){
+                        nameRet.push_back(node2);
+                        presentNames.insert(node2);
+
+                    }
+                }
+            }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists " + filename);
+    }
+    return std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> (nameRet,ret);
+}
+
+
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename){
+    string line;
+    std::vector<std::vector<double>> ret;
+    std::vector<std::string> cellNames;
+    std::vector<std::string> geneNames;
+    if(file_exists(filename)){
+        ifstream myfile (filename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> splittedHeader = splitString(line, "\t");
+            for (int i = 1; i < splittedHeader.size(); i++) {
+                cellNames.push_back(splittedHeader[i]);
+                ret.push_back(std::vector<double>());
+            }
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitString(line, "\t");
+                if(entries.size()>1){
+                    geneNames.push_back(entries[0]);
+                    for(int i = 1; i < entries.size();i++){
+                        ret[i-1].push_back(std::stod(entries[i]));
+                    }
+                }
+            }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists " + filename);
+    }
+    return std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> (geneNames,cellNames,ret);
+
+}
+
+std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename){
     string line;
     std::vector<std::tuple<std::string,std::string,double>> ret;
     std::vector<std::string> nameRet;

@@ -48,6 +48,8 @@ class Computation{
         void addEdges(const std::vector<std::tuple<std::string,std::string,double>>&  , bool bothDirections = false);
         void addEdges(const std::vector<std::pair<int,int>>& , const std::vector<double>& , bool bothDirections = false);
         void addEdges(const std::vector<std::tuple<int,int,double>>&  , bool bothDirections = false);
+        void addCellInteractions(const std::vector<std::tuple<int,int,double>>&);
+        void addCellInteractions(const std::vector<std::tuple<std::string,std::string,double>>&);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
