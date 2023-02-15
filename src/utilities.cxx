@@ -220,7 +220,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
         {
             getline (myfile,line);  // first line is header IMPORTANT
             std::vector<std::string> splittedHeader = splitString(line, "\t");
-            for (int i = 1; i < splittedHeader.size(); i++) {
+            for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
                 cellNames.push_back(splittedHeader[i]);
                 ret.push_back(std::vector<double>());
             }
@@ -229,7 +229,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                 std::vector<std::string> entries = splitString(line, "\t");
                 if(entries.size()>1){
                     geneNames.push_back(entries[0]);
-                    for(int i = 1; i < entries.size();i++){
+                    for(int i = 1; i < SizeToInt(entries.size());i++){
                         ret[i-1].push_back(std::stod(entries[i]));
                     }
                 }
@@ -243,6 +243,8 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
+
+//TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename){
     string line;
     std::vector<std::tuple<std::string,std::string,double>> ret;
