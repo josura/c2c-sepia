@@ -20,8 +20,52 @@ make
 
 ## USAGE
 ```bash
-./build/c2c-sepia <???>
+./build/c2c-sepia <metapathway>.tsv <logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]  
 ```
+
+## INPUT SCHEMA
+**metapathway.tsv**
+
+start \t end \t weight
+
+<gene1> \t <gene2> \t <0.something>
+
+...
+
+
+
+**logfoldPerCell.tsv**
+
+\t cell1 \t cell2 \t ... \t cellN 
+
+gene1 \t <lfc_cell1:gene1> \t <lfc_cell2:gene1> \t ... \t <lfc_cellN:gene1>
+
+gene2 \t <lfc_cell1:gene2> \t <lfc_cell2:gene2> \t ... \t <lfc_cellN:gene2>
+
+...
+
+
+
+**celltypesInteraction.tsv**
+
+startCell:geneLigand \t endCell:geneReceptor \t weight
+
+<cell1:geneLigand> \t <cell2:genereceptor> \t <0.something>
+
+...
+
+
+
+**nsubcelltypes.txt**
+
+cell1
+
+cell3
+
+...
+
+
+
 
 Under development
 
