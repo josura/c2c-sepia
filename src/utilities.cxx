@@ -180,13 +180,28 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            int indexStart=-1,indexEnd=-1,indexWeight=-1;
+            for(uint i = 0; i < entriesHeader.size(); i++){
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("start") != std::string::npos) {
+                    indexStart = i;
+                }
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("end") != std::string::npos) {
+                    indexEnd = i;
+                } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
+                    indexWeight = i;
+                }
+            }
+            if(indexStart < 0 || indexEnd < 0 || indexWeight < 0){
+                throw std::invalid_argument("invalid file, the header does not contain a start, an end and a weight feature");
+            }
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
-                if(entries.size()==3){
-                    std::string node1 = entries[0];
-                    std::string node2 = entries[1];
-                    double weight = std::stod( entries[2]);
+                if(entries.size()==entriesHeader.size()){
+                    std::string node1 = entries[indexStart];
+                    std::string node2 = entries[indexEnd];
+                    double weight = std::stod( entries[indexWeight]);
                     std::tuple<std::string,std::string,double> edge(node1,node2,weight);
                     ret.push_back(edge);
                     if(!presentNames.contains(node1)){
