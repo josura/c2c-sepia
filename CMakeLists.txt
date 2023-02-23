@@ -26,6 +26,10 @@ else()
   message( SEND_ERROR "lapack or blas not found")
 endif()
 
+
+FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
 set(EXEC_MAIN "src/main.cxx")
 set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
 set(LIB_SRCS 
@@ -58,7 +62,8 @@ add_library( mysharedlib SHARED ${LIB_SRCS} )
 add_executable( c2c-sepia ${EXEC_MAIN} )
 target_link_libraries( c2c-sepia 
                        mysharedlib
-                       ${lapackblas_libraries})
+                       ${lapackblas_libraries}
+                       ${Boost_LIBRARIES})
 
 add_executable( experiments ${EXPERIMENT_MAIN})
 target_link_libraries( experiments 
