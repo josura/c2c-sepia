@@ -297,3 +297,32 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
     }
     return std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> (nameRet,ret);
 }
+
+std::map<std::string, std::string> getEnsembletoEntrezidMap(){
+    string line;
+    std::map<std::string,std::string> ret;
+    std::string mapFilename = "resources/graphs/metapathwayReactome/nodes.txt";
+    if(file_exists(mapFilename)){
+        ifstream myfile (mapFilename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitString(line, "\t");
+                if(entries.size()==3){
+                    std::string Id = entries[0];
+                    std::string Name = entries[1];
+                    std::string Type = entries[2];
+                    std::string Aliases = entries[3];
+                    ret["Name"] = Id;
+                    
+                }
+            }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::getEnsembletoEntrezidMap: file does not exists " + mapFilename);
+    }
+    return ret;
+}

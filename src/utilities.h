@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <iostream>
+#include <map>
 #include <string>
 #include <fstream>
 #include <ostream>
@@ -120,3 +121,5 @@ std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToE
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesFileToEdgesListAndNodesByName(std::string filename);
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename);
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename);
+
+std::map<std::string, std::string>getEnsembletoEntrezidMap();
