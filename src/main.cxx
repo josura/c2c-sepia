@@ -26,6 +26,7 @@ int main(int argc, char** argv ) {
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
+    std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename;
 
     if (vm.count("help")) {
         //printHelp();
@@ -36,32 +37,34 @@ int main(int argc, char** argv ) {
     if (vm.count("fMETAPATHWAY")) {
         std::cout << "file for the metapathway was set to " 
     << vm["fMETAPATHWAY"].as<std::string>() << ".\n";
+        filename = vm["fMETAPATHWAY"].as<std::string>();
     } else {
         std::cout << "fMETAPATHWAY file was not set. Aborting\n";
         return 1;
+    }
+    if (vm.count("fLogfoldPerCell")) {
+        std::cout << "file for the logfoldPerCell matrix was set to " 
+    << vm["fLogfoldPerCell"].as<std::string>() << ".\n";
+        cellLogFoldMatrixFilename = vm["fLogfoldPerCell"].as<std::string>();
+    } else {
+        std::cout << "fLogfoldPerCell file was not set. Aborting\n";
+        return 1;
+    }
+    if (vm.count("dirCellInteraction")) {
+        std::cout << "folder for the cell interactions was set to " 
+    << vm["dirCellInteraction"].as<std::string>() << ".\n";
+        celltypesInteractionFoldername = vm["dirCellInteraction"].as<std::string>();
+    } else {
+        std::cout << "dirCellInteraction folder was not set. computing without taking into account cell interactions\n";
+        //TODO
     }
     //end program options section
 
     std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
     
-    std::string filename,celltypesFilename,celltypesInteractionFilename,cellLogFoldMatrixFilename;
-    if(argc < 2){
-        printHelp();
-        return 0;
-    }else{
-        if(argc >= 2)
-            filename = argv[1];
-        if(argc >= 3){
-            cellLogFoldMatrixFilename = argv[2];  // first row is cell types, so default means all the celltypes are used
-        }
-        if(argc >= 4){
-            celltypesInteractionFilename = argv[3];
-        }
-        if(argc >= 5){
-            celltypesFilename = argv[4]; //all the celltypes or a subset will be used
-        }
-    }
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
+    auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename);
+    
     
     return 0;
 }
