@@ -35,7 +35,7 @@ int main(int argc, char** argv ) {
     }
 
     if (vm.count("fMETAPATHWAY")) {
-        std::cout << "file for the metapathway was set to " 
+        std::cout << "[LOG] file for the metapathway was set to " 
     << vm["fMETAPATHWAY"].as<std::string>() << ".\n";
         filename = vm["fMETAPATHWAY"].as<std::string>();
     } else {
@@ -43,7 +43,7 @@ int main(int argc, char** argv ) {
         return 1;
     }
     if (vm.count("fLogfoldPerCell")) {
-        std::cout << "file for the logfoldPerCell matrix was set to " 
+        std::cout << "[LOG] file for the logfoldPerCell matrix was set to " 
     << vm["fLogfoldPerCell"].as<std::string>() << ".\n";
         cellLogFoldMatrixFilename = vm["fLogfoldPerCell"].as<std::string>();
     } else {
@@ -55,16 +55,19 @@ int main(int argc, char** argv ) {
     << vm["dirCellInteraction"].as<std::string>() << ".\n";
         celltypesInteractionFoldername = vm["dirCellInteraction"].as<std::string>();
     } else {
-        std::cout << "dirCellInteraction folder was not set. computing without taking into account cell interactions\n";
+        std::cout << "[LOG] dirCellInteraction folder was not set. computing without taking into account cell interactions\n";
         //TODO
     }
     //end program options section
 
     std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
-    
+    if(ensembleGeneNames){
+        std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
+    }
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename);
     
+
     
     return 0;
 }
