@@ -68,6 +68,11 @@ int main(int argc, char** argv ) {
     }
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename);
+    auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
+    for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
+        auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename);
+        //TODO insert edges to the correspondent cell metapathway
+    }
     
 
     

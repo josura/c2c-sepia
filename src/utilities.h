@@ -22,7 +22,6 @@
 #include <sys/stat.h>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 
 
 #define INTMAX 100

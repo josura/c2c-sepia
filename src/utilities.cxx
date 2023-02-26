@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <filesystem>
 #include <iterator>
 #include <random>
 #include <stdexcept>
@@ -331,15 +332,10 @@ std::map<std::string, std::string> getEnsembletoEntrezidMap(){
 std::vector<std::string> get_all(std::string const & root, std::string const & ext)
 {
     std::vector<std::string> paths;
-
-    if (boost::filesystem::exists(root) && boost::filesystem::is_directory(root))
+    for (auto &p : std::filesystem::recursive_directory_iterator(root))
     {
-        for (auto const & entry : boost::filesystem::recursive_directory_iterator(root))
-        {
-            if (boost::filesystem::is_regular_file(entry) && entry.path().extension() == ext)
-                paths.emplace_back(entry.path().filename().string());
-        }
+        if (p.path().extension() == ext)
+            paths.push_back(p.path().stem().string());
     }
-
     return paths;
 } 
