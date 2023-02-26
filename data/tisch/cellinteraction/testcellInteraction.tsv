@@ -1,0 +1,2 @@
+startCell:geneLigand    endCell:geneReceptor  weight
+CD4Tconv:TGFB1  Fibroblasts:TGFBR1 1.0
