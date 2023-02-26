@@ -48,9 +48,9 @@ gene2 \t <lfc_cell1:gene2> \t <lfc_cell2:gene2> \t ... \t <lfc_cellN:gene2>
 
 **celltypesInteraction.tsv**
 
-startCell:geneLigand \t endCell:geneReceptor \t weight
+startCell \t geneLigand \t endCell \t geneReceptor \t weight
 
-<cell1:geneLigand> \t <cell2:genereceptor> \t <0.something>
+<cell1> \t <geneLigand> \t <cell2> \t <genereceptor> \t <0.something>
 
 ...
 
