@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 
 #define INTMAX 100
@@ -123,3 +124,9 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename);
 
 std::map<std::string, std::string>getEnsembletoEntrezidMap();
+
+/**
+ * \brief   Return the filenames of all files that have the specified extension
+ *          in the specified directory and all subdirectories.
+ */
+std::vector<std::string> get_all(std::string const & root, std::string const & ext);
