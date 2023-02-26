@@ -13,6 +13,7 @@ void printHelp(){
 int main(int argc, char** argv ) {
     //program options
     bool ensembleGeneNames=false;
+    bool sameCellCommunication=false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -21,6 +22,7 @@ int main(int argc, char** argv ) {
         ("fLogfoldPerCell", po::value<std::string>()->required(), "logfoldPerCell matrix filename, for an example see in data")
         ("dirCellInteraction", po::value<std::string>(), "logfoldPerCell matrix filename, for an example see in data")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
+        ("sameCellCommunication",po::bool_switch(&sameCellCommunication),"use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
     ;
 
     po::variables_map vm;
