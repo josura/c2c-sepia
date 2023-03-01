@@ -28,7 +28,7 @@ make
 
 start \t end \t weight
 
-<gene1> \t <gene2> \t <0.something>
+[gene1] \t [gene2] \t [0.something]
 
 ...
 
@@ -38,9 +38,9 @@ start \t end \t weight
 
 \t cell1 \t cell2 \t ... \t cellN 
 
-gene1 \t <lfc_cell1:gene1> \t <lfc_cell2:gene1> \t ... \t <lfc_cellN:gene1>
+gene1 \t [lfc_cell1:gene1] \t [lfc_cell2:gene1] \t ... \t [lfc_cellN:gene1]
 
-gene2 \t <lfc_cell1:gene2> \t <lfc_cell2:gene2> \t ... \t <lfc_cellN:gene2>
+gene2 \t [lfc_cell1:gene2] \t [lfc_cell2:gene2] \t ... \t [lfc_cellN:gene2]
 
 ...
 
@@ -50,7 +50,7 @@ gene2 \t <lfc_cell1:gene2> \t <lfc_cell2:gene2> \t ... \t <lfc_cellN:gene2>
 
 startCell \t geneLigand \t endCell \t geneReceptor \t weight
 
-<cell1> \t <geneLigand> \t <cell2> \t <genereceptor> \t <0.something>
+[cell1] \t [geneLigand] \t [cell2] \t [genereceptor] \t [0.something]
 
 ...
 
