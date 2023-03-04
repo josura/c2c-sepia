@@ -29,6 +29,7 @@ jobs:
       env:
         CACHE_HIT: ${{steps.cache-dependencies.outputs.cache-hit}}
       run:  |
+        sudo apt-get update
         sudo apt-cache search blas && sudo apt-get install -y libblas-dev
         sudo apt-get install -y liblapack-dev liblapacke-dev
         sudo apt-get install -y libarpack2-dev 
