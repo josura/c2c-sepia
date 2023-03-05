@@ -59,7 +59,16 @@ class Matrix {
         static Matrix getMinor(const Matrix<T>&,int, int,int);
         static T determinant(const Matrix<T>& A);
         Matrix& operator*=(const std::vector<T>&);
-
+        /*
+        * \brief   divide the values in column i by the value in 
+        *           vector at the index i
+        */
+        Matrix& normalizeByVectorColumn(const std::vector<double>& normVector);
+        /*
+        * \brief   divide the values in row i by the value in 
+        *           vector at the index i
+        */
+        Matrix& normalizeByVectorRow(const std::vector<double>& normVector);
         // functions for reduction and inverse
         Matrix concatenateRight(const Matrix&)const;
         T determinant()const;

@@ -90,7 +90,6 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
             augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
         }
-        auto matrixToMut = metapathway->adjMatrix.copyAndAddRowsCols(0, 0);
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
@@ -119,7 +118,6 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
         }
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
-    auto matrixToMut = metapathway->adjMatrix.copyAndAddRowsCols(0, 0);
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
