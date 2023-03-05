@@ -46,8 +46,14 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
     cellTypes = std::vector<std::string>();
 
-    auto matrixToMut = metapathway->adjMatrix.copyAndAddRowsCols(0, 0);
-    WtransArma = metapathway->adjMatrix.transpose().asArmadilloMatrix();
+
+    std::vector<double> normalizationFactors(metapathway->getNumNodes(),0);
+    for (int i = 0; i < metapathway->getNumNodes(); i++) {
+        for(int j = 0; j < metapathway->getNumNodes();j++){
+            normalizationFactors[i] += metapathway->getEdgeWeight(i,j) / metapathway->getNumNodes(); 
+        }
+    }
+    WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
@@ -90,7 +96,13 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
             augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
         }
-        WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
+        std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
+        for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
+            for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
+                normalizationFactors[i] += augmentedMetapathway->getEdgeWeight(i,j) / augmentedMetapathway->getNumNodes(); 
+            }
+        }
+        WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
         inputAugmented = input;
@@ -118,7 +130,13 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
         }
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
-    WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
+    std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
+    for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
+        for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
+            normalizationFactors[i] += augmentedMetapathway->getEdgeWeight(i,j) / augmentedMetapathway->getNumNodes(); 
+        }
+    }
+    WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
 }

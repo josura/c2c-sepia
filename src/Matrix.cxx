@@ -472,3 +472,18 @@ arma::Row<T> Matrix<T>::asArmadilloRowVector()const{
 }
 
 template arma::Row<double> Matrix<double>::asArmadilloRowVector()const;
+
+
+template<typename T>
+Matrix<T>& Matrix<T>::normalizeByVectorColumn(const std::vector<double>& normVector){    
+    return *this;
+}
+
+template Matrix<double>& Matrix<double>::normalizeByVectorColumn(const std::vector<double> &normVector);
+
+template<typename T>
+Matrix<T>& Matrix<T>::normalizeByVectorRow(const std::vector<double>& normVector){
+    return *this;
+}
+
+template Matrix<double>& Matrix<double>::normalizeByVectorRow(const std::vector<double> &normVector);
