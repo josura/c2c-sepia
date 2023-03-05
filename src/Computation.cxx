@@ -46,7 +46,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
     cellTypes = std::vector<std::string>();
 
-
+    auto matrixToMut = metapathway->adjMatrix.copyAndAddRowsCols(0, 0);
     WtransArma = metapathway->adjMatrix.transpose().asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
@@ -90,10 +90,10 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
 
             augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
         }
+        auto matrixToMut = metapathway->adjMatrix.copyAndAddRowsCols(0, 0);
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
-        //TODO augment input(inputAugmented) with virtual inputs and virtual outputs
         inputAugmented = input;
         for(uint i = 0; i < tmpcelltypes.size()*2; i++){
             inputAugmented.push_back(0.0);
@@ -119,6 +119,7 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
         }
         augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
     }
+    auto matrixToMut = metapathway->adjMatrix.copyAndAddRowsCols(0, 0);
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
