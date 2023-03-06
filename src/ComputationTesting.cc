@@ -168,14 +168,22 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     EXPECT_EQ(identityArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_rows, 12);
+    //edges before
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell2","testGene2"),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell3","testGene2"),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell4","testGene2"),0.5,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell2"),augMeta->getIndexFromName("testGene2")),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell3"),augMeta->getIndexFromName("testGene2")),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell4"),augMeta->getIndexFromName("testGene2")),0.5,1e-6);
+    //edges after normalization
     EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene2"),
-                         augMeta->getIndexFromName("v-in:testCell2")),0.166667,1e-6); //0.4 not normalized, inverted since the matrix is transposed
+                         augMeta->getIndexFromName("v-in:testCell2")),0.210526,1e-6); //0.4 not normalized, inverted since the matrix is transposed
     EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene2"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.208333,1e-6); //0.5 not normalized
+                         augMeta->getIndexFromName("v-in:testCell4")),0.263157,1e-6); //0.5 not normalized
     EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene3"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.368421,1e-6); //0.7 not normalized
+                         augMeta->getIndexFromName("v-in:testCell4")),0.259259,1e-6); //0.7 not normalized
     EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene6"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.126582,1e-6); //0.2 not normalized
+                         augMeta->getIndexFromName("v-in:testCell4")),0.056338,1e-6); //0.2 not normalized
 }
 
 TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {

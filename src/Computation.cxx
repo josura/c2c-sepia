@@ -100,7 +100,8 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
         for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
             for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-                normalizationFactors[i] += std::abs(augmentedMetapathway->getEdgeWeight(i,j)); 
+                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+                normalizationFactors[i] += betaToAdd; 
             }
         }
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
@@ -134,7 +135,8 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
     std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
     for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
         for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-            normalizationFactors[i] += std::abs(augmentedMetapathway->getEdgeWeight(i,j)); 
+            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+            normalizationFactors[i] += betaToAdd; 
         }
     }
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
