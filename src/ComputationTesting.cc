@@ -184,6 +184,13 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
                          augMeta->getIndexFromName("v-in:testCell4")),0.259259,1e-6); //0.7 not normalized
     EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene6"),
                          augMeta->getIndexFromName("v-in:testCell4")),0.056338,1e-6); //0.2 not normalized
+    //control if the change of values is in place (not working) or in copy(working correctly)
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell2","testGene2"),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell3","testGene2"),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell4","testGene2"),0.5,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell2"),augMeta->getIndexFromName("testGene2")),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell3"),augMeta->getIndexFromName("testGene2")),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell4"),augMeta->getIndexFromName("testGene2")),0.5,1e-6);
 }
 
 TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
