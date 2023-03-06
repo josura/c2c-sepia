@@ -167,14 +167,14 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     EXPECT_EQ(identityArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_rows, 12);
-    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene2"),
-                         augMeta->getIndexFromName("v-in:testCell2")),0.4); //inverted since the matrix is transposed
-    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene2"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.5);
-    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene3"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.7);
-    EXPECT_EQ(wtransArma(augMeta->getIndexFromName("testGene6"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.2);
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene2"),
+                         augMeta->getIndexFromName("v-in:testCell2")),0.166667,1e10-6); //0.4 not normalized, inverted since the matrix is transposed
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene2"),
+                         augMeta->getIndexFromName("v-in:testCell4")),0.208333,1e10-6); //0.5 not normalized
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene3"),
+                         augMeta->getIndexFromName("v-in:testCell4")),0.368421,1e10-6); //0.7 not normalized
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene6"),
+                         augMeta->getIndexFromName("v-in:testCell4")),0.126582,1e10-6); //0.2 not normalized
 }
 
 TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {

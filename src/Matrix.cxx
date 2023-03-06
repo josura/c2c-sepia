@@ -476,6 +476,14 @@ template arma::Row<double> Matrix<double>::asArmadilloRowVector()const;
 
 template<typename T>
 Matrix<T>& Matrix<T>::normalizeByVectorColumn(const std::vector<double>& normVector){    
+    if (SizeToInt( normVector.size())< cols_) {
+        throw std::invalid_argument("[ERROR] Matrix<T>::normalizeByVectorColumn: normalization vector size is less than the number of columns");
+    }
+    for (int i =0 ; i<getRows(); i++) {
+        for (int j =0 ; j<getCols(); j++) {
+            _matrix[i * cols_ + j] = getValue(i, j) / normVector[j] + 1e-20;
+        }
+    }
     return *this;
 }
 
@@ -483,6 +491,15 @@ template Matrix<double>& Matrix<double>::normalizeByVectorColumn(const std::vect
 
 template<typename T>
 Matrix<T>& Matrix<T>::normalizeByVectorRow(const std::vector<double>& normVector){
+    if (SizeToInt( normVector.size())< rows_) {
+        throw std::invalid_argument("[ERROR] Matrix<T>::normalizeByVectorRow: normalization vector size is less than the number of rows");
+    }
+    for (int i =0 ; i<getRows(); i++) {
+        double normalizationFactor = normVector[i] + 1e-20;
+        for (int j =0 ; j<getCols(); j++) {
+            _matrix[i * cols_ + j] = getValue(i, j) / normalizationFactor ;
+        }
+    }
     return *this;
 }
 
