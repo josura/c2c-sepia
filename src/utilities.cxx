@@ -261,42 +261,66 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 
 //TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
-std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename){
+//TODO, understand if the translation from ensemble gene names to entrez should be done here
+std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename){
     string line;
-    std::vector<std::tuple<std::string,std::string,double>> ret;
-    std::vector<std::string> nameRet;
-    std::unordered_set<std::string> presentNames;
+    std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ret;
     if(file_exists(filename)){
         ifstream myfile (filename);
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            int indexCellStart=-1,indexCellEnd=-1,indexLigandStart=-1,indexReceptorEnd=-1,indexWeight=-1;
+            for(uint i = 0; i < entriesHeader.size(); i++){
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startCell") != std::string::npos) {
+                    indexCellStart = i;
+                }
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endCell") != std::string::npos) {
+                    indexCellEnd = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneLigand") != std::string::npos) {
+                    indexLigandStart = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneReceptor") != std::string::npos) {
+                    indexReceptorEnd = i;
+                } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
+                    indexWeight = i;
+                }
+            }
+            if(indexCellStart < 0 || indexCellEnd < 0 || indexLigandStart < 0 || indexReceptorEnd < 0 || indexWeight < 0){
+                throw std::invalid_argument("invalid file, the header does not contain a startcell, or an endcell, or a Ligand gene, or a receptor gene, or a weight feature");
+            }
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
-                if(entries.size()==3){
-                    std::string node1 = entries[0];
-                    std::string node2 = entries[1];
-                    double weight = std::stod( entries[2]);
-                    std::tuple<std::string,std::string,double> edge(node1,node2,weight);
-                    ret.push_back(edge);
-                    if(!presentNames.contains(node1)){
-                        nameRet.push_back(node1);
-                        presentNames.insert(node1);
+                if(entries.size()==5){
+                    std::string startCell = entries[indexCellStart];
+                    std::string geneLigand = entries[indexLigandStart];
+                    std::string endCell = entries[indexCellEnd];
+                    std::string geneReceptor = entries[indexReceptorEnd];
+                    double weight = std::stod( entries[indexWeight]);
+                    std::string virtualInputEndCell = "v-in:" + endCell;
+                    std::string virtualOutputStartCell = "v-out:" + startCell;
+                    std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
+                    std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
+                    if(ret.contains(startCell)){
+                        ret["startCell"].push_back(edgeStartCell);
+                    }else{
+                        ret["startCell"] = std::vector<std::tuple<std::string,std::string,double>>();
                     }
-                    if(!presentNames.contains(node2)){
-                        nameRet.push_back(node2);
-                        presentNames.insert(node2);
 
+                    if(ret.contains(endCell)){
+                        ret["endCell"].push_back(edgeStartCell);
+                    }else{
+                        ret["endCell"] = std::vector<std::tuple<std::string,std::string,double>>();
                     }
                 }
             }
             myfile.close();
         }
     } else {
-        throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists " + filename);
+        throw std::invalid_argument("utilities::cellInteractionFileToEdgesListAndNodesByName: file does not exists " + filename);
     }
-    return std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> (nameRet,ret);
+    return ret;
 }
 
 std::map<std::string, std::string> getEnsembletoEntrezidMap(){
