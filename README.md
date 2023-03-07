@@ -66,6 +66,9 @@ cell3
 
 
 
+## things to consider
+The map file that is used for the mapping of ensemble gene names to entrez ids (required if the metapathway in the __resourse__ folder are used) can b e found in the metapathways folders themselves. The one used in the tool is found at __resources/graphs/metapathwayReactome/nodes.txt__
+
 
 Under development
 
