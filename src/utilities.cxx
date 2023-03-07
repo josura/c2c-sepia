@@ -262,6 +262,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 //TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
 //TODO, understand if the translation from ensemble gene names to entrez should be done here
+//TODO, filtering genes also since I have seen nodes not in the metapathway
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename){
     string line;
     std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ret;
