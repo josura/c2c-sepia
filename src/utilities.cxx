@@ -3,6 +3,7 @@
 #include <boost/token_functions.hpp>
 #include <cstddef>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <filesystem>
 #include <iterator>
@@ -225,11 +226,12 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
 }
 
 
-std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename){
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename,bool useEntrez){
     string line;
     std::vector<std::vector<double>> ret;
     std::vector<std::string> cellNames;
     std::vector<std::string> geneNames;
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
     if(file_exists(filename)){
         ifstream myfile (filename);
         if (myfile.is_open())
@@ -244,9 +246,19 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             {
                 std::vector<std::string> entries = splitString(line, "\t");
                 if(entries.size()>1){
-                    geneNames.push_back(entries[0]);
-                    for(int i = 1; i < SizeToInt(entries.size());i++){
-                        ret[i-1].push_back(std::stod(entries[i]));
+                    if(!useEntrez){
+                        geneNames.push_back(entries[0]);
+                        for(int i = 1; i < SizeToInt(entries.size());i++){
+                            ret[i-1].push_back(std::stod(entries[i]));
+                        }
+                    }
+                    else{
+                        if (mapEnsembleToEntrez.contains(entries[0])) {
+                            geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
+                            for(int i = 1; i < SizeToInt(entries.size());i++){
+                                ret[i-1].push_back(std::stod(entries[i]));
+                            }
+                        }
                     }
                 }
             }
@@ -263,7 +275,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 //TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
 //TODO, understand if the translation from ensemble gene names to entrez should be done here
 //TODO, filtering genes also since I have seen nodes not in the metapathway
-std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename){
+std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez){
     string line;
     std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ret;
     if(file_exists(filename)){
