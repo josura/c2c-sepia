@@ -20,7 +20,7 @@ make
 
 ## USAGE
 ```bash
-./build/c2c-sepia <metapathway>.tsv <logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]  
+./build/c2c-sepia --fMETAPATHWAY [metapathway].tsv --fLogfoldPerCell [logfoldPerCell].tsv --dirCellInteraction [celltypesInteractionFolder]
 ```
 
 ## INPUT SCHEMA
@@ -45,7 +45,7 @@ gene2 \t [lfc_cell1:gene2] \t [lfc_cell2:gene2] \t ... \t [lfc_cellN:gene2]
 ...
 
 
-
+The files in the folder that contains the cell interactions should have the following schema
 **celltypesInteraction.tsv**
 
 startCell \t geneLigand \t endCell \t geneReceptor \t weight
