@@ -20,7 +20,7 @@ int main(int argc, char** argv ) {
         ("help", "print help section")//<logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\nlogfoldPerCell.tsv\n cell1 cell2 ... cellN\ngene1 <lfc_cell1:gene1> <lfc_cell2:gene1> ... <lfc_cellN:gene1>\ngene1 <lfc_cell1:gene2> <lfc_cell2:gene2> ... <lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand endCell:geneReceptor weight\n<cell1:geneLigand> <cell2:genereceptor>  <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n...")
         ("fMETAPATHWAY", po::value<std::string>()->required(), "metapathway filename, for an example metapathway see in resources")
         ("fLogfoldPerCell", po::value<std::string>()->required(), "logfoldPerCell matrix filename, for an example see in data")
-        ("dirCellInteraction", po::value<std::string>(), "logfoldPerCell matrix filename, for an example see in data")
+        ("dirCellInteraction", po::value<std::string>(), "directory for the cell interactions, for an example see in data")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
         ("sameCellCommunication",po::bool_switch(&sameCellCommunication),"use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
     ;
@@ -67,10 +67,10 @@ int main(int argc, char** argv ) {
         std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
     }
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
-    auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename);
+    auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,ensembleGeneNames);
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
-        auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename);
+        auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
         //TODO insert edges to the correspondent cell metapathway
         
     }

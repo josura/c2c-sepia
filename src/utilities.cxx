@@ -231,14 +231,15 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     std::vector<std::vector<double>> ret;
     std::vector<std::string> cellNames;
     std::vector<std::string> geneNames;
+    std::vector<std::string> discardedGenes;
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
     if(file_exists(filename)){
         ifstream myfile (filename);
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> splittedHeader = splitString(line, "\t");
-            for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
+            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector
+            for (int i = 0; i < SizeToInt( splittedHeader.size()); i++) {
                 cellNames.push_back(splittedHeader[i]);
                 ret.push_back(std::vector<double>());
             }
@@ -250,7 +251,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                         geneNames.push_back(entries[0]);
                         for(int i = 1; i < SizeToInt(entries.size());i++){
                             ret[i-1].push_back(std::stod(entries[i]));
-                        }
+                        } //TODO control over the genes in the metapathway like its done below with the mapping, but without the mapping and by taking a vector maybe
                     }
                     else{
                         if (mapEnsembleToEntrez.contains(entries[0])) {
@@ -258,11 +259,19 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                             for(int i = 1; i < SizeToInt(entries.size());i++){
                                 ret[i-1].push_back(std::stod(entries[i]));
                             }
-                        } //else don't do nothing since the node is not in the graph
+                        } else{
+                            discardedGenes.push_back(entries[0]);
+                        }//else don't do nothing since the node is not in the graph
                     }
                 }
             }
             myfile.close();
+            std::cout << "[LOG] No node in the metapathway for genes: " << std::endl;
+            for(auto iter = discardedGenes.cbegin();iter!=discardedGenes.cend();iter++){
+                std::cout << "," << *iter;
+            }
+            std::cout << std::endl <<"[LOG] discarding logfold for the genes not in the metapathway" << std::endl;
+            
         }
     } else {
         throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists " + filename);
@@ -287,14 +296,14 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
             std::vector<std::string> entriesHeader = splitString(line, "\t");
             int indexCellStart=-1,indexCellEnd=-1,indexLigandStart=-1,indexReceptorEnd=-1,indexWeight=-1;
             for(uint i = 0; i < entriesHeader.size(); i++){
-                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startCell") != std::string::npos) {
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startcell") != std::string::npos) {
                     indexCellStart = i;
                 }
-                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endCell") != std::string::npos) {
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endcell") != std::string::npos) {
                     indexCellEnd = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneLigand") != std::string::npos) {
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneligand") != std::string::npos) {
                     indexLigandStart = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneReceptor") != std::string::npos) {
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("genereceptor") != std::string::npos) {
                     indexReceptorEnd = i;
                 } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
                     indexWeight = i;
@@ -320,21 +329,23 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
                         std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
                         std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
                         if(ret.contains(startCell)){
-                            ret["startCell"].push_back(edgeStartCell);
+                            ret[startCell].push_back(edgeStartCell);
                         }else{
-                            ret["startCell"] = std::vector<std::tuple<std::string,std::string,double>>();
+                            ret[startCell] = std::vector<std::tuple<std::string,std::string,double>>();
+                            ret[startCell].push_back(edgeStartCell);
                         }
 
                         if(ret.contains(endCell)){
-                            ret["endCell"].push_back(edgeStartCell);
+                            ret[endCell].push_back(edgeEndCell);
                         }else{
-                            ret["endCell"] = std::vector<std::tuple<std::string,std::string,double>>();
+                            ret[endCell] = std::vector<std::tuple<std::string,std::string,double>>();
+                            ret[endCell].push_back(edgeEndCell);
                         }
                     } else{
                         if(mapEnsembleToEntrez.contains(entries[indexLigandStart]) && mapEnsembleToEntrez.contains(entries[indexReceptorEnd])){
                             geneLigand = mapEnsembleToEntrez[entries[indexLigandStart]];
                             geneReceptor = mapEnsembleToEntrez[entries[indexReceptorEnd]];
-                            
+
                             std::string startCell = entries[indexCellStart];
                             std::string endCell = entries[indexCellEnd];
                             double weight = std::stod( entries[indexWeight]);
@@ -343,15 +354,17 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
                             std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
                             std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
                             if(ret.contains(startCell)){
-                                ret["startCell"].push_back(edgeStartCell);
+                                ret[startCell].push_back(edgeStartCell);
                             }else{
-                                ret["startCell"] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[startCell] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[startCell].push_back(edgeStartCell);
                             }
 
                             if(ret.contains(endCell)){
-                                ret["endCell"].push_back(edgeStartCell);
+                                ret[endCell].push_back(edgeEndCell);
                             }else{
-                                ret["endCell"] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[endCell] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[endCell].push_back(edgeEndCell);
                             }
                         }
                     }
@@ -377,12 +390,12 @@ std::map<std::string, std::string> getEnsembletoEntrezidMap(){
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
-                if(entries.size()==3){
+                if(entries.size()==4){
                     std::string Id = entries[0];
                     std::string Name = entries[1];
                     std::string Type = entries[2];
                     std::string Aliases = entries[3];
-                    ret["Name"] = Id;
+                    ret[Name] = Id;
                     
                 }
             }
@@ -401,7 +414,7 @@ std::vector<std::string> get_all(std::string const & root, std::string const & e
     for (auto &p : std::filesystem::recursive_directory_iterator(root))
     {
         if (p.path().extension() == ext)
-            paths.push_back(p.path().stem().string());
+            paths.push_back(root + "/" + p.path().stem().string() + ext);
     }
     return paths;
 } 
