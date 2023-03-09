@@ -23,6 +23,15 @@ make
 ./build/c2c-sepia --fMETAPATHWAY [metapathway].tsv --fLogfoldPerCell [logfoldPerCell].tsv --dirCellInteraction [celltypesInteractionFolder]
 ```
 
+The options are the following:
+- **--help**  => print help section
+- **--fMETAPATHWAY** (obligatory for now, but it will be a default with the metapathway in the resource folder) => metapathway filename used in the algorithm
+- **--fLogfoldPerCell** (obligatory) => logFoldChange per cell matrix
+- **--dirCellInteraction** => logfoldPerCell matrix filename
+- **--ensembleGeneNames**" (no parameter) => use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources, if the metapathway is consistent with the data used for the log-fold changes and the interactions (the have the same gene names), this parameter should not be used. Only use in case of external data sources that have ensemble ids and the metapathway used is the one in the resources.
+- **--sameCellCommunication** (no parameter) => "use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
+    
+
 ## INPUT SCHEMA
 **metapathway.tsv**
 
