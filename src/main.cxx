@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <tuple>
+#include <vector>
 #include "Computation.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
@@ -68,9 +69,17 @@ int main(int argc, char** argv ) {
         std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
     }
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
+    std::vector<std::string> metapathwayNodes = namesAndEdges.first;
+    WeightedEdgeGraph *metapathway = new WeightedEdgeGraph(metapathwayNodes);
+
+
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,ensembleGeneNames);
     std::vector<std::string> cellTypes = std::get<0>(logFolds);
-    std::vector<std::string> geneslogfold = std::get<1>(logFolds);
+    std::vector<std::string> geneslogfoldNames = std::get<1>(logFolds);
+    std::vector<Computation> cellComputations;
+    for(int i = 0; i < cellTypes.size();i++){
+        //cellComputations.push_back(Computation(cellTypes[i],));  //TODO order the genes directly or use the names and set them one by one
+    }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
         auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
