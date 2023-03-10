@@ -62,6 +62,31 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     armaInitializedNotAugmented = true;
 }
 
+Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _metapathway, const std::vector<std::string>& metapathwayNames){
+    input=_input;
+    output=std::vector<double>();
+    localCellType = _thisCellType;
+    metapathway = _metapathway;
+    augmentedMetapathway = new WeightedEdgeGraph();
+    metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
+    //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
+    cellTypes = std::vector<std::string>();
+
+
+    std::vector<double> normalizationFactors(metapathway->getNumNodes(),0);
+    for (int i = 0; i < metapathway->getNumNodes(); i++) {
+        for(int j = 0; j < metapathway->getNumNodes();j++){
+            normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
+        }
+    }
+    WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    //TODO normalization by previous weight nodes for the matrix
+    IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
+    InputArma = Matrix<double>(input).asArmadilloColumnVector();
+    pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
+    armaInitializedNotAugmented = true;
+}
+
 void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
     if(augmentedMetapathway) {delete augmentedMetapathway;augmentedMetapathway = nullptr;}
     try {

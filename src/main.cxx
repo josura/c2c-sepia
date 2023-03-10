@@ -1,6 +1,7 @@
 #include <boost/program_options/value_semantic.hpp>
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <tuple>
 #include "Computation.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
@@ -68,6 +69,8 @@ int main(int argc, char** argv ) {
     }
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,ensembleGeneNames);
+    std::vector<std::string> cellTypes = std::get<0>(logFolds);
+    std::vector<std::string> geneslogfold = std::get<1>(logFolds);
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
         auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
