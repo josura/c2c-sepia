@@ -76,7 +76,7 @@ int main(int argc, char** argv ) {
     }
 
 
-    auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,ensembleGeneNames);
+    auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
     std::vector<std::string> cellTypes = std::get<0>(logFolds);
     std::vector<std::string> geneslogfoldNames = std::get<1>(logFolds);
     std::vector<Computation> cellComputations;
@@ -89,6 +89,10 @@ int main(int argc, char** argv ) {
         //TODO insert edges to the correspondent cell metapathway
         
     }
+
+
+    //cleaning memory
+    //delete metapathway
     
 
     
