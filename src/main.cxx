@@ -71,6 +71,9 @@ int main(int argc, char** argv ) {
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     std::vector<std::string> metapathwayNodes = namesAndEdges.first;
     WeightedEdgeGraph *metapathway = new WeightedEdgeGraph(metapathwayNodes);
+    for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
+        metapathway->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+    }
 
 
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,ensembleGeneNames);
