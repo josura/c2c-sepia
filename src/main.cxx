@@ -78,8 +78,8 @@ int main(int argc, char** argv ) {
 
 
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
-    std::vector<std::string> cellTypes = std::get<0>(logFolds);
-    std::vector<std::string> geneslogfoldNames = std::get<1>(logFolds);
+    std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
+    std::vector<std::string> cellTypes = std::get<1>(logFolds);
     std::vector<Computation> cellComputations;
     for(uint i = 0; i < cellTypes.size();i++){
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];

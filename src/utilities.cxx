@@ -260,11 +260,11 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                         } //TODO control over the genes in the metapathway like its done below with the mapping, but without the mapping and by taking a vector maybe
                     }
                     else{
-                        if (finalGenesToIndex.contains(entries[0]) && mapEnsembleToEntrez.contains(entries[0])) {
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex.contains(mapEnsembleToEntrez[entries[0]])) {
                             geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
                             for(int i = 1; i < SizeToInt(entries.size());i++){
                                 //ret[i-1].push_back(std::stod(entries[i]));
-                                ret[i-1][finalGenesToIndex[entries[0]]] = std::stod(entries[i]);
+                                ret[i-1][finalGenesToIndex[mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[i]);
                             }
                         } else{
                             discardedGenes.push_back(entries[0]);
