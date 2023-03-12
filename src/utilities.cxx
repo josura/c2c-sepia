@@ -7,6 +7,7 @@
 #include <iostream>
 #include <filesystem>
 #include <iterator>
+#include <map>
 #include <random>
 #include <stdexcept>
 #include <string>
@@ -232,6 +233,10 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     std::vector<std::string> cellNames;
     std::vector<std::string> geneNames;
     std::vector<std::string> discardedGenes;
+    std::map<std::string, int> finalGenesToIndex;
+    for(int i = 0 ; i < SizeToInt(finalNames.size()); i++){
+        finalGenesToIndex[finalNames[i]] = i;
+    }
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
     if(file_exists(filename)){
         ifstream myfile (filename);
@@ -241,7 +246,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector
             for (int i = 0; i < SizeToInt( splittedHeader.size()); i++) {
                 cellNames.push_back(splittedHeader[i]);
-                ret.push_back(std::vector<double>());
+                ret.push_back(std::vector<double>(finalNames.size(),0));
             }
             while ( getline (myfile,line) )
             {
@@ -250,14 +255,16 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                     if(!useEntrez){
                         geneNames.push_back(entries[0]);
                         for(int i = 1; i < SizeToInt(entries.size());i++){
-                            ret[i-1].push_back(std::stod(entries[i]));
+                            //ret[i-1].push_back(std::stod(entries[i]));
+                            ret[i-1][finalGenesToIndex[entries[0]]] = std::stod(entries[i]);
                         } //TODO control over the genes in the metapathway like its done below with the mapping, but without the mapping and by taking a vector maybe
                     }
                     else{
-                        if (mapEnsembleToEntrez.contains(entries[0])) {
+                        if (finalGenesToIndex.contains(entries[0]) && mapEnsembleToEntrez.contains(entries[0])) {
                             geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
                             for(int i = 1; i < SizeToInt(entries.size());i++){
-                                ret[i-1].push_back(std::stod(entries[i]));
+                                //ret[i-1].push_back(std::stod(entries[i]));
+                                ret[i-1][finalGenesToIndex[entries[0]]] = std::stod(entries[i]);
                             }
                         } else{
                             discardedGenes.push_back(entries[0]);
