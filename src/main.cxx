@@ -8,7 +8,8 @@
 #include "utilities.h"
 
 void printHelp(){
-    std::cout << "usage: ./c2c-sepia <metapathway>.tsv <logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\nlogfoldPerCell.tsv\n\tcell1\tcell2\t...\tcellN\ngene1\t<lfc_cell1:gene1>\t<lfc_cell2:gene1>\t...\t<lfc_cellN:gene1>\ngene1\t<lfc_cell1:gene2>\t<lfc_cell2:gene2>\t...\t<lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand\tendCell:geneReceptor\tweight\n<cell1:geneLigand>\t<cell2:genereceptor>\t <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n..."<<std::endl;
+    //TODO fix this help
+    std::cout << "usage: ./c2c-sepia --fMETAPATHWAY <metapathway>.tsv --fLogfoldPerCell <logfoldPerCell>.tsv [<subcelltypes>.txt] --dirCellInteraction <cellInteractionFolder>(containing .tsv files)]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\nlogfoldPerCell.tsv\n\tcell1\tcell2\t...\tcellN\ngene1\t<lfc_cell1:gene1>\t<lfc_cell2:gene1>\t...\t<lfc_cellN:gene1>\ngene1\t<lfc_cell1:gene2>\t<lfc_cell2:gene2>\t...\t<lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand\tendCell:geneReceptor\tweight\n<cell1:geneLigand>\t<cell2:genereceptor>\t <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n..."<<std::endl;
     std::cout << "LEGEND:\n <> := placeholder for the name of the file\n[] := optional\n{} := at least one"<<std::endl;
 }
 
@@ -83,6 +84,7 @@ int main(int argc, char** argv ) {
     for(uint i = 0; i < cellTypes.size();i++){
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
         cellComputations.push_back(Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes));  //TODO order the genes directly or use the names and set them one by one
+        //TODO augment the metapathway, I am scared since I do not have a lot of memory
     }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
