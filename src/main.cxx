@@ -85,6 +85,7 @@ int main(int argc, char** argv ) {
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
         cellComputations.push_back(Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes));  //TODO order the genes directly or use the names and set them one by one
         //TODO augment the metapathway, I am scared since I do not have a lot of memory
+        cellComputations[i].augmentMetapathway(cellTypes);
     }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
