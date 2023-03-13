@@ -260,3 +260,8 @@ void Computation::assign(const Computation & rhs){
     InputAugmentedArma = rhs.getInputAugmentedArma();
     pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
 }
+
+// optimization
+void Computation::freeAugmentedGraphs(){
+    delete augmentedMetapathway;
+}
