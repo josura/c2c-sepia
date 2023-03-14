@@ -169,6 +169,29 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
 }
 
+void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList,bool bothDirections){
+    //TODO control over the same length
+    for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
+        std::string node1Name = std::get<0>(*it); 
+        std::string node2Name = std::get<1>(*it);
+        double edgeWeight = std::get<2>(*it);
+        if (bothDirections) {
+            augmentedMetapathway->addEdge(node2Name,node1Name, edgeWeight);
+        }
+        augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+    }
+    std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
+    for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
+        for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
+            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+            normalizationFactors[i] += betaToAdd; 
+        }
+    }
+    WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    //TODO normalization by previous weight nodes for the matrix
+    pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
+}
+
 
 std::vector<double> Computation::computePerturbation(){
     arma::Col<double> outputArma =  pseudoInverseArma * InputArma;

@@ -388,7 +388,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
 std::map<std::string, std::string> getEnsembletoEntrezidMap(){
     string line;
     std::map<std::string,std::string> ret;
-    std::string mapFilename = "resources/graphs/metapathwayReactome/nodes.txt";
+    std::string mapFilename = "resources/graphs/metapathwayNew/nodes.tsv";
     if(file_exists(mapFilename)){
         ifstream myfile (mapFilename);
         if (myfile.is_open())

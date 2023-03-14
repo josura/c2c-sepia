@@ -91,7 +91,17 @@ int main(int argc, char** argv ) {
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
         auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
         //TODO insert edges to the correspondent cell metapathway
-        
+        for (uint i = 0; i < cellTypes.size();i++) {
+            if(cellInteractionsEdges.contains(cellTypes[i])){
+                cellComputations[i].addEdges(cellInteractionsEdges[cellTypes[i]]);
+                cellComputations[i].freeAugmentedGraphs();  //REMOVE
+            }
+        }
+    }
+
+    //freeing some data structures inside computation to consume less RAM
+    for(uint i = 0; i < cellComputations.size();i++ ){
+        cellComputations[i].freeAugmentedGraphs();
     }
 
 
