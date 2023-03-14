@@ -44,7 +44,7 @@ int main(int argc, char** argv ) {
     << vm["fMETAPATHWAY"].as<std::string>() << ".\n";
         filename = vm["fMETAPATHWAY"].as<std::string>();
     } else {
-        std::cout << "fMETAPATHWAY file was not set. Aborting\n";
+        std::cout << "[ERROR] fMETAPATHWAY file was not set. Aborting\n";
         return 1;
     }
     if (vm.count("fLogfoldPerCell")) {
@@ -52,11 +52,11 @@ int main(int argc, char** argv ) {
     << vm["fLogfoldPerCell"].as<std::string>() << ".\n";
         cellLogFoldMatrixFilename = vm["fLogfoldPerCell"].as<std::string>();
     } else {
-        std::cout << "fLogfoldPerCell file was not set. Aborting\n";
+        std::cout << "[ERROR] fLogfoldPerCell file was not set. Aborting\n";
         return 1;
     }
     if (vm.count("dirCellInteraction")) {
-        std::cout << "folder for the cell interactions was set to " 
+        std::cout << "[LOG] folder for the cell interactions was set to " 
     << vm["dirCellInteraction"].as<std::string>() << ".\n";
         celltypesInteractionFoldername = vm["dirCellInteraction"].as<std::string>();
     } else {
