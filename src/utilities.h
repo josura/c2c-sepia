@@ -114,7 +114,9 @@ std::vector<T> arrayToVector(T* array, int size){
     return std::vector<T>(array, array + size);
 }
 
-inline bool file_exists (const std::string& name);
+bool file_exists (const std::string& name);
+bool fileExistsPath(const std::string& filePath);
+bool folderExists(const std::string& folderPath);
 std::vector<std::string> splitString(std::string toSplit , std::string delimiter);
 
 std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToEdgesListByIndex(std::string filename);

@@ -115,11 +115,33 @@ bool definitelyLessThan(double a, double b, double epsilon)
     return (b - a) > ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
 }
 
-inline bool file_exists (const std::string& name) {
+bool file_exists (const std::string& name) {
   struct stat buffer;   
   return (stat (name.c_str(), &buffer) == 0); 
 }
 
+bool fileExistsPath(const std::string& filePath)
+{
+    struct stat info;
+    
+    // Call the stat function to check if the file exists
+    if (stat(filePath.c_str(), &info) != 0) {
+        // The stat function returned an error, so the file does not exist
+        return false;
+    }
+    
+    // Check if the path corresponds to a regular file
+    return (info.st_mode & S_IFREG) != 0;
+}
+
+bool folderExists(const std::string& folderPath)
+{
+    // Check if the folder exists
+    bool exists = std::filesystem::is_directory(folderPath);
+    
+    // Return the result
+    return exists;
+}
 
 
 std::vector<std::string> splitString(std::string toSplit , std::string delimiter){

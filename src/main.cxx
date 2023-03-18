@@ -43,6 +43,10 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] file for the metapathway was set to " 
     << vm["fMETAPATHWAY"].as<std::string>() << ".\n";
         filename = vm["fMETAPATHWAY"].as<std::string>();
+        if(!fileExistsPath(filename)){
+            std::cerr << "[ERROR] file for the metapathway do not exist: aborting"<<std::endl;
+            return 1;
+        }
     } else {
         std::cout << "[ERROR] fMETAPATHWAY file was not set. Aborting\n";
         return 1;
@@ -51,14 +55,22 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] file for the logfoldPerCell matrix was set to " 
     << vm["fLogfoldPerCell"].as<std::string>() << ".\n";
         cellLogFoldMatrixFilename = vm["fLogfoldPerCell"].as<std::string>();
+        if(!fileExistsPath(cellLogFoldMatrixFilename)){
+            std::cerr << "[ERROR] file for the logfoldPerCell does not exist: aborting"<<std::endl;
+            return 1;
+        }
     } else {
-        std::cout << "[ERROR] fLogfoldPerCell file was not set. Aborting\n";
+        std::cerr << "[ERROR] fLogfoldPerCell file was not set. Aborting\n";
         return 1;
     }
     if (vm.count("dirCellInteraction")) {
         std::cout << "[LOG] folder for the cell interactions was set to " 
     << vm["dirCellInteraction"].as<std::string>() << ".\n";
         celltypesInteractionFoldername = vm["dirCellInteraction"].as<std::string>();
+        if(!folderExists(cellLogFoldMatrixFilename)){
+            std::cerr << "[ERROR] folder for the cell interactions do not exist: aborting"<<std::endl;
+            return 1;
+        }
     } else {
         std::cout << "[LOG] dirCellInteraction folder was not set. computing without taking into account cell interactions\n";
         //TODO
