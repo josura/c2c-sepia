@@ -67,7 +67,7 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] folder for the cell interactions was set to " 
     << vm["dirCellInteraction"].as<std::string>() << ".\n";
         celltypesInteractionFoldername = vm["dirCellInteraction"].as<std::string>();
-        if(!folderExists(cellLogFoldMatrixFilename)){
+        if(!folderExists(celltypesInteractionFoldername)){
             std::cerr << "[ERROR] folder for the cell interactions do not exist: aborting"<<std::endl;
             return 1;
         }

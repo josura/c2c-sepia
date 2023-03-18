@@ -83,6 +83,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     //TODO normalization by previous weight nodes for the matrix
     IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
+    std::cout << "[LOG] computing pseudoinverse for metapathway cell : " + localCellType << std::endl;
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     armaInitializedNotAugmented = true;
 }
@@ -137,6 +138,7 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             inputAugmented.push_back(0.0);
         }
         InputAugmentedArma = arma::Col<double>(inputAugmented);
+        std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
         pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         armaInitializedAugmented = true;
     } catch (...) {
