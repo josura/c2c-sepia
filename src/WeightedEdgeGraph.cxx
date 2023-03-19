@@ -112,7 +112,9 @@ WeightedEdgeGraph::WeightedEdgeGraph(std::vector<std::string>& nodeNames,std::ve
 }
 
 WeightedEdgeGraph::~WeightedEdgeGraph(){
-    delete [] this->nodeValues;
+    if(nodeValues) {
+        delete [] this->nodeValues;
+    }
     
 }
 

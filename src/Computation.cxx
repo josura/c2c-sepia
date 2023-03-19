@@ -89,7 +89,10 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
 }
 
 void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
-    if(augmentedMetapathway) {delete augmentedMetapathway;augmentedMetapathway = nullptr;}
+    if(augmentedMetapathway) {
+        delete augmentedMetapathway;
+        augmentedMetapathway = nullptr;
+    }
     try {
         // 
         // std::vector<std::string> tmpcelltypes = _celltypes;
