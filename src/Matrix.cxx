@@ -94,7 +94,10 @@ template Matrix<double>::Matrix(const std::vector<double>& vec,uint nrows, uint 
 template<typename T>
 Matrix<T>::~Matrix()
 {
-    delete[] _matrix;
+    if(_matrix) {
+        delete[] _matrix;
+        _matrix=nullptr;
+    }
 }
 
 template Matrix<double>::~Matrix();

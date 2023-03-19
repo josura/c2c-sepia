@@ -92,12 +92,13 @@ int main(int argc, char** argv ) {
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
     std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
     std::vector<std::string> cellTypes = std::get<1>(logFolds);
-    std::vector<Computation> cellComputations;
+    Computation** cellComputations = new Computation*[cellTypes.size()];
     for(uint i = 0; i < cellTypes.size();i++){
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
-        cellComputations.push_back(Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes));  //TODO order the genes directly or use the names and set them one by one
+        Computation* tmpCompPointer = new Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes);  //TODO order the genes directly or use the names and set them one by one 
+        cellComputations[i] = tmpCompPointer;
         //TODO augment the metapathway, I am scared since I do not have a lot of memory
-        cellComputations[i].augmentMetapathway(cellTypes);
+        cellComputations[i]->augmentMetapathway(cellTypes);
     }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
@@ -105,15 +106,15 @@ int main(int argc, char** argv ) {
         //TODO insert edges to the correspondent cell metapathway
         for (uint i = 0; i < cellTypes.size();i++) {
             if(cellInteractionsEdges.contains(cellTypes[i])){
-                cellComputations[i].addEdges(cellInteractionsEdges[cellTypes[i]]);
-                cellComputations[i].freeAugmentedGraphs();  //REMOVE
+                cellComputations[i]->addEdges(cellInteractionsEdges[cellTypes[i]]);
+                cellComputations[i]->freeAugmentedGraphs();  //REMOVE
             }
         }
     }
 
     //freeing some data structures inside computation to consume less RAM
-    for(uint i = 0; i < cellComputations.size();i++ ){
-        cellComputations[i].freeAugmentedGraphs();
+    for(uint i = 0; i < cellTypes.size();i++ ){
+        cellComputations[i]->freeAugmentedGraphs();
     }
 
 
