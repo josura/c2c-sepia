@@ -16,11 +16,9 @@ class Computation{
         std::string localCellType;
         bool armaInitializedNotAugmented = false, armaInitializedAugmented = false;
         arma::Mat<double> WtransArma;
-        arma::Mat<double> IdentityArma;
         arma::Col<double> InputArma;
         arma::Mat<double> pseudoInverseArma;
         arma::Mat<double> WtransAugmentedArma;
-        arma::Mat<double> IdentityAugmentedArma;
         arma::Col<double> InputAugmentedArma;
         arma::Mat<double> pseudoInverseAugmentedArma;
     public:
@@ -61,6 +59,7 @@ class Computation{
         void addEdges(const std::vector<std::tuple<int,int,double>>&  , bool bothDirections = false);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
+        std::pair<std::string,double> getMapVirtualOutputsToCellInputs(); //TODO
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 
         // get sets
@@ -76,11 +75,9 @@ class Computation{
         bool isInitializedArmaNotAugmented()const{return armaInitializedNotAugmented;}
         bool isInitializedArmaAugmented()const{return armaInitializedAugmented;}
         arma::Mat<double> getWtransArma()const{return WtransArma;}
-        arma::Mat<double> getIdentityArma()const{return IdentityArma;}
         arma::Col<double> getInputArma()const{return InputArma;}
         arma::Mat<double> getPseudoInverseArma()const{return pseudoInverseArma;}
         arma::Mat<double> getWtransAugmentedArma()const{return WtransAugmentedArma;}
-        arma::Mat<double> getIdentityAugmentedArma()const{return IdentityAugmentedArma;}
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
 

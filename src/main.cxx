@@ -1,6 +1,7 @@
 #include <boost/program_options/value_semantic.hpp>
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <map>
 #include <tuple>
 #include <vector>
 #include "Computation.h"
@@ -113,9 +114,21 @@ int main(int argc, char** argv ) {
     }
 
     //freeing some data structures inside computation to consume less RAM
-    for(uint i = 0; i < cellTypes.size();i++ ){
-        cellComputations[i]->freeAugmentedGraphs();
+    // for(uint i = 0; i < cellTypes.size();i++ ){
+    //     cellComputations[i]->freeAugmentedGraphs();
+    // }
+
+    //std::vector<std::map<std::string, double>> queuesCellTypes = std::vector<std::map<std::string, double>>(std::map<std::string, double>(),cellTypes.size()); 
+
+    uint iteration = 0;
+    const uint maxIterations = 1000;
+    while(iteration++ < maxIterations){
+        for (uint i = 0; i < cellTypes.size(); i++) {
+            //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
+        }
+        
     }
+    
 
 
     //cleaning memory

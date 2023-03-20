@@ -160,12 +160,9 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     EXPECT_EQ(augMeta->getNumEdges(),36);
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
     auto inputArma = computationTest.getInputAugmentedArma();
-    auto identityArma = computationTest.getIdentityAugmentedArma();
     auto wtransArma = computationTest.getWtransAugmentedArma();
     EXPECT_EQ(inputArma.n_cols, 1);
     EXPECT_EQ(inputArma.n_rows, 12);
-    EXPECT_EQ(identityArma.n_rows, 12);
-    EXPECT_EQ(identityArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_rows, 12);
     //edges before

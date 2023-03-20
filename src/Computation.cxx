@@ -56,7 +56,8 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     }
     WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
-    IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
+    
+    arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     armaInitializedNotAugmented = true;
@@ -81,7 +82,8 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     }
     WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
-    IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
+    
+    arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     std::cout << "[LOG] computing pseudoinverse for metapathway cell : " + localCellType << std::endl;
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
@@ -134,7 +136,8 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         }
         WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
-        IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+        
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
         inputAugmented = input;
         for(uint i = 0; i < tmpcelltypes.size()*2; i++){
             inputAugmented.push_back(0.0);
@@ -170,6 +173,7 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
     }
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
+    arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
 }
 
@@ -193,6 +197,7 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
     }
     WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
+    arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
 }
 
@@ -207,6 +212,12 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
+}
+
+std::pair<std::string,double> getVirtualOutputsToCellInputs(){
+    std::pair<std::string,double> tmp;
+
+    return tmp;
 }
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
@@ -244,11 +255,9 @@ Computation& Computation::operator=( const Computation& rhs){
     armaInitializedNotAugmented = rhs.isInitializedArmaNotAugmented();
     armaInitializedAugmented = rhs.isInitializedArmaAugmented();
     WtransArma = rhs.getWtransArma();
-    IdentityArma = rhs.getIdentityArma();
     InputArma = rhs.getInputArma();
     pseudoInverseArma = rhs.getPseudoInverseArma();
     WtransAugmentedArma = rhs.getWtransAugmentedArma();
-    IdentityAugmentedArma = rhs.getIdentityAugmentedArma();
     InputAugmentedArma = rhs.getInputAugmentedArma();
     pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
     return *this;
@@ -279,11 +288,9 @@ void Computation::assign(const Computation & rhs){
     armaInitializedNotAugmented = rhs.isInitializedArmaNotAugmented();
     armaInitializedAugmented = rhs.isInitializedArmaAugmented();
     WtransArma = rhs.getWtransArma();
-    IdentityArma = rhs.getIdentityArma();
     InputArma = rhs.getInputArma();
     pseudoInverseArma = rhs.getPseudoInverseArma();
     WtransAugmentedArma = rhs.getWtransAugmentedArma();
-    IdentityAugmentedArma = rhs.getIdentityAugmentedArma();
     InputAugmentedArma = rhs.getInputAugmentedArma();
     pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
 }
