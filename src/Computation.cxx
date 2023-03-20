@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -225,6 +226,24 @@ double Computation::getVirtualOutputForCell(std::string celltype){
     int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
     if(index > 0) return outputAugmented[index];
     else return 0;
+}
+
+void Computation::setInputVinForCell(std::string celltype, double value){
+    int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+    if(index > 0) {
+        inputAugmented[index]=value;
+        InputAugmentedArma[index]=value;
+    }
+    else throw std::invalid_argument("Computation::setInputVinForCell: invalid set for virtual input: celltype:" + celltype + "does not exist");
+
+}
+void Computation::setInputVoutForCell(std::string celltype, double value){
+    int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+    if(index > 0) {
+        inputAugmented[index]=value;
+        InputAugmentedArma[index]=value;
+    }
+    else throw std::invalid_argument("Computation::setInputVinForCell: invalid set for virtual input: celltype:" + celltype + "does not exist");
 }
 
 

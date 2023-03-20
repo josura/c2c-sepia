@@ -79,6 +79,8 @@ class Computation{
 
         double getVirtualInputForCell(std::string celltype);
         double getVirtualOutputForCell(std::string celltype);
+        void setInputVinForCell(std::string celltype, double value);
+        void setInputVoutForCell(std::string celltype, double value);
 
         //optimization
         void freeAugmentedGraphs();
