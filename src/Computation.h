@@ -77,6 +77,9 @@ class Computation{
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
 
+        double getVirtualInputForCell(std::string celltype);
+        double getVirtualOutputForCell(std::string celltype);
+
         //optimization
         void freeAugmentedGraphs();
 

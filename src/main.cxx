@@ -118,7 +118,8 @@ int main(int argc, char** argv ) {
     //     cellComputations[i]->freeAugmentedGraphs();
     // }
 
-    //std::vector<std::map<std::string, double>> queuesCellTypes = std::vector<std::map<std::string, double>>(std::map<std::string, double>(),cellTypes.size()); 
+    // EndCelltype -> (sourceCellType -> value)
+    std::vector<std::map<std::string, double>> queuesCellTypes = std::vector<std::map<std::string, double>>(cellTypes.size(),std::map<std::string, double>()); 
 
     uint iteration = 0;
     const uint maxIterations = 1000;

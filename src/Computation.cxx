@@ -214,6 +214,16 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     return outputAugmented;
 }
 
+
+double getVirtualInputForCell(std::string celltype){
+
+    return 0;
+}
+double getVirtualOutputForCell(std::string celltype){
+
+    return 0;
+}
+
 std::pair<std::string,double> getVirtualOutputsToCellInputs(){
     std::pair<std::string,double> tmp;
 
