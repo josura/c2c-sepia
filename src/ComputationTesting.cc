@@ -160,7 +160,15 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     EXPECT_EQ(augMeta->getNumEdges(),36);
     EXPECT_EQ(computationTest.getCellTypes().size(),3);
     auto inputArma = computationTest.getInputAugmentedArma();
-    auto wtransArma = computationTest.getWtransAugmentedArma();
+
+    std::vector<double> normalizationFactors(computationTest.getAugmentedMetapathway()->getNumNodes(),0);
+        for (int i = 0; i < computationTest.getAugmentedMetapathway()->getNumNodes(); i++) {
+            for(int j = 0; j < computationTest.getAugmentedMetapathway()->getNumNodes();j++){
+                double betaToAdd = std::abs(computationTest.getAugmentedMetapathway()->getEdgeWeight(j,i));
+                normalizationFactors[i] += betaToAdd; 
+            }
+        }
+    auto wtransArma = computationTest.getAugmentedMetapathway()->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     EXPECT_EQ(inputArma.n_cols, 1);
     EXPECT_EQ(inputArma.n_rows, 12);
     EXPECT_EQ(wtransArma.n_cols, 12);

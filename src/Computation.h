@@ -15,10 +15,8 @@ class Computation{
         std::vector<std::string> cellTypes;
         std::string localCellType;
         bool armaInitializedNotAugmented = false, armaInitializedAugmented = false;
-        arma::Mat<double> WtransArma;
         arma::Col<double> InputArma;
         arma::Mat<double> pseudoInverseArma;
-        arma::Mat<double> WtransAugmentedArma;
         arma::Col<double> InputAugmentedArma;
         arma::Mat<double> pseudoInverseAugmentedArma;
     public:
@@ -74,10 +72,8 @@ class Computation{
         std::string getLocalCellType()const{return localCellType;}
         bool isInitializedArmaNotAugmented()const{return armaInitializedNotAugmented;}
         bool isInitializedArmaAugmented()const{return armaInitializedAugmented;}
-        arma::Mat<double> getWtransArma()const{return WtransArma;}
         arma::Col<double> getInputArma()const{return InputArma;}
         arma::Mat<double> getPseudoInverseArma()const{return pseudoInverseArma;}
-        arma::Mat<double> getWtransAugmentedArma()const{return WtransAugmentedArma;}
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
 

@@ -54,7 +54,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
             normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
         }
     }
-    WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
@@ -80,7 +80,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
             normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
         }
     }
-    WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
@@ -134,7 +134,7 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
                 normalizationFactors[i] += betaToAdd; 
             }
         }
-        WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         
         arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
@@ -171,7 +171,7 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
             normalizationFactors[i] += betaToAdd; 
         }
     }
-    WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
@@ -195,7 +195,7 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
             normalizationFactors[i] += betaToAdd; 
         }
     }
-    WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
@@ -254,10 +254,8 @@ Computation& Computation::operator=( const Computation& rhs){
     localCellType = rhs.getLocalCellType();
     armaInitializedNotAugmented = rhs.isInitializedArmaNotAugmented();
     armaInitializedAugmented = rhs.isInitializedArmaAugmented();
-    WtransArma = rhs.getWtransArma();
     InputArma = rhs.getInputArma();
     pseudoInverseArma = rhs.getPseudoInverseArma();
-    WtransAugmentedArma = rhs.getWtransAugmentedArma();
     InputAugmentedArma = rhs.getInputAugmentedArma();
     pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
     return *this;
@@ -287,10 +285,8 @@ void Computation::assign(const Computation & rhs){
     localCellType = rhs.getLocalCellType();
     armaInitializedNotAugmented = rhs.isInitializedArmaNotAugmented();
     armaInitializedAugmented = rhs.isInitializedArmaAugmented();
-    WtransArma = rhs.getWtransArma();
     InputArma = rhs.getInputArma();
     pseudoInverseArma = rhs.getPseudoInverseArma();
-    WtransAugmentedArma = rhs.getWtransAugmentedArma();
     InputAugmentedArma = rhs.getInputAugmentedArma();
     pseudoInverseAugmentedArma = rhs.getPseudoInverseAugmentedArma();
 }
