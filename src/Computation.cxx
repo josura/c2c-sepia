@@ -215,20 +215,18 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
 }
 
 
-double getVirtualInputForCell(std::string celltype){
+double Computation::getVirtualInputForCell(std::string celltype){
+    int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+    if(index > 0) return outputAugmented[index];
+    else return 0;
 
-    return 0;
 }
-double getVirtualOutputForCell(std::string celltype){
-
-    return 0;
+double Computation::getVirtualOutputForCell(std::string celltype){
+    int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+    if(index > 0) return outputAugmented[index];
+    else return 0;
 }
 
-std::pair<std::string,double> getVirtualOutputsToCellInputs(){
-    std::pair<std::string,double> tmp;
-
-    return tmp;
-}
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {
