@@ -124,8 +124,22 @@ int main(int argc, char** argv ) {
     uint iteration = 0;
     const uint maxIterations = 1000;
     while(iteration++ < maxIterations){
+        //computation of perturbation
+        for(uint i = 0; i < cellTypes.size(); i++){
+
+        }
+        //update input
+        
+        //update input with virtual node values update
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
+            for(uint j = 0; j < cellTypes.size(); j++){
+                if(i==j){
+                    if(sameCellCommunication) cellComputations[i]->setInputVinForCell(cellTypes[j], cellComputations[j]->getVirtualOutputForCell(cellTypes[i]));
+                } else {
+                    cellComputations[i]->setInputVinForCell(cellTypes[j], cellComputations[j]->getVirtualOutputForCell(cellTypes[i]));
+                }
+            }
         }
         
     }
