@@ -119,17 +119,18 @@ int main(int argc, char** argv ) {
     // }
 
     // EndCelltype -> (sourceCellType -> value)
-    std::vector<std::map<std::string, double>> queuesCellTypes = std::vector<std::map<std::string, double>>(cellTypes.size(),std::map<std::string, double>()); 
 
     uint iteration = 0;
     const uint maxIterations = 1000;
     while(iteration++ < maxIterations){
         //computation of perturbation
         for(uint i = 0; i < cellTypes.size(); i++){
-
+            cellComputations[i]->computeAugmentedPerturbation();
         }
         //update input
-        
+        for(uint i = 0; i < cellTypes.size(); i++){
+            cellComputations[i]->updateInput(std::vector<double>(),true);
+        }
         //update input with virtual node values update
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
