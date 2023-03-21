@@ -378,8 +378,8 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
                             std::string startCell = entries[indexCellStart];
                             std::string endCell = entries[indexCellEnd];
                             double weight = std::stod( entries[indexWeight]);
-                            std::string virtualInputEndCell = "v-in:" + endCell;
-                            std::string virtualOutputStartCell = "v-out:" + startCell;
+                            std::string virtualInputEndCell = "v-in:" + startCell;
+                            std::string virtualOutputStartCell = "v-out:" + endCell;
                             std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
                             std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
                             if(ret.contains(startCell)){

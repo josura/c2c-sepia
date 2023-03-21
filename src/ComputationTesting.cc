@@ -202,7 +202,8 @@ TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     Computation computationTest;
     computationTest.assign(*c1);
     
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues);
+    computationTest.augmentMetapathway(cellTypes);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     EXPECT_EQ(computationTest.getInput().size(),6);
     EXPECT_EQ(computationTest.getOutput().size(),0);
@@ -258,7 +259,8 @@ TEST_F(ComputationTesting, testComputePerturbation){
 TEST_F(ComputationTesting, testComputeAugmentedPerturbation){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues);
+    computationTest.augmentMetapathway(cellTypes);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computeAugmentedPerturbation();
     EXPECT_EQ( perturbation.size(), 12);

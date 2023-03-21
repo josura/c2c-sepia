@@ -86,9 +86,9 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
-    std::cout << "[LOG] computing pseudoinverse for metapathway cell : " + localCellType << std::endl;
-    pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
-    armaInitializedNotAugmented = true;
+    // std::cout << "[LOG] computing pseudoinverse for metapathway cell : " + localCellType << std::endl;
+    // pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
+    // armaInitializedNotAugmented = true;
 }
 
 void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
@@ -153,6 +153,68 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
     }
 }
 
+void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
+    if(augmentedMetapathway) {
+        delete augmentedMetapathway;
+    }
+    try {
+        // 
+        // std::vector<std::string> tmpcelltypes = _celltypes;
+        // auto cellFind = std::find(tmpcelltypes.begin(), tmpcelltypes.end(), localCellType); 
+        // if (cellFind != tmpcelltypes.end() && !includeSelfVirtual){
+        //     tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
+        //     /// this function erases the first element of newEdgesList
+        // }
+        std::vector<std::string> tmpcelltypes;
+        if (!includeSelfVirtual){
+            for (uint i = 0; i < _celltypes.size(); i++) {
+                if(_celltypes[i] != localCellType) tmpcelltypes.push_back(_celltypes[i]);
+            }
+            //tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
+            /// this function erases the first element of newEdgesList also
+        } else {
+            tmpcelltypes = _celltypes;
+        }
+        cellTypes = tmpcelltypes;
+        auto virtualNodes = tmpcelltypes;
+        for (int i = 0; i < SizeToInt( tmpcelltypes.size()); i++) {
+            std::string cellTyp = virtualNodes[i];
+            virtualNodes[i] = "v-in:" + cellTyp;
+            virtualNodes.push_back("v-out:" + cellTyp);
+        }
+        augmentedMetapathway = metapathway->addNodesAndCopyNew(virtualNodes);
+        for(uint it = 0; it < newEdgesList.size(); it++){
+            std::string node1Name = newEdgesList[it].first; 
+            std::string node2Name = newEdgesList[it].second;
+            double edgeWeight = newEdgesValue[it];
+
+            augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+        }
+        std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
+        for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
+            for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
+                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+                normalizationFactors[i] += betaToAdd; 
+            }
+        }
+        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+        //TODO normalization by previous weight nodes for the matrix
+        
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+        inputAugmented = input;
+        for(uint i = 0; i < tmpcelltypes.size()*2; i++){
+            inputAugmented.push_back(0.0);
+        }
+        InputAugmentedArma = arma::Col<double>(inputAugmented);
+        // std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        // pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
+        // armaInitializedAugmented = true;
+    } catch (...) {
+        std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
+        return;
+    }
+}
+
 void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>& newEdgesList, const std::vector<double>& newEdgesValues,bool bothDirections){
     //TODO control over the same length
     int itVal = 0;
@@ -175,7 +237,9 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
     arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+    std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
+    armaInitializedAugmented = true;
 }
 
 void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList,bool bothDirections){
@@ -199,7 +263,9 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
     arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+    std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
     pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
+    armaInitializedAugmented = true;
 }
 
 

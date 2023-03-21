@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <map>
+#include <string>
 #include <tuple>
 #include <vector>
 #include "Computation.h"
@@ -98,8 +99,8 @@ int main(int argc, char** argv ) {
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
         Computation* tmpCompPointer = new Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes);  //TODO order the genes directly or use the names and set them one by one 
         cellComputations[i] = tmpCompPointer;
-        //TODO augment the metapathway, I am scared since I do not have a lot of memory
-        cellComputations[i]->augmentMetapathway(cellTypes);
+        //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+        cellComputations[i]->augmentMetapathwayNoComputeInverse(cellTypes);
     }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
@@ -125,15 +126,18 @@ int main(int argc, char** argv ) {
     while(iteration++ < maxIterations){
         //computation of perturbation
         for(uint i = 0; i < cellTypes.size(); i++){
+            std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(i) + ") for cell (" + cellTypes[i]<<std::endl; 
             cellComputations[i]->computeAugmentedPerturbation();
         }
         //update input
         for(uint i = 0; i < cellTypes.size(); i++){
+            std::cout << "[LOG] update input for iteration ("+ std::to_string(i) + ") for cell (" + cellTypes[i]<<std::endl;
             cellComputations[i]->updateInput(std::vector<double>(),true);
         }
         //update input with virtual node values update
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
+            //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent cells to finish
             for(uint j = 0; j < cellTypes.size(); j++){
                 if(i==j){
                     if(sameCellCommunication) cellComputations[i]->setInputVinForCell(cellTypes[j], cellComputations[j]->getVirtualOutputForCell(cellTypes[i]));

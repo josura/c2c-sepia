@@ -51,6 +51,7 @@ class Computation{
         @param 
         */
         void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
+        void augmentMetapathwayNoComputeInverse(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
         void addEdges(const std::vector<std::pair<std::string,std::string>>& , const std::vector<double>& , bool bothDirections = false);
         void addEdges(const std::vector<std::tuple<std::string,std::string,double>>&  , bool bothDirections = false);
         void addEdges(const std::vector<std::pair<int,int>>& , const std::vector<double>& , bool bothDirections = false);
