@@ -126,12 +126,12 @@ int main(int argc, char** argv ) {
     while(iteration++ < maxIterations){
         //computation of perturbation
         for(uint i = 0; i < cellTypes.size(); i++){
-            std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(i) + ") for cell (" + cellTypes[i]<<std::endl; 
+            std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iteration) + ") for cell (" + cellTypes[i]<<std::endl; 
             cellComputations[i]->computeAugmentedPerturbation();
         }
         //update input
         for(uint i = 0; i < cellTypes.size(); i++){
-            std::cout << "[LOG] update input for iteration ("+ std::to_string(i) + ") for cell (" + cellTypes[i]<<std::endl;
+            std::cout << "[LOG] update input for iteration ("+ std::to_string(iteration) + ") for cell (" + cellTypes[i]<<std::endl;
             cellComputations[i]->updateInput(std::vector<double>(),true);
         }
         //update input with virtual node values update
