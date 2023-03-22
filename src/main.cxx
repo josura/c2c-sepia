@@ -34,7 +34,7 @@ int main(int argc, char** argv ) {
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-    std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename;
+    std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename,outputFoldername;
 
     if (vm.count("help")) {
         //printHelp();
@@ -76,6 +76,18 @@ int main(int argc, char** argv ) {
         }
     } else {
         std::cout << "[LOG] dirCellInteraction folder was not set. computing without taking into account cell interactions\n";
+        //TODO
+    }
+    if (vm.count("output")) {
+        std::cout << "[LOG] output folder  was set to " 
+    << vm["output"].as<std::string>() << ".\n";
+        outputFoldername = vm["dirCellInteraction"].as<std::string>();
+        if(!folderExists(outputFoldername)){
+            std::cerr << "[ERROR] folder for the output do not exist: aborting"<<std::endl;
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] output folder was not set. aborting\n";
         //TODO
     }
     //end program options section
@@ -127,8 +139,10 @@ int main(int argc, char** argv ) {
     while(iteration++ < maxIterations){
         //computation of perturbation
         for(uint i = 0; i < cellTypes.size(); i++){
+            std::vector<std::string> nodeNames = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();
             std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iteration) + ") for cell (" + cellTypes[i]<<std::endl; 
-            cellComputations[i]->computeAugmentedPerturbation();
+            std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
+            saveNodeValues(outputFoldername, iteration, cellTypes[i], outputValues, nodeNames);
         }
         //update input
         for(uint i = 0; i < cellTypes.size(); i++){
@@ -136,6 +150,7 @@ int main(int argc, char** argv ) {
             cellComputations[i]->updateInput(std::vector<double>(),true);
         }
         //update input with virtual node values update
+
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
             //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent cells to finish

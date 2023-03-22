@@ -448,6 +448,19 @@ std::vector<std::string> get_all(std::string const & root, std::string const & e
     return paths;
 } 
 
-void saveNodeValues(std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez){
+void saveNodeValues(std::string folderName, int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez){
+    std::string outputFilename = folderName + "/" + cellName + std::to_string(iteration);
+    std::ofstream outfile(outputFilename);
 
+    if (!outfile.is_open()) {
+        std::cout << "Unable to open file " << outputFilename << std::endl;
+        return;
+    }
+
+    // for (const auto& row : data) {
+    //     for (const auto& item : row) {
+    //         outfile << item << ",";
+    //     }
+    //     outfile << "\n";
+    // }
 }

@@ -132,4 +132,4 @@ std::map<std::string, std::string>getEnsembletoEntrezidMap();
  */
 std::vector<std::string> get_all(std::string const & root, std::string const & ext);
 
-void saveNodeValues(std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false);
+void saveNodeValues(std::string folderName,int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false);

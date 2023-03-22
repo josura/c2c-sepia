@@ -52,6 +52,7 @@ class WeightedEdgeGraph{
                 return adjMatrix.getValue(nodeToIndex.at(node1),nodeToIndex.at(node2));
             else throw std::out_of_range("WeightedEdgeGraph::getEdgeWeight: one of the nodes is out of range(string)");
         }
+
         
         //return -1 if the name is not found, so be careful
         int getIndexFromName(std::string name)const {
@@ -123,6 +124,7 @@ class WeightedEdgeGraph{
 
         int getNumNodes()const ;
         int getNumEdges()const ;
+        std::vector<std::string> getNodeNames()const{ return nameVector;}
         int degreeOfNode(int node)const;
 
 
