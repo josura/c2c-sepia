@@ -109,7 +109,7 @@ int main(int argc, char** argv ) {
         for (uint i = 0; i < cellTypes.size();i++) {
             if(cellInteractionsEdges.contains(cellTypes[i])){
                 cellComputations[i]->addEdges(cellInteractionsEdges[cellTypes[i]]);
-                cellComputations[i]->freeAugmentedGraphs();  //REMOVE
+                //cellComputations[i]->freeAugmentedGraphs();  //REMOVE
             }
         }
     }

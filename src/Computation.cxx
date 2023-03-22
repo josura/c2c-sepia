@@ -295,6 +295,7 @@ double Computation::getVirtualOutputForCell(std::string celltype){
 }
 
 void Computation::setInputVinForCell(std::string celltype, double value){
+    //TODO if the augmented metapathway is deleted, switch to a direct map saved before deleting the metapathway
     int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
     if(index > 0) {
         inputAugmented[index]=value;
