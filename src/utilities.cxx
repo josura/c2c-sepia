@@ -447,3 +447,7 @@ std::vector<std::string> get_all(std::string const & root, std::string const & e
     }
     return paths;
 } 
+
+void saveNodeValues(std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez){
+
+}

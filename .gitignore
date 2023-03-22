@@ -41,3 +41,6 @@ CMakeFiles/
 #vscode
 .vscode
 .cache
+
+#folders
+outputs/

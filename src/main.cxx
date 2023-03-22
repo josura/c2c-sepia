@@ -28,6 +28,7 @@ int main(int argc, char** argv ) {
         ("dirCellInteraction", po::value<std::string>(), "directory for the cell interactions, for an example see in data")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
         ("sameCellCommunication",po::bool_switch(&sameCellCommunication),"use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
+        ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
     ;
 
     po::variables_map vm;
