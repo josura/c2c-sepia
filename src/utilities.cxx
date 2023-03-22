@@ -436,6 +436,36 @@ std::map<std::string, std::string> getEnsembletoEntrezidMap(){
     return ret;
 }
 
+std::map<std::string, std::vector<std::string>> getFullNodesDescription(){
+    string line;
+    // schema is #Id	Name	Type	Aliases
+    std::map<std::string,std::vector<std::string>> ret;
+    std::string mapFilename = "resources/graphs/metapathwayNew/nodes.tsv";
+    if(file_exists(mapFilename)){
+        ifstream myfile (mapFilename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitString(line, "\t");
+                if(entries.size()==4){
+                    std::string Id = entries[0];
+                    std::string Name = entries[1];
+                    std::string Type = entries[2];
+                    std::string Aliases = entries[3];
+                    ret[Id] = std::vector<std::string>{Id,Name,Type,Aliases};
+                    
+                }
+            }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::getFullNodesDescription: file does not exists " + mapFilename);
+    }
+    return ret;
+}
+
 
 std::vector<std::string> get_all(std::string const & root, std::string const & ext)
 {
@@ -449,12 +479,42 @@ std::vector<std::string> get_all(std::string const & root, std::string const & e
 } 
 
 void saveNodeValues(std::string folderName, int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez){
-    std::string outputFilename = folderName + "/" + cellName + std::to_string(iteration);
-    std::ofstream outfile(outputFilename);
+    std::string outputFilename = folderName + "/" + cellName + "--"+std::to_string(iteration);
+    std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
     if (!outfile.is_open()) {
         std::cout << "Unable to open file " << outputFilename << std::endl;
         return;
+    }
+    auto mapToEverything = getFullNodesDescription();
+    //auto mapToEnsemble = getEnsembletoEntrezidMap();
+    //header
+    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue";
+    //body
+    if(useEntrez){
+        for(uint i = 0; i < nodeValues.size(); i++){
+            if(mapToEverything.contains(nodeNames[i]))
+                outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<cellName[i]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
+            else {
+                auto splittedVirtual = splitString(nodeNames[i], ":");
+                if(splittedVirtual[0]=="v-in" || splittedVirtual[0]=="v-out"){
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<std::to_string(nodeValues[i]);
+                }
+            }
+            outfile << std::endl;
+        }
+    }else{
+        for(uint i = 0; i < nodeValues.size(); i++){
+            if(mapToEverything.contains(nodeNames[i]))
+                outfile<<mapToEverything.at(nodeNames[i])[0]<<cellName[i]<<mapToEverything.at(nodeNames[i])[2]<<mapToEverything.at(nodeNames[i])[3]<< std::to_string(nodeValues[i]);
+            else {
+                auto splittedVirtual = splitString(nodeNames[i], ":");
+                if(splittedVirtual[0]=="v-in" || splittedVirtual[0]=="v-out"){
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual\t"<<splittedVirtual[1]<<std::to_string(nodeValues[i]);
+                }
+            }
+            outfile << std::endl;
+        }
     }
 
     // for (const auto& row : data) {
@@ -463,4 +523,6 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     //     }
     //     outfile << "\n";
     // }
+
+    outfile.close();
 }

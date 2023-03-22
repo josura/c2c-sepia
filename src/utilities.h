@@ -125,7 +125,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 
 std::map<std::string, std::string>getEnsembletoEntrezidMap();
-
+std::map<std::string, std::vector<std::string>> getFullNodesDescription();
 /**
  * \brief   Return the filenames of all files that have the specified extension
  *          in the specified directory and all subdirectories.

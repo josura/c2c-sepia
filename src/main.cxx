@@ -81,7 +81,7 @@ int main(int argc, char** argv ) {
     if (vm.count("output")) {
         std::cout << "[LOG] output folder  was set to " 
     << vm["output"].as<std::string>() << ".\n";
-        outputFoldername = vm["dirCellInteraction"].as<std::string>();
+        outputFoldername = vm["output"].as<std::string>();
         if(!folderExists(outputFoldername)){
             std::cerr << "[ERROR] folder for the output do not exist: aborting"<<std::endl;
             return 1;
@@ -142,7 +142,7 @@ int main(int argc, char** argv ) {
             std::vector<std::string> nodeNames = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();
             std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iteration) + ") for cell (" + cellTypes[i]<<std::endl; 
             std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
-            saveNodeValues(outputFoldername, iteration, cellTypes[i], outputValues, nodeNames);
+            saveNodeValues(outputFoldername, iteration, cellTypes[i], outputValues, nodeNames,ensembleGeneNames);
         }
         //update input
         for(uint i = 0; i < cellTypes.size(); i++){

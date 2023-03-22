@@ -19,6 +19,7 @@ class Computation{
         arma::Mat<double> pseudoInverseArma;
         arma::Col<double> InputAugmentedArma;
         arma::Mat<double> pseudoInverseAugmentedArma;
+        std::map<std::string,int> nodeToIndex;
     public:
         Computation();
         ~Computation();
@@ -78,8 +79,8 @@ class Computation{
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
 
-        double getVirtualInputForCell(std::string celltype);
-        double getVirtualOutputForCell(std::string celltype);
+        double getVirtualInputForCell(std::string celltype)const;
+        double getVirtualOutputForCell(std::string celltype)const;
         void setInputVinForCell(std::string celltype, double value);
         void setInputVoutForCell(std::string celltype, double value);
 

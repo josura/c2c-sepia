@@ -147,6 +147,10 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
         pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         armaInitializedAugmented = true;
+
+
+        //get nodeToIndex map as well
+        nodeToIndex = augmentedMetapathway->getNodeToIndexMap();
     } catch (...) {
         std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
         return;
@@ -209,6 +213,9 @@ void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::stri
         // std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
         // pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         // armaInitializedAugmented = true;
+
+        //get nodeToIndex map as well
+        nodeToIndex = augmentedMetapathway->getNodeToIndexMap();
     } catch (...) {
         std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
         return;
@@ -282,21 +289,24 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
 }
 
 
-double Computation::getVirtualInputForCell(std::string celltype){
-    int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+double Computation::getVirtualInputForCell(std::string celltype)const{
+    //int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+    int index = nodeToIndex.at("v-in:" + celltype);
     if(index > 0) return outputAugmented[index];
     else return 0;
 
 }
-double Computation::getVirtualOutputForCell(std::string celltype){
-    int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+double Computation::getVirtualOutputForCell(std::string celltype)const{
+    //int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+    int index = nodeToIndex.at("v-out:" + celltype);
     if(index > 0) return outputAugmented[index];
     else return 0;
 }
 
 void Computation::setInputVinForCell(std::string celltype, double value){
     //TODO if the augmented metapathway is deleted, switch to a direct map saved before deleting the metapathway
-    int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+    //int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+    int index = nodeToIndex.at("v-in:" + celltype);
     if(index > 0) {
         inputAugmented[index]=value;
         InputAugmentedArma[index]=value;
@@ -305,7 +315,8 @@ void Computation::setInputVinForCell(std::string celltype, double value){
 
 }
 void Computation::setInputVoutForCell(std::string celltype, double value){
-    int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+    //int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+    int index = nodeToIndex.at("v-out:" + celltype);
     if(index > 0) {
         inputAugmented[index]=value;
         InputAugmentedArma[index]=value;
@@ -316,13 +327,16 @@ void Computation::setInputVoutForCell(std::string celltype, double value){
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {
+        
         if (newInp.size() == 0) {
             InputArma = arma::Col<double>(output);
             input = output;    
         }
         else {
-            InputArma = arma::Col<double>(newInp);
-            input = newInp;
+            if(newInp.size() == input.size()){
+                InputArma = arma::Col<double>(newInp);
+                input = newInp;
+            }
         }
     } else {
         if (newInp.size() == 0) {
@@ -330,8 +344,10 @@ void Computation::updateInput(const std::vector<double>& newInp, bool augmented)
             inputAugmented = outputAugmented;    
         }
         else {
-            InputAugmentedArma = arma::Col<double>(newInp);
-            inputAugmented = newInp;
+            if(newInp.size() == inputAugmented.size()){
+                InputAugmentedArma = arma::Col<double>(newInp);
+                inputAugmented = newInp;
+            }
         }
     }
 }
@@ -387,5 +403,6 @@ void Computation::assign(const Computation & rhs){
 
 // optimization
 void Computation::freeAugmentedGraphs(){
+    nodeToIndex = augmentedMetapathway->getNodeToIndexMap();
     delete augmentedMetapathway;
 }
