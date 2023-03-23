@@ -128,9 +128,11 @@ int main(int argc, char** argv ) {
     }
 
     //freeing some data structures inside computation to consume less RAM
-    // for(uint i = 0; i < cellTypes.size();i++ ){
-    //     cellComputations[i]->freeAugmentedGraphs();
-    // }
+    std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
+    for(uint i = 0; i < cellTypes.size();i++ ){
+        cellToNodeNames[i] = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();  
+        cellComputations[i]->freeAugmentedGraphs();  
+    }
 
     // EndCelltype -> (sourceCellType -> value)
 
@@ -139,7 +141,7 @@ int main(int argc, char** argv ) {
     while(iteration++ < maxIterations){
         //computation of perturbation
         for(uint i = 0; i < cellTypes.size(); i++){
-            std::vector<std::string> nodeNames = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();
+            std::vector<std::string> nodeNames = cellToNodeNames[i];
             std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iteration) + ") for cell (" + cellTypes[i]<<std::endl; 
             std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
             saveNodeValues(outputFoldername, iteration, cellTypes[i], outputValues, nodeNames,ensembleGeneNames);

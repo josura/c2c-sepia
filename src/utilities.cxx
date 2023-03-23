@@ -494,7 +494,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     if(useEntrez){
         for(uint i = 0; i < nodeValues.size(); i++){
             if(mapToEverything.contains(nodeNames[i]))
-                outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<cellName[i]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
+                outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
             else {
                 auto splittedVirtual = splitString(nodeNames[i], ":");
                 if(splittedVirtual[0]=="v-in" || splittedVirtual[0]=="v-out"){
@@ -506,7 +506,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     }else{
         for(uint i = 0; i < nodeValues.size(); i++){
             if(mapToEverything.contains(nodeNames[i]))
-                outfile<<mapToEverything.at(nodeNames[i])[0]<<cellName[i]<<mapToEverything.at(nodeNames[i])[2]<<mapToEverything.at(nodeNames[i])[3]<< std::to_string(nodeValues[i]);
+                outfile<<mapToEverything.at(nodeNames[i])[0]<<mapToEverything.at(nodeNames[i])[1]<<mapToEverything.at(nodeNames[i])[2]<<mapToEverything.at(nodeNames[i])[3]<< std::to_string(nodeValues[i]);
             else {
                 auto splittedVirtual = splitString(nodeNames[i], ":");
                 if(splittedVirtual[0]=="v-in" || splittedVirtual[0]=="v-out"){
