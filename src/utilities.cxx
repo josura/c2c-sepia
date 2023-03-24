@@ -479,7 +479,7 @@ std::vector<std::string> get_all(std::string const & root, std::string const & e
 } 
 
 void saveNodeValues(std::string folderName, int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez){
-    std::string outputFilename = folderName + "/" + cellName + "--"+std::to_string(iteration);
+    std::string outputFilename = folderName + "/" + cellName + "--"+std::to_string(iteration) + ".tsv";
     std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
     if (!outfile.is_open()) {
@@ -489,7 +489,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     auto mapToEverything = getFullNodesDescription();
     //auto mapToEnsemble = getEnsembletoEntrezidMap();
     //header
-    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue";
+    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\n";
     //body
     if(useEntrez){
         for(uint i = 0; i < nodeValues.size(); i++){
