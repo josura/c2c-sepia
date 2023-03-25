@@ -142,11 +142,16 @@ int main(int argc, char** argv ) {
     const uint maxIterations = 1000;
     while(iteration++ < maxIterations){
         //computation of perturbation
+        #pragma omp parallel for
         for(uint i = 0; i < cellTypes.size(); i++){
             std::vector<std::string> nodeNames = cellToNodeNames[i];
             std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iteration) + ") for cell (" + cellTypes[i]<<std::endl; 
             std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
-            saveNodeValues(outputFoldername, iteration, cellTypes[i], outputValues, nodeNames,ensembleGeneNames);
+        }
+        //save output values
+        for(uint i = 0; i < cellTypes.size(); i++){
+            std::vector<std::string> nodeNames = cellToNodeNames[i];
+            saveNodeValues(outputFoldername, iteration, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
         }
         //update input
         for(uint i = 0; i < cellTypes.size(); i++){
