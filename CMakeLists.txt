@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 project(c2c-sepia)
 
 #if (UNIX)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")   #  -lblas -llapack are included directly #blas is very fast for me on this machine
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fopenmp")   #  -lblas -llapack are included directly #blas is very fast for me on this machine
 #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lopenblas")
 
 add_definitions(-DARMA_DONT_USE_WRAPPER)
