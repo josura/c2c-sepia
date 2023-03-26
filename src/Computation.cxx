@@ -288,6 +288,18 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     return outputAugmented;
 }
 
+std::vector<double> Computation::computeAugmentedPerturbationNorm(){
+    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+    outputAugmented = armaColumnToVector(outputArma);
+    return outputAugmented;
+}
+
+std::vector<double> Computation::computeAugmentedPerturbationDissipated(){
+    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+    outputAugmented = armaColumnToVector(outputArma);
+    return outputAugmented;
+}
+
 
 double Computation::getVirtualInputForCell(std::string celltype)const{
     //int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
