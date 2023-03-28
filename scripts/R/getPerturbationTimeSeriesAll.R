@@ -1,35 +1,57 @@
 
 
 # set the path to the folder containing the files
-pathToPerturbation <- "path/to/folder/"
+pathToPerturbation <- "~/Projects/ccc/c2c-sepia/outputs/"
+# set the path to the output folder
+pathToOutput <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/"
+library(dplyr)
 
-
-getperturbationTimeSeries <- function(path){
+getperturbationTimeSeries <- function(path,output){
   # get a list of all files in the folder
   file_list <- list.files(path)
   
   # initialize an empty list to store the dataframes
   df_list <- list()
   cell_list <- list()
-  
+  gene_list <- list()
+  firstFileName <- ""
   # iterate over the files
   for (file_name in file_list) {
+    if(firstFileName == ""){
+      firstFileName <- paste(path,file_name,sep = "")
+    }
     # check if the file ends with ".tsv"
+    print(file_name)
     if (endsWith(file_name, ".tsv")) {
       # get the prefix and suffix of the file (e.g. "file1" and "1")
       file_parts <- strsplit(file_name, "--")[[1]]
       file_prefix <- file_parts[1]
       file_suffix <- sub("\\.tsv", "", file_parts[2])
       
-      cell_list <- c(file_prefix)
-      
-      # read the file into a dataframe
-      file_path <- paste0(path, file_name)
-      df <- read.delim(file_path)
-      
-      # write the results in the corresponding file
+      cell_list <- c(cell_list,file_prefix)
       
     }
-  }  
+    print(file_name)
+  }
+  
+  gene_list <- read.csv(firstFileName,header=TRUE,sep = "\t")$nodeName
+  
+  cell_list <- unique(cell_list)
+  for (cellName in cell_list){
+    outputFileName <- paste(paste(output,cellName,sep = ""),"_outputAll.tsv",sep = "")
+    print(outputFileName)
+    # create the file
+    #file.create(outputFileName)
+    write(paste(c("iteration",gene_list),collapse = "\t"), file = outputFileName, append = FALSE, sep = "\t")
+  }
+  
+  # read the file into a dataframe
+  #file_path <- paste0(path, file_name)
+  #df <- read.delim(file_path)
+  #colValues <- df$nodename;
+  #df_selected <- df %>%
+  #  select(nodeValue)
+  #df_selected <- t(df_selected)
+  # write the results in the corresponding file
 }
-
+getperturbationTimeSeries(path = pathToPerturbation,output = pathToOutput)
