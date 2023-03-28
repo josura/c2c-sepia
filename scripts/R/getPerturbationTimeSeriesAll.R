@@ -45,13 +45,29 @@ getperturbationTimeSeries <- function(path,output){
     write(paste(c("iteration",gene_list),collapse = "\t"), file = outputFileName, append = FALSE, sep = "\t")
   }
   
-  # read the file into a dataframe
-  #file_path <- paste0(path, file_name)
-  #df <- read.delim(file_path)
-  #colValues <- df$nodename;
-  #df_selected <- df %>%
-  #  select(nodeValue)
-  #df_selected <- t(df_selected)
-  # write the results in the corresponding file
+  for (file_name in file_list) {
+    if(firstFileName == ""){
+      firstFileName <- paste(path,file_name,sep = "")
+    }
+    # check if the file ends with ".tsv"
+    print(paste("writing values for ",file_name))
+    if (endsWith(file_name, ".tsv")) {
+      # get the prefix and suffix of the file (e.g. "file1" and "1")
+      file_parts <- strsplit(file_name, "--")[[1]]
+      file_prefix <- file_parts[1]
+      file_suffix <- sub("\\.tsv", "", file_parts[2])
+      
+      # read the file into a dataframe
+      file_path <- paste0(path, file_name)
+      outputFileName <- paste(paste(output,file_prefix,sep = ""),"_outputAll.tsv",sep = "")
+      df <- read.delim(file_path)
+      colValues <- df$nodeValue
+      write(paste(c(file_suffix,colValues),collapse = "\t"), file = outputFileName, append = TRUE, sep = "\t")
+      # write the results in the corresponding file
+      
+    }
+    print(file_name)
+  }
+  
 }
 getperturbationTimeSeries(path = pathToPerturbation,output = pathToOutput)
