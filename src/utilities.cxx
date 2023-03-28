@@ -497,8 +497,10 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
                 outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
             else {
                 auto splittedVirtual = splitString(nodeNames[i], ":");
-                if(splittedVirtual[0]=="v-in" || splittedVirtual[0]=="v-out"){
-                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<std::to_string(nodeValues[i]);
+                if(splittedVirtual[0]=="v-in"){
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                } else if(splittedVirtual[0]=="v-out"){
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 }
             }
             outfile << std::endl;
@@ -509,8 +511,10 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
                 outfile<<mapToEverything.at(nodeNames[i])[0]<<mapToEverything.at(nodeNames[i])[1]<<mapToEverything.at(nodeNames[i])[2]<<mapToEverything.at(nodeNames[i])[3]<< std::to_string(nodeValues[i]);
             else {
                 auto splittedVirtual = splitString(nodeNames[i], ":");
-                if(splittedVirtual[0]=="v-in" || splittedVirtual[0]=="v-out"){
-                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual\t"<<splittedVirtual[1]<<std::to_string(nodeValues[i]);
+                if(splittedVirtual[0]=="v-in"){
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                } else if(splittedVirtual[0]=="v-out"){
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 }
             }
             outfile << std::endl;
