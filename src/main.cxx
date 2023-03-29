@@ -30,6 +30,8 @@ int main(int argc, char** argv ) {
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
         ("sameCellCommunication",po::bool_switch(&sameCellCommunication),"use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
         ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
+        ("intercellIterations",po::value<uint>(),"number of iterations for intercell communication")
+        ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
     ;
 
     po::variables_map vm;
