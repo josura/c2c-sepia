@@ -38,10 +38,30 @@ int main(int argc, char** argv ) {
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
     std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename,outputFoldername;
+    uint intercellIterations,intracellIterations;
 
     if (vm.count("help")) {
         //printHelp();
         std::cout << desc << std::endl;
+        return 1;
+    }
+
+    if (vm.count("intercellIterations")) {
+        std::cout << "[LOG] iterations intercell set to " 
+    << vm["intercellIterations"].as<std::string>() << ".\n";
+        intercellIterations = vm["intercellIterations"].as<uint>();
+    } else {
+        std::cout << "[LOG] iterations intercell not set, set to default \n";
+        intercellIterations = 50;
+        return 1;
+    }
+    if (vm.count("intracellIterations")) {
+        std::cout << "[LOG] iterations intracell set to " 
+    << vm["intracellIterations"].as<std::string>() << ".\n";
+        intracellIterations = vm["intracellIterations"].as<uint>();
+    } else {
+        std::cout << "[LOG] iterations intracell not set, set to default \n";
+        intracellIterations = 50;
         return 1;
     }
 
