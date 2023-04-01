@@ -52,7 +52,7 @@ int main(int argc, char** argv ) {
         intercellIterations = vm["intercellIterations"].as<uint>();
     } else {
         std::cout << "[LOG] iterations intercell not set, set to default \n";
-        intercellIterations = 50;
+        intercellIterations = 10;
         return 1;
     }
     if (vm.count("intracellIterations")) {
@@ -61,7 +61,7 @@ int main(int argc, char** argv ) {
         intracellIterations = vm["intracellIterations"].as<uint>();
     } else {
         std::cout << "[LOG] iterations intracell not set, set to default \n";
-        intracellIterations = 50;
+        intracellIterations = 5;
         return 1;
     }
 
