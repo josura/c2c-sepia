@@ -163,16 +163,20 @@ int main(int argc, char** argv ) {
     uint iterationIntercell = 0;
     while(iterationIntercell++ < intercellIterations){
         //computation of perturbation
-        #pragma omp parallel for
-        for(uint i = 0; i < cellTypes.size(); i++){
-            std::vector<std::string> nodeNames = cellToNodeNames[i];
-            std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iterationIntercell) + ") for cell (" + cellTypes[i]<<std::endl; 
-            std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
-        }
-        //save output values
-        for(uint i = 0; i < cellTypes.size(); i++){
-            std::vector<std::string> nodeNames = cellToNodeNames[i];
-            saveNodeValues(outputFoldername, iterationIntercell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+        uint iterationIntracell = 0;
+        //intracell iteration with no passing of values to the virtual nodes
+        while (iterationIntracell++ < intracellIterations) {
+            #pragma omp parallel for
+            for(uint i = 0; i < cellTypes.size(); i++){
+                std::vector<std::string> nodeNames = cellToNodeNames[i];
+                std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iterationIntercell) + ") for cell (" + cellTypes[i]<<std::endl; 
+                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
+            }
+            //save output values
+            for(uint i = 0; i < cellTypes.size(); i++){
+                std::vector<std::string> nodeNames = cellToNodeNames[i];
+                saveNodeValues(outputFoldername, iterationIntercell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+            }
         }
         //update input
         for(uint i = 0; i < cellTypes.size(); i++){
