@@ -30,6 +30,9 @@ The options are the following:
 - **--dirCellInteraction** => logfoldPerCell matrix filename
 - **--ensembleGeneNames**" (no parameter) => use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources, if the metapathway is consistent with the data used for the log-fold changes and the interactions (the have the same gene names), this parameter should not be used. Only use in case of external data sources that have ensemble ids and the metapathway used is the one in the resources.
 - **--sameCellCommunication** (no parameter) => "use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
+- **--output** (obligatory) => output folder for output of the algorithm at each iteration
+- **--intercellIterations** => number of iterations for intercell communication
+- **--intracellIterations** => number of iterations for intracell communication
     
 
 ## INPUT SCHEMA
