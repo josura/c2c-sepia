@@ -61,6 +61,7 @@ class Computation{
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         std::vector<double> computeAugmentedPerturbationNorm(); //taking into account normalization
         std::vector<double> computeAugmentedPerturbationDissipated(); //taking into account dissipation after every iteration(a kind of starvation probably)
+        std::vector<double> computeAugmentedPerturbationSaturated(); //taking into account saturation(hyperbolic tangent and scaling) after every iteration
         std::pair<std::string,double> getMapVirtualOutputsToCellInputs(); //TODO
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 
