@@ -288,13 +288,29 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     return outputAugmented;
 }
 
+//TODO
 std::vector<double> Computation::computeAugmentedPerturbationNorm(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
 }
 
+//TODO
 std::vector<double> Computation::computeAugmentedPerturbationDissipated(){
+    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+    outputAugmented = armaColumnToVector(outputArma);
+    return outputAugmented;
+}
+
+//TODO
+std::vector<double> Computation::computeAugmentedPerturbationSaturated(){
+    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+    outputAugmented = armaColumnToVector(outputArma);
+    return outputAugmented;
+}
+
+//TODO
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
