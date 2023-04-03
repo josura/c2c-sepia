@@ -1,6 +1,7 @@
 #include "utilities.h"
 #include <algorithm>
 #include <boost/token_functions.hpp>
+#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
@@ -8,6 +9,7 @@
 #include <filesystem>
 #include <iterator>
 #include <map>
+#include <math.h>
 #include <random>
 #include <stdexcept>
 #include <string>
@@ -113,6 +115,13 @@ bool definitelyGreaterThan(double a, double b, double epsilon)
 bool definitelyLessThan(double a, double b, double epsilon)
 {
     return (b - a) > ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+
+
+double hyperbolicTangentScaled(double xInput, double scaleFactor ){
+    double firstTerm = std::exp(xInput/scaleFactor);
+    double secondTerm = std::exp(-xInput/scaleFactor);
+    return scaleFactor*(firstTerm - secondTerm)/(firstTerm + secondTerm);
 }
 
 bool file_exists (const std::string& name) {

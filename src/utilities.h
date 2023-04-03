@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
-
+#include<cmath>
 
 #define INTMAX 100
 #define DOUBLEMAX 100.0
@@ -108,6 +108,11 @@ bool approximatelyEqual(double a, double b, double epsilon);
 bool essentiallyEqual(double a, double b, double epsilon);
 bool definitelyGreaterThan(double a, double b, double epsilon);
 bool definitelyLessThan(double a, double b, double epsilon);
+
+/**
+scale the hyperbolic tangent function, the return value is always < c , the function is also scaled to grow linearly before reaching the transient
+*/
+double hyperbolicTangentScaled(double xInput, double scaleFactor );
 
 template<typename T>
 std::vector<T> arrayToVector(T* array, int size){
