@@ -303,14 +303,14 @@ std::vector<double> Computation::computeAugmentedPerturbationDissipated(){
 }
 
 //TODO
-std::vector<double> Computation::computeAugmentedPerturbationSaturated(){
+std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
 }
 
 //TODO
-std::vector<double> Computation::computeAugmentedPerturbationEnhanced(){
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced(const std::vector<double>& saturationsVector){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
