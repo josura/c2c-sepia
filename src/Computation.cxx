@@ -308,7 +308,7 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std
         if (saturationsVector.size() >= InputAugmentedArma.n_elem) {
             arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
             for(uint i = 0;i<outputArma.n_elem;i++){
-                
+                outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
             }
             outputAugmented = armaColumnToVector(outputArma);
             return outputAugmented;
@@ -318,6 +318,9 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std
     }
     else {
         arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+        for(uint i = 0;i<outputArma.n_elem;i++){
+            outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
+        }
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     }
