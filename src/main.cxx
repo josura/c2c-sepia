@@ -170,7 +170,8 @@ int main(int argc, char** argv ) {
             for(uint i = 0; i < cellTypes.size(); i++){
                 std::vector<std::string> nodeNames = cellToNodeNames[i];
                 std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iterationIntercell) + ") for cell (" + cellTypes[i]<<std::endl; 
-                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
+                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
+                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
             }
             //save output values
             for(uint i = 0; i < cellTypes.size(); i++){
