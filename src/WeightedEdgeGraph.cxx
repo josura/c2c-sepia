@@ -577,6 +577,14 @@ std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
                 out << "(" << get<0>(*it)<< ","<< get<1>(*it)<< ","<< get<2>(*it)<< "," << ")," ;
             }
             out << "}"<< std::endl;
+            out << "Adj matrix: (";
+            for(int i = 0;i<data.getNumNodes();i++){
+                for(int j = 0;j<data.getNumNodes();j++){
+                    out << data.adjMatrix.getValue(i,j) << ", ";
+                }
+                out <<std::endl ;
+            }
+            out << "}"<< std::endl;
             return out;
         }
 
