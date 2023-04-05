@@ -166,6 +166,7 @@ class WeightedEdgeGraph{
         double getAverageDegree()const;
 
         std::map<std::string, int> getNodeToIndexMap()const {return nodeToIndex;}
+        void print()const;
 
 };
 

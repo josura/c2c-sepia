@@ -562,6 +562,10 @@ WeightedEdgeGraph* WeightedEdgeGraph::copyNew()const{
 //     return *this;
 // }
 
+void WeightedEdgeGraph::print()const{
+    std::cout << *this;
+}
+
 std::ostream& operator<< (std::ostream &out, const WeightedEdgeGraph& data) {
             out << "number of nodes: "<<data.getNumNodes() << "  and of edges:" << data.getNumEdges() <<std::endl;
             std::string nodeValues = data.getnodeValuesStr();
