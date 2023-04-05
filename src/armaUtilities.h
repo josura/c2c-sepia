@@ -9,3 +9,5 @@ std::vector<T> armaColumnToVector(arma::Col<T> matr){return arma::conv_to< std::
 
 template<typename T>
 std::vector<T> armaRowToVector(arma::Row<T> matr){return arma::conv_to< std::vector<T> >::from(matr);}
+
+void print_mat(arma::mat my_matrix);

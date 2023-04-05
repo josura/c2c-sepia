@@ -35,6 +35,7 @@ set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
 set(LIB_SRCS 
     src/WeightedEdgeGraph.cxx
     src/utilities.cxx
+    src/armaUtilities.cxx
     src/optimization.cxx
     src/Matrix.cxx
     src/Computation.cxx
