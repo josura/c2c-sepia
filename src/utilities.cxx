@@ -258,7 +258,7 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
 }
 
 
-std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, std::vector<std::string> finalNames,bool useEntrez){
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,bool useEntrez){
     string line;
     std::vector<std::vector<double>> ret;
     std::vector<std::string> cellNames;
