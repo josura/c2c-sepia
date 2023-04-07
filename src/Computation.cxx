@@ -56,11 +56,17 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
         }
     }
     arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
-    //TODO normalization by previous weight nodes for the matrix
-    
+    // std::cout<< " WtransArma:\n";
+    // print_mat( WtransArma);
+
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
+    // std::cout<< "Identity - WtransArma:\n";
+    // print_mat(IdentityArma - WtransArma);
+
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
+    // std::cout<< "pseudoInverseArma:\n";
+    // print_mat(pseudoInverseArma);
     armaInitializedNotAugmented = true;
 }
 

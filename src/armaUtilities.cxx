@@ -9,11 +9,10 @@ void print_mat(arma::mat my_matrix){
     
     std::cout << "--------\n";
     for(uint rX = 0; rX < rows; rX++) {
-        std::cout << " " << rX << ": ";
         for(uint cX = 0; cX < cols; cX++) {
             std::cout << my_matrix(rX, cX) << " ";
         }
-        std::cout << "\n";
+        std::cout << std::endl;
     }
     std::cout << "--------\n";
 }
