@@ -1,2 +1,16 @@
-version: 'version'
+version: '3.8'
 
+services:
+  backend:
+    restart: always
+    build: .
+    container_name: c2c-sepia-container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootuser
+      MONGO_INITDB_ROOT_PASSWORD: rootpass
+    volumes:
+      - .:c2c-sepia
+
+
+volumes:
+  c2c-sepia-data:
