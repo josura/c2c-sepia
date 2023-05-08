@@ -301,14 +301,16 @@ std::vector<double> Computation::computeAugmentedPerturbationNorm(){
     return outputAugmented;
 }
 
-//TODO
 std::vector<double> Computation::computeAugmentedPerturbationDissipated(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+    arma::Col<double> dissipationTerm = pow(InputAugmentedArma,2);
+    for(uint i = 0;i<outputArma.n_elem;i++){
+        outputArma[i] = outputArma[i] - dissipationTerm[i];
+    }
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
 }
 
-//TODO
 std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector){
     if(saturationsVector.size() == 0){
         if (saturationsVector.size() >= InputAugmentedArma.n_elem) {
