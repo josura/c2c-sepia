@@ -64,7 +64,8 @@ class Computation{
         std::vector<double> computeAugmentedPerturbationDissipatedAfterCompute(); //taking into account dissipation after every iteration, dissipation after the computation of the perturbated value
         std::vector<double> computeAugmentedPerturbationDissipatedBeforeCompute(); //taking into account dissipation after every iteration, dissipation before the computation of the perturbated value
         std::vector<double> computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) after every iteration
-        std::vector<double> computeAugmentedPerturbationEnhanced(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
+        std::vector<double> computeAugmentedPerturbationEnhanced1(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
+        std::vector<double> computeAugmentedPerturbationEnhanced2(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
         std::pair<std::string,double> getMapVirtualOutputsToCellInputs(); //TODO
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 

@@ -335,7 +335,14 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std
 }
 
 //TODO
-std::vector<double> Computation::computeAugmentedPerturbationEnhanced(const std::vector<double>& saturationsVector){
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(const std::vector<double>& saturationsVector){
+    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+    outputAugmented = armaColumnToVector(outputArma);
+    return outputAugmented;
+}
+
+//TODO
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(const std::vector<double>& saturationsVector){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
