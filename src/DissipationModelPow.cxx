@@ -1,5 +1,3 @@
-#pragma once
-#include <armadillo>
 #include "DissipationModelPow.h"
 
 DissipationModelPow::DissipationModelPow(){
