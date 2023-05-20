@@ -4,9 +4,9 @@
 
 class DissipationModelPow : public DissipationModel
 {
-    DissipationModelPow();
-    DissipationModelPow(double power);
-    ~DissipationModelPow();
     public:
+        DissipationModelPow();
+        DissipationModelPow(double power);
+        ~DissipationModelPow();
         arma::Col<double> dissipate(arma::Col<double> input);
 };
