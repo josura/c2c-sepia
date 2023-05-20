@@ -41,6 +41,8 @@ CMakeFiles/
 #vscode
 .vscode
 .cache
+
+#R
 .Rhistory
 
 #folders
