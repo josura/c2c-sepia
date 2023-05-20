@@ -2,9 +2,10 @@
 #include <armadillo>
 
 class DissipationModel{
-    DissipationModel();
-    ~DissipationModel();
     public:
+        DissipationModel();
+        ~DissipationModel();
+        arma::Col<double> dissipate(arma::Col<double> input);
         arma::Col<double> dissipatePow2Self(arma::Col<double> input);
         arma::Col<double> dissipateSelfScaled(arma::Col<double> input, double scale);
         arma::Col<double> dissipateSelfScaled(arma::Col<double> input, arma::Col<double> scales);
