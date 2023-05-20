@@ -17,3 +17,15 @@ arma::Col<double> DissipationModel::dissipateSelfScaled(arma::Col<double> input,
 arma::Col<double> DissipationModel::dissipateSelfScaled(arma::Col<double> input, arma::Col<double> scales){
     return input - scales%input;
 }
+
+arma::Col<double> DissipationModel::dissipateSelfPeriodic(arma::Col<double> input, double period, double amplitude, double phase){
+    return input;
+}
+
+arma::Col<double> DissipationModel::dissipateSelfPeriodic(arma::Col<double> input, arma::Col<double> periods, arma::Col<double> amplitudes, arma::Col<double> phases){
+    return input;
+}
+
+arma::Col<double> DissipationModel::dissipateSelfRandom(arma::Col<double> input, double min, double max){
+    return input;
+}
