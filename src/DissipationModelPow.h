@@ -4,6 +4,8 @@
 
 class DissipationModelPow : public DissipationModel
 {
+    private:
+        double power;
     public:
         DissipationModelPow();
         DissipationModelPow(double power);
