@@ -4,9 +4,13 @@
 
 class DissipationModelRandom : public DissipationModel
 {
+    private:
+        double rangeMin;
+        double rangeMax;
+        int numEl;
     public:
         DissipationModelRandom();
-        DissipationModelRandom(double rangeMin, double rangeMax);
+        DissipationModelRandom(int numEl,double rangeMin, double rangeMax);
         ~DissipationModelRandom();
         arma::Col<double> dissipate(arma::Col<double> input, double time);
 };
