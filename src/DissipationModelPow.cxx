@@ -13,6 +13,6 @@ DissipationModelPow::DissipationModelPow(double power){
 DissipationModelPow::~DissipationModelPow(){
 }
 
-arma::Col<double> DissipationModelPow::dissipate(arma::Col<double> input){
+arma::Col<double> DissipationModelPow::dissipate(arma::Col<double> input, double time){
     return input - pow(input,this->power);
 }

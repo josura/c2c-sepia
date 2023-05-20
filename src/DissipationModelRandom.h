@@ -8,5 +8,5 @@ class DissipationModelRandom : public DissipationModel
         DissipationModelRandom();
         DissipationModelRandom(double rangeMin, double rangeMax);
         ~DissipationModelRandom();
-        arma::Col<double> dissipate(arma::Col<double> input);
+        arma::Col<double> dissipate(arma::Col<double> input, double time);
 };
