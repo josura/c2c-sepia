@@ -408,6 +408,10 @@ void Computation::setInputVoutForCell(std::string celltype, double value){
     else throw std::invalid_argument("Computation::setInputVinForCell: invalid set for virtual input: celltype:" + celltype + "does not exist");
 }
 
+void Computation::setDissipationModel(DissipationModel *dissipationModel){
+    this->dissipationModel = dissipationModel;
+}
+
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {

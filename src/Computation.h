@@ -92,6 +92,7 @@ class Computation{
         double getVirtualOutputForCell(std::string celltype)const;
         void setInputVinForCell(std::string celltype, double value);
         void setInputVoutForCell(std::string celltype, double value);
+        void setDissipationModel(DissipationModel* dissipationModel);
 
         //optimization
         void freeAugmentedGraphs();
