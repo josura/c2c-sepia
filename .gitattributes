@@ -8,3 +8,6 @@ resources/graphs/metapathwayReactome/metapathway_reactome.zip filter=lfs diff=lf
 resources/graphs/metapathwayReactome/nodes.txt filter=lfs diff=lfs merge=lfs -text
 resources/graphs/metapathwayReactome/edges_to_pathways.txt filter=lfs diff=lfs merge=lfs -text
 resources/graphs/metapathwayReactome/edges.txt filter=lfs diff=lfs merge=lfs -text
+resources/graphs/metapathwayNew/edges_to_pathways.tsv filter=lfs diff=lfs merge=lfs -text
+resources/graphs/metapathwayNew/edges.tsv filter=lfs diff=lfs merge=lfs -text
+resources/graphs/metapathwayNew/nodes.tsv filter=lfs diff=lfs merge=lfs -text
