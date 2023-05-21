@@ -3,7 +3,7 @@ library(ggplot2)
 timeSeries.CD4Tconv <- read.csv("/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/CD4Tconv_outputAll.tsv",sep = "\t",header = TRUE)
 ### visualization all iterations
 ggplot() +
-  ggtitle("Virtual input in the CD4Tconv augmented metapathway for Fibroblast") +
+  ggtitle("Virtual input in the CD4Tconv augmented metapathway for Fibroblast (log10)") +
   geom_point(data=timeSeries.CD4Tconv, aes(x=iteration, y=v.in.Fibroblasts),size=0.5)+ 
   scale_y_log10()
 ##without scale 
