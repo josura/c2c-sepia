@@ -6,6 +6,7 @@
 #include <tuple>
 #include <vector>
 #include "Computation.h"
+#include "DissipationModel.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 
@@ -32,6 +33,8 @@ int main(int argc, char** argv ) {
         ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
         ("intercellIterations",po::value<uint>(),"number of iterations for intercell communication")
         ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
+        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none','power','random','periodic'")
+        ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
     ;
 
     po::variables_map vm;
@@ -39,6 +42,7 @@ int main(int argc, char** argv ) {
     po::notify(vm);
     std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename,outputFoldername;
     uint intercellIterations,intracellIterations;
+    DissipationModel* dissipationModel = nullptr;
 
     if (vm.count("help")) {
         //printHelp();
@@ -113,6 +117,48 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] output folder was not set. aborting\n";
         //TODO
     }
+    if (vm.count("dissipationModel")) {
+        std::cout << "[LOG] dissipation model was set to "
+    << vm["dissipationModel"].as<std::string>() << ".\n";
+        std::string dissipationModelName = vm["dissipationModel"].as<std::string>();
+        if(dissipationModelName == "none"){
+            dissipationModel = new DissipationModel();
+        } else if(dissipationModelName == "power"){
+            // if (vm.count("dissipationModelParameters")) {
+            //     std::cout << "[LOG] dissipation model parameters were set to " << vm["dissipationModelParameters"].as<std::vector<double>>() << ".\n";
+            //     std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+            //     if(dissipationModelParameters.size() == 1){
+            //         dissipationModel = new DissipationModel(dissipationModelParameters[0]);
+            //     } else {
+            //         std::cerr << "[ERROR] dissipation model parameters for power dissipation must be one: aborting"<<std::endl;
+            //         return 1;
+            //     }
+            // } else {
+            //     std::cerr << "[ERROR] dissipation model parameters for power dissipation was not set: aborting"<<std::endl;
+            //     return 1;
+            // }
+        } else if(dissipationModelName == "random"){
+            // if (vm.count("dissipationModelParameters")) {
+            //     std::cout << "[LOG] dissipation model parameters were set to "
+            // << vm["dissipationModelParameters"].as<std::vector<double>>() << ".\n";
+            //     std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+            //     if(dissipationModelParameters.size() == 2){
+            //         dissipationModel = new DissipationModel(dissipationModelParameters[0],dissipationModelParameters[1]);
+            //     } else {
+            //         std::cerr << "[ERROR] dissipation model parameters for random dissipation must be two: aborting"<<std::endl;
+            //         return 1;
+            //     }
+            // } else {
+            //     std::cerr << "[ERROR] dissipation model parameters for random dissipation was not set: aborting"<<std::endl;
+            //     return 1;
+            // }
+        } else if(dissipationModelName == "periodic"){
+            // if (vm.count("dissipationModelParameters")) {
+            //     std::cout << "[LOG] dissipation model parameters were set to "
+            // << vm["dissipationModelParameters"].as<std::vector<double>>()
+            // }
+        }
+    }
     //end program options section
 
     std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
@@ -134,6 +180,7 @@ int main(int argc, char** argv ) {
     for(uint i = 0; i < cellTypes.size();i++){
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
         Computation* tmpCompPointer = new Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes);  //TODO order the genes directly or use the names and set them one by one 
+        tmpCompPointer->setDissipationModel(dissipationModel);
         cellComputations[i] = tmpCompPointer;
         //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
         cellComputations[i]->augmentMetapathwayNoComputeInverse(cellTypes);
