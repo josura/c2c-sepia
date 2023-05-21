@@ -11,4 +11,5 @@ class DissipationModelPow : public DissipationModel
         DissipationModelPow(double power);
         ~DissipationModelPow();
         arma::Col<double> dissipate(arma::Col<double> input, double time);
+        arma::Col<double> dissipateTerm(arma::Col<double> input, double time);
 };

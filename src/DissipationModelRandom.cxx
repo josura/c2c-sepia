@@ -18,7 +18,15 @@ DissipationModelRandom::~DissipationModelRandom(){
 arma::Col<double> DissipationModelRandom::dissipate(arma::Col<double> input, double time){
     arma::Col<double> output = arma::Col<double>(this->numEl);
     for(int i = 0; i < this->numEl; i++){
-        output(i) = input(i) - (this->rangeMin + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(this->rangeMax-this->rangeMin))));
+        output(i) = input(i) - input(i)*(this->rangeMin + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(this->rangeMax-this->rangeMin))));
+    }
+    return output;
+}
+
+arma::Col<double> DissipationModelRandom::dissipateTerm(arma::Col<double> input, double time){
+    arma::Col<double> output = arma::Col<double>(this->numEl);
+    for(int i = 0; i < this->numEl; i++){
+        output(i) = input(i)*(this->rangeMin + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(this->rangeMax-this->rangeMin))));
     }
     return output;
 }

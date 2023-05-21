@@ -31,3 +31,11 @@ arma::Col<double> DissipationModelPeriodic::dissipate(arma::Col<double> input, d
     }
     return output;
 }
+
+arma::Col<double> DissipationModelPeriodic::dissipateTerm(arma::Col<double> input, double time){
+    arma::Col<double> output = arma::Col<double>(this->numEl);
+    for(int i = 0; i < this->numEl; i++){
+        output(i) = this->amplitudes(i)*sin(2*arma::datum::pi/this->periods(i)*time + this->phases(i));
+    }
+    return output;
+}
