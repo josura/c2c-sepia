@@ -334,6 +334,20 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std
     }
 }
 
+std::vector<double> Computation::computeAugmentedPerturbationDissipatedAfterCompute(double timeStep){
+    if (dissipationModel) {
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+        arma::Col<double> dissipationTerm = dissipationModel->dissipationTerm(outputArma,timeStep);
+        for(uint i = 0;i<outputArma.n_elem;i++){
+            outputArma[i] = outputArma[i] - dissipationTerm[i];
+        }
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
+    } else {
+        throw std::invalid_argument("Computation::computeAugmentedPerturbationDissipatedAfterCompute: dissipationModel is not set");
+    }
+}
+
 //TODO
 std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(const std::vector<double>& saturationsVector){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;

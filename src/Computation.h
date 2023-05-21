@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DissipationModel.h"
 #include "Matrix.h"
 #include "WeightedEdgeGraph.h"
 #include <map>
@@ -20,6 +21,7 @@ class Computation{
         arma::Col<double> InputAugmentedArma;
         arma::Mat<double> pseudoInverseAugmentedArma;
         std::map<std::string,int> nodeToIndex;
+        DissipationModel* dissipationModel=nullptr;
     public:
         Computation();
         ~Computation();
@@ -61,8 +63,8 @@ class Computation{
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
         std::vector<double> computeAugmentedPerturbationNorm(); //taking into account normalization
         std::vector<double> computeAugmentedPerturbationDissipatedPow2(); //taking into account dissipation after every iteration(a kind of starvation probably) subtracting the pow2 of every perturbation before the computation
-        std::vector<double> computeAugmentedPerturbationDissipatedAfterCompute(); //taking into account dissipation after every iteration, dissipation after the computation of the perturbated value
-        std::vector<double> computeAugmentedPerturbationDissipatedBeforeCompute(); //taking into account dissipation after every iteration, dissipation before the computation of the perturbated value
+        std::vector<double> computeAugmentedPerturbationDissipatedAfterCompute(double timeStep); //taking into account dissipation after every iteration(Dissipation model), dissipation after the computation of the perturbated value
+        std::vector<double> computeAugmentedPerturbationDissipatedBeforeCompute(double timeStep); //taking into account dissipation after every iteration (Dissipation model), dissipation before the computation of the perturbated value
         std::vector<double> computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) after every iteration
         std::vector<double> computeAugmentedPerturbationEnhanced1(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
         std::vector<double> computeAugmentedPerturbationEnhanced2(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration

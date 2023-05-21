@@ -6,6 +6,14 @@ DissipationModel::DissipationModel(){
 DissipationModel::~DissipationModel(){
 }
 
+
+arma::Col<double> DissipationModel::dissipate(arma::Col<double> input,double time){
+    return input;
+}
+arma::Col<double> DissipationModel::dissipationTerm(arma::Col<double> input, double time){
+    return input;
+}
+
 arma::Col<double> DissipationModel::dissipatePow2Self(arma::Col<double> input){
     return input - pow(input,2);
 }

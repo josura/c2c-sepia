@@ -39,6 +39,10 @@ set(LIB_SRCS
     src/optimization.cxx
     src/Matrix.cxx
     src/Computation.cxx
+    src/DissipationModel.cxx
+    src/DissipationModelPow.cxx
+    src/DissipationModelRandom.cxx
+    src/DissipationModelPeriodic.cxx
 )
 
 if(CUDAavailable)
