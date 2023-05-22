@@ -11,7 +11,7 @@ arma::Col<double> DissipationModel::dissipate(arma::Col<double> input,double tim
     return input;
 }
 arma::Col<double> DissipationModel::dissipationTerm(arma::Col<double> input, double time){
-    return input;
+    return arma::zeros<arma::Col<double>>(input.n_rows);
 }
 
 arma::Col<double> DissipationModel::dissipatePow2Self(arma::Col<double> input){
