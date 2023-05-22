@@ -7,6 +7,8 @@
 #include <vector>
 #include "Computation.h"
 #include "DissipationModel.h"
+#include "DissipationModelPow.h"
+#include "DissipationModelRandom.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 
@@ -33,7 +35,7 @@ int main(int argc, char** argv ) {
         ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
         ("intercellIterations",po::value<uint>(),"number of iterations for intercell communication")
         ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
-        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none','power','random','periodic'")
+        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic'")
         ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
     ;
 
@@ -122,42 +124,48 @@ int main(int argc, char** argv ) {
     << vm["dissipationModel"].as<std::string>() << ".\n";
         std::string dissipationModelName = vm["dissipationModel"].as<std::string>();
         if(dissipationModelName == "none"){
+            std::cout << "[LOG] dissipation model set to default (none)\n";
             dissipationModel = new DissipationModel();
         } else if(dissipationModelName == "power"){
-            // if (vm.count("dissipationModelParameters")) {
-            //     std::cout << "[LOG] dissipation model parameters were set to " << vm["dissipationModelParameters"].as<std::vector<double>>() << ".\n";
-            //     std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
-            //     if(dissipationModelParameters.size() == 1){
-            //         dissipationModel = new DissipationModel(dissipationModelParameters[0]);
-            //     } else {
-            //         std::cerr << "[ERROR] dissipation model parameters for power dissipation must be one: aborting"<<std::endl;
-            //         return 1;
-            //     }
-            // } else {
-            //     std::cerr << "[ERROR] dissipation model parameters for power dissipation was not set: aborting"<<std::endl;
-            //     return 1;
-            // }
+            if (vm.count("dissipationModelParameters")) {
+                std::cout << "[LOG] dissipation model parameters for power dissipation were declared to be" << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if(dissipationModelParameters.size() == 1){
+                    dissipationModel = new DissipationModelPow(dissipationModelParameters[0]);
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for power dissipation must be one: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for power dissipation was not set: setting to default (2)"<<std::endl;
+                dissipationModel = new DissipationModelPow(2);
+            }
         } else if(dissipationModelName == "random"){
-            // if (vm.count("dissipationModelParameters")) {
-            //     std::cout << "[LOG] dissipation model parameters were set to "
-            // << vm["dissipationModelParameters"].as<std::vector<double>>() << ".\n";
-            //     std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
-            //     if(dissipationModelParameters.size() == 2){
-            //         dissipationModel = new DissipationModel(dissipationModelParameters[0],dissipationModelParameters[1]);
-            //     } else {
-            //         std::cerr << "[ERROR] dissipation model parameters for random dissipation must be two: aborting"<<std::endl;
-            //         return 1;
-            //     }
-            // } else {
-            //     std::cerr << "[ERROR] dissipation model parameters for random dissipation was not set: aborting"<<std::endl;
-            //     return 1;
-            // }
+            if (vm.count("dissipationModelParameters")) {
+                std::cout << "[LOG] dissipation model parameters were declared to be "
+            << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << " & " << vm["dissipationModelParameters"].as<std::vector<double>>()[1] << ".\n";
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if(dissipationModelParameters.size() == 2){
+                    dissipationModel = new DissipationModelRandom(dissipationModelParameters[0],dissipationModelParameters[1]);
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for random dissipation must be two: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for random dissipation was not set: aborting"<<std::endl;
+                return 1;
+            }
         } else if(dissipationModelName == "periodic"){
+            std::cout << "Not yet implemented\n";
+            return 1;
             // if (vm.count("dissipationModelParameters")) {
             //     std::cout << "[LOG] dissipation model parameters were set to "
             // << vm["dissipationModelParameters"].as<std::vector<double>>()
             // }
         }
+    } else { //dissipation model set to default (none)
+        std::cout << "[LOG] dissipation model was not set. set to default (none)\n";
+        dissipationModel = new DissipationModel();
     }
     //end program options section
 
