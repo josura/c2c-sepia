@@ -2,10 +2,12 @@
 
 DissipationModelPow::DissipationModelPow(){
     this->power = 2;
+    this->numEl = 0;
 }
 
 DissipationModelPow::DissipationModelPow(double power){
     this->power = power;
+    this->numEl = 0;
 }
 
 DissipationModelPow::~DissipationModelPow(){

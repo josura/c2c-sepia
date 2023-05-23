@@ -1,6 +1,7 @@
 #include "DissipationModel.h"
 
 DissipationModel::DissipationModel(){
+    this->numEl = 0;
 }
 
 DissipationModel::~DissipationModel(){

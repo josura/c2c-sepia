@@ -2,6 +2,8 @@
 #include <armadillo>
 
 class DissipationModel{
+    protected:
+        int numEl;
     public:
         DissipationModel();
         ~DissipationModel();
@@ -15,4 +17,6 @@ class DissipationModel{
         arma::Col<double> dissipateSelfPeriodicShift(arma::Col<double> input, double shiftY, double period, double amplitude, double phase);
         arma::Col<double> dissipateSelfPeriodicShift(arma::Col<double> input, arma::Col<double> shiftY, arma::Col<double> periods, arma::Col<double> amplitudes, arma::Col<double> phases);
         arma::Col<double> dissipateSelfRandom(arma::Col<double> input, double min, double max);
+        int getNumEl(){return this->numEl;}
+        void setNumEl(int numEl){this->numEl = numEl;}
 };
