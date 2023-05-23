@@ -9,6 +9,8 @@
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
 #include "DissipationModelRandom.h"
+#include "DissipationModelScaled.h"
+//#include "DissipationModelPeriodic.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 
@@ -35,7 +37,7 @@ int main(int argc, char** argv ) {
         ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
         ("intercellIterations",po::value<uint>(),"number of iterations for intercell communication")
         ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
-        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic'")
+        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled'")
         ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
     ;
 
@@ -155,14 +157,54 @@ int main(int argc, char** argv ) {
                 std::cerr << "[ERROR] dissipation model parameters for random dissipation was not set: aborting"<<std::endl;
                 return 1;
             }
+        } else if(dissipationModelName == "scaled"){
+            if (vm.count("dissipationModelParameters")) {
+                std::cout << "[LOG] dissipation model parameters were declared to be "
+            << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if(dissipationModelParameters.size() == 1){
+                    dissipationModel = new DissipationModelScaled([dissipationModelParameters](double time)->double{return dissipationModelParameters[0];});
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for scaled dissipation must be one: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for scaled dissipation was not set: setting to default 0.5 costant"<<std::endl;
+                dissipationModel = new DissipationModelScaled();
+            }
         } else if(dissipationModelName == "periodic"){
-            std::cout << "Not yet implemented\n";
-            return 1;
+            // std::cout << "Not yet implemented\n";
+            // return 1;
             // if (vm.count("dissipationModelParameters")) {
-            //     std::cout << "[LOG] dissipation model parameters were set to "
-            // << vm["dissipationModelParameters"].as<std::vector<double>>()
+            //     std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+            //     if (dissipationModelParameters.size() == 3) {
+            //         std::cout << "[LOG] dissipation model parameters were set to "
+            //         << dissipationModelParameters[0] << " & " << dissipationModelParameters[1] << " & " << dissipationModelParameters[2] << ".\n";
+            //         dissipationModel = new DissipationModelPeriodic(dissipationModelParameters[0],dissipationModelParameters[1],dissipationModelParameters[2]);
+            //     } else {
+            //         std::cerr << "[ERROR] dissipation model parameters for periodic dissipation must be three: aborting"<<std::endl;
+            //         return 1;
+            //     }
+                
+                
             // }
-        }
+            if (vm.count("dissipationModelParameters")) {
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if (dissipationModelParameters.size() == 3) {
+                    std::cout << "[LOG] dissipation model parameters were set to Amplitude:"
+                    << dissipationModelParameters[0] << " & period:" << dissipationModelParameters[1] << " & phase: " << dissipationModelParameters[2] << ".\n";
+                    dissipationModel = new DissipationModelScaled([dissipationModelParameters](double time)->double{return dissipationModelParameters[0]*sin(2*arma::datum::pi/dissipationModelParameters[1]*time + dissipationModelParameters[2]);});
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for periodic dissipation must be three: aborting"<<std::endl;
+                    return 1;
+                }
+                
+                
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for periodic dissipation was not set: aborting"<<std::endl;
+                return 1;
+            }
+        } 
     } else { //dissipation model set to default (none)
         std::cout << "[LOG] dissipation model was not set. set to default (none)\n";
         dissipationModel = new DissipationModel();
@@ -206,6 +248,7 @@ int main(int argc, char** argv ) {
         }
     }
 
+
     //freeing some data structures inside computation to consume less RAM
     std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
     for(uint i = 0; i < cellTypes.size();i++ ){
@@ -226,7 +269,8 @@ int main(int argc, char** argv ) {
                 std::vector<std::string> nodeNames = cellToNodeNames[i];
                 std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iterationIntercell) + ") for cell (" + cellTypes[i]<<std::endl; 
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
-                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
+                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
+                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationDissipatedBeforeCompute(iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
             }
             //save output values
             for(uint i = 0; i < cellTypes.size(); i++){

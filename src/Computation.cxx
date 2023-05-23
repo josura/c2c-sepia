@@ -338,9 +338,7 @@ std::vector<double> Computation::computeAugmentedPerturbationDissipatedAfterComp
     if (dissipationModel) {
         arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
         arma::Col<double> dissipationTerm = dissipationModel->dissipationTerm(outputArma,timeStep);
-        for(uint i = 0;i<outputArma.n_elem;i++){
-            outputArma[i] = outputArma[i] - dissipationTerm[i];
-        }
+        outputArma = outputArma - dissipationTerm;
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     } else {

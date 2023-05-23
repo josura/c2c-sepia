@@ -43,6 +43,7 @@ set(LIB_SRCS
     src/DissipationModelPow.cxx
     src/DissipationModelRandom.cxx
     src/DissipationModelPeriodic.cxx
+    src/DissipationModelScaled.cxx
 )
 
 if(CUDAavailable)

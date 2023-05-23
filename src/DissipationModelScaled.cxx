@@ -14,7 +14,7 @@ DissipationModelScaled::~DissipationModelScaled(){
 }
 
 arma::Col<double> DissipationModelScaled::dissipate(arma::Col<double> input, double time){
-    return input - this->scaleFunction(time)*input;
+    return input - (this->scaleFunction(time)*input);
 }
 
 arma::Col<double> DissipationModelScaled::dissipationTerm(arma::Col<double> input, double time){
