@@ -10,7 +10,7 @@ class DissipationModelPow : public DissipationModel
         DissipationModelPow();
         DissipationModelPow(double power);
         ~DissipationModelPow();
-        arma::Col<double> dissipate(arma::Col<double> input, double time);
-        arma::Col<double> dissipationTerm(arma::Col<double> input, double time);
+        arma::Col<double> dissipate(arma::Col<double> input, double time)override;
+        arma::Col<double> dissipationTerm(arma::Col<double> input, double time)override;
         double getPower(){return this->power;}
 };

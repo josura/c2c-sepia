@@ -59,18 +59,16 @@ int main(int argc, char** argv ) {
     << vm["intercellIterations"].as<std::string>() << ".\n";
         intercellIterations = vm["intercellIterations"].as<uint>();
     } else {
-        std::cout << "[LOG] iterations intercell not set, set to default \n";
+        std::cout << "[LOG] iterations intercell not set, set to default: 10 iterations \n";
         intercellIterations = 10;
-        return 1;
     }
     if (vm.count("intracellIterations")) {
         std::cout << "[LOG] iterations intracell set to " 
     << vm["intracellIterations"].as<std::string>() << ".\n";
         intracellIterations = vm["intracellIterations"].as<uint>();
     } else {
-        std::cout << "[LOG] iterations intracell not set, set to default \n";
+        std::cout << "[LOG] iterations intracell not set, set to default: 5 iterations \n";
         intracellIterations = 5;
-        return 1;
     }
 
     if (vm.count("fMETAPATHWAY")) {
@@ -119,6 +117,7 @@ int main(int argc, char** argv ) {
         }
     } else {
         std::cout << "[LOG] output folder was not set. aborting\n";
+        return 1;
         //TODO
     }
     if (vm.count("dissipationModel")) {
@@ -195,7 +194,7 @@ int main(int argc, char** argv ) {
                     << dissipationModelParameters[0] << " & period:" << dissipationModelParameters[1] << " & phase: " << dissipationModelParameters[2] << ".\n";
                     dissipationModel = new DissipationModelScaled([dissipationModelParameters](double time)->double{return dissipationModelParameters[0]*sin(2*arma::datum::pi/dissipationModelParameters[1]*time + dissipationModelParameters[2]);});
                 } else {
-                    std::cerr << "[ERROR] dissipation model parameters for periodic dissipation must be three: aborting"<<std::endl;
+                    std::cerr << "[ERROR] dissipation model parameters for periodic dissipation must be three for amplitude, period and phase: aborting"<<std::endl;
                     return 1;
                 }
                 
@@ -275,7 +274,8 @@ int main(int argc, char** argv ) {
             //save output values
             for(uint i = 0; i < cellTypes.size(); i++){
                 std::vector<std::string> nodeNames = cellToNodeNames[i];
-                saveNodeValues(outputFoldername, iterationIntercell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+                //TODO change how to save files to get more information about intracell and intercell iterations
+                saveNodeValues(outputFoldername, iterationIntercell*intracellIterations + iterationIntracell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
             }
         }
         //update input

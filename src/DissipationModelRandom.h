@@ -11,6 +11,6 @@ class DissipationModelRandom : public DissipationModel
         DissipationModelRandom();
         DissipationModelRandom(double rangeMin, double rangeMax);
         ~DissipationModelRandom();
-        arma::Col<double> dissipate(arma::Col<double> input, double time);
-        arma::Col<double> dissipateTerm(arma::Col<double> input, double time);
+        arma::Col<double> dissipate(arma::Col<double> input, double time)override;
+        arma::Col<double> dissipationTerm(arma::Col<double> input, double time)override;
 };

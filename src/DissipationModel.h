@@ -7,8 +7,8 @@ class DissipationModel{
     public:
         DissipationModel();
         ~DissipationModel();
-        arma::Col<double> dissipate(arma::Col<double> input,double time);
-        arma::Col<double> dissipationTerm(arma::Col<double> input, double time);
+        virtual arma::Col<double> dissipate(arma::Col<double> input,double time);
+        virtual arma::Col<double> dissipationTerm(arma::Col<double> input, double time);
         arma::Col<double> dissipatePow2Self(arma::Col<double> input);
         arma::Col<double> dissipateSelfScaled(arma::Col<double> input, double scale);
         arma::Col<double> dissipateSelfScaled(arma::Col<double> input, arma::Col<double> scales);

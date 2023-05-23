@@ -11,7 +11,7 @@ class DissipationModelScaled : public DissipationModel
         DissipationModelScaled();
         DissipationModelScaled(std::function<double(double)> scaleFunc);
         ~DissipationModelScaled();
-        arma::Col<double> dissipate(arma::Col<double> input, double time);
-        arma::Col<double> dissipationTerm(arma::Col<double> input, double time);
+        arma::Col<double> dissipate(arma::Col<double> input, double time)override;
+        arma::Col<double> dissipationTerm(arma::Col<double> input, double time)override;
         double getScale(double time){return scaleFunction(time);}
 };
