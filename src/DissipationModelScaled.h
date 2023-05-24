@@ -10,7 +10,7 @@ class DissipationModelScaled : public DissipationModel
         // default constructor uses scaleFunction = 0.5
         DissipationModelScaled();
         DissipationModelScaled(std::function<double(double)> scaleFunc);
-        ~DissipationModelScaled();
+        ~DissipationModelScaled()override;
         arma::Col<double> dissipate(arma::Col<double> input, double time)override;
         arma::Col<double> dissipationTerm(arma::Col<double> input, double time)override;
         double getScale(double time){return scaleFunction(time);}

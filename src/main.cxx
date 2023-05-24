@@ -126,7 +126,7 @@ int main(int argc, char** argv ) {
         std::string dissipationModelName = vm["dissipationModel"].as<std::string>();
         if(dissipationModelName == "none"){
             std::cout << "[LOG] dissipation model set to default (none)\n";
-            dissipationModel = new DissipationModel();
+            dissipationModel = new DissipationModelScaled([](double time)->double{return 0;});
         } else if(dissipationModelName == "power"){
             if (vm.count("dissipationModelParameters")) {
                 std::cout << "[LOG] dissipation model parameters for power dissipation were declared to be" << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << ".\n";
@@ -206,7 +206,7 @@ int main(int argc, char** argv ) {
         } 
     } else { //dissipation model set to default (none)
         std::cout << "[LOG] dissipation model was not set. set to default (none)\n";
-        dissipationModel = new DissipationModel();
+        dissipationModel = new DissipationModelScaled([](double time)->double{return 0;});
     }
     //end program options section
 

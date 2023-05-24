@@ -6,11 +6,12 @@
 #include "DissipationModelPow.h"
 #include "DissipationModelPeriodic.h"
 #include "DissipationModelRandom.h"
+#include "DissipationModelScaled.h"
 
 class DissipationModelTesting : public ::testing::Test {
     protected:
         void SetUp() override {
-            c0 = new DissipationModel();
+            c0 = new DissipationModelScaled([](double time)->double{return 0;});
             c1 = new DissipationModelPow(2);
         }
         void TearDown() override{
