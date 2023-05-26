@@ -288,6 +288,7 @@ int main(int argc, char** argv ) {
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
             //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent cells to finish
+            //also take into account REpast framework
             for(uint j = 0; j < cellTypes.size(); j++){
                 if(i==j){
                     if(sameCellCommunication) cellComputations[i]->setInputVinForCell(cellTypes[j], cellComputations[j]->getVirtualOutputForCell(cellTypes[i]));
