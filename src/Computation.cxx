@@ -312,7 +312,7 @@ std::vector<double> Computation::computeAugmentedPerturbationDissipatedPow2(){
 }
 
 std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector){
-    if(saturationsVector.size() == 0){
+    if(saturationsVector.size() != 0){
         if (saturationsVector.size() >= InputAugmentedArma.n_elem) {
             arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
             for(uint i = 0;i<outputArma.n_elem;i++){
@@ -353,6 +353,29 @@ std::vector<double> Computation::computeAugmentedPerturbationDissipatedBeforeCom
         return outputAugmented;
     } else {
         throw std::invalid_argument("Computation::computeAugmentedPerturbationDissipatedBeforeCompute: dissipationModel is not set");
+    }
+}
+
+std::vector<double> Computation::computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(double timeStep, const std::vector<double>& saturationsVector){
+    if (saturationsVector.size() ) {
+        if (saturationsVector.size() >= InputAugmentedArma.n_elem) {
+            arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
+            for(uint i = 0;i<outputArma.n_elem;i++){
+                outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
+            }
+            outputAugmented = armaColumnToVector(outputArma);
+            return outputAugmented;
+        } else{
+            throw std::invalid_argument("saturationVector is not of the same size as output vector. abort");
+        }
+    }
+    else {
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
+        for(uint i = 0;i<outputArma.n_elem;i++){
+            outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
+        }
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
     }
 }
 
