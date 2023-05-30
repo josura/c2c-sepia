@@ -258,19 +258,19 @@ int main(int argc, char** argv ) {
     // EndCelltype -> (sourceCellType -> value)
 
     uint iterationIntercell = 0;
-    while(iterationIntercell++ < intercellIterations){
+    while(iterationIntercell < intercellIterations){
         //computation of perturbation
         uint iterationIntracell = 0;
         //intracell iteration with no passing of values to the virtual nodes
-        while (iterationIntracell++ < intracellIterations) {
+        while (iterationIntracell < intracellIterations) {
             #pragma omp parallel for
             for(uint i = 0; i < cellTypes.size(); i++){
                 std::vector<std::string> nodeNames = cellToNodeNames[i];
-                std::cout << "[LOG] computation of perturbation for iteration ("+ std::to_string(iterationIntercell) + ") for cell (" + cellTypes[i]<<std::endl; 
+                std::cout << "[LOG] computation of perturbation for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl; 
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
-                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
-                //std::vector<double> out
+                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
+                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
             }
             //save output values
             for(uint i = 0; i < cellTypes.size(); i++){
@@ -278,11 +278,12 @@ int main(int argc, char** argv ) {
                 //TODO change how to save files to get more information about intracell and intercell iterations
                 saveNodeValues(outputFoldername, iterationIntercell*intracellIterations + iterationIntracell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
             }
-        }
-        //update input
-        for(uint i = 0; i < cellTypes.size(); i++){
-            std::cout << "[LOG] update input for iteration ("+ std::to_string(iterationIntercell) + ") for cell (" + cellTypes[i]<<std::endl;
-            cellComputations[i]->updateInput(std::vector<double>(),true);
+            //update input
+            for(uint i = 0; i < cellTypes.size(); i++){
+                std::cout << "[LOG] update input for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl;
+                cellComputations[i]->updateInput(std::vector<double>(),true);
+            }
+            iterationIntracell++;
         }
         //update input with virtual node values update
 
@@ -298,7 +299,8 @@ int main(int argc, char** argv ) {
                 }
             }
         }
-        
+        iterationIntercell++;
+
     }
     
 
