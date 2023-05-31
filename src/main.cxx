@@ -234,6 +234,10 @@ int main(int argc, char** argv ) {
         //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
         cellComputations[i]->augmentMetapathwayNoComputeInverse(cellTypes);
     }
+    std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
+    for(uint i = 0; i < cellTypes.size();i++ ){
+        cellToNodeNames[i] = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();    
+    }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
         auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
@@ -242,18 +246,18 @@ int main(int argc, char** argv ) {
         for (uint i = 0; i < cellTypes.size();i++) {
             if(cellInteractionsEdges.contains(cellTypes[i])){
                 cellComputations[i]->addEdges(cellInteractionsEdges[cellTypes[i]]);
-                //cellComputations[i]->freeAugmentedGraphs();  //REMOVE
+                cellComputations[i]->freeAugmentedGraphs();
             }
         }
     }
 
 
     //freeing some data structures inside computation to consume less RAM
-    std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
-    for(uint i = 0; i < cellTypes.size();i++ ){
-        cellToNodeNames[i] = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();  
-        cellComputations[i]->freeAugmentedGraphs();  
-    }
+    // std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
+    // for(uint i = 0; i < cellTypes.size();i++ ){
+    //     cellToNodeNames[i] = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();  
+    //     cellComputations[i]->freeAugmentedGraphs();  
+    // }
 
     // EndCelltype -> (sourceCellType -> value)
 
