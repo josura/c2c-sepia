@@ -10,7 +10,6 @@
 #include "DissipationModelPow.h"
 #include "DissipationModelRandom.h"
 #include "DissipationModelScaled.h"
-//#include "DissipationModelPeriodic.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 
@@ -40,6 +39,7 @@ int main(int argc, char** argv ) {
         ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled'")
         ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
     ;
+    //TODO add additional parameter for different metapathway(graphs) files
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -172,21 +172,6 @@ int main(int argc, char** argv ) {
                 dissipationModel = new DissipationModelScaled();
             }
         } else if(dissipationModelName == "periodic"){
-            // std::cout << "Not yet implemented\n";
-            // return 1;
-            // if (vm.count("dissipationModelParameters")) {
-            //     std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
-            //     if (dissipationModelParameters.size() == 3) {
-            //         std::cout << "[LOG] dissipation model parameters were set to "
-            //         << dissipationModelParameters[0] << " & " << dissipationModelParameters[1] << " & " << dissipationModelParameters[2] << ".\n";
-            //         dissipationModel = new DissipationModelPeriodic(dissipationModelParameters[0],dissipationModelParameters[1],dissipationModelParameters[2]);
-            //     } else {
-            //         std::cerr << "[ERROR] dissipation model parameters for periodic dissipation must be three: aborting"<<std::endl;
-            //         return 1;
-            //     }
-                
-                
-            // }
             if (vm.count("dissipationModelParameters")) {
                 std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
                 if (dissipationModelParameters.size() == 3) {
