@@ -38,6 +38,7 @@ int main(int argc, char** argv ) {
         ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
         ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled'")
         ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
+        ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder")
     ;
     //TODO add additional parameter for different metapathway(graphs) files
 
