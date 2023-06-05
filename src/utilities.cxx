@@ -282,7 +282,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
-                if(entries.size()>1){
+                if(entries.size()==splittedHeader.size()){
                     if(!useEntrez){
                         geneNames.push_back(entries[0]);
                         for(int i = 1; i < SizeToInt(entries.size());i++){
@@ -301,6 +301,8 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                             discardedGenes.push_back(entries[0]);
                         }//else don't do nothing since the node is not in the graph
                     }
+                } else {
+                    throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: header doesn't have the same amount of columns as the data " + filename);
                 }
             }
             myfile.close();
@@ -348,7 +350,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
                 }
             }
             if(indexCellStart < 0 || indexCellEnd < 0 || indexLigandStart < 0 || indexReceptorEnd < 0 || indexWeight < 0){
-                throw std::invalid_argument("invalid file, the header does not contain a startcell, or an endcell, or a Ligand gene, or a receptor gene, or a weight feature");
+                throw std::invalid_argument("utilities::cellInteractionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startcell, or an endcell, or a Ligand gene, or a receptor gene, or a weight feature");
             }
             while ( getline (myfile,line) )
             {
