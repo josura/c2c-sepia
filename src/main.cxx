@@ -41,6 +41,7 @@ int main(int argc, char** argv ) {
         ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder")
     ;
     //TODO add additional parameter for different metapathway(graphs) files
+    //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
