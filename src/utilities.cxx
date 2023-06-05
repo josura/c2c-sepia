@@ -274,8 +274,8 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector
-            for (int i = 0; i < SizeToInt( splittedHeader.size()); i++) {
+            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector,
+            for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
                 cellNames.push_back(splittedHeader[i]);
                 ret.push_back(std::vector<double>(finalNames.size(),0));
             }
