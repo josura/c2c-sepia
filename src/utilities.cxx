@@ -364,8 +364,8 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
                         std::string startCell = entries[indexCellStart];
                         std::string endCell = entries[indexCellEnd];
                         double weight = std::stod( entries[indexWeight]);
-                        std::string virtualInputEndCell = "v-in:" + endCell;
-                        std::string virtualOutputStartCell = "v-out:" + startCell;
+                        std::string virtualInputEndCell = "v-in:" + startCell;
+                        std::string virtualOutputStartCell = "v-out:" + endCell;
                         std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
                         std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
                         if(ret.contains(startCell)){
@@ -518,14 +518,16 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
         }
     }else{
         for(uint i = 0; i < nodeValues.size(); i++){
-            if(mapToEverything.contains(nodeNames[i]))
+            if(mapToEverything.contains(nodeNames[i])){
                 outfile<<mapToEverything.at(nodeNames[i])[0]<<mapToEverything.at(nodeNames[i])[1]<<mapToEverything.at(nodeNames[i])[2]<<mapToEverything.at(nodeNames[i])[3]<< std::to_string(nodeValues[i]);
-            else {
+            } else {
                 auto splittedVirtual = splitString(nodeNames[i], ":");
                 if(splittedVirtual[0]=="v-in"){
                     outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 } else if(splittedVirtual[0]=="v-out"){
                     outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                } else{ //when the node names are not genes but something else
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the pathway\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i]);
                 }
             }
             outfile << std::endl;
