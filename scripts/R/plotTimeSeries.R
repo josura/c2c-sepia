@@ -1,6 +1,6 @@
 library(ggplot2)
 
-timeSeries.CD4Tconv <- read.csv("/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/periodicSatNotfull/CD4Tconv_outputAll.tsv",sep = "\t",header = TRUE)
+timeSeries.CD4Tconv <- read.csv("/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/PeriodicSatFull/CD4Tconv_outputAll.tsv",sep = "\t",header = TRUE)
 ### visualization all iterations virtual inputs
 ggplot() +
   ggtitle("Virtual input in the CD4Tconv augmented metapathway for Fibroblast (log10)") +
