@@ -1,6 +1,6 @@
 library(ggplot2)
 
-timeSeries.t0 <- read.csv("/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/t3_outputAll.tsv",sep = "\t",header = TRUE)
+timeSeries.t0 <- read.csv("/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/t2_outputAll.tsv",sep = "\t",header = TRUE)
 
 library(reshape2)
 x <- timeSeries.t0[, 1]
@@ -12,7 +12,7 @@ interesting.list <- c("v.in.t3","v.in.t1","v.out.t3","v.out.t1","v.out.t2")
 y.int <- timeSeries.t0[, interesting.list]
 
 # Combine x and y into a new dataframe
-df_new <- data.frame(x = rep(x, ncol(y)), y.int = c(y))
+df_new <- data.frame(x = rep(x, ncol(y)), c(y))
 
 # Convert y columns into a single column
 df_new <- melt(df_new, id.vars = "x")
