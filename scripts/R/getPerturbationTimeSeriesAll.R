@@ -13,13 +13,9 @@ getperturbationTimeSeries <- function(path,output){
   # initialize an empty list to store the dataframes
   df_list <- list()
   cell_list <- list()
-  gene_list <- list()
   firstFileName <- ""
   # iterate over the files
   for (file_name in file_list) {
-    if(firstFileName == ""){
-      firstFileName <- paste(path,file_name,sep = "")
-    }
     # check if the file ends with ".tsv"
     print(file_name)
     if (endsWith(file_name, ".tsv")) {
@@ -34,10 +30,12 @@ getperturbationTimeSeries <- function(path,output){
     print(file_name)
   }
   
-  gene_list <- read.csv(firstFileName,header=TRUE,sep = "\t")$nodeName
   
   cell_list <- unique(cell_list)
   for (cellName in cell_list){
+    gene_list <- list()
+    firstFileName <- paste(path,paste(cellName,"--0.tsv",sep=""),sep = "")
+    gene_list <- read.csv(firstFileName,header=TRUE,sep = "\t")$nodeName
     outputFileName <- paste(paste(output,cellName,sep = ""),"_outputAll.tsv",sep = "")
     print(outputFileName)
     # create the file
@@ -46,9 +44,6 @@ getperturbationTimeSeries <- function(path,output){
   }
   
   for (file_name in file_list) {
-    if(firstFileName == ""){
-      firstFileName <- paste(path,file_name,sep = "")
-    }
     # check if the file ends with ".tsv"
     print(paste("writing values for ",file_name))
     if (endsWith(file_name, ".tsv")) {
