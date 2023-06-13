@@ -358,7 +358,7 @@ std::vector<double> Computation::computeAugmentedPerturbationDissipatedBeforeCom
 
 std::vector<double> Computation::computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(double timeStep, const std::vector<double>& saturationsVector){
     if (saturationsVector.size() ) {
-        if (saturationsVector.size() >= InputAugmentedArma.n_elem) {
+        if (saturationsVector.size() == InputAugmentedArma.n_elem) {
             arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
             for(uint i = 0;i<outputArma.n_elem;i++){
                 outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
