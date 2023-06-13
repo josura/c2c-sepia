@@ -313,7 +313,7 @@ std::vector<double> Computation::computeAugmentedPerturbationDissipatedPow2(){
 
 std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector){
     if(saturationsVector.size() != 0){
-        if (saturationsVector.size() >= InputAugmentedArma.n_elem) {
+        if (saturationsVector.size() == InputAugmentedArma.n_elem) {
             arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
             for(uint i = 0;i<outputArma.n_elem;i++){
                 outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
