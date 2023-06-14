@@ -55,7 +55,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
             normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
         }
     }
-    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     // std::cout<< " WtransArma:\n";
     // print_mat( WtransArma);
 
@@ -87,7 +87,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
             normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
         }
     }
-    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
@@ -137,11 +137,11 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
         for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
             for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
                 normalizationFactors[i] += betaToAdd; 
             }
         }
-        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         
         arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
@@ -203,11 +203,20 @@ void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::stri
         std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
         for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
             for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
                 normalizationFactors[i] += betaToAdd; 
             }
         }
-        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+
+        // std::cout << "[LOG + TESTING] normalization factors for augmented metapathway cell : " + localCellType << std::endl;
+        // printVector(normalizationFactors);
+        // std::cout << "[LOG + TESTING] augmented metapathway matrix : " + localCellType << std::endl;
+        // augmentedMetapathway->adjMatrix.printMatrix();
+        // std::cout << "[LOG + TESTING] augmented metapathway matrix transposed : " + localCellType << std::endl;
+        // augmentedMetapathway->adjMatrix.transpose().printMatrix();
+        // std::cout << "[LOG + TESTING] augmented metapathway matrix transposed normalized : " + localCellType << std::endl;
+        // augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).printMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         
         arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
@@ -243,11 +252,11 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
     std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
     for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
         for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
             normalizationFactors[i] += betaToAdd; 
         }
     }
-    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
@@ -269,11 +278,11 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
     std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
     for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
         for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(j,i));
+            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
             normalizationFactors[i] += betaToAdd; 
         }
     }
-    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorRow(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     //TODO normalization by previous weight nodes for the matrix
     arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
     std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
@@ -366,7 +375,7 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturatedAndDissipa
             outputAugmented = armaColumnToVector(outputArma);
             return outputAugmented;
         } else{
-            throw std::invalid_argument("saturationVector is not of the same size as output vector. abort");
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute: saturationVector is not of the same size as output vector. abort");
         }
     }
     else {
@@ -380,15 +389,50 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturatedAndDissipa
 }
 
 //TODO
-std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(const std::vector<double>& saturationsVector){
-    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-    outputAugmented = armaColumnToVector(outputArma);
-    return outputAugmented;
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(double timeStep, const std::vector<double>& saturationsVector){
+    if (saturationsVector.size() ) {
+        if (saturationsVector.size() == InputAugmentedArma.n_elem) {
+            arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
+            for(uint i = 0;i<outputArma.n_elem;i++){
+                outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
+            }
+            outputAugmented = armaColumnToVector(outputArma);
+            return outputAugmented;
+        } else{
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced1: saturationVector is not of the same size as output vector. abort");
+        }
+    }
+    else {
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
+        for(uint i = 0;i<outputArma.n_elem;i++){
+            outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
+        }
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
+    }
 }
 
 //TODO
-std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(const std::vector<double>& saturationsVector){
-    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double timeStep, const std::vector<double>& saturationsVector,const std::vector<double>& qVector){
+    std::vector<double> saturationVectorVar = saturationsVector;
+    std::vector<double> qVectorVar = qVector;
+    if(saturationVectorVar.size() == 0){
+        saturationVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
+    }
+    if(qVectorVar.size() == 0){
+        qVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
+    }
+    if(saturationVectorVar.size() != InputAugmentedArma.n_elem || qVectorVar.size() != InputAugmentedArma.n_elem){
+        throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: saturationVector or qVector is not of the same size as output vector. abort");
+    }
+    //dissipation
+    arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
+    //saturation
+    for(uint i = 0;i<dissipatedPerturbationArma.n_elem;i++){
+        dissipatedPerturbationArma[i] = hyperbolicTangentScaled(dissipatedPerturbationArma[i], saturationVectorVar[i]);
+    }
+    //conservation
+    arma::Col<double> outputArma =  dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
     outputAugmented = armaColumnToVector(outputArma);
     return outputAugmented;
 }

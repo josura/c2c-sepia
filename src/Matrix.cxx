@@ -484,7 +484,7 @@ Matrix<T>& Matrix<T>::normalizeByVectorColumn(const std::vector<double>& normVec
     }
     for (int i =0 ; i<getRows(); i++) {
         for (int j =0 ; j<getCols(); j++) {
-            _matrix[i * cols_ + j] = getValue(i, j) / normVector[j] + 1e-20;
+            _matrix[i * cols_ + j] = getValue(i, j) / (normVector[j] + 1e-20);
         }
     }
     return *this;
@@ -507,3 +507,16 @@ Matrix<T>& Matrix<T>::normalizeByVectorRow(const std::vector<double>& normVector
 }
 
 template Matrix<double>& Matrix<double>::normalizeByVectorRow(const std::vector<double> &normVector);
+
+template<typename T>
+void Matrix<T>::printMatrix()const{
+    std::cout << "Matrix " << rows_ << "x" << cols_ << std::endl;
+    for (int i =0 ; i<getRows(); i++) {
+        for (int j =0 ; j<getCols(); j++) {
+            std::cout << getValue(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+template void Matrix<double>::printMatrix()const;

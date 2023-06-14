@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DissipationModel.h"
+#include "ConservationModel.h"
 #include "Matrix.h"
 #include "WeightedEdgeGraph.h"
 #include <map>
@@ -22,6 +23,7 @@ class Computation{
         arma::Mat<double> pseudoInverseAugmentedArma;
         std::map<std::string,int> nodeToIndex;
         DissipationModel* dissipationModel=nullptr;
+        ConservationModel* conservationModel=nullptr;
     public:
         Computation();
         ~Computation();
@@ -67,8 +69,8 @@ class Computation{
         std::vector<double> computeAugmentedPerturbationDissipatedBeforeCompute(double timeStep); //taking into account dissipation after every iteration (Dissipation model), dissipation before the computation of the perturbated value
         std::vector<double> computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) after every iteration
         std::vector<double> computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(double timeStep,const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
-        std::vector<double> computeAugmentedPerturbationEnhanced1(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
-        std::vector<double> computeAugmentedPerturbationEnhanced2(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
+        std::vector<double> computeAugmentedPerturbationEnhanced1(double timeStep, const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
+        std::vector<double> computeAugmentedPerturbationEnhanced2(double timeStep, const std::vector<double>& saturationsVector = std::vector<double>(),const std::vector<double>& qVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling), dissipation and conservation after every iteration
         std::pair<std::string,double> getMapVirtualOutputsToCellInputs(); //TODO
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 
@@ -94,6 +96,7 @@ class Computation{
         void setInputVinForCell(std::string celltype, double value);
         void setInputVoutForCell(std::string celltype, double value);
         void setDissipationModel(DissipationModel* dissipationModel);
+        void setConservationModel(ConservationModel* conservationModel);
 
         //optimization
         void freeAugmentedGraphs();

@@ -1,7 +1,6 @@
 #pragma once
 #include <armadillo>
 #include <functional>
-#include "armaUtilities.h"
 
 class ConservationModel{
     protected:

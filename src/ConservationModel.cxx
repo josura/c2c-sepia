@@ -1,4 +1,5 @@
 #include "ConservationModel.h"
+#include "armaUtilities.h"
 
 
 ConservationModel::ConservationModel(){

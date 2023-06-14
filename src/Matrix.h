@@ -89,6 +89,7 @@ class Matrix {
         arma::Mat<T> asArmadilloMatrix()const;
         arma::Col<T> asArmadilloColumnVector()const;
         arma::Row<T> asArmadilloRowVector()const;
+        void printMatrix()const;
 
     protected:
         int rows_, cols_;

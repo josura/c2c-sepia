@@ -160,6 +160,19 @@ std::vector<std::string> splitString(std::string toSplit , std::string delimiter
     return tokens;
 }
 
+void printVector(std::vector<int> vec){
+    for(int i : vec){
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+}
+
+void printVector(std::vector<double> vec){
+    for(double i : vec){
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+}
 
 boost::tokenizer<boost::char_delimiters_separator<char>> splitStringTokenizer(std::string toSplit , char delimiter){
     boost::char_delimiters_separator<char> sep(delimiter);

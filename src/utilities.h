@@ -42,6 +42,9 @@ NodeSet* nodeBitArrayToSet(NodeBitArray const& nodeArray,int arraySize);
 
 void printNodeBitArray(NodeBitArray nodeArray,int size);
 
+void printVector(std::vector<int> vec);
+void printVector(std::vector<double> vec);
+
 //random generation for integers
 int randomNumber(int min, int max);
 //random generation for doubles
