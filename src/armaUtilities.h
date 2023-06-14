@@ -11,6 +11,6 @@ template<typename T>
 std::vector<T> armaRowToVector(arma::Row<T> matr){return arma::conv_to< std::vector<T> >::from(matr);}
 
 template<typename T>
-std::vector<T> vectorToArmaColumn(std::vector<T> vec){return arma::conv_to< arma::Col<T> >::from(vec);}
+arma::Col<T> vectorToArmaColumn(std::vector<T> vec){return arma::Col<T>(vec);}
 
 void print_mat(arma::mat my_matrix);

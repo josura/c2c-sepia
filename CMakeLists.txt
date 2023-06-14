@@ -44,6 +44,7 @@ set(LIB_SRCS
     src/DissipationModelRandom.cxx
     src/DissipationModelPeriodic.cxx
     src/DissipationModelScaled.cxx
+    src/ConservationModel.cxx
 )
 
 if(CUDAavailable)
@@ -113,8 +114,17 @@ target_link_libraries(
   ${lapackblas_libraries}
 )
 
+add_executable(ConservationModelTesting  "src/ConservationModelTesting.cc")
+target_link_libraries(
+  ConservationModelTesting
+  GTest::gtest_main
+  mysharedlib
+  ${lapackblas_libraries}
+)
+
 include(GoogleTest)
 gtest_discover_tests(GraphTesting)
 gtest_discover_tests(MatrixTesting)
 gtest_discover_tests(ComputationTesting)
 gtest_discover_tests(DissipationModelTesting)
+gtest_discover_tests(ConservationModelTesting)
