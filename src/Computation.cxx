@@ -480,6 +480,9 @@ void Computation::setDissipationModel(DissipationModel *dissipationModel){
     this->dissipationModel = dissipationModel;
 }
 
+void Computation::setConservationModel(ConservationModel *conservationModel){
+    this->conservationModel = conservationModel;
+}
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {
