@@ -6,6 +6,7 @@
 #include <tuple>
 #include <vector>
 #include "Computation.h"
+#include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
 #include "DissipationModelRandom.h"
@@ -51,6 +52,7 @@ int main(int argc, char** argv ) {
     std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename,outputFoldername;
     uint intercellIterations,intracellIterations;
     DissipationModel* dissipationModel = nullptr;
+    ConservationModel* conservationModel = nullptr;
 
     if (vm.count("help")) {
         //printHelp();
@@ -196,6 +198,50 @@ int main(int argc, char** argv ) {
     } else { //dissipation model set to default (none)
         std::cout << "[LOG] dissipation model was not set. set to default (none)\n";
         dissipationModel = new DissipationModelScaled([](double time)->double{return 0;});
+    }
+
+
+    if (vm.count("conservationModel")) {
+        std::cout << "[LOG] conservation model was set to "
+    << vm["conservationModel"].as<std::string>() << ".\n";
+        std::string conservationModelName = vm["conservationModel"].as<std::string>();
+        if(conservationModelName == "none"){
+            std::cout << "[LOG] conservation model set to default (none)\n";
+            conservationModel = new ConservationModel([](double time)->double{return 0;});
+        } else if (conservationModelName == "scaled"){
+            if (vm.count("conservationModelParameters")) {
+                std::cout << "[LOG] conservation model parameters were declared to be "
+            << vm["conservationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> conservationModelParameters = vm["conservationModelParameters"].as<std::vector<double>>();
+                if(conservationModelParameters.size() == 1){
+                    conservationModel = new ConservationModel([conservationModelParameters](double time)->double{return conservationModelParameters[0];});
+                } else {
+                    std::cerr << "[ERROR] conservation model parameters for scaled conservation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] conservation model parameters for scaled conservation was not set: setting to default 0.5 costant"<<std::endl;
+                conservationModel = new ConservationModel();
+            }
+        } else if (conservationModelName == "random"){
+            if (vm.count("conservationModelParameters")) {
+                std::cout << "[LOG] conservation model parameters were declared to be "
+            << vm["conservationModelParameters"].as<std::vector<double>>()[0] << " & " << vm["conservationModelParameters"].as<std::vector<double>>()[1] << ".\n";
+                std::vector<double> conservationModelParameters = vm["conservationModelParameters"].as<std::vector<double>>();
+                if(conservationModelParameters.size() == 2){
+                    conservationModel = new ConservationModel([conservationModelParameters](double time)->double{return randomRealNumber(conservationModelParameters[0],conservationModelParameters[1]);});
+                } else {
+                    std::cerr << "[ERROR] conservation model parameters for random conservation must be two: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] conservation model parameters for random conservation was not set: aborting"<<std::endl;
+                return 1;
+            }
+        } else {
+            std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled and random \n";
+            return 1;
+        }
     }
     //end program options section
 
