@@ -33,19 +33,26 @@ The options are the following:
 - **--output** (obligatory) => output folder for output of the algorithm at each iteration
 - **--intercellIterations** => number of iterations for intercell communication
 - **--intracellIterations** => number of iterations for intracell communication
+- **--dissipationModel** => dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled'
+- **--dissipationModelParameters** => parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period
+- **--graphsFilesFolder** => graphs (pathways or other types of graphs) file folder IMPORTANT not yet implemented loading for these graphs into the different computations
+- **--conservationModel** => conservation model used for the computation, available models are: 'none (default)','scaled','random' 
+- **--conservationModelParameters** => parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)
     
 
 ## INPUT SCHEMA
-**metapathway.tsv**
+
+The graphs file (or the single metapathway-graph used as the structure for every agent) should have the following structure, where every entry is an weighted edge of the graph :
+**graph1.tsv**
 
 start \t end \t weight
 
-[gene1] \t [gene2] \t [0.something]
+[node1] \t [node2] \t [realValue]
 
 ...
 
 
-
+The inputs for every node value in the graph will be the following (in the case of a single graph used for every type)
 **logfoldPerCell.tsv**
 
 \t cell1 \t cell2 \t ... \t cellN 
