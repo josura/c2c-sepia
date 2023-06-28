@@ -303,7 +303,6 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     return outputAugmented;
 }
 
-//TODO
 std::vector<double> Computation::computeAugmentedPerturbationNorm(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     outputAugmented = armaColumnToVector(outputArma);
@@ -388,7 +387,7 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturatedAndDissipa
     }
 }
 
-//TODO
+//TODO test if it works in the correct way
 std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(double timeStep, const std::vector<double>& saturationsVector){
     if (saturationsVector.size() ) {
         if (saturationsVector.size() == InputAugmentedArma.n_elem) {
@@ -412,7 +411,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(double ti
     }
 }
 
-//TODO
+//TODO test if it works in the correct way
 std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double timeStep, const std::vector<double>& saturationsVector,const std::vector<double>& qVector){
     std::vector<double> saturationVectorVar = saturationsVector;
     std::vector<double> qVectorVar = qVector;
