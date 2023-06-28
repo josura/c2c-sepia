@@ -229,6 +229,11 @@ int main(int argc, char** argv ) {
             << vm["conservationModelParameters"].as<std::vector<double>>()[0] << " & " << vm["conservationModelParameters"].as<std::vector<double>>()[1] << ".\n";
                 std::vector<double> conservationModelParameters = vm["conservationModelParameters"].as<std::vector<double>>();
                 if(conservationModelParameters.size() == 2){
+                    //control if lower and upper limits of the random values are within 0 and 1
+                    if( (conservationModelParameters[0] < 0) || (conservationModelParameters[0] > 1) || (conservationModelParameters[1] < 0) || (conservationModelParameters[1] > 1) || (conservationModelParameters[0] > conservationModelParameters[1]) ){
+                        std::cerr << "[ERROR] conservation model parameters for random conservation must be between 0 and 1 and must be a < b: aborting"<<std::endl;
+                        return 1;
+                    }
                     conservationModel = new ConservationModel([conservationModelParameters](double time)->double{return randomRealNumber(conservationModelParameters[0],conservationModelParameters[1]);});
                 } else {
                     std::cerr << "[ERROR] conservation model parameters for random conservation must be two: aborting"<<std::endl;
@@ -265,6 +270,7 @@ int main(int argc, char** argv ) {
         std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
         Computation* tmpCompPointer = new Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes);  //TODO order the genes directly or use the names and set them one by one 
         tmpCompPointer->setDissipationModel(dissipationModel);
+        tmpCompPointer->setConservationModel(conservationModel);
         cellComputations[i] = tmpCompPointer;
         //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
         cellComputations[i]->augmentMetapathwayNoComputeInverse(cellTypes);
@@ -309,7 +315,8 @@ int main(int argc, char** argv ) {
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
-                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
+                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
+                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
             }
             //save output values
             for(uint i = 0; i < cellTypes.size(); i++){
