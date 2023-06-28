@@ -19,7 +19,7 @@ arma::Col<double> ConservationModel::conservate(arma::Col<double> input, arma::C
         if (q.size() == input.n_elem) {
             //convert q vector to arma vector
             arma::Col<double> qArma = vectorToArmaColumn(q);
-            arma::Col<double> outputArma = inputDissipated -  scaleFunction(time) * Wstar * qArma % input;
+            arma::Col<double> outputArma = inputDissipated -  (scaleFunction(time) * Wstar * qArma) % input;
             return outputArma;
         } else{
             throw std::invalid_argument("q vector is not of the same size as input vector. abort");
