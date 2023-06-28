@@ -28,7 +28,7 @@ arma::Col<double> ConservationModel::conservate(arma::Col<double> input, arma::C
     else {
         //since in the case of vector values with all q values equal to 1
         arma::Col<double> qOnes = arma::ones<arma::Col<double>>(input.n_elem);
-        arma::Col<double> outputArma =  inputDissipated -  scaleFunction(time)* Wstar * qOnes * input;
+        arma::Col<double> outputArma =  inputDissipated -  (scaleFunction(time)* Wstar * qOnes) % input;
         return outputArma;
     }
 }
@@ -38,14 +38,14 @@ arma::Col<double> ConservationModel::conservationTerm(arma::Col<double> input, a
         if (q.size() == input.n_elem) {
             //convert q vector to arma vector
             arma::Col<double> qArma = vectorToArmaColumn(q);
-            arma::Col<double> outputArma =  scaleFunction(time) * Wstar * qArma * input;
+            arma::Col<double> outputArma =  (scaleFunction(time) * Wstar * qArma) % input;
             return outputArma;
         } else{
             throw std::invalid_argument("q is not of the same size as input vector. abort");
         }
     } else{
         arma::Col<double> qOnes = arma::ones<arma::Col<double>>(input.n_elem);
-        arma::Col<double> outputArma =  scaleFunction(time) * Wstar * qOnes * input;
+        arma::Col<double> outputArma =  (scaleFunction(time) * Wstar * qOnes) % input;
         return outputArma;
     }
 }
