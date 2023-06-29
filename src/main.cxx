@@ -25,6 +25,7 @@ int main(int argc, char** argv ) {
     //program options
     bool ensembleGeneNames=false;
     bool sameCellCommunication=false;
+    bool saturation=false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -42,6 +43,8 @@ int main(int argc, char** argv ) {
         ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
         ("conservationModel",po::value<std::string>(),"the conservation model used for the computation, available models are: 'none (default)','scaled','random' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
+        ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
+        ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
     ;
     //TODO add additional parameter for different metapathway(graphs) files
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
