@@ -388,55 +388,73 @@ std::vector<double> Computation::computeAugmentedPerturbationSaturatedAndDissipa
 }
 
 //TODO test if it works in the correct way
-std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(double timeStep, const std::vector<double>& saturationsVector){
-    if (saturationsVector.size() ) {
-        if (saturationsVector.size() == InputAugmentedArma.n_elem) {
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced1(double timeStep, bool saturation, const std::vector<double>& saturationsVector){
+    if(saturation){
+        if (saturationsVector.size() ) {
+            if (saturationsVector.size() == InputAugmentedArma.n_elem) {
+                arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
+                for(uint i = 0;i<outputArma.n_elem;i++){
+                    outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
+                }
+                outputAugmented = armaColumnToVector(outputArma);
+                return outputAugmented;
+            } else{
+                throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced1: saturationVector is not of the same size as output vector. abort");
+            }
+        }
+        else {
             arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
             for(uint i = 0;i<outputArma.n_elem;i++){
-                outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
+                outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
             }
             outputAugmented = armaColumnToVector(outputArma);
             return outputAugmented;
-        } else{
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced1: saturationVector is not of the same size as output vector. abort");
         }
-    }
-    else {
+    } else {
         arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
-        for(uint i = 0;i<outputArma.n_elem;i++){
-            outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
-        }
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     }
 }
 
 //TODO test if it works in the correct way
-std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double timeStep, const std::vector<double>& saturationsVector,const std::vector<double>& qVector){
-    std::vector<double> saturationVectorVar = saturationsVector;
-    std::vector<double> qVectorVar = qVector;
-    if(saturationVectorVar.size() == 0){
-        saturationVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double timeStep, bool saturation, const std::vector<double>& saturationsVector,const std::vector<double>& qVector){
+    if (saturation) {
+        std::vector<double> saturationVectorVar = saturationsVector;
+        std::vector<double> qVectorVar = qVector;
+        if(saturationVectorVar.size() == 0){
+            saturationVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
+        }
+        if(qVectorVar.size() == 0){
+            qVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
+        }
+        if(saturationVectorVar.size() != InputAugmentedArma.n_elem || qVectorVar.size() != InputAugmentedArma.n_elem){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: saturationVector or qVector is not of the same size as output vector. abort");
+        }
+        //dissipation
+        arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
+        //saturation
+        for(uint i = 0;i<dissipatedPerturbationArma.n_elem;i++){
+            dissipatedPerturbationArma[i] = hyperbolicTangentScaled(dissipatedPerturbationArma[i], saturationVectorVar[i]);
+        }
+        //conservation
+        if(augmentedMetapathway == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
+        }
+        arma::Col<double> outputArma =  dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
+    } else {
+        //dissipation
+        arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
+        //conservation
+        if(augmentedMetapathway == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
+        }
+        arma::Col<double> outputArma =  dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
     }
-    if(qVectorVar.size() == 0){
-        qVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
-    }
-    if(saturationVectorVar.size() != InputAugmentedArma.n_elem || qVectorVar.size() != InputAugmentedArma.n_elem){
-        throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: saturationVector or qVector is not of the same size as output vector. abort");
-    }
-    //dissipation
-    arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
-    //saturation
-    for(uint i = 0;i<dissipatedPerturbationArma.n_elem;i++){
-        dissipatedPerturbationArma[i] = hyperbolicTangentScaled(dissipatedPerturbationArma[i], saturationVectorVar[i]);
-    }
-    //conservation
-    if(augmentedMetapathway == nullptr){
-        throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
-    }
-    arma::Col<double> outputArma =  dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
-    outputAugmented = armaColumnToVector(outputArma);
-    return outputAugmented;
 }
 
 

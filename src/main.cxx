@@ -71,6 +71,7 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] iterations intercell not set, set to default: 10 iterations \n";
         intercellIterations = 10;
     }
+
     if (vm.count("intracellIterations")) {
         std::cout << "[LOG] iterations intracell set to " 
     << vm["intracellIterations"].as<std::string>() << ".\n";
@@ -79,6 +80,7 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] iterations intracell not set, set to default: 5 iterations \n";
         intracellIterations = 5;
     }
+
 
     if (vm.count("fMETAPATHWAY")) {
         std::cout << "[LOG] file for the metapathway was set to " 
