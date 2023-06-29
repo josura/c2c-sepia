@@ -321,7 +321,18 @@ int main(int argc, char** argv ) {
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
-                std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
+                if (saturation) {
+                    if(vm.count("saturationTerm") == 0){
+                        std::cout << "[LOG] saturation term not specified, using the interval [-1,1]"<<std::endl;
+                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = true); // TODO check if iteration intracell should be multiplied by iteration intercell
+                    } else if (vm.count("saturationTerm") >= 1) {
+                        //TODO create saturation vector
+                        double saturationTerm = vm["saturationTerm"].as<double>();
+                        std::vector<double> saturationVector = std::vector<double>(metapathwayNodes.size(),saturationTerm);
+                    }
+                } else{
+                    std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = false); // TODO check if iteration intracell should be multiplied by iteration intercell
+                }
             }
             //save output values
             for(uint i = 0; i < cellTypes.size(); i++){
