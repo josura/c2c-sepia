@@ -26,6 +26,7 @@ int main(int argc, char** argv ) {
     bool ensembleGeneNames=false;
     bool sameCellCommunication=false;
     bool saturation=false;
+    bool conservateInitialNorm=false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -45,6 +46,7 @@ int main(int argc, char** argv ) {
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
+        ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
     ;
     //TODO add additional parameter for different metapathway(graphs) files
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
@@ -329,6 +331,7 @@ int main(int argc, char** argv ) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         std::vector<double> saturationVector = std::vector<double>(metapathwayNodes.size(),saturationTerm);
+                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = true, saturationVector); // TODO check if iteration intracell should be multiplied by iteration intercell
                     }
                 } else{
                     std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = false); // TODO check if iteration intracell should be multiplied by iteration intercell
