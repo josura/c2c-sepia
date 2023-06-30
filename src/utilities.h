@@ -142,3 +142,18 @@ std::map<std::string, std::vector<std::string>> getFullNodesDescription();
 std::vector<std::string> get_all(std::string const & root, std::string const & ext);
 
 void saveNodeValues(std::string folderName,int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false);
+
+template<typename T>
+std::vector<T> vectorNormalization(std::vector<T> vec){
+    T norm=0;
+    for (int i = 0; i < vec.size(); ++i) {
+        norm+=vec[i]*vec[i];
+    }
+    norm=sqrt(norm);
+    for (int i = 0; i < vec.size(); ++i) {
+        vec[i]=vec[i]/norm;
+    }
+    return vec;
+}
+
+double vectorNorm(std::vector<double> vec);
