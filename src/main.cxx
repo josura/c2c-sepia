@@ -345,8 +345,20 @@ int main(int argc, char** argv ) {
             }
             //update input
             for(uint i = 0; i < cellTypes.size(); i++){
-                std::cout << "[LOG] update input for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl;
-                cellComputations[i]->updateInput(std::vector<double>(),true);
+                //If conservation of the initial values is required, the input is first updated with the initial norm value
+                if (conservateInitialNorm) {
+                    std::vector<double> inputInitial = std::get<2>(logFolds)[i];
+                    double initialNorm = vectorNorm(inputInitial);
+                    double outputNorm = vectorNorm(cellComputations[i]->getOutputAugmented());
+                    double normRatio = initialNorm/outputNorm;
+                    std::vector<double> newInput = vectorScalarMultiplication(cellComputations[i]->getOutputAugmented(),normRatio);
+                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl;
+                    cellComputations[i]->updateInput(newInput,true);
+                } else {
+                    std::cout << "[LOG] update input for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl;
+                    cellComputations[i]->updateInput(std::vector<double>(),true);
+                }
+                
             }
             iterationIntracell++;
         }

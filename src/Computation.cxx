@@ -503,7 +503,6 @@ void Computation::setConservationModel(ConservationModel *conservationModel){
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {
-        
         if (newInp.size() == 0) {
             InputArma = arma::Col<double>(output);
             input = output;    
