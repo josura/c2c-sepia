@@ -12,7 +12,6 @@
 class ComputationTestingPerturbation : public ::testing::Test {
     protected:
         void SetUp() override {
-            c0  = new Computation();
             c1  = new Computation(thisType,input,_W,nodesNames);
             
         }
@@ -45,54 +44,58 @@ class ComputationTestingPerturbation : public ::testing::Test {
                                                                                      };
         std::vector<double> virtualOutputEdgesValues = {0.4,0.4};
 
-        Computation* c0;       //testing default constructor
         Computation* c1;       //testing general constructor
 
         DissipationModel* dms = new DissipationModelScaled( [](double x){return 0;} );
-        DissipationModel* dms = new DissipationModelScaled(); //default constructor uses the functions that returns 0.5 for every iteration
+        DissipationModel* dms2 = new DissipationModelScaled(); //default constructor uses the functions that returns 0.5 for every iteration
 
         ConservationModel* cms = new ConservationModel( [](double x){return 0;} );
-        ConservationModel* cms = new ConservationModel(); //default constructor uses the functions that returns 0.5 for every iteration
+        ConservationModel* cms2 = new ConservationModel(); //default constructor uses the functions that returns 0.5 for every iteration
   
 };
 
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefault) {
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefaultNoSaturation) {
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathway(cellTypes);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    computationTest->compute();
+}
+
+
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationNoSaturation) {
 
 }
 
 
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservation) {
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDefaultNoConservationNoSaturation) {
+
+}
+
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationNoConservationNoSaturation) {
+
+}
+
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationDefaultQemptyNoSaturation) {
+
+}
+
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQemptyNoSaturation) {
+
+}
+
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassedNoSaturation) {
 
 }
 
 
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDefaultNoConservation) {
-
-}
-
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationNoConservation) {
-
-}
-
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationDefaultQempty) {
-
-}
-
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQempty) {
-
-}
-
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassed) {
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQemptyNoSaturation) {
 
 }
 
 
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQempty) {
-
-}
-
-
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQpassed) {
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQpassedNoSaturation) {
 
 }
 
