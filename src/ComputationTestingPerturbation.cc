@@ -57,10 +57,16 @@ class ComputationTestingPerturbation : public ::testing::Test {
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefaultNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathwayNoComputeInverse(cellTypes);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
-    computationTest->compute();
+    computationTest.setDissipationModel(dms);
+    computationTest.setConservationModel(cms);
+    std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,false);
+    std::vector<double> expected{2.182562,1.567783,1.461379,3.737241,0,0,2.182562,1.567783};
+    for (int i = 0; i < 8 ; i++) {
+        EXPECT_NEAR(result[i],expected[i],1e-4);
+    }
 }
 
 
