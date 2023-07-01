@@ -441,7 +441,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         if(augmentedMetapathway == nullptr){
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
         }
-        arma::Col<double> outputArma =  dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     } else {
@@ -451,7 +451,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         if(augmentedMetapathway == nullptr){
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
         }
-        arma::Col<double> outputArma =  dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     }
