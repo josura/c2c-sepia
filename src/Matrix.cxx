@@ -498,9 +498,8 @@ Matrix<T>& Matrix<T>::normalizeByVectorRow(const std::vector<double>& normVector
         throw std::invalid_argument("[ERROR] Matrix<T>::normalizeByVectorRow: normalization vector size is less than the number of rows");
     }
     for (int i =0 ; i<getRows(); i++) {
-        double normalizationFactor = normVector[i] + 1e-20;
         for (int j =0 ; j<getCols(); j++) {
-            _matrix[i * cols_ + j] = getValue(i, j) / normalizationFactor ;
+            _matrix[i * cols_ + j] = getValue(i, j) / (normVector[i] + 1e-20) ;
         }
     }
     return *this;
