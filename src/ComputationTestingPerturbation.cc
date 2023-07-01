@@ -4,6 +4,7 @@
 #include <vector>
 #include "Computation.h"
 #include "ConservationModel.h"
+#include "DissipationModel.h"
 #include "DissipationModelScaled.h"
 #include "Matrix.h"
 #include "utilities.h"
@@ -47,9 +48,11 @@ class ComputationTestingPerturbation : public ::testing::Test {
         Computation* c0;       //testing default constructor
         Computation* c1;       //testing general constructor
 
-        DissipationModel* dms = new DissipationModelScaled( [](double x){return 0.5;} );
+        DissipationModel* dms = new DissipationModelScaled( [](double x){return 0;} );
+        DissipationModel* dms = new DissipationModelScaled(); //default constructor uses the functions that returns 0.5 for every iteration
 
-        ConservationModel* cms = new ConservationModel( [](double x){return 0.5;} );
+        ConservationModel* cms = new ConservationModel( [](double x){return 0;} );
+        ConservationModel* cms = new ConservationModel(); //default constructor uses the functions that returns 0.5 for every iteration
   
 };
 
@@ -63,15 +66,21 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 }
 
 
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDefaultNoConservation) {
+
+}
+
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationNoConservation) {
 
 }
 
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationDefaultQempty) {
+
+}
 
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQempty) {
 
 }
-
 
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassed) {
 
@@ -86,3 +95,4 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationCo
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQpassed) {
 
 }
+
