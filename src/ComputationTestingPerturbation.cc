@@ -10,7 +10,7 @@ class ComputationTestingPerturbation : public ::testing::Test {
     protected:
         void SetUp() override {
             c0  = new Computation();
-            c1  = new Computation(thisCellType,input,_W,metapathwayNames);
+            c1  = new Computation(thisCellType,input,_W,nodesNames);
             
         }
         void TearDown() override{
@@ -19,7 +19,7 @@ class ComputationTestingPerturbation : public ::testing::Test {
         }
 
 
-        std::string thisCellType = "testType";
+        std::string thisCellType = "type1";
         std::vector<double> input{1,1,0.1,2}; 
         //Matrix<double> _W=Matrix<double>::createRandom(6, 6); 
         std::vector<double> matrixVector{0,0.2,0.4,0.5,
@@ -27,18 +27,18 @@ class ComputationTestingPerturbation : public ::testing::Test {
                                          0.3,0.2,0,0.5,
                                          0.4,0.2,0.4,0
                                          };  // 30 edges initially
-        Matrix<double> _W = Matrix<double>(matrixVector,6,6);
-        std::vector<std::string> metapathwayNames{"testGene1","testGene2","testGene3","testGene4","testGene5","testGene6"};
+        Matrix<double> _W = Matrix<double>(matrixVector,4,4);
+        std::vector<std::string> nodesNames{"node1","node2","node3","node4"};
 
-        const std::vector<std::string> cellTypes{"testCell","testCell2","testCell3","testCell4"};
-        const std::vector<std::pair<std::string, std::string>> virtualInputEdges{{"v-in:testCell2","testGene2"},
-                                                                                 {"v-in:testCell4","testGene2"},
-                                                                                 {"v-in:testCell4","testGene3"},
-                                                                                 {"v-in:testCell4","testGene6"}
+        const std::vector<std::string> types{"type1","type2","type3"};
+        const std::vector<std::pair<std::string, std::string>> virtualInputEdges{{"v-in:type2","node2"},
+                                                                                 {"v-in:type3","node2"},
+                                                                                 {"v-in:type3","node3"},
+                                                                                 {"v-in:type3","node1"}
                                                                                  };
         std::vector<double> virtualInputEdgesValues = {0.4,0.5,0.7,0.2};
-        std::vector<std::pair<std::string, std::string>> virtualOutputEdges{{"testGene2","v-out:testCell2"},
-                                                                            {"testGene4","v-out:testCell3"}
+        std::vector<std::pair<std::string, std::string>> virtualOutputEdges{{"node2","v-out:type2"},
+                                                                            {"node4","v-out:type1"}
                                                                                      };
         std::vector<double> virtualOutputEdgesValues = {0.4,0.4};
 
@@ -57,7 +57,7 @@ TEST_F(ComputationTesting, constructorWorksDefault) {
     EXPECT_EQ(meta->getNumNodes(),0);
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),0);
-    EXPECT_EQ(c0->getCellTypes().size(),0);
+    EXPECT_EQ(c0->gettypes().size(),0);
 }
 
 TEST_F(ComputationTesting, constructorWorksGeneral) {
@@ -74,13 +74,13 @@ TEST_F(ComputationTesting, constructorWorksGeneral) {
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),0);
     
-    EXPECT_EQ(c1->getCellTypes().size(),0);
+    EXPECT_EQ(c1->gettypes().size(),0);
 }
 
 TEST_F(ComputationTesting, testingAddingEdges) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathway(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -96,19 +96,19 @@ TEST_F(ComputationTesting, testingAddingEdges) {
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell2","testGene2"), 0.4);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene2"), 0.5);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene3"), 0.7);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene6"), 0.2);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-out:testCell2"), 0.4);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene4","v-out:testCell3"), 0.4);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type2","node2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type3","node2"), 0.5);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type3","node3"), 0.7);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type3","node1"), 0.2);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node2","v-out:type2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node4","v-out:type1"), 0.4);
 }
 
 TEST_F(ComputationTesting, testingAddingEdgesUndirected) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathway(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues,true);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues,true);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -124,24 +124,24 @@ TEST_F(ComputationTesting, testingAddingEdgesUndirected) {
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),42);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell2","testGene2"), 0.4);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene2"), 0.5);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene3"), 0.7);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:testCell4","testGene6"), 0.2);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-in:testCell2"), 0.4);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-in:testCell4"), 0.5);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene3","v-in:testCell4"), 0.7);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene6","v-in:testCell4"), 0.2);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene2","v-out:testCell2"), 0.4);
-    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("testGene4","v-out:testCell3"), 0.4);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type2","node2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type3","node2"), 0.5);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type3","node3"), 0.7);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("v-in:type3","node1"), 0.2);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node2","v-in:type2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node2","v-in:type3"), 0.5);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node3","v-in:type3"), 0.7);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node1","v-in:type3"), 0.2);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node2","v-out:type2"), 0.4);
+    EXPECT_DOUBLE_EQ(augMeta->getEdgeWeight("node4","v-out:type1"), 0.4);
 }
 
 
 TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathway(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -157,7 +157,7 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
     auto inputArma = computationTest.getInputAugmentedArma();
 
     std::vector<double> normalizationFactors(computationTest.getAugmentedMetapathway()->getNumNodes(),0);
@@ -173,35 +173,35 @@ TEST_F(ComputationTesting, testingAddingEdgesArmaInitialized) {
     EXPECT_EQ(wtransArma.n_cols, 12);
     EXPECT_EQ(wtransArma.n_rows, 12);
     //edges before
-    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell2","testGene2"),0.4,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell3","testGene2"),0,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell4","testGene2"),0.5,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell2"),augMeta->getIndexFromName("testGene2")),0.4,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell3"),augMeta->getIndexFromName("testGene2")),0,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell4"),augMeta->getIndexFromName("testGene2")),0.5,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:type2","node2"),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:type1","node2"),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:type3","node2"),0.5,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:type2"),augMeta->getIndexFromName("node2")),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:type1"),augMeta->getIndexFromName("node2")),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:type3"),augMeta->getIndexFromName("node2")),0.5,1e-6);
     //edges after normalization
-    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene2"),
-                         augMeta->getIndexFromName("v-in:testCell2")),0.210526,1e-6); //0.4 not normalized, inverted since the matrix is transposed
-    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene2"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.263157,1e-6); //0.5 not normalized
-    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene3"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.259259,1e-6); //0.7 not normalized
-    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("testGene6"),
-                         augMeta->getIndexFromName("v-in:testCell4")),0.056338,1e-6); //0.2 not normalized
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("node2"),
+                         augMeta->getIndexFromName("v-in:type2")),0.210526,1e-6); //0.4 not normalized, inverted since the matrix is transposed
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("node2"),
+                         augMeta->getIndexFromName("v-in:type3")),0.263157,1e-6); //0.5 not normalized
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("node3"),
+                         augMeta->getIndexFromName("v-in:type3")),0.259259,1e-6); //0.7 not normalized
+    EXPECT_NEAR(wtransArma(augMeta->getIndexFromName("node1"),
+                         augMeta->getIndexFromName("v-in:type3")),0.056338,1e-6); //0.2 not normalized
     //control if the change of values is in place (not working) or in copy(working correctly)
-    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell2","testGene2"),0.4,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell3","testGene2"),0,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:testCell4","testGene2"),0.5,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell2"),augMeta->getIndexFromName("testGene2")),0.4,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell3"),augMeta->getIndexFromName("testGene2")),0,1e-6);
-    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:testCell4"),augMeta->getIndexFromName("testGene2")),0.5,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:type2","node2"),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:type1","node2"),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight("v-in:type3","node2"),0.5,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:type2"),augMeta->getIndexFromName("node2")),0.4,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:type1"),augMeta->getIndexFromName("node2")),0,1e-6);
+    EXPECT_NEAR(augMeta->getEdgeWeight(augMeta->getIndexFromName("v-in:type3"),augMeta->getIndexFromName("node2")),0.5,1e-6);
 }
 
 TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     Computation computationTest;
     computationTest.assign(*c1);
     
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathway(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     EXPECT_EQ(computationTest.getInput().size(),6);
@@ -217,13 +217,13 @@ TEST_F(ComputationTesting, testingAugmentingPathwayNoSelf) {
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
 }
 
 TEST_F(ComputationTesting, testingAugmentingPathwaySelf) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues,true);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     EXPECT_EQ(computationTest.getInput().size(),6);
     EXPECT_EQ(computationTest.getOutput().size(),0);
@@ -238,7 +238,7 @@ TEST_F(ComputationTesting, testingAugmentingPathwaySelf) {
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),14);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+    EXPECT_EQ(computationTest.gettypes().size(),4);
 }
 
 TEST_F(ComputationTesting, testComputePerturbation){
@@ -258,7 +258,7 @@ TEST_F(ComputationTesting, testComputePerturbation){
 TEST_F(ComputationTesting, testComputeAugmentedPerturbation){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathway(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computeAugmentedPerturbation();
@@ -276,14 +276,14 @@ TEST_F(ComputationTesting, testComputeAugmentedPerturbation){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
 }
 
 
 TEST_F(ComputationTesting, testComputePerturbationSelf){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues,true);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computePerturbation();
     EXPECT_EQ( perturbation.size(), 6);
@@ -300,13 +300,13 @@ TEST_F(ComputationTesting, testComputePerturbationSelf){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),14);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+    EXPECT_EQ(computationTest.gettypes().size(),4);
 }
 
 TEST_F(ComputationTesting, testComputeAugmentedPerturbationSelf){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues,true);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computeAugmentedPerturbation();
     EXPECT_EQ( perturbation.size(), 14);
@@ -323,14 +323,14 @@ TEST_F(ComputationTesting, testComputeAugmentedPerturbationSelf){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),14);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+    EXPECT_EQ(computationTest.gettypes().size(),4);
 }
 
 
 TEST_F(ComputationTesting, testUpdateInputDefault){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computePerturbation();
     computationTest.updateInput();
@@ -353,13 +353,13 @@ TEST_F(ComputationTesting, testUpdateInputDefault){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
 }
 
 TEST_F(ComputationTesting, testUpdateInputPerturbation){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computePerturbation();
     computationTest.updateInput(perturbation);
@@ -382,14 +382,14 @@ TEST_F(ComputationTesting, testUpdateInputPerturbation){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
 }
 
 
 TEST_F(ComputationTesting, testUpdateInputAugmentedDefaultSelf){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues,true);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computeAugmentedPerturbation();
     auto nothing = std::vector<double>();
@@ -413,13 +413,13 @@ TEST_F(ComputationTesting, testUpdateInputAugmentedDefaultSelf){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),14);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+    EXPECT_EQ(computationTest.gettypes().size(),4);
 }
 
 TEST_F(ComputationTesting, testUpdateInputAugmentedSelf){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes,virtualInputEdges,virtualInputEdgesValues,true);
+    computationTest.augmentMetapathway(types,virtualInputEdges,virtualInputEdgesValues,true);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computeAugmentedPerturbation();
     computationTest.updateInput(perturbation,true);
@@ -442,14 +442,14 @@ TEST_F(ComputationTesting, testUpdateInputAugmentedSelf){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),14);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),4);
+    EXPECT_EQ(computationTest.gettypes().size(),4);
 }
 
 
 TEST_F(ComputationTesting, testAugmentedVinputZeros){
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathway(cellTypes);
+    computationTest.augmentMetapathway(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     auto perturbation = computationTest.computeAugmentedPerturbation();
@@ -473,14 +473,14 @@ TEST_F(ComputationTesting, testAugmentedVinputZeros){
     ASSERT_TRUE(augMeta != nullptr);
     EXPECT_EQ(augMeta->getNumNodes(),12);
     EXPECT_EQ(augMeta->getNumEdges(),36);
-    EXPECT_EQ(computationTest.getCellTypes().size(),3);
+    EXPECT_EQ(computationTest.gettypes().size(),3);
     ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell") < 0);
-    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell2") >= 0 && augMeta->getIndexFromName("v-in:testCell2") < 12);
-    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:testCell2")], 0, 1e-12);
-    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell2") >= 0 && augMeta->getIndexFromName("v-in:testCell3") < 12);
-    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:testCell3")], 0,1e-12);
-    ASSERT_TRUE(augMeta->getIndexFromName("v-in:testCell2") >= 0 && augMeta->getIndexFromName("v-in:testCell4") < 12);
-    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:testCell4")], 0,1e-12);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:type2") >= 0 && augMeta->getIndexFromName("v-in:type2") < 12);
+    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:type2")], 0, 1e-12);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:type2") >= 0 && augMeta->getIndexFromName("v-in:type1") < 12);
+    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:type1")], 0,1e-12);
+    ASSERT_TRUE(augMeta->getIndexFromName("v-in:type2") >= 0 && augMeta->getIndexFromName("v-in:type3") < 12);
+    EXPECT_NEAR(perturbation[augMeta->getIndexFromName("v-in:type3")], 0,1e-12);
 }
 
 //TESTING IF NODE VALUES FOR v-input nodes are the same as the previous iteration
