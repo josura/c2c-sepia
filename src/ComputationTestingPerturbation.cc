@@ -38,11 +38,11 @@ class ComputationTestingPerturbation : public ::testing::Test {
                                                                                  {"v-in:type3","node3"},
                                                                                  {"v-in:type3","node1"}
                                                                                  };
-        std::vector<double> virtualInputEdgesValues = {0.4,0.5,0.7,0.2};
+        std::vector<double> virtualInputEdgesValues = {1,1,1,1};
         std::vector<std::pair<std::string, std::string>> virtualOutputEdges{{"node2","v-out:type2"},
                                                                             {"node4","v-out:type3"}
                                                                                      };
-        std::vector<double> virtualOutputEdgesValues = {0.4,0.4};
+        std::vector<double> virtualOutputEdgesValues = {1,1};
 
         Computation* c1;       //testing general constructor
 
@@ -57,14 +57,15 @@ class ComputationTestingPerturbation : public ::testing::Test {
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefaultNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(cellTypes);
+    computationTest.augmentMetapathwayNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
     computationTest.setConservationModel(cms);
     std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,false);
-    std::vector<double> expected{2.182562,1.567783,1.461379,3.737241,0,0,2.182562,1.567783};
-    for (int i = 0; i < 8 ; i++) {
+    std::vector<double> expected{3.256667,2.736364,2.924242,5.593939,0,0,1.303030,2.796970};
+    ASSERT_EQ(result.size(),expected.size());
+    for (uint i = 0; i < expected.size() ; i++) {
         EXPECT_NEAR(result[i],expected[i],1e-4);
     }
 }
