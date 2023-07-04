@@ -160,7 +160,7 @@ double vectorNorm(std::vector<double> vec);
 
 template<typename T>
 std::vector<T> vectorScalarMultiplication(std::vector<T> vec, T scalar){
-    for (int i = 0; i < vec.size(); ++i) {
+    for (uint i = 0; i < vec.size(); ++i) {
         vec[i]=vec[i]*scalar;
     }
     return vec;

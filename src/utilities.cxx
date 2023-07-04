@@ -559,7 +559,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
 
 double vectorNorm(std::vector<double> vec){
     double norm=0;
-    for (int i = 0; i < vec.size(); ++i) {
+    for (uint i = 0; i < vec.size(); ++i) {
         norm+=vec[i]*vec[i];
     }
     norm=sqrt(norm);
