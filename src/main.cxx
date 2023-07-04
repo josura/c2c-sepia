@@ -65,6 +65,11 @@ int main(int argc, char** argv ) {
         return 1;
     }
 
+    if(saturation && conservateInitialNorm){
+        std::cerr << "[ERROR] saturation and conservateInitialNorm cannot be both true, aborting"<<std::endl;
+        return 1;
+    }
+
     if (vm.count("intercellIterations")) {
         std::cout << "[LOG] iterations intercell set to " 
     << vm["intercellIterations"].as<std::string>() << ".\n";
