@@ -433,15 +433,16 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         }
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
-        //saturation
-        for(uint i = 0;i<dissipatedPerturbationArma.n_elem;i++){
-            dissipatedPerturbationArma[i] = hyperbolicTangentScaled(dissipatedPerturbationArma[i], saturationVectorVar[i]);
-        }
         //conservation
         if(augmentedMetapathway == nullptr){
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
         }
         arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        //saturation
+        for(uint i = 0;i<outputArma.n_elem;i++){
+            double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
+            outputArma[i] = saturatedValue;
+        }
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     } else {
