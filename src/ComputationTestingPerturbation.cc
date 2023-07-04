@@ -70,6 +70,23 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
     }
 }
 
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefaultSaturationSingle) {
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    computationTest.setDissipationModel(dms);
+    computationTest.setConservationModel(cms);
+    std::vector<double> saturationVector = std::vector<double>(8,0.5);
+    //std::vector<double> saturationVector{2,1.5,2,4,1,1,0.5,1.5};
+    std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,true,saturationVector);
+    std::vector<double> expected{0.5,0.5,0.5,0.5,0,0,0.5,0.5};
+    ASSERT_EQ(result.size(),expected.size());
+    for (uint i = 0; i < expected.size() ; i++) {
+        EXPECT_NEAR(result[i],expected[i],1e-2);
+    }
+}
 
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationNoSaturation) {
 
