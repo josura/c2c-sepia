@@ -124,12 +124,25 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
     }
 }
 
-TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQemptyNoSaturation) {
-
-}
 
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassedNoSaturation) {
-
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    computationTest.setDissipationModel(dms);
+    computationTest.setConservationModel(cms2);
+    std::vector<double> saturationVector = std::vector<double>(8,0.5);
+    std::vector<double> qVector = std::vector<double>(8,0.5);
+    //std::vector<double> saturationVector{2,1.5,2,4,1,1,0.5,1.5};
+    std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,false,std::vector<double>(),qVector);
+    // std::vector<double> expected{3.256667-(input[0]/2),2.736364-(input[1]/2),2.924242-(input[2]/2),5.593939-(input[3]/2),0,0,1.303030,2.796970};
+    std::vector<double> expected{3.256667-(input[0]/4),2.736364-(input[1]/4),2.924242-(input[2]/4),5.593939-(input[3]/4),0,0,1.303030,2.796970};
+    ASSERT_EQ(result.size(),expected.size());
+    for (uint i = 0; i < expected.size() ; i++) {
+        EXPECT_NEAR(result[i],expected[i],1e-2);
+    }
 }
 
 
