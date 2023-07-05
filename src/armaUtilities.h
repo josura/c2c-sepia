@@ -13,4 +13,16 @@ std::vector<T> armaRowToVector(arma::Row<T> matr){return arma::conv_to< std::vec
 template<typename T>
 arma::Col<T> vectorToArmaColumn(std::vector<T> vec){return arma::Col<T>(vec);}
 
+template<typename T>
+arma::Mat<T> normalizeColumns(arma::Mat<T> matr);
+
+template<typename T>
+arma::Mat<T> normalizeRows(arma::Mat<T> matr);
+
+template<typename T>
+arma::Mat<T> normalize1Columns(arma::Mat<T> matr);
+
+template<typename T>
+arma::Mat<T> normalize1Rows(arma::Mat<T> matr);
+
 void print_mat(arma::mat my_matrix);

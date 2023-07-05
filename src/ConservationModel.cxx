@@ -45,7 +45,7 @@ arma::Col<double> ConservationModel::conservationTerm(arma::Col<double> input, a
         }
     } else{
         arma::Col<double> qOnes = arma::ones<arma::Col<double>>(input.n_elem);
-        arma::Col<double> outputArma =  (scaleFunction(time) * Wstar * qOnes) % input;
+        arma::Col<double> outputArma =  scaleFunction(time) *(Wstar * qOnes) % input;
         return outputArma;
     }
 }

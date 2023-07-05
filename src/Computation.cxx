@@ -437,7 +437,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         if(augmentedMetapathway == nullptr){
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
         }
-        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()) , timeStep);
         //saturation
         for(uint i = 0;i<outputArma.n_elem;i++){
             double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
@@ -452,7 +452,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         if(augmentedMetapathway == nullptr){
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
         }
-        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, augmentedMetapathway->adjMatrix.asArmadilloMatrix(), timeStep);
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep);
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     }
