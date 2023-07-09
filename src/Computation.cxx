@@ -449,7 +449,8 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         if(augmentedMetapathway == nullptr){
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
         }
-        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
+        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationVector;
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     }
