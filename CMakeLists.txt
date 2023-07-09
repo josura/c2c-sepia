@@ -122,9 +122,18 @@ target_link_libraries(
   ${lapackblas_libraries}
 )
 
+add_executable(ComputationTestingPerturbation  "src/ComputationTestingPerturbation.cc")
+target_link_libraries(
+  ComputationTestingPerturbation
+  GTest::gtest_main
+  mysharedlib
+  ${lapackblas_libraries}
+)
+
 include(GoogleTest)
 gtest_discover_tests(GraphTesting)
 gtest_discover_tests(MatrixTesting)
 gtest_discover_tests(ComputationTesting)
 gtest_discover_tests(DissipationModelTesting)
 gtest_discover_tests(ConservationModelTesting)
+gtest_discover_tests(ComputationTestingPerturbation)
