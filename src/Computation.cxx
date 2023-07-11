@@ -24,8 +24,8 @@ Computation::Computation(){
 }
 
 Computation::~Computation(){
-    if(metapathway) delete metapathway;
-    if(augmentedMetapathway) delete augmentedMetapathway;
+    if(metapathway) {delete metapathway; metapathway=nullptr;}
+    if(augmentedMetapathway) {delete augmentedMetapathway; augmentedMetapathway=nullptr;}
 }
 
 Computation::Computation(std::string _thisCellType,const std::vector<double>& _input){
