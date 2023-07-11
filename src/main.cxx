@@ -302,7 +302,7 @@ int main(int argc, char** argv ) {
         for (uint i = 0; i < cellTypes.size();i++) {
             if(cellInteractionsEdges.contains(cellTypes[i])){
                 cellComputations[i]->addEdges(cellInteractionsEdges[cellTypes[i]]);
-                cellComputations[i]->freeAugmentedGraphs();
+                //cellComputations[i]->freeAugmentedGraphs();
             }
         }
     }
@@ -391,6 +391,10 @@ int main(int argc, char** argv ) {
 
 
     //cleaning memory
+    // for(uint i = 0; i< cellTypes.size(); i++){
+    //     delete cellComputations[i];
+    // }
+    // delete [] cellComputations;
     //delete metapathway
     
 
