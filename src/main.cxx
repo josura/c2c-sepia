@@ -259,6 +259,9 @@ int main(int argc, char** argv ) {
             std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled and random \n";
             return 1;
         }
+    } else {
+        std::cout << "[LOG] conservation model was not set. set to default (none)\n";
+        conservationModel = new ConservationModel([](double time)->double{return 0;});
     }
     //end program options section
 
