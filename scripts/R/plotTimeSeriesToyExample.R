@@ -2,7 +2,9 @@ library(ggplot2)
 
 timeSeries.t0 <- read.csv("/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/t2_outputAll.tsv",sep = "\t",header = TRUE)
 
-library(reshape2)
+library(tidyverse)
+
+
 x <- timeSeries.t0[, 1]
 y <- timeSeries.t0[, (ncol(timeSeries.t0)-11):ncol(timeSeries.t0)]
 
@@ -12,10 +14,11 @@ interesting.list <- c("v.in.t3","v.in.t1","v.out.t3","v.out.t1","v.out.t2")
 y.int <- timeSeries.t0[, interesting.list]
 
 # Combine x and y into a new dataframe
-df_new <- data.frame(x = rep(x, ncol(y)), c(y))
+df_new <- data.frame(x = rep(x, ncol(y)), y)
 
 # Convert y columns into a single column
-df_new <- melt(df_new, id.vars = "x")
+df_new <- df_new %>%
+  pivot_longer(cols = starts_with("v."), names_to = "variable", values_to = "value")
 
 # Plot the matrix of scatter plots
 ggplot(df_new, aes(x = x, y = value, color = variable)) +
@@ -23,3 +26,4 @@ ggplot(df_new, aes(x = x, y = value, color = variable)) +
   labs(x = "X Axis", y = "Y Axis") +
   scale_color_discrete(name = "Y Variables") +
   facet_wrap(~ variable, ncol = 3)  # Adjust the number of columns as needed
+
