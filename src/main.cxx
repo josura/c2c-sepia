@@ -3,6 +3,7 @@
 #include <boost/program_options.hpp>
 #include <map>
 #include <string>
+#include <sys/types.h>
 #include <tuple>
 #include <vector>
 #include "Computation.h"
@@ -351,6 +352,14 @@ int main(int argc, char** argv ) {
                 //TODO change how to save files to get more information about intracell and intercell iterations
                 saveNodeValues(outputFoldername, iterationIntercell*intracellIterations + iterationIntracell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
             }
+            // std::cout<< "[DEBUG] output values before updating input"<<std::endl;
+            // for(uint i = 0; i < cellTypes.size(); i++){
+            //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+            //     for(uint j = 0; j < cellComputations[i]->getOutputAugmented().size(); j++){
+            //         std::cout << cellComputations[i]->getOutputAugmented()[j] << " ";
+            //     }
+            //     std::cout << std::endl;
+            // }
             //update input
             for(uint i = 0; i < cellTypes.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
@@ -368,9 +377,26 @@ int main(int argc, char** argv ) {
                 }
                 
             }
+            // std::cout<< "[DEBUG] input values after updating input"<<std::endl;
+            // for(uint i = 0; i < cellTypes.size(); i++){
+            //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+            //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+            //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+            //     }
+            //     std::cout << std::endl;
+            // }
             iterationIntracell++;
         }
         //update input with virtual node values update
+        
+        // std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
+        // for(uint i = 0; i < cellTypes.size(); i++){
+        //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+        //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
 
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
@@ -384,6 +410,14 @@ int main(int argc, char** argv ) {
                 }
             }
         }
+        // std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
+        //     for(uint i = 0; i < cellTypes.size(); i++){
+        //         std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+        //         for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+        //             std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+        //         }
+        //         std::cout << std::endl;
+        //     }
         iterationIntercell++;
 
     }
