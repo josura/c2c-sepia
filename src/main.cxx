@@ -401,14 +401,14 @@ int main(int argc, char** argv ) {
         }
         //update input with virtual node values update
         
-        std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
-        for(uint i = 0; i < cellTypes.size(); i++){
-            std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-            for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-                std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
-            }
-            std::cout << std::endl;
-        }
+        // std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
+        // for(uint i = 0; i < cellTypes.size(); i++){
+        //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+        //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
 
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
@@ -422,14 +422,14 @@ int main(int argc, char** argv ) {
                 }
             }
         }
-        std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
-            for(uint i = 0; i < cellTypes.size(); i++){
-                std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-                for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-                    std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
-                }
-                std::cout << std::endl;
-            }
+        // std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
+        // for(uint i = 0; i < cellTypes.size(); i++){
+        //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+        //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
 
         
         iterationIntercell++;
