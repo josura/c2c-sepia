@@ -45,7 +45,6 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     metapathway = new WeightedEdgeGraph(_W);
     augmentedMetapathway = new WeightedEdgeGraph();
     metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
-    //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
     cellTypes = std::vector<std::string>();
 
 
@@ -56,17 +55,11 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
         }
     }
     arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
-    // std::cout<< " WtransArma:\n";
-    // print_mat( WtransArma);
-
+    
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
-    // std::cout<< "Identity - WtransArma:\n";
-    // print_mat(IdentityArma - WtransArma);
-
+    
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
-    // std::cout<< "pseudoInverseArma:\n";
-    // print_mat(pseudoInverseArma);
     armaInitializedNotAugmented = true;
 }
 
@@ -77,7 +70,6 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     metapathway = _metapathway;
     augmentedMetapathway = new WeightedEdgeGraph();
     metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
-    //augmentedMetapathway = metapathway->addNodes();  // not available since we do not have additional information about the other types
     cellTypes = std::vector<std::string>();
 
 
@@ -88,7 +80,6 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
         }
     }
     arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
-    //TODO normalization by previous weight nodes for the matrix
     
     arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
@@ -102,20 +93,11 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
         delete augmentedMetapathway;
     }
     try {
-        // 
-        // std::vector<std::string> tmpcelltypes = _celltypes;
-        // auto cellFind = std::find(tmpcelltypes.begin(), tmpcelltypes.end(), localCellType); 
-        // if (cellFind != tmpcelltypes.end() && !includeSelfVirtual){
-        //     tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
-        //     /// this function erases the first element of newEdgesList
-        // }
         std::vector<std::string> tmpcelltypes;
         if (!includeSelfVirtual){
             for (uint i = 0; i < _celltypes.size(); i++) {
                 if(_celltypes[i] != localCellType) tmpcelltypes.push_back(_celltypes[i]);
             }
-            //tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
-            /// this function erases the first element of newEdgesList also
         } else {
             tmpcelltypes = _celltypes;
         }
@@ -168,20 +150,12 @@ void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::stri
         delete augmentedMetapathway;
     }
     try {
-        // 
-        // std::vector<std::string> tmpcelltypes = _celltypes;
-        // auto cellFind = std::find(tmpcelltypes.begin(), tmpcelltypes.end(), localCellType); 
-        // if (cellFind != tmpcelltypes.end() && !includeSelfVirtual){
-        //     tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
-        //     /// this function erases the first element of newEdgesList
-        // }
         std::vector<std::string> tmpcelltypes;
         if (!includeSelfVirtual){
             for (uint i = 0; i < _celltypes.size(); i++) {
                 if(_celltypes[i] != localCellType) tmpcelltypes.push_back(_celltypes[i]);
             }
-            //tmpcelltypes.erase(cellFind);  /// PROBLEM!!!
-            /// this function erases the first element of newEdgesList also
+            
         } else {
             tmpcelltypes = _celltypes;
         }
@@ -458,14 +432,12 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
 
 
 double Computation::getVirtualInputForCell(std::string celltype)const{
-    //int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
     int index = nodeToIndex.at("v-in:" + celltype);
     if(index > 0) return outputAugmented[index];
     else return 0;
 
 }
 double Computation::getVirtualOutputForCell(std::string celltype)const{
-    //int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
     int index = nodeToIndex.at("v-out:" + celltype);
     if(index > 0) return outputAugmented[index];
     else return 0;
