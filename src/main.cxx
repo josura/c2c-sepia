@@ -264,6 +264,19 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] conservation model was not set. set to default (none)\n";
         conservationModel = new ConservationModel([](double time)->double{return 0;});
     }
+
+    //logging if saturation is set and saturation parameters are set
+    if (saturation) {
+        if(vm.count("saturationTerm") == 0){
+            std::cout << "[LOG] saturation term not specified, using the interval [-1,1]"<<std::endl;
+        } else if(vm.count("saturationTerm") == 1){
+            double saturationTerm = vm["saturationTerm"].as<double>();
+            std::cout << "[LOG] saturation term specified, using the interval [-" << saturationTerm << "," << saturationTerm << "]"<<std::endl;
+        } else {
+            std::cerr << "[ERROR] saturation term specified more than once, possibility of using more values not yet implemented: aborting"<<std::endl;
+            return 1;
+        }
+    }
     //end program options section
 
     std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
@@ -334,7 +347,6 @@ int main(int argc, char** argv ) {
                 //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::cout << "[LOG] saturation term not specified, using the interval [-1,1]"<<std::endl;
                         std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = true); // TODO check if iteration intracell should be multiplied by iteration intercell
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
@@ -389,14 +401,14 @@ int main(int argc, char** argv ) {
         }
         //update input with virtual node values update
         
-        // std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
-        // for(uint i = 0; i < cellTypes.size(); i++){
-        //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-        //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-        //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
-        //     }
-        //     std::cout << std::endl;
-        // }
+        std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
+        for(uint i = 0; i < cellTypes.size(); i++){
+            std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+            for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+                std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+            }
+            std::cout << std::endl;
+        }
 
         for (uint i = 0; i < cellTypes.size(); i++) {
             //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
@@ -410,14 +422,16 @@ int main(int argc, char** argv ) {
                 }
             }
         }
-        // std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
-        //     for(uint i = 0; i < cellTypes.size(); i++){
-        //         std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-        //         for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-        //             std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
-        //         }
-        //         std::cout << std::endl;
-        //     }
+        std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
+            for(uint i = 0; i < cellTypes.size(); i++){
+                std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
+                for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
+                    std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+                }
+                std::cout << std::endl;
+            }
+
+        
         iterationIntercell++;
 
     }
