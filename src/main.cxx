@@ -341,10 +341,7 @@ int main(int argc, char** argv ) {
             for(uint i = 0; i < cellTypes.size(); i++){
                 std::vector<std::string> nodeNames = cellToNodeNames[i];
                 std::cout << "[LOG] computation of perturbation for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl; 
-                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbation();
-                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturated();
-                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
-                //std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationSaturatedAndDissipatedBeforeCompute(iterationIntercell*intracellIterations + iterationIntracell); // TODO check if iteration intracell should be multiplied by iteration intercell
+                
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
                         std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = true); // TODO check if iteration intracell should be multiplied by iteration intercell
