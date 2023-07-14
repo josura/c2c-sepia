@@ -40,12 +40,25 @@ df_new <- data.frame(
 )
 
 
+# my reshaping since everything else doesn't work
+df_new_corrected <- data.frame(x = c(0),variable = c("0"),value = c(0.0))
+colnames(df_new_corrected) = c("x","variable","value")
+
+
+for (colname in colnames(y)) {
+  tmp_dataframe <- data.frame(x = x,variable = c(colname),value = timeSeries.t2[,colnames(timeSeries.t2) == colname])
+  df_new_corrected <- rbind(df_new_corrected, tmp_dataframe)
+}
+
+df_new_corrected <- df_new_corrected[-1,]
+
 # Plot the matrix of scatter plots
-ggplot(df_new, aes(x = x, y = value, color = variable)) +
+ggplot(df_new_corrected, aes(x = x, y = value, color = variable)) +
   geom_point() +
   labs(x = "X Axis", y = "Y Axis") +
   scale_color_discrete(name = "Y Variables") +
   facet_wrap(~ variable, ncol = 3)  # Adjust the number of columns as needed
 
 
-plot(df_new[df_new$variable == "a",]$x,df_new[df_new$variable == "a",]$value)
+plot(df_new[df_new$variable == "v.in.t1",]$x,df_new[df_new$variable == "v.in.t1",]$value)
+plot( timeSeries.t2$iteration, timeSeries.t2$v.in.t1)
