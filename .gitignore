@@ -43,6 +43,9 @@ CMakeFiles/
 .vscode
 .cache
 
+#big files
+.zip
+
 #R
 .Rhistory
 
