@@ -14,6 +14,7 @@
 #include "DissipationModelScaled.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
+#include "CustomScalingFunctions.h"
 
 
 void printHelp(){
@@ -208,7 +209,7 @@ int main(int argc, char** argv ) {
                 return 1;
             }
         } else if(dissipationModelName == "custom"){
-            //TODO add custom dissipation model
+            dissipationModel = new DissipationModelScaled(getDissipationScalingFunction());
         } else {
             std::cerr << "[ERROR] dissipation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
             return 1;
@@ -262,7 +263,7 @@ int main(int argc, char** argv ) {
                 return 1;
             }
         } else if(conservationModelName == "custom"){
-            //TODO add custom conservation model
+            conservationModel = new ConservationModel(getConservationScalingFunction());
         } else {
             std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
             return 1;

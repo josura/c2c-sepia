@@ -1,5 +1,3 @@
-#pragma once
-#include <functional>
 #include "CustomScalingFunctions.h"
 
 //add scaling function as lambda function for dissipation
