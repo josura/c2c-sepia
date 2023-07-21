@@ -207,7 +207,12 @@ int main(int argc, char** argv ) {
                 std::cerr << "[ERROR] dissipation model parameters for periodic dissipation was not set: aborting"<<std::endl;
                 return 1;
             }
-        } 
+        } else if(dissipationModelName == "custom"){
+            //TODO add custom dissipation model
+        } else {
+            std::cerr << "[ERROR] dissipation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
+            return 1;
+        }
     } else { //dissipation model set to default (none)
         std::cout << "[LOG] dissipation model was not set. set to default (none)\n";
         dissipationModel = new DissipationModelScaled([](double time)->double{return 0;});
@@ -256,8 +261,10 @@ int main(int argc, char** argv ) {
                 std::cerr << "[ERROR] conservation model parameters for random conservation was not set: aborting"<<std::endl;
                 return 1;
             }
+        } else if(conservationModelName == "custom"){
+            //TODO add custom conservation model
         } else {
-            std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled and random \n";
+            std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
             return 1;
         }
     } else {
