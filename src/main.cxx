@@ -33,7 +33,7 @@ int main(int argc, char** argv ) {
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help", "print help section")//<logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\nlogfoldPerCell.tsv\n cell1 cell2 ... cellN\ngene1 <lfc_cell1:gene1> <lfc_cell2:gene1> ... <lfc_cellN:gene1>\ngene1 <lfc_cell1:gene2> <lfc_cell2:gene2> ... <lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand endCell:geneReceptor weight\n<cell1:geneLigand> <cell2:genereceptor>  <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n...")
-        ("fMETAPATHWAY", po::value<std::string>()->required(), "metapathway filename, for an example metapathway see in resources")
+        ("fMETAPATHWAY", po::value<std::string>(), "metapathway filename, for an example metapathway see in resources. NOTE: if this option is chosen")
         ("fLogfoldPerCell", po::value<std::string>()->required(), "logfoldPerCell matrix filename, for an example see in data")
         ("dirCellInteraction", po::value<std::string>(), "directory for the cell interactions, for an example see in data")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
@@ -99,8 +99,8 @@ int main(int argc, char** argv ) {
             std::cerr << "[ERROR] file for the metapathway do not exist: aborting"<<std::endl;
             return 1;
         }
-    } else {
-        std::cout << "[ERROR] fMETAPATHWAY file was not set. Aborting\n";
+    } else if(vm.count("graphsFilesFolder")){
+        std::cout << "[ERROR] fMETAPATHWAY or graphsFilesFolder was not set(only one need to be set at least). Aborting\n";
         return 1;
     }
     if (vm.count("fLogfoldPerCell")) {
