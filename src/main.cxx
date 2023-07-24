@@ -31,6 +31,7 @@ int main(int argc, char** argv ) {
     bool conservateInitialNorm=false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
+    //TODO implement subcelltypes
     desc.add_options()
         ("help", "print help section")//<logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\nlogfoldPerCell.tsv\n cell1 cell2 ... cellN\ngene1 <lfc_cell1:gene1> <lfc_cell2:gene1> ... <lfc_cellN:gene1>\ngene1 <lfc_cell1:gene2> <lfc_cell2:gene2> ... <lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand endCell:geneReceptor weight\n<cell1:geneLigand> <cell2:genereceptor>  <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n...")
         ("fMETAPATHWAY", po::value<std::string>(), "metapathway filename, for an example metapathway see in resources. NOTE: if this option is chosen")
@@ -295,12 +296,12 @@ int main(int argc, char** argv ) {
     if(ensembleGeneNames){
         std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
     }
-    auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
+        auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     std::vector<std::string> metapathwayNodes = namesAndEdges.first;
     WeightedEdgeGraph *metapathway = new WeightedEdgeGraph(metapathwayNodes);
-    for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
-        metapathway->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
-    }
+        for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
+            metapathway->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+        }
 
 
     auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
