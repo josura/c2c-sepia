@@ -1,0 +1,6 @@
+startCell	geneLigand	endCell	geneReceptor	weight
+t0	e	t1	a	1.0
+t1	f	t0	a	1.0
+t0	e	t2	a	1.0
+t3	e	t0	a	1.0
+t3	f	t2	a	1.0
