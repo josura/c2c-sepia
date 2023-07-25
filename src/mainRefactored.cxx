@@ -1,0 +1,479 @@
+#include <boost/program_options/value_semantic.hpp>
+#include <iostream>
+#include <boost/program_options.hpp>
+#include <map>
+#include <string>
+#include <sys/types.h>
+#include <tuple>
+#include <vector>
+#include "Computation.h"
+#include "ConservationModel.h"
+#include "DissipationModel.h"
+#include "DissipationModelPow.h"
+#include "DissipationModelRandom.h"
+#include "DissipationModelScaled.h"
+#include "WeightedEdgeGraph.h"
+#include "utilities.h"
+#include "CustomScalingFunctions.h"
+
+
+void printHelp(){
+    //TODO fix this help
+    std::cout << "usage: ./c2c-sepia --fGRAPH <graph>.tsv --fInitialPerturbationPerType <initialPerturbationPerType>.tsv [<subtypes>.txt] --dirTypeInteraction <TypeInteractionFolder>(containing .tsv files)]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n\ttype1\ttype2\t...\ttypeN\ngene1\t<lfc_type1:gene1>\t<lfc_type2:gene1>\t...\t<lfc_typeN:gene1>\ngene1\t<lfc_type1:gene2>\t<lfc_type2:gene2>\t...\t<lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand\tendType:geneReceptor\tweight\n<type1:geneLigand>\t<type2:genereceptor>\t <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n..."<<std::endl;
+    std::cout << "LEGEND:\n <> := placeholder for the name of the file\n[] := optional\n{} := at least one"<<std::endl;
+}
+
+int main(int argc, char** argv ) {
+    //program options
+    bool ensembleGeneNames=false;
+    bool sameTypeCommunication=false;
+    bool saturation=false;
+    bool conservateInitialNorm=false;
+    namespace po = boost::program_options;
+    po::options_description desc("Allowed options");
+    //TODO implement subtypes
+    desc.add_options()
+        ("help", "print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
+        ("fGRAPH", po::value<std::string>(), "graph filename, for an example graph see in resources. NOTE: if this option is chosen")
+        ("fInitialPerturbationPerType", po::value<std::string>()->required(), "initialPerturbationPerType matrix filename, for an example see in data")
+        ("dirTypeInteraction", po::value<std::string>(), "directory for the type interactions, for an example see in data")
+        ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
+        ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
+        ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
+        ("intertypeIterations",po::value<uint>(),"number of iterations for intertype communication")
+        ("intratypeIterations",po::value<uint>(),"number of iterations for intratype communication")
+        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
+        ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
+        ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
+        ("conservationModel",po::value<std::string>(),"the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
+        ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
+        ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
+        ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
+        ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
+    ;
+    //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+    std::string filename,typesFilename,typesInteractionFoldername,typeInitialPerturbationMatrixFilename,outputFoldername;
+    uint intertypeIterations,intratypeIterations;
+    DissipationModel* dissipationModel = nullptr;
+    ConservationModel* conservationModel = nullptr;
+
+    if (vm.count("help")) {
+        //printHelp();
+        std::cout << desc << std::endl;
+        return 1;
+    }
+
+    if(saturation && conservateInitialNorm){
+        std::cerr << "[ERROR] saturation and conservateInitialNorm cannot be both true, aborting"<<std::endl;
+        return 1;
+    }
+
+    if (vm.count("intertypeIterations")) {
+        std::cout << "[LOG] iterations intertype set to " 
+    << vm["intertypeIterations"].as<std::string>() << ".\n";
+        intertypeIterations = vm["intertypeIterations"].as<uint>();
+    } else {
+        std::cout << "[LOG] iterations intertype not set, set to default: 10 iterations \n";
+        intertypeIterations = 10;
+    }
+
+    if (vm.count("intratypeIterations")) {
+        std::cout << "[LOG] iterations intratype set to " 
+    << vm["intratypeIterations"].as<std::string>() << ".\n";
+        intratypeIterations = vm["intratypeIterations"].as<uint>();
+    } else {
+        std::cout << "[LOG] iterations intratype not set, set to default: 5 iterations \n";
+        intratypeIterations = 5;
+    }
+
+
+    if (vm.count("fGRAPH")) {
+        std::cout << "[LOG] file for the graph was set to " 
+    << vm["fGRAPH"].as<std::string>() << ".\n";
+        // filename = vm["fGRAPH"].as<std::string>();
+        // if(!fileExistsPath(filename)){
+        //     std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
+        //     return 1;
+        // }
+        if(vm.count("graphsFilesFolder")){
+            std::cout << "[ERROR] fGRAPH and graphsFilesFolder were both set. Aborting\n";
+            return 1;
+        }
+    } else if(vm.count("graphsFilesFolder")){
+        std::cout << "[LOG] folder for the graphs was set to " 
+    << vm["graphsFilesFolder"].as<std::string>() << ".\n";
+        // filename = vm["fGRAPH"].as<std::string>();
+        // if(!fileExistsPath(filename)){
+        //     std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
+        //     return 1;
+        // }
+        if(vm.count("fGRAPH")){
+            std::cout << "[ERROR] fGRAPH and graphsFilesFolder were both set. Aborting\n";
+            return 1;
+        }
+        // std::cout << "[ERROR] fGRAPH or graphsFilesFolder was not set(only one need to be set at least). Aborting\n";
+        // return 1;
+    }
+    if (vm.count("fInitialPerturbationPerType")) {
+        std::cout << "[LOG] file for the initialPerturbationPerType matrix was set to " 
+    << vm["fInitialPerturbationPerType"].as<std::string>() << ".\n";
+        typeInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
+        if(!fileExistsPath(typeInitialPerturbationMatrixFilename)){
+            std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
+            return 1;
+        }
+    } else {
+        std::cerr << "[ERROR] fInitialPerturbationPerType file was not set. Aborting\n";
+        return 1;
+    }
+    if (vm.count("dirTypeInteraction")) {
+        std::cout << "[LOG] folder for the type interactions was set to " 
+    << vm["dirTypeInteraction"].as<std::string>() << ".\n";
+        typesInteractionFoldername = vm["dirTypeInteraction"].as<std::string>();
+        if(!folderExists(typesInteractionFoldername)){
+            std::cerr << "[ERROR] folder for the type interactions do not exist: aborting"<<std::endl;
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] dirTypeInteraction folder was not set. computing without taking into account type interactions\n";
+        //TODO
+    }
+    if (vm.count("output")) {
+        std::cout << "[LOG] output folder  was set to " 
+    << vm["output"].as<std::string>() << ".\n";
+        outputFoldername = vm["output"].as<std::string>();
+        if(!folderExists(outputFoldername)){
+            std::cerr << "[ERROR] folder for the output do not exist: aborting"<<std::endl;
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] output folder was not set. aborting\n";
+        return 1;
+        //TODO
+    }
+    if (vm.count("dissipationModel")) {
+        std::cout << "[LOG] dissipation model was set to "
+    << vm["dissipationModel"].as<std::string>() << ".\n";
+        std::string dissipationModelName = vm["dissipationModel"].as<std::string>();
+        if(dissipationModelName == "none"){
+            std::cout << "[LOG] dissipation model set to default (none)\n";
+            dissipationModel = new DissipationModelScaled([](double time)->double{return 0;});
+        } else if(dissipationModelName == "power"){
+            if (vm.count("dissipationModelParameters")) {
+                std::cout << "[LOG] dissipation model parameters for power dissipation were declared to be" << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if(dissipationModelParameters.size() == 1){
+                    dissipationModel = new DissipationModelPow(dissipationModelParameters[0]);
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for power dissipation must be one: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for power dissipation was not set: setting to default (2)"<<std::endl;
+                dissipationModel = new DissipationModelPow(2);
+            }
+        } else if(dissipationModelName == "random"){
+            if (vm.count("dissipationModelParameters")) {
+                std::cout << "[LOG] dissipation model parameters were declared to be "
+            << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << " & " << vm["dissipationModelParameters"].as<std::vector<double>>()[1] << ".\n";
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if(dissipationModelParameters.size() == 2){
+                    dissipationModel = new DissipationModelRandom(dissipationModelParameters[0],dissipationModelParameters[1]);
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for random dissipation must be two: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for random dissipation was not set: aborting"<<std::endl;
+                return 1;
+            }
+        } else if(dissipationModelName == "scaled"){
+            if (vm.count("dissipationModelParameters")) {
+                std::cout << "[LOG] dissipation model parameters were declared to be "
+            << vm["dissipationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if(dissipationModelParameters.size() == 1){
+                    dissipationModel = new DissipationModelScaled([dissipationModelParameters](double time)->double{return dissipationModelParameters[0];});
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for scaled dissipation must be one: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for scaled dissipation was not set: setting to default 0.5 costant"<<std::endl;
+                dissipationModel = new DissipationModelScaled();
+            }
+        } else if(dissipationModelName == "periodic"){
+            if (vm.count("dissipationModelParameters")) {
+                std::vector<double> dissipationModelParameters = vm["dissipationModelParameters"].as<std::vector<double>>();
+                if (dissipationModelParameters.size() == 3) {
+                    std::cout << "[LOG] dissipation model parameters were set to Amplitude:"
+                    << dissipationModelParameters[0] << " & period:" << dissipationModelParameters[1] << " & phase: " << dissipationModelParameters[2] << ".\n";
+                    dissipationModel = new DissipationModelScaled([dissipationModelParameters](double time)->double{return dissipationModelParameters[0]*sin(2*arma::datum::pi/dissipationModelParameters[1]*time + dissipationModelParameters[2]);});
+                } else {
+                    std::cerr << "[ERROR] dissipation model parameters for periodic dissipation must be three for amplitude, period and phase: aborting"<<std::endl;
+                    return 1;
+                }
+                
+                
+            } else {
+                std::cerr << "[ERROR] dissipation model parameters for periodic dissipation was not set: aborting"<<std::endl;
+                return 1;
+            }
+        } else if(dissipationModelName == "custom"){
+            //control if custom function for dissipation returns double and takes a single parameter as double
+            std::cout << "[LOG] dissipation model was set to custom, HIGH RISK OF FAILURE\n " << std::endl;
+            dissipationModel = new DissipationModelScaled(getDissipationScalingFunction());
+        } else {
+            std::cerr << "[ERROR] dissipation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
+            return 1;
+        }
+    } else { //dissipation model set to default (none)
+        std::cout << "[LOG] dissipation model was not set. set to default (none)\n";
+        dissipationModel = new DissipationModelScaled([](double time)->double{return 0;});
+    }
+
+
+    if (vm.count("conservationModel")) {
+        std::cout << "[LOG] conservation model was set to "
+    << vm["conservationModel"].as<std::string>() << ".\n";
+        std::string conservationModelName = vm["conservationModel"].as<std::string>();
+        if(conservationModelName == "none"){
+            std::cout << "[LOG] conservation model set to default (none)\n";
+            conservationModel = new ConservationModel([](double time)->double{return 0;});
+        } else if (conservationModelName == "scaled"){
+            if (vm.count("conservationModelParameters")) {
+                std::cout << "[LOG] conservation model parameters were declared to be "
+            << vm["conservationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> conservationModelParameters = vm["conservationModelParameters"].as<std::vector<double>>();
+                if(conservationModelParameters.size() == 1){
+                    conservationModel = new ConservationModel([conservationModelParameters](double time)->double{return conservationModelParameters[0];});
+                } else {
+                    std::cerr << "[ERROR] conservation model parameters for scaled conservation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] conservation model parameters for scaled conservation was not set: setting to default 0.5 costant"<<std::endl;
+                conservationModel = new ConservationModel();
+            }
+        } else if (conservationModelName == "random"){
+            if (vm.count("conservationModelParameters")) {
+                std::cout << "[LOG] conservation model parameters were declared to be "
+            << vm["conservationModelParameters"].as<std::vector<double>>()[0] << " & " << vm["conservationModelParameters"].as<std::vector<double>>()[1] << ".\n";
+                std::vector<double> conservationModelParameters = vm["conservationModelParameters"].as<std::vector<double>>();
+                if(conservationModelParameters.size() == 2){
+                    //control if lower and upper limits of the random values are within 0 and 1
+                    if( (conservationModelParameters[0] < 0) || (conservationModelParameters[0] > 1) || (conservationModelParameters[1] < 0) || (conservationModelParameters[1] > 1) || (conservationModelParameters[0] > conservationModelParameters[1]) ){
+                        std::cerr << "[ERROR] conservation model parameters for random conservation must be between 0 and 1 and must be a < b: aborting"<<std::endl;
+                        return 1;
+                    }
+                    conservationModel = new ConservationModel([conservationModelParameters](double time)->double{return randomRealNumber(conservationModelParameters[0],conservationModelParameters[1]);});
+                } else {
+                    std::cerr << "[ERROR] conservation model parameters for random conservation must be two: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] conservation model parameters for random conservation was not set: aborting"<<std::endl;
+                return 1;
+            }
+        } else if(conservationModelName == "custom"){
+            //control if custom function for conservation returns double and takes a single parameter as double
+            std::cout << "[LOG] conservation model was set to custom, HIGH RISK OF FAILURE\n " << std::endl;
+            conservationModel = new ConservationModel(getConservationScalingFunction());
+        } else {
+            std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] conservation model was not set. set to default (none)\n";
+        conservationModel = new ConservationModel([](double time)->double{return 0;});
+    }
+
+    //logging if saturation is set and saturation parameters are set
+    if (saturation) {
+        if(vm.count("saturationTerm") == 0){
+            std::cout << "[LOG] saturation term not specified, using the interval [-1,1]"<<std::endl;
+        } else if(vm.count("saturationTerm") == 1){
+            double saturationTerm = vm["saturationTerm"].as<double>();
+            std::cout << "[LOG] saturation term specified, using the interval [-" << saturationTerm << "," << saturationTerm << "]"<<std::endl;
+        } else {
+            std::cerr << "[ERROR] saturation term specified more than once, possibility of using more values not yet implemented: aborting"<<std::endl;
+            return 1;
+        }
+    }
+    //end program options section
+
+    std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
+    if(ensembleGeneNames){
+        std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
+    }
+    //take the types before with another function TODO define function
+
+    //use the number of types to allocate an array of pointers to contain the graph for every type
+    auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
+    std::vector<std::string> graphNodes = namesAndEdges.first;
+    WeightedEdgeGraph *graph = new WeightedEdgeGraph(graphNodes);
+    for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
+        graph->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+    }
+
+
+
+    auto logFolds = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
+    std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
+    std::vector<std::string> types = std::get<1>(logFolds);
+    Computation** typeComputations = new Computation*[types.size()];
+    for(uint i = 0; i < types.size();i++){
+        std::vector<double> inputTypelogfold = std::get<2>(logFolds)[i];
+        Computation* tmpCompPointer = new Computation(types[i],inputTypelogfold,graph,graphNodes);  //TODO order the genes directly or use the names and set them one by one 
+        tmpCompPointer->setDissipationModel(dissipationModel);
+        tmpCompPointer->setConservationModel(conservationModel);
+        typeComputations[i] = tmpCompPointer;
+        //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+        typeComputations[i]->augmentMetapathwayNoComputeInverse(types);
+    }
+    std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
+    for(uint i = 0; i < types.size();i++ ){
+        typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();    
+    }
+    auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
+    for(auto TypeInteractionFilename = allFilesInteraction.cbegin() ; TypeInteractionFilename != allFilesInteraction.cend() ; TypeInteractionFilename++){
+        auto TypeInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*TypeInteractionFilename,ensembleGeneNames);
+        //TODO insert edges to the correspondent type graph
+        #pragma omp parallel for
+        for (uint i = 0; i < types.size();i++) {
+            if(TypeInteractionsEdges.contains(types[i])){
+                typeComputations[i]->addEdges(TypeInteractionsEdges[types[i]]);
+                //typeComputations[i]->freeAugmentedGraphs();
+            }
+        }
+    }
+
+
+    //freeing some data structures inside computation to consume less RAM
+    // std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
+    // for(uint i = 0; i < types.size();i++ ){
+    //     typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();  
+    //     typeComputations[i]->freeAugmentedGraphs();  
+    // }
+
+    // EndTypetype -> (sourceTypeType -> value)
+
+    uint iterationIntertype = 0;
+    while(iterationIntertype < intertypeIterations){
+        //computation of perturbation
+        uint iterationIntratype = 0;
+        //intratype iteration with no passing of values to the virtual nodes
+        while (iterationIntratype < intratypeIterations) {
+            #pragma omp parallel for
+            for(uint i = 0; i < types.size(); i++){
+                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl; 
+                
+                if (saturation) {
+                    if(vm.count("saturationTerm") == 0){
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = true); // TODO check if iteration intratype should be multiplied by iteration intertype
+                    } else if (vm.count("saturationTerm") >= 1) {
+                        //TODO create saturation vector
+                        double saturationTerm = vm["saturationTerm"].as<double>();
+                        std::vector<double> saturationVector = std::vector<double>(graphNodes.size(),saturationTerm);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = true, saturationVector); // TODO check if iteration intratype should be multiplied by iteration intertype
+                    }
+                } else{
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false); // TODO check if iteration intratype should be multiplied by iteration intertype
+                }
+            }
+            //save output values
+            for(uint i = 0; i < types.size(); i++){
+                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                //TODO change how to save files to get more information about intratype and intertype iterations
+                saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, types[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+            }
+            // std::cout<< "[DEBUG] output values before updating input"<<std::endl;
+            // for(uint i = 0; i < types.size(); i++){
+            //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+            //     for(uint j = 0; j < typeComputations[i]->getOutputAugmented().size(); j++){
+            //         std::cout << typeComputations[i]->getOutputAugmented()[j] << " ";
+            //     }
+            //     std::cout << std::endl;
+            // }
+            //update input
+            for(uint i = 0; i < types.size(); i++){
+                //If conservation of the initial values is required, the input is first updated with the initial norm value
+                if (conservateInitialNorm) {
+                    std::vector<double> inputInitial = std::get<2>(logFolds)[i];
+                    double initialNorm = vectorNorm(inputInitial);
+                    double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
+                    double normRatio = initialNorm/outputNorm;
+                    std::vector<double> newInput = vectorScalarMultiplication(typeComputations[i]->getOutputAugmented(),normRatio);
+                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    typeComputations[i]->updateInput(newInput,true);
+                } else {
+                    std::cout << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    typeComputations[i]->updateInput(std::vector<double>(),true);
+                }
+                
+            }
+            // std::cout<< "[DEBUG] input values after updating input"<<std::endl;
+            // for(uint i = 0; i < types.size(); i++){
+            //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+            //     for(uint j = 0; j < typeComputations[i]->getInputAugmented().size(); j++){
+            //         std::cout << typeComputations[i]->getInputAugmented()[j] << " ";
+            //     }
+            //     std::cout << std::endl;
+            // }
+            iterationIntratype++;
+        }
+        //update input with virtual node values update
+        
+        // std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
+        // for(uint i = 0; i < types.size(); i++){
+        //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+        //     for(uint j = 0; j < typeComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << typeComputations[i]->getInputAugmented()[j] << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+
+        for (uint i = 0; i < types.size(); i++) {
+            //queuesTypeTypes[i] = typeComputations[i]->computeAugmentedPerturbation();
+            //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent types to finish
+            //also take into account REpast framework
+            for(uint j = 0; j < types.size(); j++){
+                if(i==j){
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForCell(types[j], typeComputations[j]->getVirtualOutputForCell(types[i]));
+                } else {
+                    typeComputations[i]->setInputVinForCell(types[j], typeComputations[j]->getVirtualOutputForCell(types[i]));
+                }
+            }
+        }
+        // std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
+        // for(uint i = 0; i < types.size(); i++){
+        //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+        //     for(uint j = 0; j < typeComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << typeComputations[i]->getInputAugmented()[j] << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+
+        
+        iterationIntertype++;
+
+    }
+    
+
+
+    //cleaning memory
+    // for(uint i = 0; i< types.size(); i++){
+    //     delete typeComputations[i];
+    // }
+    // delete [] typeComputations;
+    //delete graph
+    
+
+    
+    return 0;
+}
