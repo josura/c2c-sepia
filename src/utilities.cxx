@@ -271,6 +271,18 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
 }
 
 
+std::vector<std::string> getTypesFromFolderFileNames(std::string typeInitialPerturbationFolderFilename){
+    std::vector<std::string> ret;
+    std::vector<std::string> files = get_all(typeInitialPerturbationFolderFilename,".tsv");
+    for(auto iter = files.cbegin(); iter!=files.cend();iter++){
+        std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+        std::string filename = splitted[splitted.size()-1]; //last element
+        std::vector<std::string> splittedFilename = splitString(filename, "."); //split the extension
+        ret.push_back(splittedFilename[0]);
+    }
+    return ret;
+}
+
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,bool useEntrez){
     string line;
     std::vector<std::vector<double>> ret;

@@ -132,6 +132,12 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 std::vector<double> saturationFileToVector(std::string filename,const std::map<std::string, int>& ensembleToIndexMap);
+/**
+ * \brief   Return the types taken from the file names in a folder with the extension .tsv
+ *          that is if the folder contains the files: A.tsv, B.tsv, C.tsv, D.tsv, E.tsv
+ *         the function will return the vector {"A","B","C","D","E"}
+ */
+std::vector<std::string> getTypesFromFolderFileNames(std::string typeInitialPerturbationFolderFilename);
 
 std::map<std::string, std::string>getEnsembletoEntrezidMap();
 std::map<std::string, std::vector<std::string>> getFullNodesDescription();
