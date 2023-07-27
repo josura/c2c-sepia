@@ -42,6 +42,7 @@ int main(int argc, char** argv ) {
         ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
         ("intercellIterations",po::value<uint>(),"number of iterations for intercell communication")
         ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
+        ("timestep",po::value<double>(),"timestep to use for the iteration, the final time is iterationIntracell*iterationIntercell*timestep")
         ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
         ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
         ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
@@ -61,6 +62,7 @@ int main(int argc, char** argv ) {
     uint intercellIterations,intracellIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
+    double timestep = 1;
 
     if (vm.count("help")) {
         //printHelp();
@@ -89,6 +91,14 @@ int main(int argc, char** argv ) {
     } else {
         std::cout << "[LOG] iterations intracell not set, set to default: 5 iterations \n";
         intracellIterations = 5;
+    }
+
+    if(vm.count("timestep")){
+        std::cout << "[LOG] timestep set to " 
+    << vm["timestep"].as<std::string>() << ".\n";
+        timestep = vm["timestep"].as<double>();
+    } else {
+        std::cout << "[LOG] timestep not set, set to default (1)"<<std::endl;
     }
 
 
@@ -357,12 +367,12 @@ int main(int argc, char** argv ) {
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = true); // TODO check if iteration intracell should be multiplied by iteration intercell
+                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntercell*intracellIterations + iterationIntracell)*timestep, saturation = true); // TODO check if iteration intracell should be multiplied by iteration intercell
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         std::vector<double> saturationVector = std::vector<double>(metapathwayNodes.size(),saturationTerm);
-                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = true, saturationVector); // TODO check if iteration intracell should be multiplied by iteration intercell
+                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntercell*intracellIterations + iterationIntracell)*timestep, saturation = true, saturationVector); // TODO check if iteration intracell should be multiplied by iteration intercell
                     }
                 } else{
                     std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = false); // TODO check if iteration intracell should be multiplied by iteration intercell
