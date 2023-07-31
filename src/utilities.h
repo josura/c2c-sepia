@@ -130,6 +130,7 @@ std::vector<std::string> splitString(std::string toSplit , std::string delimiter
 std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToEdgesListByIndex(std::string filename);
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesFileToEdgesListAndNodesByName(std::string filename);
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,bool useEntrez=false);
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,std::vector<std::string> subTypes= std::vector<std::string>(), bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 std::vector<double> saturationFileToVector(std::string filename,const std::map<std::string, int>& ensembleToIndexMap);
 /**
@@ -138,6 +139,22 @@ std::vector<double> saturationFileToVector(std::string filename,const std::map<s
  *         the function will return the vector {"A","B","C","D","E"}
  */
 std::vector<std::string> getTypesFromFolderFileNames(std::string typeInitialPerturbationFolderFilename);
+
+template<typename T>
+std::vector<T> getVectorFromFile(std::string filename){
+    std::vector<T> retVec;
+    std::ifstream inFile(filename);
+    std::string line;
+    while (std::getline(inFile, line))
+    {
+        std::stringstream ss(line);
+        T temp;
+        ss >> temp;
+        retVec.push_back(temp);
+    }
+    inFile.close();
+    return retVec;
+}
 
 std::map<std::string, std::string>getEnsembletoEntrezidMap();
 std::map<std::string, std::vector<std::string>> getFullNodesDescription();
@@ -170,4 +187,14 @@ std::vector<T> vectorScalarMultiplication(std::vector<T> vec, T scalar){
         vec[i]=vec[i]*scalar;
     }
     return vec;
+}
+
+template<typename T>
+bool vectorContains(std::vector<T> vec, T element){
+    for (uint i = 0; i < vec.size(); ++i) {
+        if(vec[i]==element){
+            return true;
+        }
+    }
+    return false;
 }

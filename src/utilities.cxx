@@ -345,6 +345,69 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,std::vector<std::string> subTypes ,bool useEntrez){
+    string line;
+    std::vector<std::vector<double>> ret;
+    std::vector<std::string> cellNames;
+    std::vector<std::string> geneNames;
+    std::vector<std::string> discardedGenes;
+    std::map<std::string, int> finalGenesToIndex;
+    for(int i = 0 ; i < SizeToInt(finalNames.size()); i++){
+        finalGenesToIndex[finalNames[i]] = i;
+    }
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
+    if(file_exists(filename)){
+        ifstream myfile (filename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector,
+            std::vector<int> subTypeIndexes;
+            for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
+                if(vectorContains(subTypes,splittedHeader[i])){
+                    cellNames.push_back(splittedHeader[i]);
+                    subTypeIndexes.push_back(i);
+                    ret.push_back(std::vector<double>(finalNames.size(),0));
+                }
+            }
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitString(line, "\t");
+                if(entries.size()==splittedHeader.size()){
+                    if(!useEntrez){
+                        geneNames.push_back(entries[0]);
+                        for(uint i = 0; i<subTypeIndexes.size();i++){
+                            ret[i][finalGenesToIndex[entries[0]]] = std::stod(entries[subTypeIndexes[i]]);
+                        } //TODO control over the genes in the metapathway like its done below with the mapping, but without the mapping and by taking a vector maybe
+                    }
+                    else{
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex.contains(mapEnsembleToEntrez[entries[0]])) {
+                            geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
+                            for(uint i = 0; i< subTypeIndexes.size();i++){
+                                ret[i][finalGenesToIndex[mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[subTypeIndexes[i]]);
+                            }
+                        } else{
+                            discardedGenes.push_back(entries[0]);
+                        }//else don't do nothing since the node is not in the graph
+                    }
+                } else {
+                    throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: header doesn't have the same amount of columns as the data " + filename);
+                }
+            }
+            myfile.close();
+            std::cout << "[LOG] No node in the metapathway for genes: " << std::endl;
+            for(auto iter = discardedGenes.cbegin();iter!=discardedGenes.cend();iter++){
+                std::cout << "," << *iter;
+            }
+            std::cout << std::endl <<"[LOG] discarding logfold for the genes not in the metapathway" << std::endl;
+            
+        }
+    } else {
+        throw std::invalid_argument("utilities::edgeFileEdgesListByIndex: file does not exists " + filename);
+    }
+    return std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> (geneNames,cellNames,ret);
+
+}
 
 //TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
 //TODO, understand if the translation from ensemble gene names to entrez should be done here
