@@ -29,6 +29,7 @@ int main(int argc, char** argv ) {
     bool sameCellCommunication=false;
     bool saturation=false;
     bool conservateInitialNorm=false;
+    std::string subcelltypesFilename="";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     //TODO implement subcelltypes
@@ -74,6 +75,18 @@ int main(int argc, char** argv ) {
     if(saturation && conservateInitialNorm){
         std::cerr << "[ERROR] saturation and conservateInitialNorm cannot be both true, aborting"<<std::endl;
         return 1;
+    }
+
+
+    std::vector<std::string> subcelltypes;
+    if(vm.count("subcelltypes")){
+        std::cout << "[LOG] subcelltypes filename set to "
+    << vm["subcelltypes"].as<std::string>() << ".\n";
+        subcelltypesFilename = vm["subcelltypes"].as<std::string>();
+        subcelltypes = getVectorFromFile<std::string>(subcelltypesFilename);
+    }else{
+        std::cout << "[LOG] subcelltypes filename not set, set to default: all types \n";
+        subcelltypesFilename = "";
     }
 
     if (vm.count("intercellIterations")) {
@@ -313,9 +326,15 @@ int main(int argc, char** argv ) {
         for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
             metapathway->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
         }
-
-
-    auto logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
+    std::cout << "[LOG] metapathway loaded with " << metapathway->getNumNodes() << " nodes and " << metapathway->getNumEdges() << " edges" << std::endl;
+    std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> logFolds;
+    if(subcelltypes.size()==0){
+        std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
+        logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
+    } else {
+        std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
+        logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,subcelltypes,ensembleGeneNames);
+    }
     std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
     std::vector<std::string> cellTypes = std::get<1>(logFolds);
     Computation** cellComputations = new Computation*[cellTypes.size()];
