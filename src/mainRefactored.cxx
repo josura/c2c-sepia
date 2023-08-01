@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <map>
+#include <ostream>
 #include <string>
 #include <sys/types.h>
 #include <tuple>
@@ -19,7 +20,7 @@
 
 void printHelp(){
     //TODO fix this help
-    std::cout << "usage: ./c2c-sepia --fGRAPH <graph>.tsv --fInitialPerturbationPerType <initialPerturbationPerType>.tsv [<subtypes>.txt] --dirTypeInteraction <TypeInteractionFolder>(containing .tsv files)]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n\ttype1\ttype2\t...\ttypeN\ngene1\t<lfc_type1:gene1>\t<lfc_type2:gene1>\t...\t<lfc_typeN:gene1>\ngene1\t<lfc_type1:gene2>\t<lfc_type2:gene2>\t...\t<lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand\tendType:geneReceptor\tweight\n<type1:geneLigand>\t<type2:genereceptor>\t <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n..."<<std::endl;
+    std::cout << "usage: ./c2c-sepia --fUniqueGraph <graph>.tsv --fInitialPerturbationPerType <initialPerturbationPerType>.tsv [<subtypes>.txt] --typeInteractionFolder <TypeInteractionFolder>(containing .tsv files)]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n\ttype1\ttype2\t...\ttypeN\ngene1\t<lfc_type1:gene1>\t<lfc_type2:gene1>\t...\t<lfc_typeN:gene1>\ngene1\t<lfc_type1:gene2>\t<lfc_type2:gene2>\t...\t<lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand\tendType:geneReceptor\tweight\n<type1:geneLigand>\t<type2:genereceptor>\t <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n..."<<std::endl;
     std::cout << "LEGEND:\n <> := placeholder for the name of the file\n[] := optional\n{} := at least one"<<std::endl;
 }
 
@@ -33,33 +34,38 @@ int main(int argc, char** argv ) {
     po::options_description desc("Allowed options");
     //TODO implement subtypes
     desc.add_options()
-        ("help", "print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
-        ("fGRAPH", po::value<std::string>(), "graph filename, for an example graph see in resources. NOTE: if this option is chosen")
-        ("fInitialPerturbationPerType", po::value<std::string>()->required(), "initialPerturbationPerType matrix filename, for an example see in data")
-        ("dirTypeInteraction", po::value<std::string>(), "directory for the type interactions, for an example see in data")
-        ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
-        ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
-        ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
-        ("intertypeIterations",po::value<uint>(),"number of iterations for intertype communication")
-        ("intratypeIterations",po::value<uint>(),"number of iterations for intratype communication")
-        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
-        ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
-        ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
-        ("conservationModel",po::value<std::string>(),"the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
-        ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
+        ("help", "() print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
+        ("fUniqueGraph", po::value<std::string>(), "(string) graph filename, for an example graph see in resources. NOTE: if this option is chosen, graphsFilesFolder cannot be used")
+        ("fInitialPerturbationPerType", po::value<std::string>(), "(string) initialPerturbationPerType matrix filename, for an example see in data")
+        ("initialPerturbationPerTypeFolder", po::value<std::string>(), "(string) initialPerturbationPerType folder, for an example see in data TODO")
+        ("typeInteractionFolder", po::value<std::string>(), "(string) directory for the type interactions, for an example see in data")
+        ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"() use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
+        ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"() use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
+        ("outputFolder",po::value<std::string>()->required(),"(string) output folder for output of the algorithm at each iteration")
+        ("intertypeIterations",po::value<uint>(),"(positive integer) number of iterations for intertype communication")
+        ("intratypeIterations",po::value<uint>(),"(positive integer) number of iterations for intratype communication")
+        ("timestep",po::value<double>(),"timestep to use for the iteration, the final time is iterationIntracell*iterationIntercell*timestep")
+        ("dissipationModel",po::value<std::string>(),"(string) the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
+        ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"(string) the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
+        ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
+        ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
+        ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
     ;
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
+    
+
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-    std::string filename,typesFilename,typesInteractionFoldername,typeInitialPerturbationMatrixFilename,outputFoldername;
+    std::string filename,typesFilename,typesInteractionFoldername,typeInitialPerturbationMatrixFilename,graphsFilesFolder, typeInitialPerturbationFolderFilename,outputFoldername;
     uint intertypeIterations,intratypeIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
+    double timestep = 1;
 
     if (vm.count("help")) {
         //printHelp();
@@ -91,36 +97,67 @@ int main(int argc, char** argv ) {
     }
 
 
-    if (vm.count("fGRAPH")) {
+    if(vm.count("timestep")){
+        std::cout << "[LOG] timestep set to " 
+    << vm["timestep"].as<std::string>() << ".\n";
+        timestep = vm["timestep"].as<double>();
+    } else {
+        std::cout << "[LOG] timestep not set, set to default (1)"<<std::endl;
+    }
+
+    if(vm.count("fUniqueGraph") == 0 && vm.count("graphsFilesFolder") == 0){
+        //no unique graph of folder of the graphs was set
+        std::cout << "no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
+        return 1;
+    }
+
+    if(vm.count("fInitialPerturbationPerType") == 0 && vm.count("initialPerturbationPerTypeFolder") == 0){
+        //no way of getting the initial perturbation values
+        std::cout << "no matrix for the initial values was passed as filename or single vector in files contained in the folder specified was set, set one "<<std::endl;
+        return 1;
+    }
+
+    if(vm.count("fInitialPerturbationPerType") && vm.count("graphsFilesFolder")){
+        //unstable configuration of different graphs and single matrix with the same nodes
+        std::cout << "WARNING: unstable configuration of different graphs and a single matrix with the initial perturbations"<<std::endl;
+    }
+
+
+    if (vm.count("fUniqueGraph")) {
         std::cout << "[LOG] file for the graph was set to " 
-    << vm["fGRAPH"].as<std::string>() << ".\n";
-        // filename = vm["fGRAPH"].as<std::string>();
+    << vm["fUniqueGraph"].as<std::string>() << ".\n";
+        // filename = vm["fUniqueGraph"].as<std::string>();
         // if(!fileExistsPath(filename)){
         //     std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
         //     return 1;
         // }
         if(vm.count("graphsFilesFolder")){
-            std::cout << "[ERROR] fGRAPH and graphsFilesFolder were both set. Aborting\n";
+            std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
             return 1;
         }
     } else if(vm.count("graphsFilesFolder")){
         std::cout << "[LOG] folder for the graphs was set to " 
     << vm["graphsFilesFolder"].as<std::string>() << ".\n";
-        // filename = vm["fGRAPH"].as<std::string>();
+        graphsFilesFolder = vm["graphsFilesFolder"].as<std::string>();
+        // filename = vm["fUniqueGraph"].as<std::string>();
         // if(!fileExistsPath(filename)){
         //     std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
         //     return 1;
         // }
-        if(vm.count("fGRAPH")){
-            std::cout << "[ERROR] fGRAPH and graphsFilesFolder were both set. Aborting\n";
+        if(vm.count("fUniqueGraph")){
+            std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
             return 1;
         }
-        // std::cout << "[ERROR] fGRAPH or graphsFilesFolder was not set(only one need to be set at least). Aborting\n";
+        // std::cout << "[ERROR] fUniqueGraph or graphsFilesFolder was not set(only one need to be set at least). Aborting\n";
         // return 1;
     }
     if (vm.count("fInitialPerturbationPerType")) {
         std::cout << "[LOG] file for the initialPerturbationPerType matrix was set to " 
     << vm["fInitialPerturbationPerType"].as<std::string>() << ".\n";
+        if(vm.count("initialPerturbationPerTypeFolder")){
+            std::cout << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
+            return 1;
+        }
         typeInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
         if(!fileExistsPath(typeInitialPerturbationMatrixFilename)){
             std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
@@ -130,22 +167,22 @@ int main(int argc, char** argv ) {
         std::cerr << "[ERROR] fInitialPerturbationPerType file was not set. Aborting\n";
         return 1;
     }
-    if (vm.count("dirTypeInteraction")) {
+    if (vm.count("typeInteractionFolder")) {
         std::cout << "[LOG] folder for the type interactions was set to " 
-    << vm["dirTypeInteraction"].as<std::string>() << ".\n";
-        typesInteractionFoldername = vm["dirTypeInteraction"].as<std::string>();
+    << vm["typeInteractionFolder"].as<std::string>() << ".\n";
+        typesInteractionFoldername = vm["typeInteractionFolder"].as<std::string>();
         if(!folderExists(typesInteractionFoldername)){
             std::cerr << "[ERROR] folder for the type interactions do not exist: aborting"<<std::endl;
             return 1;
         }
     } else {
-        std::cout << "[LOG] dirTypeInteraction folder was not set. computing without taking into account type interactions\n";
+        std::cout << "[LOG] typeInteractionFolder folder was not set. computing without taking into account type interactions\n";
         //TODO
     }
-    if (vm.count("output")) {
+    if (vm.count("outputFolder")) {
         std::cout << "[LOG] output folder  was set to " 
-    << vm["output"].as<std::string>() << ".\n";
-        outputFoldername = vm["output"].as<std::string>();
+    << vm["outputFolder"].as<std::string>() << ".\n";
+        outputFoldername = vm["outputFolder"].as<std::string>();
         if(!folderExists(outputFoldername)){
             std::cerr << "[ERROR] folder for the output do not exist: aborting"<<std::endl;
             return 1;
@@ -311,7 +348,7 @@ int main(int argc, char** argv ) {
         std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
     }
     //take the types before with another function TODO define function
-
+    std::vector<std::string> types = getTypesFromFolderFileNames(typeInitialPerturbationFolderFilename);
     //use the number of types to allocate an array of pointers to contain the graph for every type
     auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     std::vector<std::string> graphNodes = namesAndEdges.first;
@@ -324,7 +361,7 @@ int main(int argc, char** argv ) {
 
     auto logFolds = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
     std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
-    std::vector<std::string> types = std::get<1>(logFolds);
+    //std::vector<std::string> types = std::get<1>(logFolds);
     Computation** typeComputations = new Computation*[types.size()];
     for(uint i = 0; i < types.size();i++){
         std::vector<double> inputTypelogfold = std::get<2>(logFolds)[i];
@@ -375,12 +412,12 @@ int main(int argc, char** argv ) {
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = true); // TODO check if iteration intratype should be multiplied by iteration intertype
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true); // TODO check if iteration intratype should be multiplied by iteration intertype
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         std::vector<double> saturationVector = std::vector<double>(graphNodes.size(),saturationTerm);
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = true, saturationVector); // TODO check if iteration intratype should be multiplied by iteration intertype
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector); // TODO check if iteration intratype should be multiplied by iteration intertype
                     }
                 } else{
                     std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false); // TODO check if iteration intratype should be multiplied by iteration intertype
