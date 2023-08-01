@@ -353,7 +353,12 @@ int main(int argc, char** argv ) {
     }
     auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
     for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
-        auto cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
+        std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> cellInteractionsEdges;
+        if (subcelltypes.size() == 0) {
+            cellInteractionsEdges  = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
+        } else {
+            cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename, subcelltypes, ensembleGeneNames);
+        }
         //TODO insert edges to the correspondent cell metapathway
         #pragma omp parallel for
         for (uint i = 0; i < cellTypes.size();i++) {
