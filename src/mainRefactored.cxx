@@ -37,6 +37,7 @@ int main(int argc, char** argv ) {
         ("help", "() print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
         ("fUniqueGraph", po::value<std::string>(), "(string) graph filename, for an example graph see in resources. NOTE: if this option is chosen, graphsFilesFolder cannot be used")
         ("fInitialPerturbationPerType", po::value<std::string>(), "(string) initialPerturbationPerType matrix filename, for an example see in data")
+        ("subtypes", po::value<std::string>(), "subtypes filename, for an example see in data TODO")
         ("initialPerturbationPerTypeFolder", po::value<std::string>(), "(string) initialPerturbationPerType folder, for an example see in data TODO")
         ("typeInteractionFolder", po::value<std::string>(), "(string) directory for the type interactions, for an example see in data")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"() use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
@@ -61,7 +62,7 @@ int main(int argc, char** argv ) {
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-    std::string filename,typesFilename,typesInteractionFoldername,typeInitialPerturbationMatrixFilename,graphsFilesFolder, typeInitialPerturbationFolderFilename,outputFoldername;
+    std::string filename,subtypesFilename,typesFilename,typesInteractionFoldername,typeInitialPerturbationMatrixFilename,graphsFilesFolder, typeInitialPerturbationFolderFilename,outputFoldername;
     uint intertypeIterations,intratypeIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
@@ -76,6 +77,17 @@ int main(int argc, char** argv ) {
     if(saturation && conservateInitialNorm){
         std::cerr << "[ERROR] saturation and conservateInitialNorm cannot be both true, aborting"<<std::endl;
         return 1;
+    }
+
+    std::vector<std::string> subtypes;
+    if(vm.count("subtypes")){
+        std::cout << "[LOG] subtypes filename set to "
+    << vm["subtypes"].as<std::string>() << ".\n";
+        subtypesFilename = vm["subtypes"].as<std::string>();
+        subtypes = getVectorFromFile<std::string>(subtypesFilename);
+    }else{
+        std::cout << "[LOG] subtypes filename not set, set to default: all types \n";
+        subtypesFilename = "";
     }
 
     if (vm.count("intertypeIterations")) {
@@ -358,13 +370,19 @@ int main(int argc, char** argv ) {
     }
 
 
-
-    auto logFolds = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
-    std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
-    //std::vector<std::string> types = std::get<1>(logFolds);
+    std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> initialValues;
+    if(subtypes.size()==0){
+        std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
+        initialValues = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
+    } else {
+        std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
+        initialValues = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,subtypes,ensembleGeneNames);
+    }
+    std::vector<std::string> initialNames = std::get<0>(initialValues);
+    //std::vector<std::string> types = std::get<1>(initialValues);
     Computation** typeComputations = new Computation*[types.size()];
     for(uint i = 0; i < types.size();i++){
-        std::vector<double> inputTypelogfold = std::get<2>(logFolds)[i];
+        std::vector<double> inputTypelogfold = std::get<2>(initialValues)[i];
         Computation* tmpCompPointer = new Computation(types[i],inputTypelogfold,graph,graphNodes);  //TODO order the genes directly or use the names and set them one by one 
         tmpCompPointer->setDissipationModel(dissipationModel);
         tmpCompPointer->setConservationModel(conservationModel);
@@ -377,13 +395,18 @@ int main(int argc, char** argv ) {
         typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();    
     }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
-    for(auto TypeInteractionFilename = allFilesInteraction.cbegin() ; TypeInteractionFilename != allFilesInteraction.cend() ; TypeInteractionFilename++){
-        auto TypeInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*TypeInteractionFilename,ensembleGeneNames);
+    for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
+        std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> typeInteractionsEdges;
+        if (subtypes.size() == 0) {
+            typeInteractionsEdges  = cellInteractionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
+        } else {
+            typeInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
+        }
         //TODO insert edges to the correspondent type graph
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
-            if(TypeInteractionsEdges.contains(types[i])){
-                typeComputations[i]->addEdges(TypeInteractionsEdges[types[i]]);
+            if(typeInteractionsEdges.contains(types[i])){
+                typeComputations[i]->addEdges(typeInteractionsEdges[types[i]]);
                 //typeComputations[i]->freeAugmentedGraphs();
             }
         }
@@ -441,7 +464,7 @@ int main(int argc, char** argv ) {
             for(uint i = 0; i < types.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
                 if (conservateInitialNorm) {
-                    std::vector<double> inputInitial = std::get<2>(logFolds)[i];
+                    std::vector<double> inputInitial = std::get<2>(initialValues)[i];
                     double initialNorm = vectorNorm(inputInitial);
                     double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
                     double normRatio = initialNorm/outputNorm;
