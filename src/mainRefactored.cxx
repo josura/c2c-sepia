@@ -62,7 +62,7 @@ int main(int argc, char** argv ) {
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-    std::string filename,subtypesFilename,typesFilename,typesInteractionFoldername,typeInitialPerturbationMatrixFilename,graphsFilesFolder, typeInitialPerturbationFolderFilename,outputFoldername;
+    std::string filename,subtypesFilename,typesFilename,typesInteractionFoldername,typesInitialPerturbationMatrixFilename,graphsFilesFolder, typeInitialPerturbationFolderFilename,outputFoldername;
     uint intertypeIterations,intratypeIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
@@ -138,11 +138,11 @@ int main(int argc, char** argv ) {
     if (vm.count("fUniqueGraph")) {
         std::cout << "[LOG] file for the graph was set to " 
     << vm["fUniqueGraph"].as<std::string>() << ".\n";
-        // filename = vm["fUniqueGraph"].as<std::string>();
-        // if(!fileExistsPath(filename)){
-        //     std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
-        //     return 1;
-        // }
+        filename = vm["fUniqueGraph"].as<std::string>();
+        if(!fileExistsPath(filename)){
+            std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
+            return 1;
+        }
         if(vm.count("graphsFilesFolder")){
             std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
             return 1;
@@ -151,17 +151,14 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] folder for the graphs was set to " 
     << vm["graphsFilesFolder"].as<std::string>() << ".\n";
         graphsFilesFolder = vm["graphsFilesFolder"].as<std::string>();
-        // filename = vm["fUniqueGraph"].as<std::string>();
-        // if(!fileExistsPath(filename)){
-        //     std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
-        //     return 1;
-        // }
+        if(!folderExists(graphsFilesFolder)){
+            std::cerr << "[ERROR] folder for the graphs do not exist: aborting"<<std::endl;
+            return 1;
+        }
         if(vm.count("fUniqueGraph")){
             std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
             return 1;
         }
-        // std::cout << "[ERROR] fUniqueGraph or graphsFilesFolder was not set(only one need to be set at least). Aborting\n";
-        // return 1;
     }
     if (vm.count("fInitialPerturbationPerType")) {
         std::cout << "[LOG] file for the initialPerturbationPerType matrix was set to " 
@@ -170,8 +167,8 @@ int main(int argc, char** argv ) {
             std::cout << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
             return 1;
         }
-        typeInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
-        if(!fileExistsPath(typeInitialPerturbationMatrixFilename)){
+        typesInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
+        if(!fileExistsPath(typesInitialPerturbationMatrixFilename)){
             std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
             return 1;
         }
@@ -360,30 +357,61 @@ int main(int argc, char** argv ) {
         std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
     }
     //take the types before with another function TODO define function
-    std::vector<std::string> types = getTypesFromFolderFileNames(typeInitialPerturbationFolderFilename);
+    std::vector<std::string> types;
+    if(vm.count("fUniqueGraph")){
+        if(vm.count("fInitialPerturbationPerType")){
+            types = getTypesFromMatrixFile(filename);
+
+        } else if (vm.count("initialPerturbationPerTypeFolder")){
+            types = getTypesFromFolderFileNames(typeInitialPerturbationFolderFilename);
+        } else {
+            std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
+            return 1;
+        }
+    } else if (vm.count("graphsFilesFolder")) {
+        types = getTypesFromFolderFileNames(graphsFilesFolder);
+    } else {
+        std::cerr << "[ERROR] no graph file or folder specified: aborting"<<std::endl;
+        return 1;
+    }
     //use the number of types to allocate an array of pointers to contain the graph for every type
-    auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
+    std::pair<std::vector<std::string>, std::vector<std::tuple<std::string, std::string, double>>> namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
     std::vector<std::string> graphNodes = namesAndEdges.first;
-    WeightedEdgeGraph *graph = new WeightedEdgeGraph(graphNodes);
+    WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[types.size()];
+    if(vm.count("fUniqueGraph")){
+        graphs[0] = new WeightedEdgeGraph(graphNodes);
+        for(int i = 1; i < types.size(); i++){
+            graphs[i] = graphs[0];
+        }
+    } else {
+        for(int i = 0; i < types.size(); i++){
+            graphs[i] = new WeightedEdgeGraph(graphNodes);
+        }
+    }
+    // WeightedEdgeGraph *graph = new WeightedEdgeGraph(graphNodes);
     for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
-        graph->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+        for(int i = 0; i < types.size(); i++){
+            graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+        }
+        // graph->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
     }
 
 
     std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> initialValues;
     if(subtypes.size()==0){
         std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
-        initialValues = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
+        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
     } else {
         std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
-        initialValues = logFoldChangeMatrixToCellVectors(typeInitialPerturbationMatrixFilename,graphNodes,subtypes,ensembleGeneNames);
+        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphNodes,subtypes,ensembleGeneNames);
     }
     std::vector<std::string> initialNames = std::get<0>(initialValues);
+    auto inputInitials = std::get<2>(initialValues);
     //std::vector<std::string> types = std::get<1>(initialValues);
     Computation** typeComputations = new Computation*[types.size()];
     for(uint i = 0; i < types.size();i++){
         std::vector<double> inputTypelogfold = std::get<2>(initialValues)[i];
-        Computation* tmpCompPointer = new Computation(types[i],inputTypelogfold,graph,graphNodes);  //TODO order the genes directly or use the names and set them one by one 
+        Computation* tmpCompPointer = new Computation(types[i],inputTypelogfold,graphs[i],graphNodes);  //TODO order the genes directly or use the names and set them one by one 
         tmpCompPointer->setDissipationModel(dissipationModel);
         tmpCompPointer->setConservationModel(conservationModel);
         typeComputations[i] = tmpCompPointer;
@@ -464,7 +492,7 @@ int main(int argc, char** argv ) {
             for(uint i = 0; i < types.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
                 if (conservateInitialNorm) {
-                    std::vector<double> inputInitial = std::get<2>(initialValues)[i];
+                    std::vector<double> inputInitial = inputInitials[i];
                     double initialNorm = vectorNorm(inputInitial);
                     double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
                     double normRatio = initialNorm/outputNorm;
