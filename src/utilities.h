@@ -139,7 +139,13 @@ std::vector<double> saturationFileToVector(std::string filename,const std::map<s
  *          that is if the folder contains the files: A.tsv, B.tsv, C.tsv, D.tsv, E.tsv
  *         the function will return the vector {"A","B","C","D","E"}
  */
-std::vector<std::string> getTypesFromFolderFileNames(std::string typeInitialPerturbationFolderFilename);
+std::vector<std::string> getTypesFromFolderFileNames(std::string folderPath);
+/**
+ * \brief   Return the types taken from the first line of a file
+ *          that is if the first line contains: name, A, B, C, D, E
+ *         the function will return the vector {"A","B","C","D","E"}
+ */
+std::vector<std::string> getTypesFromMatrixFile(std::string matrixFilepath);
 
 template<typename T>
 std::vector<T> getVectorFromFile(std::string filename){

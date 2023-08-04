@@ -271,9 +271,9 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
 }
 
 
-std::vector<std::string> getTypesFromFolderFileNames(std::string typeInitialPerturbationFolderFilename){
+std::vector<std::string> getTypesFromFolderFileNames(std::string folderPath){
     std::vector<std::string> ret;
-    std::vector<std::string> files = get_all(typeInitialPerturbationFolderFilename,".tsv");
+    std::vector<std::string> files = get_all(folderPath,".tsv");
     for(auto iter = files.cbegin(); iter!=files.cend();iter++){
         std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
         std::string filename = splitted[splitted.size()-1]; //last element
@@ -281,6 +281,26 @@ std::vector<std::string> getTypesFromFolderFileNames(std::string typeInitialPert
         ret.push_back(splittedFilename[0]);
     }
     return ret;
+}
+
+std::vector<std::string> getTypesFromMatrixFile(std::string matrixFilepath){
+    std::vector<std::string> typeNames;
+    std::string line;
+    if(file_exists(matrixFilepath)){
+        ifstream myfile (matrixFilepath);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector,
+            for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
+                typeNames.push_back(splittedHeader[i]);
+            }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::getTypesFromMatrixFile: file does not exists " + matrixFilepath);
+    }
+    return typeNames;
 }
 
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,bool useEntrez){
