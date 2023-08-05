@@ -410,8 +410,8 @@ int main(int argc, char** argv ) {
     //std::vector<std::string> types = std::get<1>(initialValues);
     Computation** typeComputations = new Computation*[types.size()];
     for(uint i = 0; i < types.size();i++){
-        std::vector<double> inputTypelogfold = std::get<2>(initialValues)[i];
-        Computation* tmpCompPointer = new Computation(types[i],inputTypelogfold,graphs[i],graphNodes);  //TODO order the genes directly or use the names and set them one by one 
+        std::vector<double> input = std::get<2>(initialValues)[i];
+        Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphNodes);  //TODO order the genes directly or use the names and set them one by one 
         tmpCompPointer->setDissipationModel(dissipationModel);
         tmpCompPointer->setConservationModel(conservationModel);
         typeComputations[i] = tmpCompPointer;
