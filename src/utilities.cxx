@@ -270,6 +270,20 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
     return std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> (nameRet,ret);
 }
 
+std::pair<std::vector<std::string>,std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>>> edgesFileToEdgesListAndNodesByNameFromFolder(std::string filename){
+    std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> ret;
+    std::vector<std::string> graphNames;
+    std::vector<std::string> files = get_all(filename,".tsv");
+    for(auto iter = files.cbegin(); iter!=files.cend();iter++){
+        std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesListAndNodesByName = edgesFileToEdgesListAndNodesByName(*iter);
+        std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+        std::string filename = splitted[splitted.size()-1]; //last element
+        std::vector<std::string> splittedFilename = splitString(filename, "."); //split the extension
+        graphNames.push_back(splittedFilename[0]);
+        ret.push_back(edgesListAndNodesByName);
+    }
+    return std::pair<std::vector<std::string>,std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>>>(graphNames,ret);
+}
 
 std::vector<std::string> getTypesFromFolderFileNames(std::string folderPath){
     std::vector<std::string> ret;
