@@ -443,6 +443,93 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath, const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType, bool useEntrez){
+    std::vector<std::string> cellNames;
+    std::vector<std::string> geneNames;
+    std::vector<std::vector<double>> ret;
+    std::vector<std::string> discardedGenes;
+    std::vector<std::map<std::string, int>> finalGenesToIndex;
+    for(int i = 0 ; i < SizeToInt(finalNames.size()); i++){
+        std::map<std::string, int> tmp;
+        for(int j = 0 ; j < SizeToInt(finalNames[i].size()); j++){
+            tmp[finalNames[i][j]] = j;
+        }
+        finalGenesToIndex.push_back(tmp);
+    }
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
+    auto files = get_all(folderPath,".tsv");
+    if(files.size()==0){
+        throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: no files found in the folder " + folderPath);
+    }
+    //default argument for subtype is empty, if empty, use all files in the folder
+    if(subType.size()==0){
+        for(auto iter = files.cbegin();iter!=files.cend();iter++){
+            subType.push_back(splitString(*iter, ".")[0]);
+        }
+    }
+    //filter files from subtypes (first part of the filename before the extension)
+    std::vector<std::string> filteredFiles;
+    for(auto iter = files.cbegin();iter!=files.cend();iter++){
+        std::string type = splitString(*iter, ".")[0];
+        if(vectorContains(subType,type)){
+            filteredFiles.push_back(*iter);
+        }
+    }
+    if(filteredFiles.size()==0){
+        throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: no files found in the folder that are similar to the subtypes " + folderPath);
+    }
+    int i = 0;
+    for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++,i++){
+        std::string filename = folderPath + "/" + *iter;
+        std::string cellName = splitString(*iter, ".")[0];
+        cellNames.push_back(cellName);
+        if(file_exists(filename)){
+            //first line is the header, the first column is the gene, the second column is the value
+            ifstream myfile (filename);
+            string line;
+            std::vector<double> cellValues(finalNames[i].size(),0);
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitString(line, "\t");
+                if(entries.size()==2){
+                    if(!useEntrez){
+                        if(finalGenesToIndex[i].contains(entries[0])){
+                            cellValues[finalGenesToIndex[i][entries[0]]] = std::stod(entries[1]);
+                            geneNames.push_back(entries[0]);
+                        } else{
+                            discardedGenes.push_back(entries[0]);
+                        }
+                    }
+                    else{
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex[i].contains(mapEnsembleToEntrez[entries[0]])) {
+                            cellValues[finalGenesToIndex[i][mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[1]);
+                            geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
+                        } else{
+                            discardedGenes.push_back(entries[0]);
+                        }//else don't do nothing since the node is not in the graph
+                    }
+                } else {
+                    throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: header doesn't have the same amount of columns as the data " + filename);
+                }
+            }
+            myfile.close();
+            std::cout << "[LOG] No node in the metapathway for genes: " << std::endl;
+            for(auto iter = discardedGenes.cbegin();iter!=discardedGenes.cend();iter++){
+                std::cout << "," << *iter;
+            }
+            std::cout << std::endl <<"[LOG] discarding logfold for the genes not in the metapathway" << std::endl;
+            ret.push_back(cellValues);
+
+        
+        } else {
+            throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: file does not exists " + filename);
+        }
+    }
+    return std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> (geneNames,cellNames,ret);
+            
+}
+
+
 //TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
 //TODO, understand if the translation from ensemble gene names to entrez should be done here
 //TODO, filtering genes also since I have seen nodes not in the metapathway
