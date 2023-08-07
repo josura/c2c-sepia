@@ -375,48 +375,105 @@ int main(int argc, char** argv ) {
         return 1;
     }
     //use the number of types to allocate an array of pointers to contain the graph for every type
-    std::pair<std::vector<std::string>, std::vector<std::tuple<std::string, std::string, double>>> namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
-    std::vector<std::string> graphNodes = namesAndEdges.first;
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[types.size()];
+    std::vector<std::vector<std::string>> graphsNodes;
+    std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     if(vm.count("fUniqueGraph")){
-        graphs[0] = new WeightedEdgeGraph(graphNodes);
+        namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
+        graphsNodes.push_back(namesAndEdges[0].first);
+        graphs[0] = new WeightedEdgeGraph(graphsNodes[0]);
         for(int i = 1; i < types.size(); i++){
+            namesAndEdges.push_back(namesAndEdges[0]);
+            graphsNodes.push_back(namesAndEdges[0].first);
             graphs[i] = graphs[0];
         }
-    } else {
-        for(int i = 0; i < types.size(); i++){
-            graphs[i] = new WeightedEdgeGraph(graphNodes);
+    } else if (vm.count("graphsFilesFolder")) {
+        // TODO get the nodes from the single files
+        auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
+        auto typesFromFolder = allGraphs.first;
+        if(typesFromFolder.size() != types.size()){
+            std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+            return 1;
         }
-    }
-    // WeightedEdgeGraph *graph = new WeightedEdgeGraph(graphNodes);
-    for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
-        for(int i = 0; i < types.size(); i++){
-            graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+        for (uint i = 0; i<typesFromFolder.size(); i++){
+            if(typesFromFolder[i] != types[i]){
+                std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+                return 1;
+            }
         }
-        // graph->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+        namesAndEdges = allGraphs.second;
+        for(int i = 0; i < types.size(); i++){
+            graphsNodes.push_back(namesAndEdges[i].first);
+            graphs[i] = new WeightedEdgeGraph(graphsNodes[i]);
+        }
+    } 
+
+    //add the edges to the graphs
+    if(vm.count("fUniqueGraph")){
+        for(auto edge = namesAndEdges[0].second.cbegin() ; edge != namesAndEdges[0].second.cend(); edge++ ){
+            graphs[0]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+        }
+    } else if (vm.count("graphsFilesFolder")) {
+        for(int i = 0; i < types.size(); i++){
+            for(auto edge = namesAndEdges[i].second.cbegin() ; edge != namesAndEdges[i].second.cend(); edge++ ){
+                graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+            }
+        }
     }
 
 
     std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> initialValues;
-    if(subtypes.size()==0){
-        std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
-        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphNodes,ensembleGeneNames);
+    std::vector<std::vector<double>> inputInitials;
+    if(vm.count("fInitialPerturbationPerType")){
+        std::cout << "[LOG] initial perturbation per type specified, using the file "<<typesInitialPerturbationMatrixFilename<<std::endl;
+        if(subtypes.size()==0){
+            std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
+            initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],ensembleGeneNames);
+        } else {
+            std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
+            initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
+        }
+    } else if (vm.count("initialPerturbationPerTypeFolder")){
+        std::cout << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
+        initialValues = logFoldChangeCellVectorsFromFolder(typeInitialPerturbationFolderFilename,graphsNodes,subtypes,ensembleGeneNames);
     } else {
-        std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
-        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphNodes,subtypes,ensembleGeneNames);
+        std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
+        return 1;
     }
     std::vector<std::string> initialNames = std::get<0>(initialValues);
-    auto inputInitials = std::get<2>(initialValues);
-    //std::vector<std::string> types = std::get<1>(initialValues);
+    inputInitials = std::get<2>(initialValues);
+    std::vector<std::string> typesFromValues = std::get<1>(initialValues);
+    //TODO understand if types from values should be the same as the types from the graphs since values could be specified for a subset of the types
+    if(typesFromValues.size() != types.size()){
+        std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+        return 1;
+    }
+    auto indexMapGraphTypesToValuesTypes = get_indexmap_vector_values_full(types, typesFromValues);
+    if(indexMapGraphTypesToValuesTypes.size() == 0){
+        std::cerr << "[ERROR] types from folder and types from file do not match even on one instance: aborting"<<std::endl;
+        return 1;
+    }
     Computation** typeComputations = new Computation*[types.size()];
     for(uint i = 0; i < types.size();i++){
-        std::vector<double> input = std::get<2>(initialValues)[i];
-        Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphNodes);  //TODO order the genes directly or use the names and set them one by one 
-        tmpCompPointer->setDissipationModel(dissipationModel);
-        tmpCompPointer->setConservationModel(conservationModel);
-        typeComputations[i] = tmpCompPointer;
-        //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-        typeComputations[i]->augmentMetapathwayNoComputeInverse(types);
+        if(indexMapGraphTypesToValuesTypes[i] == -1){
+            std::cout << "[LOG] type "<<types[i]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
+            std::vector<double> input = std::vector<double>(graphsNodes[i].size(),0);
+            Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
+            tmpCompPointer->setDissipationModel(dissipationModel);
+            tmpCompPointer->setConservationModel(conservationModel);
+            typeComputations[i] = tmpCompPointer;
+            //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+            typeComputations[i]->augmentMetapathwayNoComputeInverse(types);
+        } else {
+            int index = indexMapGraphTypesToValuesTypes[i];
+            std::vector<double> input = inputInitials[index];
+            Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
+            tmpCompPointer->setDissipationModel(dissipationModel);
+            tmpCompPointer->setConservationModel(conservationModel);
+            typeComputations[i] = tmpCompPointer;
+            //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+            typeComputations[i]->augmentMetapathwayNoComputeInverse(types);
+        }
     }
     std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
     for(uint i = 0; i < types.size();i++ ){
@@ -467,7 +524,7 @@ int main(int argc, char** argv ) {
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
-                        std::vector<double> saturationVector = std::vector<double>(graphNodes.size(),saturationTerm);
+                        std::vector<double> saturationVector = std::vector<double>(graphsNodes[i].size(),saturationTerm);
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector); // TODO check if iteration intratype should be multiplied by iteration intertype
                     }
                 } else{
