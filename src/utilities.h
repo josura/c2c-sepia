@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <exception>
 #include <iostream>
 #include <map>
 #include <string>
@@ -172,6 +173,52 @@ std::map<std::string, std::vector<std::string>> getFullNodesDescription();
  *          in the specified directory and all subdirectories.
  */
 std::vector<std::string> get_all(std::string const & root, std::string const & ext);
+/**
+ * \brief   Return map of the vector values from the first vector to the second vector
+ */
+template<typename T>
+std::vector<int> get_indexmap_vector_values(std::vector<T> const & origin, std::vector<T> const & toMap){
+    std::vector<int> retVec;
+    for (int i = 0; i < toMap.size(); ++i) {
+        auto it = std::find(origin.begin(), origin.end(), toMap[i]);
+        if (it != origin.end()) {
+            retVec.push_back(std::distance(origin.begin(), it));
+        }
+        else {
+            std::cout << "[ERROR] utilities::get_indexmap_vector_values : " << toMap[i] << " not found in the origin vector" << std::endl;
+            throw std::invalid_argument( "utilities::get_indexmap_vector_values : " + toMap[i] + " not found in the origin vector" );
+        }
+    }
+    return retVec;
+}
+
+/**
+ * \brief   Return map of the vector values from the second vector to the first vector, if the value is not found in the first vector the value -1 is added to the map
+ */
+template<typename T>
+std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, std::vector<T> const & toMap){
+    std::vector<int> retVec;
+    int notFoundValues = 0;
+    for (int i = 0; i < origin.size(); ++i) {
+        auto itorigin = std::find(toMap.begin(), toMap.end(), origin[i]);
+        if (itorigin != toMap.end()) {
+            retVec.push_back(std::distance(toMap.begin(), itorigin));
+        }
+        else {
+            retVec.push_back(-1);
+            notFoundValues++;
+        }
+        
+    }
+    if(notFoundValues==origin.size()){
+        std::cout << "[ERROR] utilities::get_indexmap_vector_values_full : all values not found in the origin vector" << std::endl;
+        throw std::invalid_argument( "all values not found in the origin vector" );
+    }
+    if(notFoundValues>0){
+        std::cout << "[WARNING] utilities::get_indexmap_vector_values_full : " << notFoundValues << " values not found in the origin vector" << std::endl;
+    }
+    return retVec;
+}
 
 void saveNodeValues(std::string folderName,int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false);
 
