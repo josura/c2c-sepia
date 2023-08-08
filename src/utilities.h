@@ -198,8 +198,8 @@ std::vector<int> get_indexmap_vector_values(std::vector<T> const & origin, std::
 template<typename T>
 std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, std::vector<T> const & toMap){
     std::vector<int> retVec;
-    int notFoundValues = 0;
-    for (int i = 0; i < origin.size(); ++i) {
+    uint notFoundValues = 0;
+    for (uint i = 0; i < origin.size(); ++i) {
         auto itorigin = std::find(toMap.begin(), toMap.end(), origin[i]);
         if (itorigin != toMap.end()) {
             retVec.push_back(std::distance(toMap.begin(), itorigin));
@@ -210,7 +210,7 @@ std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, 
         }
         
     }
-    if(notFoundValues==origin.size()){
+    if(notFoundValues == origin.size()){
         std::cout << "[ERROR] utilities::get_indexmap_vector_values_full : all values not found in the origin vector" << std::endl;
         throw std::invalid_argument( "all values not found in the origin vector" );
     }
