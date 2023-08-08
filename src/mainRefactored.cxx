@@ -74,11 +74,41 @@ int main(int argc, char** argv ) {
         return 1;
     }
 
+
+    //controls over impossible configurations
+    if(vm.count("fUniqueGraph") == 0 && vm.count("graphsFilesFolder") == 0){
+        //no unique graph of folder of the graphs was set
+        std::cout << "[ERROR] no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
+        return 1;
+    }
+
+    if(vm.count("fInitialPerturbationPerType") == 0 && vm.count("initialPerturbationPerTypeFolder") == 0){
+        //no way of getting the initial perturbation values
+        std::cout << "[ERROR] no matrix for the initial values was passed as filename or single vector in files contained in the folder specified was set, set one "<<std::endl;
+        return 1;
+    }
+
+    if(vm.count("fInitialPerturbationPerType") && vm.count("graphsFilesFolder")){
+        //unstable configuration of different graphs and single matrix with the same nodes
+        std::cout << "[WARNING] unstable configuration of different graphs and a single matrix with the initial perturbations"<<std::endl;
+    }
+
     if(saturation && conservateInitialNorm){
         std::cerr << "[ERROR] saturation and conservateInitialNorm cannot be both true, aborting"<<std::endl;
         return 1;
     }
 
+
+    if(vm.count("graphsFilesFolder") && vm.count("fUniqueGraph")){
+        std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
+        return 1;
+    }
+    if(vm.count("initialPerturbationPerTypeFolder") && vm.count("fInitialPerturbationPerType")){
+        std::cout << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
+        return 1;
+    }
+
+    // reading the parameters
     std::vector<std::string> subtypes;
     if(vm.count("subtypes")){
         std::cout << "[LOG] subtypes filename set to "
@@ -117,23 +147,6 @@ int main(int argc, char** argv ) {
         std::cout << "[LOG] timestep not set, set to default (1)"<<std::endl;
     }
 
-    if(vm.count("fUniqueGraph") == 0 && vm.count("graphsFilesFolder") == 0){
-        //no unique graph of folder of the graphs was set
-        std::cout << "no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
-        return 1;
-    }
-
-    if(vm.count("fInitialPerturbationPerType") == 0 && vm.count("initialPerturbationPerTypeFolder") == 0){
-        //no way of getting the initial perturbation values
-        std::cout << "no matrix for the initial values was passed as filename or single vector in files contained in the folder specified was set, set one "<<std::endl;
-        return 1;
-    }
-
-    if(vm.count("fInitialPerturbationPerType") && vm.count("graphsFilesFolder")){
-        //unstable configuration of different graphs and single matrix with the same nodes
-        std::cout << "WARNING: unstable configuration of different graphs and a single matrix with the initial perturbations"<<std::endl;
-    }
-
 
     if (vm.count("fUniqueGraph")) {
         std::cout << "[LOG] file for the graph was set to " 
@@ -141,10 +154,6 @@ int main(int argc, char** argv ) {
         filename = vm["fUniqueGraph"].as<std::string>();
         if(!fileExistsPath(filename)){
             std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
-            return 1;
-        }
-        if(vm.count("graphsFilesFolder")){
-            std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
             return 1;
         }
     } else if(vm.count("graphsFilesFolder")){
@@ -155,18 +164,10 @@ int main(int argc, char** argv ) {
             std::cerr << "[ERROR] folder for the graphs do not exist: aborting"<<std::endl;
             return 1;
         }
-        if(vm.count("fUniqueGraph")){
-            std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
-            return 1;
-        }
     }
     if (vm.count("fInitialPerturbationPerType")) {
         std::cout << "[LOG] file for the initialPerturbationPerType matrix was set to " 
     << vm["fInitialPerturbationPerType"].as<std::string>() << ".\n";
-        if(vm.count("initialPerturbationPerTypeFolder")){
-            std::cout << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
-            return 1;
-        }
         typesInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
         if(!fileExistsPath(typesInitialPerturbationMatrixFilename)){
             std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
@@ -382,7 +383,7 @@ int main(int argc, char** argv ) {
         namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
         graphsNodes.push_back(namesAndEdges[0].first);
         graphs[0] = new WeightedEdgeGraph(graphsNodes[0]);
-        for(int i = 1; i < types.size(); i++){
+        for(uint i = 1; i < types.size(); i++){
             namesAndEdges.push_back(namesAndEdges[0]);
             graphsNodes.push_back(namesAndEdges[0].first);
             graphs[i] = graphs[0];
@@ -402,7 +403,7 @@ int main(int argc, char** argv ) {
             }
         }
         namesAndEdges = allGraphs.second;
-        for(int i = 0; i < types.size(); i++){
+        for(uint i = 0; i < types.size(); i++){
             graphsNodes.push_back(namesAndEdges[i].first);
             graphs[i] = new WeightedEdgeGraph(graphsNodes[i]);
         }
@@ -414,7 +415,7 @@ int main(int argc, char** argv ) {
             graphs[0]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
         }
     } else if (vm.count("graphsFilesFolder")) {
-        for(int i = 0; i < types.size(); i++){
+        for(uint i = 0; i < types.size(); i++){
             for(auto edge = namesAndEdges[i].second.cbegin() ; edge != namesAndEdges[i].second.cend(); edge++ ){
                 graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
             }
