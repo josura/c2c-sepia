@@ -361,7 +361,7 @@ int main(int argc, char** argv ) {
     std::vector<std::string> types;
     if(vm.count("fUniqueGraph")){
         if(vm.count("fInitialPerturbationPerType")){
-            types = getTypesFromMatrixFile(filename);
+            types = getTypesFromMatrixFile(typesInitialPerturbationMatrixFilename);
 
         } else if (vm.count("initialPerturbationPerTypeFolder")){
             types = getTypesFromFolderFileNames(typeInitialPerturbationFolderFilename);
@@ -375,6 +375,15 @@ int main(int argc, char** argv ) {
         std::cerr << "[ERROR] no graph file or folder specified: aborting"<<std::endl;
         return 1;
     }
+    
+    //filter types with the subtypes
+    std::vector<std::string> typesFiltered = vectorsIntersection(types, subtypes);
+    if (typesFiltered.size() == 0) {
+        std::cerr << "[ERROR] no types in common between the types and subtypes: aborting"<<std::endl;
+        return 1;
+    }
+    
+    
     //use the number of types to allocate an array of pointers to contain the graph for every type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[types.size()];
     std::vector<std::vector<std::string>> graphsNodes;
@@ -447,9 +456,19 @@ int main(int argc, char** argv ) {
     //TODO understand if types from values should be the same as the types from the graphs since values could be specified for a subset of the types
     //this condition should take into account the intersection of the types and the subtypes
     if(typesFromValues.size() == 0){
-        std::cerr << "[ERROR] types specified and types from file (matrix or folder of initial values) do not match: aborting"<<std::endl;
-        std::cerr << "[ERROR] types specified(subtypes): "<< subtypes <<std::endl;
-        std::cerr << "[ERROR] types from file(from graphs folder or from matrix): "<< types <<std::endl;
+        std::cerr << "[ERROR] types from the initial values folder are 0, control if the types are the same to the one specified in the matrix, in the graphs folder and in the subtypes: aborting"<<std::endl;
+        std::cerr << "[ERROR] types specified(subtypes): ";
+        for(auto type: subtypes)
+            std::cerr << type << " ";
+        std::cerr << std::endl;
+        std::cerr << "[ERROR] types from file(from graphs folder or from matrix): ";
+        for(auto type: types)
+            std::cerr << type << " ";
+        std::cerr << std::endl;
+        std::cerr << "[ERROR] types from values(from initial values folder or from values matrix) intersected with subtypes: ";
+        for(auto type: typesFromValues)
+            std::cerr << type << " ";
+        std::cerr << std::endl;
         return 1;
     }
     auto indexMapGraphTypesToValuesTypes = get_indexmap_vector_values_full(types, typesFromValues);
@@ -457,6 +476,7 @@ int main(int argc, char** argv ) {
         std::cerr << "[ERROR] types from folder and types from file do not match even on one instance: aborting"<<std::endl;
         return 1;
     }
+
     Computation** typeComputations = new Computation*[types.size()];
     for(uint i = 0; i < types.size();i++){
         if(indexMapGraphTypesToValuesTypes[i] == -1){
