@@ -223,6 +223,45 @@ std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, 
 void saveNodeValues(std::string folderName,int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false);
 
 template<typename T>
+std::vector<T> vectorSubtraction(std::vector<T> vec1, std::vector<T> vec2){
+    if(vec1.size()!=vec2.size()){
+        std::cout << "[ERROR] utilities::vectorSubtraction : vectors have different sizes" << std::endl;
+        throw std::invalid_argument( "utilities::vectorSubtraction : vectors have different sizes" );
+    }
+    std::vector<T> retVec;
+    for (int i = 0; i < vec1.size(); ++i) {
+        retVec.push_back(vec1[i]-vec2[i]);
+    }
+    return retVec;
+}
+
+template<typename T>
+std::vector<T> vectorAddition(std::vector<T> vec1, std::vector<T> vec2){
+    if(vec1.size()!=vec2.size()){
+        std::cout << "[ERROR] utilities::vectorAddition : vectors have different sizes" << std::endl;
+        throw std::invalid_argument( "utilities::vectorAddition : vectors have different sizes" );
+    }
+    std::vector<T> retVec;
+    for (int i = 0; i < vec1.size(); ++i) {
+        retVec.push_back(vec1[i]+vec2[i]);
+    }
+    return retVec;
+}
+
+template<typename T>
+std::vector<T> vectorsIntersection(std::vector<T> vec1, std::vector<T> vec2){
+    std::vector<T> retVec;
+    for (int i = 0; i < vec1.size(); ++i) {
+        auto it = std::find(vec2.begin(), vec2.end(), vec1[i]);
+        if (it != vec2.end()) {
+            retVec.push_back(vec1[i]);
+        }
+    }
+    return retVec;
+}
+
+
+template<typename T>
 std::vector<T> vectorNormalization(std::vector<T> vec){
     T norm=0;
     for (int i = 0; i < vec.size(); ++i) {
