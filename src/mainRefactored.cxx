@@ -445,8 +445,11 @@ int main(int argc, char** argv ) {
     inputInitials = std::get<2>(initialValues);
     std::vector<std::string> typesFromValues = std::get<1>(initialValues);
     //TODO understand if types from values should be the same as the types from the graphs since values could be specified for a subset of the types
-    if(typesFromValues.size() != types.size()){
-        std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+    //this condition should take into account the intersection of the types and the subtypes
+    if(typesFromValues.size() == 0){
+        std::cerr << "[ERROR] types specified and types from file (matrix or folder of initial values) do not match: aborting"<<std::endl;
+        std::cerr << "[ERROR] types specified(subtypes): "<< subtypes <<std::endl;
+        std::cerr << "[ERROR] types from file(from graphs folder or from matrix): "<< types <<std::endl;
         return 1;
     }
     auto indexMapGraphTypesToValuesTypes = get_indexmap_vector_values_full(types, typesFromValues);
