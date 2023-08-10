@@ -508,8 +508,8 @@ int main(int argc, char** argv ) {
             indexComputation++;
         }
     }
-    std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
-    for(uint i = 0; i < types.size();i++ ){
+    std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(typesFiltered.size(),std::vector<std::string>());
+    for(uint i = 0; i < typesFiltered.size();i++ ){
         typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();    
     }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
