@@ -109,16 +109,6 @@ int main(int argc, char** argv ) {
     }
 
     // reading the parameters
-    std::vector<std::string> subtypes;
-    if(vm.count("subtypes")){
-        std::cout << "[LOG] subtypes filename set to "
-    << vm["subtypes"].as<std::string>() << ".\n";
-        subtypesFilename = vm["subtypes"].as<std::string>();
-        subtypes = getVectorFromFile<std::string>(subtypesFilename);
-    }else{
-        std::cout << "[LOG] subtypes filename not set, set to default: all types \n";
-        subtypesFilename = "";
-    }
 
     if (vm.count("intertypeIterations")) {
         std::cout << "[LOG] iterations intertype set to " 
@@ -374,6 +364,17 @@ int main(int argc, char** argv ) {
     } else {
         std::cerr << "[ERROR] no graph file or folder specified: aborting"<<std::endl;
         return 1;
+    }
+
+    std::vector<std::string> subtypes;
+    if(vm.count("subtypes")){
+        std::cout << "[LOG] subtypes filename set to "
+    << vm["subtypes"].as<std::string>() << ".\n";
+        subtypesFilename = vm["subtypes"].as<std::string>();
+        subtypes = getVectorFromFile<std::string>(subtypesFilename);
+    }else{
+        std::cout << "[LOG] subtypes filename not set, set to default: all types \n";
+        subtypes = types;
     }
     
     //filter types with the subtypes
