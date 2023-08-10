@@ -251,7 +251,7 @@ std::vector<T> vectorAddition(std::vector<T> vec1, std::vector<T> vec2){
 template<typename T>
 std::vector<T> vectorsIntersection(std::vector<T> vec1, std::vector<T> vec2){
     std::vector<T> retVec;
-    for (int i = 0; i < vec1.size(); ++i) {
+    for (uint i = 0; i < vec1.size(); ++i) {
         auto it = std::find(vec2.begin(), vec2.end(), vec1[i]);
         if (it != vec2.end()) {
             retVec.push_back(vec1[i]);
