@@ -478,26 +478,34 @@ int main(int argc, char** argv ) {
         return 1;
     }
 
-    Computation** typeComputations = new Computation*[types.size()];
+    Computation** typeComputations = new Computation*[typesFiltered.size()];
+    int indexComputation = 0;
+    std::vector<int> typesIndexes = std::vector<int>(types.size(),-1); 
+    std::vector<int> invertedTypesIndexes = std::vector<int>(typesFiltered.size(),-1); 
     for(uint i = 0; i < types.size();i++){
-        if(indexMapGraphTypesToValuesTypes[i] == -1){
-            std::cout << "[LOG] type "<<types[i]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
-            std::vector<double> input = std::vector<double>(graphsNodes[i].size(),0);
-            Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
-            tmpCompPointer->setDissipationModel(dissipationModel);
-            tmpCompPointer->setConservationModel(conservationModel);
-            typeComputations[i] = tmpCompPointer;
-            //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-            typeComputations[i]->augmentMetapathwayNoComputeInverse(types);
-        } else {
-            int index = indexMapGraphTypesToValuesTypes[i];
-            std::vector<double> input = inputInitials[index];
-            Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
-            tmpCompPointer->setDissipationModel(dissipationModel);
-            tmpCompPointer->setConservationModel(conservationModel);
-            typeComputations[i] = tmpCompPointer;
-            //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-            typeComputations[i]->augmentMetapathwayNoComputeInverse(types);
+        if(vectorContains(typesFiltered, types[i])){
+            if(indexMapGraphTypesToValuesTypes[i] == -1){
+                std::cout << "[LOG] type "<<types[i]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
+                std::vector<double> input = std::vector<double>(graphsNodes[i].size(),0);
+                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
+                tmpCompPointer->setDissipationModel(dissipationModel);
+                tmpCompPointer->setConservationModel(conservationModel);
+                typeComputations[indexComputation] = tmpCompPointer;
+                //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(types);
+            } else {
+                int index = indexMapGraphTypesToValuesTypes[i];
+                std::vector<double> input = inputInitials[index];
+                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
+                tmpCompPointer->setDissipationModel(dissipationModel);
+                tmpCompPointer->setConservationModel(conservationModel);
+                typeComputations[indexComputation] = tmpCompPointer;
+                //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(types);
+            }
+            typesIndexes[i] = indexComputation;
+            invertedTypesIndexes[indexComputation] = i;
+            indexComputation++;
         }
     }
     std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
@@ -515,8 +523,8 @@ int main(int argc, char** argv ) {
         //TODO insert edges to the correspondent type graph
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
-            if(typeInteractionsEdges.contains(types[i])){
-                typeComputations[i]->addEdges(typeInteractionsEdges[types[i]]);
+            if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]]);
                 //typeComputations[i]->freeAugmentedGraphs();
             }
         }
@@ -539,7 +547,7 @@ int main(int argc, char** argv ) {
         //intratype iteration with no passing of values to the virtual nodes
         while (iterationIntratype < intratypeIterations) {
             #pragma omp parallel for
-            for(uint i = 0; i < types.size(); i++){
+            for(uint i = 0; i < typesFiltered.size(); i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl; 
                 
@@ -549,7 +557,8 @@ int main(int argc, char** argv ) {
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
-                        std::vector<double> saturationVector = std::vector<double>(graphsNodes[i].size(),saturationTerm);
+                        //TODO TEST
+                        std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector); // TODO check if iteration intratype should be multiplied by iteration intertype
                     }
                 } else{
@@ -557,7 +566,7 @@ int main(int argc, char** argv ) {
                 }
             }
             //save output values
-            for(uint i = 0; i < types.size(); i++){
+            for(uint i = 0; i < typesFiltered.size(); i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 //TODO change how to save files to get more information about intratype and intertype iterations
                 saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, types[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
@@ -571,7 +580,7 @@ int main(int argc, char** argv ) {
             //     std::cout << std::endl;
             // }
             //update input
-            for(uint i = 0; i < types.size(); i++){
+            for(uint i = 0; i < typesFiltered.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
                 if (conservateInitialNorm) {
                     std::vector<double> inputInitial = inputInitials[i];
