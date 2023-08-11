@@ -617,15 +617,15 @@ int main(int argc, char** argv ) {
         //     std::cout << std::endl;
         // }
 
-        for (uint i = 0; i < types.size(); i++) {
+        for (uint i = 0; i < typesFiltered.size(); i++) {
             //queuesTypeTypes[i] = typeComputations[i]->computeAugmentedPerturbation();
             //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent types to finish
             //also take into account REpast framework
-            for(uint j = 0; j < types.size(); j++){
+            for(uint j = 0; j < typesFiltered.size(); j++){
                 if(i==j){
-                    if(sameTypeCommunication) typeComputations[i]->setInputVinForCell(types[j], typeComputations[j]->getVirtualOutputForCell(types[i]));
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
                 } else {
-                    typeComputations[i]->setInputVinForCell(types[j], typeComputations[j]->getVirtualOutputForCell(types[i]));
+                    typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
                 }
             }
         }
