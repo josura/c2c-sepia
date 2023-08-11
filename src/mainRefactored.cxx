@@ -492,7 +492,7 @@ int main(int argc, char** argv ) {
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
                 //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(types);
+                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(typesFiltered);
             } else {
                 int index = indexMapGraphTypesToValuesTypes[i];
                 std::vector<double> input = inputInitials[index];
@@ -501,7 +501,7 @@ int main(int argc, char** argv ) {
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
                 //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(types);
+                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(typesFiltered);
             }
             typesIndexes[i] = indexComputation;
             invertedTypesIndexes[indexComputation] = i;
