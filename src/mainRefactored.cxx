@@ -163,10 +163,16 @@ int main(int argc, char** argv ) {
             std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
             return 1;
         }
-    } else {
-        std::cerr << "[ERROR] fInitialPerturbationPerType file was not set. Aborting\n";
-        return 1;
+    } else if (vm.count("initialPerturbationPerTypeFolder")) {
+        std::cout << "[LOG] folder for the initialPerturbationPerType was set to "
+    << vm["initialPerturbationPerTypeFolder"].as<std::string>() << ".\n";
+        typeInitialPerturbationFolderFilename = vm["initialPerturbationPerTypeFolder"].as<std::string>();
+        if(!folderExists(typeInitialPerturbationFolderFilename)){
+            std::cerr << "[ERROR] folder for the initialPerturbationPerType do not exist: aborting"<<std::endl;
+            return 1;
+        }
     }
+
     if (vm.count("typeInteractionFolder")) {
         std::cout << "[LOG] folder for the type interactions was set to " 
     << vm["typeInteractionFolder"].as<std::string>() << ".\n";
