@@ -470,7 +470,9 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     //filter files from subtypes (first part of the filename before the extension)
     std::vector<std::string> filteredFiles;
     for(auto iter = files.cbegin();iter!=files.cend();iter++){
-        std::string type = splitString(*iter, ".")[0];
+        std::vector<std::string> fileSplitPath = splitString(*iter, "/");
+        std::string filename = fileSplitPath[fileSplitPath.size()-1];
+        std::string type = splitString(filename, ".")[0];
         if(vectorContains(subType,type)){
             filteredFiles.push_back(*iter);
         }
@@ -480,8 +482,10 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     }
     int i = 0;
     for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++,i++){
-        std::string filename = folderPath + "/" + *iter;
-        std::string cellName = splitString(*iter, ".")[0];
+        //std::string filename = folderPath + "/" + *iter;
+        std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+        std::string filename = splitted[splitted.size()-1]; //last element
+        std::string cellName = splitString(filename, ".")[0];
         cellNames.push_back(cellName);
         if(file_exists(filename)){
             //first line is the header, the first column is the gene, the second column is the value
