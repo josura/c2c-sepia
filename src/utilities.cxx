@@ -482,11 +482,11 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     }
     int i = 0;
     for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++,i++){
-        //std::string filename = folderPath + "/" + *iter;
         std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
-        std::string filename = splitted[splitted.size()-1]; //last element
-        std::string cellName = splitString(filename, ".")[0];
+        std::string filenameNoPath = splitted[splitted.size()-1]; //last element
+        std::string cellName = splitString(filenameNoPath, ".")[0];
         cellNames.push_back(cellName);
+        std::string filename = *iter;
         if(file_exists(filename)){
             //first line is the header, the first column is the gene, the second column is the value
             ifstream myfile (filename);
