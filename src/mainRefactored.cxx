@@ -575,7 +575,7 @@ int main(int argc, char** argv ) {
             for(uint i = 0; i < typesFiltered.size(); i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 //TODO change how to save files to get more information about intratype and intertype iterations
-                saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, types[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+                saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, typesFiltered[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
             }
             // std::cout<< "[DEBUG] output values before updating input"<<std::endl;
             // for(uint i = 0; i < types.size(); i++){
