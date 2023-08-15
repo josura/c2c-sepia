@@ -285,7 +285,7 @@ std::vector<T> vectorScalarMultiplication(std::vector<T> vec, T scalar){
 }
 
 template<typename T>
-bool vectorContains(std::vector<T> vec, T element){
+bool vectorContains(std::vector<T> vec, const T element){
     for (uint i = 0; i < vec.size(); ++i) {
         if(vec[i]==element){
             return true;

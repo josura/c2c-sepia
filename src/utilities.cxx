@@ -464,7 +464,9 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     //default argument for subtype is empty, if empty, use all files in the folder
     if(subType.size()==0){
         for(auto iter = files.cbegin();iter!=files.cend();iter++){
-            subType.push_back(splitString(*iter, ".")[0]);
+            std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+            std::string filename = splitted[splitted.size()-1]; //last element
+            subType.push_back(splitString(filename, ".")[0]);
         }
     }
     //filter files from subtypes (first part of the filename before the extension)
@@ -492,6 +494,17 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             ifstream myfile (filename);
             string line;
             std::vector<double> cellValues(finalNames[i].size(),0);
+            std::string lineHeader;
+            getline (myfile,lineHeader);  // first line is header IMPORTANT
+            std::vector<std::string> splittedHeader = splitString(lineHeader, "\t");
+            //check if the header is correct
+            if(splittedHeader.size()!=2){
+                throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: header doesn't have the same amount of columns as the data " + filename);
+            }
+            if(splittedHeader[0]!="name" || splittedHeader[1] != "value"){
+                throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: header doesn't have the name and value columns or it does not have  an header" + filename);
+            }
+            //get file contents
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
