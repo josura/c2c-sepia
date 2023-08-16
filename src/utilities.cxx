@@ -655,7 +655,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
             getline (myfile,line);  // first line is header IMPORTANT
             std::vector<std::string> entriesHeader = splitString(line, "\t");
             int indexCellStart=-1,indexCellEnd=-1,indexLigandStart=-1,indexReceptorEnd=-1,indexWeight=-1;
-            for(uint i = 0; i < entriesHeader.size(); i++){
+            for(uint i = 0; i < entriesHeader.size(); i++){ //TODO change names in the header to be more general
                 if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startcell") != std::string::npos) {
                     indexCellStart = i;
                 }
