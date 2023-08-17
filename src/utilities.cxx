@@ -482,8 +482,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     if(filteredFiles.size()==0){
         throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: no files found in the folder that are similar to the subtypes " + folderPath);
     }
-    int i = 0;
-    for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++,i++){
+    for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++){
         std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
         std::string filenameNoPath = splitted[splitted.size()-1]; //last element
         std::string cellName = splitString(filenameNoPath, ".")[0];
@@ -493,7 +492,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             //first line is the header, the first column is the gene, the second column is the value
             ifstream myfile (filename);
             string line;
-            std::vector<double> cellValues(finalGenesToIndex[allTypes[i]].size(),0);
+            std::vector<double> cellValues(finalGenesToIndex[cellName].size(),0);
             std::string lineHeader;
             getline (myfile,lineHeader);  // first line is header IMPORTANT
             std::vector<std::string> splittedHeader = splitString(lineHeader, "\t");
@@ -510,16 +509,16 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                 std::vector<std::string> entries = splitString(line, "\t");
                 if(entries.size()==2){
                     if(!useEntrez){
-                        if(finalGenesToIndex[allTypes[i]].contains(entries[0])){
-                            cellValues[finalGenesToIndex[allTypes[i]][entries[0]]] = std::stod(entries[1]);
+                        if(finalGenesToIndex[cellName].contains(entries[0])){
+                            cellValues[finalGenesToIndex[cellName][entries[0]]] = std::stod(entries[1]);
                             geneNames.push_back(entries[0]);
                         } else{
                             discardedGenes.push_back(entries[0]);
                         }
                     }
                     else{
-                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex[allTypes[i]].contains(mapEnsembleToEntrez[entries[0]])) {
-                            cellValues[finalGenesToIndex[allTypes[i]][mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[1]);
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex[cellName].contains(mapEnsembleToEntrez[entries[0]])) {
+                            cellValues[finalGenesToIndex[cellName][mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[1]);
                             geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
                         } else{
                             discardedGenes.push_back(entries[0]);
