@@ -443,18 +443,18 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
-std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath, const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType, bool useEntrez){
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath,const std::vector<std::string>& allTypes , const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType, bool useEntrez){
     std::vector<std::string> cellNames;
     std::vector<std::string> geneNames;
     std::vector<std::vector<double>> ret;
     std::vector<std::string> discardedGenes;
-    std::vector<std::map<std::string, int>> finalGenesToIndex;
+    std::map<std::string ,std::map<std::string, int>> finalGenesToIndex;
     for(int i = 0 ; i < SizeToInt(finalNames.size()); i++){
         std::map<std::string, int> tmp;
         for(int j = 0 ; j < SizeToInt(finalNames[i].size()); j++){
             tmp[finalNames[i][j]] = j;
         }
-        finalGenesToIndex.push_back(tmp);
+        finalGenesToIndex[allTypes[i]]= tmp;
     }
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
     auto files = get_all(folderPath,".tsv");
@@ -493,7 +493,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             //first line is the header, the first column is the gene, the second column is the value
             ifstream myfile (filename);
             string line;
-            std::vector<double> cellValues(finalNames[i].size(),0);
+            std::vector<double> cellValues(finalGenesToIndex[allTypes[i]].size(),0);
             std::string lineHeader;
             getline (myfile,lineHeader);  // first line is header IMPORTANT
             std::vector<std::string> splittedHeader = splitString(lineHeader, "\t");
@@ -510,16 +510,16 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                 std::vector<std::string> entries = splitString(line, "\t");
                 if(entries.size()==2){
                     if(!useEntrez){
-                        if(finalGenesToIndex[i].contains(entries[0])){
-                            cellValues[finalGenesToIndex[i][entries[0]]] = std::stod(entries[1]);
+                        if(finalGenesToIndex[allTypes[i]].contains(entries[0])){
+                            cellValues[finalGenesToIndex[allTypes[i]][entries[0]]] = std::stod(entries[1]);
                             geneNames.push_back(entries[0]);
                         } else{
                             discardedGenes.push_back(entries[0]);
                         }
                     }
                     else{
-                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex[i].contains(mapEnsembleToEntrez[entries[0]])) {
-                            cellValues[finalGenesToIndex[i][mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[1]);
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalGenesToIndex[allTypes[i]].contains(mapEnsembleToEntrez[entries[0]])) {
+                            cellValues[finalGenesToIndex[allTypes[i]][mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[1]);
                             geneNames.push_back(mapEnsembleToEntrez[entries[0]]);
                         } else{
                             discardedGenes.push_back(entries[0]);
