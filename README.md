@@ -47,48 +47,17 @@ The options are the following:
 - **--conservateInitialNorm** => conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false
     
 
-## INPUT SCHEMA
-
-The graphs file (or the single metapathway-graph used as the structure for every agent) should have the following structure, where every entry is an weighted edge of the graph :
-**graph1.tsv**
-
-start \t end \t weight
-
-[node1] \t [node2] \t [realValue]
-
-...
-
-
-The inputs for every node value in the graph will be the following (in the case of a single graph used for every type)
-**logfoldPerCell.tsv**
-
-\t cell1 \t cell2 \t ... \t cellN 
-
-gene1 \t [lfc_cell1:gene1] \t [lfc_cell2:gene1] \t ... \t [lfc_cellN:gene1]
-
-gene2 \t [lfc_cell1:gene2] \t [lfc_cell2:gene2] \t ... \t [lfc_cellN:gene2]
-
-...
-
-
-The files in the folder that contains the cell interactions should have the following schema
-**celltypesInteraction.tsv**
-
-startCell \t geneLigand \t endCell \t geneReceptor \t weight
-
-[cell1] \t [geneLigand] \t [cell2] \t [genereceptor] \t [0.something]
-
-...
-
-
-
-**nsubcelltypes.txt**
-
-cell1
-
-cell3
-
-...
+## INPUTS 
+For the structure of the input see the following reference example data in the repository:
+- Graph: 
+    - Generic graph: data/testdata/testGraph/edges-Graph1-general.tsv
+    - entrez-id graph(the name of the nodes are entrez-ids): data/testdata/edges.tsv
+- Graphs folder (the name of the files should be the types, with a tsv format and extension): data/testdata/testHeterogeneousGraph
+- Initial values of the nodes for every type:
+    - Matrix (only with same graph for every type): data/testdata/testGraph/initialValues-general.tsv
+    - Single vector (usable in both cases of homogeneous and heterogeneous graphs): data/testdata/testHeterogeneousGraph/initialValues/t0.tsv
+- Initial values files folder: data/testdata/testHeterogeneousGraph/initialValues
+- Type interactions(see the file in the folder for the structure, you can create more files that will be seen during the execution in the directory specified as a parameter): data/testdata/testHeterogeneousGraph/interactions
 
 ## EXAMPLES
 
