@@ -25,19 +25,26 @@ make
 
 The options are the following:
 - **--help**  => print help section
-- **--fMETAPATHWAY** (obligatory for now, but it will be a default with the metapathway in the resource folder) => metapathway filename used in the algorithm
-- **--fLogfoldPerCell** (obligatory) => logFoldChange per cell matrix
-- **--dirCellInteraction** => logfoldPerCell matrix filename
+- **--fUniqueGraph** (obligatory if there is only a single topology structure for the agents, otherwise see) => graph filename, for an example graph see in resources or in test data. NOTE: if this option is chosen, graphsFilesFolder cannot be used")
+- **--graphsFilesFolder** (obligatory if --fUniqueGraph is not specified) => graphs file folder
+- **--fInitialPerturbationPerType** (obligatory if the folder with the initial inputs is not specified, this option is only available if a unique graph was specified for every agent, since all the agents will have the same topology and the inputs can be specified as a matrix in a single file) => initialPerturbationPerType matrix filename, for an example see in data
+- **--initialPerturbationPerTypeFolder** (obligatory if fInitialPerturbationPerType was not specified) => initial inputs folder, every file name follows the names of the types defined 
+- **--subtypes** => subtypes filename, every row one string, representing the types that should be used, the intersection of the subtypes defined and the types obtained from the graph folder or from the initialValues matrix should be non-empty
+- **--typeInteractionFolder** => directory for the type interactions
 - **--ensembleGeneNames**" (no parameter) => use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources, if the metapathway is consistent with the data used for the log-fold changes and the interactions (the have the same gene names), this parameter should not be used. Only use in case of external data sources that have ensemble ids and the metapathway used is the one in the resources.
-- **--sameCellCommunication** (no parameter) => "use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
-- **--output** (obligatory) => output folder for output of the algorithm at each iteration
-- **--intercellIterations** => number of iterations for intercell communication
-- **--intracellIterations** => number of iterations for intracell communication
-- **--dissipationModel** => dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled'
+- **--sameTypeCommunication** (no parameter) => "use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type")
+- **--outputFolder** (obligatory) => output folder for output of the algorithm at each iteration
+- **--intertypeIterations** => number of iterations for intertype communication
+- **--intratypeIterations** => number of iterations for intratype communication
+- **--timestep** => timestep to use for the iteration, the final time is iterationIntracell\*iterationIntercell\*timestep
+- **--dissipationModel** => (string) the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'
 - **--dissipationModelParameters** => parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period
 - **--graphsFilesFolder** => graphs (pathways or other types of graphs) file folder IMPORTANT not yet implemented loading for these graphs into the different computations
-- **--conservationModel** => conservation model used for the computation, available models are: 'none (default)','scaled','random' 
+- **--conservationModel** => (string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom'
 - **--conservationModelParameters** => parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)
+- **--saturation** => use saturation of values, default to 1, if another value is needed, use the saturationTerm
+- **--saturationTerm** => defines the limits of the saturation [-saturationTerm,saturationTerm]
+- **--conservateInitialNorm** => conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false
     
 
 ## INPUT SCHEMA
@@ -82,6 +89,8 @@ cell1
 cell3
 
 ...
+
+## EXAMPLES
 
 
 
