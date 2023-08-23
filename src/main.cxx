@@ -18,12 +18,6 @@
 #include "CustomScalingFunctions.h"
 
 
-void printHelp(){
-    //TODO fix this help
-    std::cout << "usage: ./c2c-sepia --fUniqueGraph <graph>.tsv --fInitialPerturbationPerType <initialPerturbationPerType>.tsv [<subtypes>.txt] --typeInteractionFolder <TypeInteractionFolder>(containing .tsv files)]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n\ttype1\ttype2\t...\ttypeN\ngene1\t<lfc_type1:gene1>\t<lfc_type2:gene1>\t...\t<lfc_typeN:gene1>\ngene1\t<lfc_type1:gene2>\t<lfc_type2:gene2>\t...\t<lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand\tendType:geneReceptor\tweight\n<type1:geneLigand>\t<type2:genereceptor>\t <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n..."<<std::endl;
-    std::cout << "LEGEND:\n <> := placeholder for the name of the file\n[] := optional\n{} := at least one"<<std::endl;
-}
-
 int main(int argc, char** argv ) {
     //program options
     bool ensembleGeneNames=false;
@@ -32,7 +26,6 @@ int main(int argc, char** argv ) {
     bool conservateInitialNorm=false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
-    //TODO implement subtypes
     desc.add_options()
         ("help", "() print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
         ("fUniqueGraph", po::value<std::string>(), "(string) graph filename, for an example graph see in resources. NOTE: if this option is chosen, graphsFilesFolder cannot be used")
@@ -48,7 +41,7 @@ int main(int argc, char** argv ) {
         ("timestep",po::value<double>(),"timestep to use for the iteration, the final time is iterationIntracell*iterationIntercell*timestep")
         ("dissipationModel",po::value<std::string>(),"(string) the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
         ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"(string) the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
-        ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
+        ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder")
         ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
@@ -69,7 +62,6 @@ int main(int argc, char** argv ) {
     double timestep = 1;
 
     if (vm.count("help")) {
-        //printHelp();
         std::cout << desc << std::endl;
         return 1;
     }
@@ -460,7 +452,6 @@ int main(int argc, char** argv ) {
     std::vector<std::string> initialNames = std::get<0>(initialValues);
     inputInitials = std::get<2>(initialValues);
     std::vector<std::string> typesFromValues = std::get<1>(initialValues);
-    //TODO understand if types from values should be the same as the types from the graphs since values could be specified for a subset of the types
     //this condition should take into account the intersection of the types and the subtypes
     if(typesFromValues.size() == 0){
         std::cerr << "[ERROR] types from the initial values folder are 0, control if the types are the same to the one specified in the matrix, in the graphs folder and in the subtypes: aborting"<<std::endl;
@@ -493,7 +484,7 @@ int main(int argc, char** argv ) {
             if(indexMapGraphTypesToValuesTypes[i] == -1){
                 std::cout << "[LOG] type "<<types[i]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
                 std::vector<double> input = std::vector<double>(graphsNodes[i].size(),0);
-                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
+                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);   
                 tmpCompPointer->setDissipationModel(dissipationModel);
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
@@ -502,7 +493,7 @@ int main(int argc, char** argv ) {
             } else {
                 int index = indexMapGraphTypesToValuesTypes[i];
                 std::vector<double> input = inputInitials[index];
-                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);  //TODO order the genes directly or use the names and set them one by one 
+                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]); 
                 tmpCompPointer->setDissipationModel(dissipationModel);
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
@@ -526,7 +517,6 @@ int main(int argc, char** argv ) {
         } else {
             typeInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
         }
-        //TODO insert edges to the correspondent type graph
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
             if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
@@ -559,16 +549,16 @@ int main(int argc, char** argv ) {
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true); // TODO check if iteration intratype should be multiplied by iteration intertype
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         //TODO TEST
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector); // TODO check if iteration intratype should be multiplied by iteration intertype
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector); 
                     }
                 } else{
-                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false); // TODO check if iteration intratype should be multiplied by iteration intertype
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false);
                 }
             }
             //save output values
