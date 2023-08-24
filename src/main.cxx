@@ -435,13 +435,7 @@ int main(int argc, char** argv ) {
     std::vector<std::vector<double>> inputInitials;
     if(vm.count("fInitialPerturbationPerType")){
         std::cout << "[LOG] initial perturbation per type specified, using the file "<<typesInitialPerturbationMatrixFilename<<std::endl;
-        if(subtypes.size()==0){
-            std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
-            initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],ensembleGeneNames);
-        } else {
-            std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
-            initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
-        }
+        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
     } else if (vm.count("initialPerturbationPerTypeFolder")){
         std::cout << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
         initialValues = logFoldChangeCellVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodes,subtypes,ensembleGeneNames);
