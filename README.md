@@ -20,7 +20,7 @@ make
 
 ## USAGE
 ```bash
-./build/c2c-sepia --fMETAPATHWAY [metapathway].tsv --fLogfoldPerCell [logfoldPerCell].tsv --dirCellInteraction [celltypesInteractionFolder]
+./build/c2c-sepia --fUniqueGraph [graph].tsv --fInitialPerturbationPerType [matrix].tsv --typeInteractionFolder [typesInteractionFolder]
 ```
 
 The options are the following:
@@ -61,8 +61,9 @@ For the structure of the input see the following reference example data in the r
 
 ## EXAMPLES
 
+### different graphs, saturation at 1, dissipation scaled at 0.2, conservation scaled at 0.5
 ```bash
-c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
+./c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
             --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
             --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
             --subtypes data/testdata/testGraph/subcelltypes.txt \
@@ -71,7 +72,7 @@ c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
             --saturation \
             --conservationModel scaled \
             --conservationModelParameters 0.5 \
-            --outputFolder outputs"
+            --outputFolder outputs
 ```
 
 ## things to consider
