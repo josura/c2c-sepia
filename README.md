@@ -61,7 +61,18 @@ For the structure of the input see the following reference example data in the r
 
 ## EXAMPLES
 
-
+```bash
+c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
+            --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
+            --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
+            --subtypes data/testdata/testGraph/subcelltypes.txt \
+            --dissipationModel scaled \
+            --dissipationModelParameters 0.2 \
+            --saturation \
+            --conservationModel scaled \
+            --conservationModelParameters 0.5 \
+            --outputFolder outputs"
+```
 
 ## things to consider
 The map file that is used for the mapping of ensemble gene names to entrez ids (required if the metapathway in the __resourse__ folder are used) can b e found in the metapathways folders themselves. The one used in the tool is found at __resources/graphs/metapathwayReactome/nodes.txt__
