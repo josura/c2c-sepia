@@ -1,13 +1,14 @@
 version: '3.8'
 
 services:
-  backend:
+  sepia-worker:
     restart: always
     build: .
     container_name: c2c-sepia-container
     environment:
-      MONGO_INITDB_ROOT_USERNAME: rootuser
-      MONGO_INITDB_ROOT_PASSWORD: rootpass
+      - SEPIA_WORKER_QUEUE=sepia
+      #add env variables
+
     volumes:
       - .:c2c-sepia
 
