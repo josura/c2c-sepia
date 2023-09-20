@@ -18,6 +18,8 @@ cmake .
 make
 ```
 
+## PARAMETER CUSTOMIZATION
+
 ## USAGE
 ```bash
 ./build/c2c-sepia --fUniqueGraph [graph].tsv --fInitialPerturbationPerType [matrix].tsv --typeInteractionFolder [typesInteractionFolder]
@@ -76,6 +78,10 @@ For the structure of the input see the following reference example data in the r
 ```
 
 ## USE CASES
+The framework can be used in every situation with the following structure:
+- network of networks, where every network is a weighted graph and the networks are interacting with each other via some connection of two nodes inside the two networks
+- every network can be abstracted to a single type (like in the biological case, every meta-pathway or pathway is related to a single cell or a single place)
+- the interactions of the types are done via a node in one graph(related to a type) that has a weighted edge to a node on the other graph (related to the same type or another type), the difference between the interaction inside the graphs and outside the graph is that perturbation inside the graph is done more quickly (more iteration to propagate the values intra-network) while the perturbation outside of the type (inter-type propagation) is done more slowly and after a number of propagation intra-type.
 
 ## things to consider
 The map file that is used for the mapping of ensemble gene names to entrez ids (required if the metapathway in the __resourse__ folder are used) can b e found in the metapathways folders themselves. The one used in the tool is found at __resources/graphs/metapathwayReactome/nodes.txt__
