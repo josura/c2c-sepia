@@ -19,6 +19,8 @@ make
 ```
 
 ## PARAMETER CUSTOMIZATION
+The custom functions used for the scaling of the perturbation values (dissipation and conservation) are defined in the file in the source folder
+
 
 ## USAGE
 ```bash
