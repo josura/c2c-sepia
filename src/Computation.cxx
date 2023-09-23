@@ -211,7 +211,7 @@ void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::stri
     }
 }
 
-void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>& newEdgesList, const std::vector<double>& newEdgesValues,bool bothDirections){
+void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>& newEdgesList, const std::vector<double>& newEdgesValues,bool bothDirections, bool inverseComputation){
     //TODO control over the same length
     int itVal = 0;
     for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
@@ -230,15 +230,18 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
             normalizationFactors[i] += betaToAdd; 
         }
     }
-    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
-    //TODO normalization by previous weight nodes for the matrix
-    arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
-    std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
-    pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
-    armaInitializedAugmented = true;
+    if(inverseComputation){
+        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+        //TODO normalization by previous weight nodes for the matrix
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+        std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
+        armaInitializedAugmented = true;
+    }
+    
 }
 
-void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList,bool bothDirections){
+void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList,bool bothDirections, bool inverseComputation){
     //TODO control over the same length
     for(auto it = newEdgesList.cbegin(); it!=newEdgesList.cend();it++){
         std::string node1Name = std::get<0>(*it); 
@@ -256,12 +259,14 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
             normalizationFactors[i] += betaToAdd; 
         }
     }
-    arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
-    //TODO normalization by previous weight nodes for the matrix
-    arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
-    std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
-    pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
-    armaInitializedAugmented = true;
+    if(inverseComputation){
+        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+        //TODO normalization by previous weight nodes for the matrix
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+        std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
+        armaInitializedAugmented = true;
+    }
 }
 
 
