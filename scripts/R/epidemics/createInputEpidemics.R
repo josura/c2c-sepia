@@ -12,7 +12,7 @@ graph <- generate_graph(100, m = 2)
 
 # Function to assign node conditions (Susceptible or Infectious)
 assign_node_conditions <- function(graph, prob_infectious = 0.1) {
-  nodes <- V(graph)$name
+  nodes <- V(graph)
   conditions <- sample(c("Susceptible", "Infectious"), length(nodes), replace = TRUE, prob = c(1 - prob_infectious, prob_infectious))
   node_conditions <- data.frame(node_name = nodes, condition = conditions)
   return(node_conditions)
@@ -41,6 +41,27 @@ generate_edge_data <- function(graph) {
 
 # Generate edge data with edge weights
 edge_data <- generate_edge_data(graph)
+
+# Plot the graph
+plot_graph <- function(graph, node_conditions) {
+  # Assign node colors based on conditions
+  node_colors <- ifelse(node_conditions$condition == "Susceptible", "blue", "red")
+  
+  # Assign edge widths based on edge weights
+  edge_weights <- E(graph)$weight * 5  # Multiply by a factor for better visualization
+  
+  plot(
+    graph,
+    layout = layout_with_fr(graph),
+    vertex.color = node_colors,
+    vertex.size = 6,
+    edge.width = edge_weights,
+    vertex.label.cex = 0.5
+  )
+}
+
+# Plot the graph with node colors and edge widths
+plot_graph(graph, node_conditions)
 
 # Write data to files
 write.csv(edge_data, "edge_data.csv", row.names = FALSE)
