@@ -549,7 +549,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 //TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
 //TODO, understand if the translation from ensemble gene names to entrez should be done here
 //TODO, filtering genes also since I have seen nodes not in the metapathway
-std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez){
+std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez){
     string line;
     std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ret;
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
@@ -559,78 +559,79 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
         {
             getline (myfile,line);  // first line is header IMPORTANT
             std::vector<std::string> entriesHeader = splitString(line, "\t");
-            int indexCellStart=-1,indexCellEnd=-1,indexLigandStart=-1,indexReceptorEnd=-1,indexWeight=-1;
+            int indexTypeStart=-1,indexTypeEnd=-1,indexStartNode=-1,indexEndNode=-1,indexWeight=-1;
             //TODO change attributes names to be more general
             for(uint i = 0; i < entriesHeader.size(); i++){
-                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startcell") != std::string::npos) {
-                    indexCellStart = i;
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startType") != std::string::npos) {
+                    indexTypeStart = i;
                 }
-                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endcell") != std::string::npos) {
-                    indexCellEnd = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneligand") != std::string::npos) {
-                    indexLigandStart = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("genereceptor") != std::string::npos) {
-                    indexReceptorEnd = i;
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endType") != std::string::npos) {
+                    indexTypeEnd = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startNodeName") != std::string::npos) {
+                    indexStartNode = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endNodeName") != std::string::npos) {
+                    indexEndNode = i;
                 } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
                     indexWeight = i;
                 }
+                //startType	startNodeName	endType	endNodeName	weight
             }
-            if(indexCellStart < 0 || indexCellEnd < 0 || indexLigandStart < 0 || indexReceptorEnd < 0 || indexWeight < 0){
-                throw std::invalid_argument("utilities::cellInteractionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startcell, or an endcell, or a Ligand gene, or a receptor gene, or a weight feature");
+            if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0){
+                throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a startNodeName, or a endNodeName, or a weight feature");
             }
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
                 if(entries.size()==5){
-                    std::string geneLigand,geneReceptor;
+                    std::string startNodeName,endNodeName;
                     if(!useEntrez){
-                        geneLigand = entries[indexLigandStart];
-                        geneReceptor = entries[indexReceptorEnd];    
+                        startNodeName = entries[indexStartNode];
+                        endNodeName = entries[indexEndNode];    
 
-                        std::string startCell = entries[indexCellStart];
-                        std::string endCell = entries[indexCellEnd];
+                        std::string startType = entries[indexTypeStart];
+                        std::string endType = entries[indexTypeEnd];
                         double weight = std::stod( entries[indexWeight]);
-                        std::string virtualInputEndCell = "v-in:" + startCell;
-                        std::string virtualOutputStartCell = "v-out:" + endCell;
-                        std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
-                        std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
-                        if(ret.contains(startCell)){
-                            ret[startCell].push_back(edgeStartCell);
+                        std::string virtualInputEndType = "v-in:" + startType;
+                        std::string virtualOutputstartType = "v-out:" + endType;
+                        std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
+                        std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
+                        if(ret.contains(startType)){
+                            ret[startType].push_back(edgestartType);
                         }else{
-                            ret[startCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                            ret[startCell].push_back(edgeStartCell);
+                            ret[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+                            ret[startType].push_back(edgestartType);
                         }
 
-                        if(ret.contains(endCell)){
-                            ret[endCell].push_back(edgeEndCell);
+                        if(ret.contains(endType)){
+                            ret[endType].push_back(edgeEndType);
                         }else{
-                            ret[endCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                            ret[endCell].push_back(edgeEndCell);
+                            ret[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+                            ret[endType].push_back(edgeEndType);
                         }
                     } else{
-                        if(mapEnsembleToEntrez.contains(entries[indexLigandStart]) && mapEnsembleToEntrez.contains(entries[indexReceptorEnd])){
-                            geneLigand = mapEnsembleToEntrez[entries[indexLigandStart]];
-                            geneReceptor = mapEnsembleToEntrez[entries[indexReceptorEnd]];
+                        if(mapEnsembleToEntrez.contains(entries[indexStartNode]) && mapEnsembleToEntrez.contains(entries[indexEndNode])){
+                            startNodeName = mapEnsembleToEntrez[entries[indexStartNode]];
+                            endNodeName = mapEnsembleToEntrez[entries[indexEndNode]];
 
-                            std::string startCell = entries[indexCellStart];
-                            std::string endCell = entries[indexCellEnd];
+                            std::string startType = entries[indexTypeStart];
+                            std::string endType = entries[indexTypeEnd];
                             double weight = std::stod( entries[indexWeight]);
-                            std::string virtualInputEndCell = "v-in:" + startCell;
-                            std::string virtualOutputStartCell = "v-out:" + endCell;
-                            std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
-                            std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
-                            if(ret.contains(startCell)){
-                                ret[startCell].push_back(edgeStartCell);
+                            std::string virtualInputEndType = "v-in:" + startType;
+                            std::string virtualOutputstartType = "v-out:" + endType;
+                            std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
+                            std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
+                            if(ret.contains(startType)){
+                                ret[startType].push_back(edgestartType);
                             }else{
-                                ret[startCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                                ret[startCell].push_back(edgeStartCell);
+                                ret[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[startType].push_back(edgestartType);
                             }
 
-                            if(ret.contains(endCell)){
-                                ret[endCell].push_back(edgeEndCell);
+                            if(ret.contains(endType)){
+                                ret[endType].push_back(edgeEndType);
                             }else{
-                                ret[endCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                                ret[endCell].push_back(edgeEndCell);
+                                ret[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[endType].push_back(edgeEndType);
                             }
                         }
                     }
@@ -639,12 +640,12 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
             myfile.close();
         }
     } else {
-        throw std::invalid_argument("utilities::cellInteractionFileToEdgesListAndNodesByName: file does not exists " + filename);
+        throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: file does not exists " + filename);
     }
     return ret;
 }
 
-std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> cellInteractionFileToEdgesListAndNodesByName(std::string filename,std::vector<std::string> subtypes,bool useEntrez){
+std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,std::vector<std::string> subtypes,bool useEntrez){
     string line;
     std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ret;
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
@@ -654,83 +655,84 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
         {
             getline (myfile,line);  // first line is header IMPORTANT
             std::vector<std::string> entriesHeader = splitString(line, "\t");
-            int indexCellStart=-1,indexCellEnd=-1,indexLigandStart=-1,indexReceptorEnd=-1,indexWeight=-1;
+            int indexTypeStart=-1,indexTypeEnd=-1,indexStartNode=-1,indexEndNode=-1,indexWeight=-1;
             for(uint i = 0; i < entriesHeader.size(); i++){ //TODO change names in the header to be more general
-                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startcell") != std::string::npos) {
-                    indexCellStart = i;
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("starttype") != std::string::npos) {
+                    indexTypeStart = i;
                 }
-                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endcell") != std::string::npos) {
-                    indexCellEnd = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("geneligand") != std::string::npos) {
-                    indexLigandStart = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("genereceptor") != std::string::npos) {
-                    indexReceptorEnd = i;
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endtype") != std::string::npos) {
+                    indexTypeEnd = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startnodename") != std::string::npos) {
+                    indexStartNode = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endnodename") != std::string::npos) {
+                    indexEndNode = i;
                 } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
                     indexWeight = i;
                 }
+                //startType	startNodeName	endType	endNodeName	weight
             }
-            if(indexCellStart < 0 || indexCellEnd < 0 || indexLigandStart < 0 || indexReceptorEnd < 0 || indexWeight < 0){
-                throw std::invalid_argument("utilities::cellInteractionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startcell, or an endcell, or a Ligand gene, or a receptor gene, or a weight feature");
+            if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0){
+                throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a Ligand gene, or a receptor gene, or a weight feature");
             }
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
                 if(entries.size()==5){
-                    std::string geneLigand,geneReceptor;
+                    std::string startNodeName,endNodeName;
                     if(!useEntrez){
-                        geneLigand = entries[indexLigandStart];
-                        geneReceptor = entries[indexReceptorEnd];    
+                        startNodeName = entries[indexStartNode];
+                        endNodeName = entries[indexEndNode];    
 
-                        std::string startCell = entries[indexCellStart];
-                        std::string endCell = entries[indexCellEnd];
-                        if(vectorContains(subtypes, startCell) && vectorContains(subtypes, endCell)){
+                        std::string startType = entries[indexTypeStart];
+                        std::string endType = entries[indexTypeEnd];
+                        if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                             double weight = std::stod( entries[indexWeight]);
-                            std::string virtualInputEndCell = "v-in:" + startCell;
-                            std::string virtualOutputStartCell = "v-out:" + endCell;
-                            std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
-                            std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
-                            if(ret.contains(startCell)){
-                                ret[startCell].push_back(edgeStartCell);
+                            std::string virtualInputEndType = "v-in:" + startType;
+                            std::string virtualOutputstartType = "v-out:" + endType;
+                            std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
+                            std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
+                            if(ret.contains(startType)){
+                                ret[startType].push_back(edgestartType);
                             }else{
-                                ret[startCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                                ret[startCell].push_back(edgeStartCell);
+                                ret[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[startType].push_back(edgestartType);
                             }
 
-                            if(ret.contains(endCell)){
-                                ret[endCell].push_back(edgeEndCell);
+                            if(ret.contains(endType)){
+                                ret[endType].push_back(edgeEndType);
                             }else{
-                                ret[endCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                                ret[endCell].push_back(edgeEndCell);
+                                ret[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+                                ret[endType].push_back(edgeEndType);
                             }
                         } else {
                             //ignored because not in the subtypes
                         }
                         
                     } else{
-                        if(mapEnsembleToEntrez.contains(entries[indexLigandStart]) && mapEnsembleToEntrez.contains(entries[indexReceptorEnd])){
-                            geneLigand = mapEnsembleToEntrez[entries[indexLigandStart]];
-                            geneReceptor = mapEnsembleToEntrez[entries[indexReceptorEnd]];
+                        if(mapEnsembleToEntrez.contains(entries[indexStartNode]) && mapEnsembleToEntrez.contains(entries[indexEndNode])){
+                            startNodeName = mapEnsembleToEntrez[entries[indexStartNode]];
+                            endNodeName = mapEnsembleToEntrez[entries[indexEndNode]];
 
-                            std::string startCell = entries[indexCellStart];
-                            std::string endCell = entries[indexCellEnd];
-                            if(vectorContains(subtypes, startCell) && vectorContains(subtypes, endCell)){
+                            std::string startType = entries[indexTypeStart];
+                            std::string endType = entries[indexTypeEnd];
+                            if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                                 double weight = std::stod( entries[indexWeight]);
-                                std::string virtualInputEndCell = "v-in:" + startCell;
-                                std::string virtualOutputStartCell = "v-out:" + endCell;
-                                std::tuple<std::string,std::string,double> edgeStartCell(geneLigand, virtualOutputStartCell,weight);
-                                std::tuple<std::string,std::string,double> edgeEndCell(virtualInputEndCell, geneReceptor,weight);
-                                if(ret.contains(startCell)){
-                                    ret[startCell].push_back(edgeStartCell);
+                                std::string virtualInputEndType = "v-in:" + startType;
+                                std::string virtualOutputstartType = "v-out:" + endType;
+                                std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
+                                std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
+                                if(ret.contains(startType)){
+                                    ret[startType].push_back(edgestartType);
                                 }else{
-                                    ret[startCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                                    ret[startCell].push_back(edgeStartCell);
+                                    ret[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+                                    ret[startType].push_back(edgestartType);
                                 }
 
-                                if(ret.contains(endCell)){
-                                    ret[endCell].push_back(edgeEndCell);
+                                if(ret.contains(endType)){
+                                    ret[endType].push_back(edgeEndType);
                                 }else{
-                                    ret[endCell] = std::vector<std::tuple<std::string,std::string,double>>();
-                                    ret[endCell].push_back(edgeEndCell);
+                                    ret[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+                                    ret[endType].push_back(edgeEndType);
                                 }
                             } else {
                                 //ignored because not in the subtypes
@@ -742,7 +744,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ce
             myfile.close();
         }
     } else {
-        throw std::invalid_argument("utilities::cellInteractionFileToEdgesListAndNodesByName: file does not exists " + filename);
+        throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: file does not exists " + filename);
     }
     return ret;
 }

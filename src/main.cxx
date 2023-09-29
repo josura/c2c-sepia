@@ -507,9 +507,9 @@ int main(int argc, char** argv ) {
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
         std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> typeInteractionsEdges;
         if (subtypes.size() == 0) {
-            typeInteractionsEdges  = cellInteractionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
+            typeInteractionsEdges  = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
         } else {
-            typeInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
+            typeInteractionsEdges = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
         }
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
