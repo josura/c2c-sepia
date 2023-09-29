@@ -3,7 +3,7 @@ library(dplyr)
 
 # Function to generate a graph with preferential attachment rule
 generate_graph <- function(num_nodes, m) {
-  g <- erdos.renyi.game(num_nodes, p = m / num_nodes, directed = TRUE)
+  g <- erdos.renyi.game(num_nodes, p = m / num_nodes, directed = FALSE)
   return(g)
 }
 
@@ -24,7 +24,7 @@ node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
 # Function to create communities using Louvain community detection
 create_communities <- function(graph) {
   communities <- cluster_louvain(graph)
-  nodes <- V(graph)$name
+  nodes <- V(graph)
   community_data <- data.frame(node_name = nodes, community = communities$membership)
   return(community_data)
 }
@@ -63,8 +63,35 @@ plot_graph <- function(graph, node_conditions) {
 # Plot the graph with node colors and edge widths
 plot_graph(graph, node_conditions)
 
-# Write data to files
-write.csv(edge_data, "edge_data.csv", row.names = FALSE)
-write.csv(node_conditions, "node_conditions.csv", row.names = FALSE)
-write.csv(community_data, "communities.csv", row.names = FALSE)
+# Create the input graphs for single types(communities) and create file for interactions between communities
+save.graph.communities.and.interactions <- function(graph, node_conditions){
+  # Create a graph for each community
+  communities <- unique(node_conditions$community)
+  for (community in communities) {
+    # Get the nodes in the community
+    nodes <- node_conditions %>% filter(community == community) %>% select(node_name)
+    nodes <- nodes$node_name
+    
+    # Create a subgraph for the community
+    subgraph <- induced_subgraph(graph, nodes)
+    
+    # Save the subgraph as a tsv file
+    write.graph(subgraph, file = paste0("community_", community, ".graphml"), format = "graphml")
+  }
+  
+  # Create a graph for interactions between communities
+  # Get the edges between communities
+  edges <- edge_data %>% filter(Start %in% communities & End %in% communities)
+  
+  # Create a graph with the edges
+  interactions <- graph_from_data_frame(edges, directed = FALSE)
+  
+  # Save the graph as a tsv file
+  write.graph(interactions, file = "interactions.graphml", format = "graphml")
+}
+
+# Write data to tsv files
+write.csv(edge_data, "edge_data.csv", sep = "\t" , row.names = FALSE)
+write.csv(node_conditions, "node_conditions.csv", sep = "\t", row.names = FALSE)
+write.csv(community_data, "communities.csv", sep = "\t", row.names = FALSE)
 
