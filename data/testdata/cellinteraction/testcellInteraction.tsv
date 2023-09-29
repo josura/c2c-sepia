@@ -1,4 +1,4 @@
-startCell	geneLigand	endCell	geneReceptor	weight
+startType	startNodeName	endType	endNodeName	weight
 CD4Tconv	TGFB1	DC	TGFBR1	-1.0
 CD4Tconv	TGFB1	Fibroblasts	TGFBR2	-1.0
 CD4Tconv	TGFB3	Malignant	TGFBR1	-1.0
