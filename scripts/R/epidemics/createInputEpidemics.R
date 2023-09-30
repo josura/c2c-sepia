@@ -64,6 +64,8 @@ plot_graph <- function(graph, node_conditions) {
 plot_graph(graph, node_conditions)
 
 # Create the input graphs for single types(communities) and create file for interactions between communities
+# The interaction file should have the following format:
+# startType	startNodeName	endType	endNodeName	weight
 save.graph.communities.and.interactions <- function(graph, node_conditions){
   # Create a graph for each community
   communities <- unique(node_conditions$community)
@@ -87,7 +89,7 @@ save.graph.communities.and.interactions <- function(graph, node_conditions){
   interactions <- graph_from_data_frame(edges, directed = FALSE)
   
   # Save the graph as a tsv file
-  write.graph(interactions, file = "interactions.graphml", format = "graphml")
+  write.graph(interactions, file = "interactions.graphml", sep = "\t", format = "graphml")
 }
 
 # Write data to tsv files
