@@ -78,7 +78,11 @@ save.graph.communities.and.interactions <- function(graph, node_conditions){
     subgraph <- induced_subgraph(graph, nodes)
     
     # Save the subgraph as a tsv file
-    write.graph(subgraph, file = paste0("community_", community, ".graphml"), format = "graphml")
+    #write.graph(subgraph, file = paste0("community_", community, ".graphml"), format = "graphml")
+    edges.subgraph <- generate_edge_data(subgraph)
+    subgraph.name <- paste0("community_", community)
+    write.csv(edges.subgraph, paste0(subgraph.name, ".csv"), sep = "\t" , row.names = FALSE)
+
   }
   
   # Create a graph for interactions between communities
