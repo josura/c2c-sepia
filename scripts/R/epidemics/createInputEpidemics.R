@@ -87,10 +87,37 @@ create_input_graphs <- function(graph, node_conditions, community_data){
     subgraph_edge_data <- generate_edge_data(subgraph)
     subgraph_node_conditions <- node_conditions[node_conditions$node_name %in% V(subgraph)$name, ]
     subgraph_community_data <- community_data[community_data$node_name %in% V(subgraph)$name, ]
-    write.csv(subgraph_edge_data, paste0("edge_data_community_", community, ".csv"), sep = "\t", row.names = FALSE)
-    write.csv(subgraph_node_conditions, paste0("node_conditions_community_", community, ".csv"), sep = "\t", row.names = FALSE)
-    write.csv(subgraph_community_data, paste0("communities_community_", community, ".csv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_edge_data, paste0("edge_data_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_node_conditions, paste0("node_conditions_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_community_data, paste0("communities_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
   }
+
+  # create a file for the interactions between communities
+  # the file should be:
+  # startType	startNodeName	endType	endNodeName	weight
+  # where startType and endType are the community names
+  # startNodeName and endNodeName are the node names
+  # weight is the edge weight
+
+  # get the edges between communities
+  edges_between_communities <- get.data.frame(graph, what = "edges")
+  edges_between_communities <- edges_between_communities[edges_between_communities$from %in% V(graph)$name & edges_between_communities$to %in% V(graph)$name, ]
+  edges_between_communities <- edges_between_communities[edges_between_communities$from != edges_between_communities$to, ]
+
+  # get the community names for each node
+  edges_between_communities <- edges_between_communities %>%
+    left_join(community_data, by = c("from" = "node_name")) %>%
+    rename(startType = community) %>%
+    left_join(community_data, by = c("to" = "node_name")) %>%
+    rename(endType = community)
+
+  # get the edge weights
+  edges_between_communities <- edges_between_communities %>%
+    left_join(edge_data, by = c("from" = "Start", "to" = "End")) %>%
+    rename(weight = Weight)
+  
+  # write the file
+  write.csv(edges_between_communities, "interactions.tsv", sep = "\t", row.names = FALSE)
 }
 
 # Write data to tsv files
