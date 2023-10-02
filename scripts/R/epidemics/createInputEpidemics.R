@@ -101,20 +101,23 @@ create_input_graphs <- function(graph, node_conditions, community_data){
 
   # get the edges between communities
   edges_between_communities <- get.data.frame(graph, what = "edges")
-  edges_between_communities <- edges_between_communities[edges_between_communities$from %in% V(graph)$name & edges_between_communities$to %in% V(graph)$name, ]
-  edges_between_communities <- edges_between_communities[edges_between_communities$from != edges_between_communities$to, ]
+  # filter out edges that are not between communities, that is the edge is not between nodes that belong to different communities, so the edge is between nodes that belong to the same community
+  edges_between_communities <- edges_between_communities[community_data[edges_between_communities$from, ]$community != community_data[edges_between_communities$to, ]$community, ]
 
+  community_data.asids <- community_data
+  community_data.asids$node_name <- as_ids(community_data.asids$node_name)
+  
   # get the community names for each node
   edges_between_communities <- edges_between_communities %>%
-    left_join(community_data, by = c("from" = "node_name")) %>%
+    #mutate_at(c('from', 'to'), as.character) %>%
+    left_join(community_data.asids, by = c("from" = "node_name")) %>%
     rename(startType = community) %>%
-    left_join(community_data, by = c("to" = "node_name")) %>%
+    left_join(community_data.asids, by = c("to" = "node_name")) %>%
     rename(endType = community)
 
   # get the edge weights
   edges_between_communities <- edges_between_communities %>%
-    left_join(edge_data, by = c("from" = "Start", "to" = "End")) %>%
-    rename(weight = Weight)
+    rename(startNodeName = from, endNodeName = to)
   
   # write the file
   write.csv(edges_between_communities, "interactions.tsv", sep = "\t", row.names = FALSE)
