@@ -1,9 +1,10 @@
 library(igraph)
 library(dplyr)
 
-# Function to generate a graph with preferential attachment rule
+# Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
 generate_graph <- function(num_nodes, m) {
-  g <- erdos.renyi.game(num_nodes, p = m / num_nodes, directed = FALSE)
+  g <- barabasi.game(num_nodes, m = m, directed = FALSE)
+  E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   return(g)
 }
 
@@ -34,7 +35,8 @@ community_data <- create_communities(graph)
 
 # Function to generate edge data with edge weights
 generate_edge_data <- function(graph) {
-  edge_data <- as_data_frame(as_edgelist(graph, names = TRUE, weights = TRUE))
+  #edge_data <- as_data_frame(as_edgelist(graph, names = TRUE, weights = TRUE))
+  edge_data <- get.data.frame(graph)
   colnames(edge_data) <- c("Start", "End", "Weight")
   return(edge_data)
 }
@@ -66,34 +68,29 @@ plot_graph(graph, node_conditions)
 # Create the input graphs for single types(communities) and create file for interactions between communities
 # The interaction file should have the following format:
 # startType	startNodeName	endType	endNodeName	weight
-save.graph.communities.and.interactions <- function(graph, node_conditions){
-  # Create a graph for each community
-  communities <- unique(node_conditions$community)
+create_input_graphs <- function(graph, node_conditions, community_data){
+  # create a subgraph for each community
+  communities <- unique(community_data$community)
+  subgraphs <- list()
   for (community in communities) {
-    # Get the nodes in the community
-    nodes <- node_conditions %>% filter(community == community) %>% select(node_name)
-    nodes <- nodes$node_name
-    
-    # Create a subgraph for the community
-    subgraph <- induced_subgraph(graph, nodes)
-    
-    # Save the subgraph as a tsv file
-    #write.graph(subgraph, file = paste0("community_", community, ".graphml"), format = "graphml")
-    edges.subgraph <- generate_edge_data(subgraph)
-    subgraph.name <- paste0("community_", community)
-    write.csv(edges.subgraph, paste0(subgraph.name, ".csv"), sep = "\t" , row.names = FALSE)
-
+    subgraph <- induced_subgraph(graph, V(graph)[community_data$community == community])
+    subgraphs[[community]] <- subgraph
   }
-  
-  # Create a graph for interactions between communities
-  # Get the edges between communities
-  edges <- edge_data %>% filter(Start %in% communities & End %in% communities)
-  
-  # Create a graph with the edges
-  interactions <- graph_from_data_frame(edges, directed = FALSE)
-  
-  # Save the graph as a tsv file
-  write.graph(interactions, file = "interactions.graphml", sep = "\t", format = "graphml")
+
+  # create a file for each community
+  #the files should be:
+  # a file for each community graph, has the format o a graph with Start End and Weight
+  # a file for the interactions between communities, has the format of the interaction file, that is startType	startNodeName	endType	endNodeName	weight
+  # a file for each community,  with the conditions of each node , has the format of the node conditions file, that is name condition
+  for (community in communities) {
+    subgraph <- subgraphs[[community]]
+    subgraph_edge_data <- generate_edge_data(subgraph)
+    subgraph_node_conditions <- node_conditions[node_conditions$node_name %in% V(subgraph)$name, ]
+    subgraph_community_data <- community_data[community_data$node_name %in% V(subgraph)$name, ]
+    write.csv(subgraph_edge_data, paste0("edge_data_community_", community, ".csv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_node_conditions, paste0("node_conditions_community_", community, ".csv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_community_data, paste0("communities_community_", community, ".csv"), sep = "\t", row.names = FALSE)
+  }
 }
 
 # Write data to tsv files
