@@ -311,6 +311,7 @@ std::vector<std::string> getTypesFromMatrixFile(std::string matrixFilepath){
             }
             myfile.close();
         }
+        //check for duplicates
         if(controlForDuplicates(typeNames)){
             throw std::invalid_argument("utilities::getTypesFromMatrixFile: duplicate types in the matrix file, aborting " + matrixFilepath);
         }
