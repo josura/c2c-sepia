@@ -56,7 +56,7 @@ plot_graph <- function(graph, node_conditions) {
     graph,
     layout = layout_with_fr(graph),
     vertex.color = node_colors,
-    vertex.size = 6,
+    vertex.size = 3,
     edge.width = edge_weights,
     vertex.label.cex = 0.5
   )
@@ -83,10 +83,11 @@ create_input_graphs <- function(graph, node_conditions, community_data){
   # a file for the interactions between communities, has the format of the interaction file, that is startType	startNodeName	endType	endNodeName	weight
   # a file for each community,  with the conditions of each node , has the format of the node conditions file, that is name condition
   for (community in communities) {
+    print(paste0("saving community: ",community))
     subgraph <- subgraphs[[community]]
     subgraph_edge_data <- generate_edge_data(subgraph)
-    subgraph_node_conditions <- node_conditions[node_conditions$node_name %in% V(subgraph)$name, ]
-    subgraph_community_data <- community_data[community_data$node_name %in% V(subgraph)$name, ]
+    subgraph_node_conditions <- node_conditions[as_ids(node_conditions$node_name) %in% as_ids(V(subgraph)), ]
+    subgraph_community_data <- community_data[as_ids(community_data$node_name) %in% as_ids(V(subgraph)), ]
     write.csv(subgraph_edge_data, paste0("edge_data_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
     write.csv(subgraph_node_conditions, paste0("node_conditions_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
     write.csv(subgraph_community_data, paste0("communities_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
@@ -123,6 +124,7 @@ create_input_graphs <- function(graph, node_conditions, community_data){
   write.csv(edges_between_communities, "interactions.tsv", sep = "\t", row.names = FALSE)
 }
 
+create_input_graphs(graph, node_conditions, community_data)
 # Write data to tsv files
 write.csv(edge_data, "edge_data.csv", sep = "\t" , row.names = FALSE)
 write.csv(node_conditions, "node_conditions.csv", sep = "\t", row.names = FALSE)
