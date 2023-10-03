@@ -99,6 +99,18 @@ int getIndex(std::vector<T> v, T K)
     }
 }
 
+template<typename T>
+bool controlForDuplicates(std::vector<T> v){
+    std::vector<T> v2 = v;
+    std::sort(v2.begin(), v2.end());
+    auto last = std::unique(v2.begin(), v2.end());
+    v2.erase(last, v2.end());
+    if(v.size()!=v2.size()){
+        return false;
+    }
+    return true;
+}
+
 // convert size to int and  launch an exception if it is not possible
 int SizeToInt(size_t u);
 
