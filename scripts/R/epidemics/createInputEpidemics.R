@@ -88,9 +88,9 @@ create_input_graphs <- function(graph, node_conditions, community_data){
     subgraph_edge_data <- generate_edge_data(subgraph)
     subgraph_node_conditions <- node_conditions[as_ids(node_conditions$node_name) %in% as_ids(V(subgraph)), ]
     subgraph_community_data <- community_data[as_ids(community_data$node_name) %in% as_ids(V(subgraph)), ]
-    write.csv(subgraph_edge_data, paste0("edge_data_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
-    write.csv(subgraph_node_conditions, paste0("node_conditions_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
-    write.csv(subgraph_community_data, paste0("communities_community_", community, ".tsv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_edge_data, paste0("graphs/", community, ".tsv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_node_conditions, paste0("node_conditions/", community, ".tsv"), sep = "\t", row.names = FALSE)
+    write.csv(subgraph_community_data, paste0("communities/", community, ".tsv"), sep = "\t", row.names = FALSE)
   }
 
   # create a file for the interactions between communities
@@ -121,7 +121,7 @@ create_input_graphs <- function(graph, node_conditions, community_data){
     rename(startNodeName = from, endNodeName = to)
   
   # write the file
-  write.csv(edges_between_communities, "interactions.tsv", sep = "\t", row.names = FALSE)
+  write.csv(edges_between_communities, "interactions/interactions.tsv", sep = "\t", row.names = FALSE)
 }
 
 create_input_graphs(graph, node_conditions, community_data)
