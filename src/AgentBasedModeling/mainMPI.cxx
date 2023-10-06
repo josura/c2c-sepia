@@ -22,6 +22,13 @@ int main(int argc, char** argv) {
         // Compute for types[i]
         std::cout << "Process " << rank << " is computing for type: " << types[i] << "\n";
         // ... Perform computation for types[i]
+
+        // Send results to master process
+        MPI_Send(&types[i], 1, MPI_STRING, 0, 0, MPI_COMM_WORLD);
+
+        // Receive results from master process
+
+        // MPI_Recv(&types[i], 1, MPI_STRING, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
     MPI_Finalize();
