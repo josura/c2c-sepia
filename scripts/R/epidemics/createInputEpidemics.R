@@ -68,7 +68,7 @@ plot_graph(graph, node_conditions)
 # Create the input graphs for single types(communities) and create file for interactions between communities
 # The interaction file should have the following format:
 # startType	startNodeName	endType	endNodeName	weight
-create_input_graphs <- function(graph, node_conditions, community_data){
+create_input_graphs <- function(graph, node_conditions, community_data, output_dir){
   # create a subgraph for each community
   communities <- unique(community_data$community)
   subgraphs <- list()
@@ -76,6 +76,13 @@ create_input_graphs <- function(graph, node_conditions, community_data){
     subgraph <- induced_subgraph(graph, V(graph)[community_data$community == community])
     subgraphs[[community]] <- subgraph
   }
+
+  # create the output directories
+  dir.create(paste0(output_dir,"graphs"), showWarnings = FALSE)
+  dir.create(paste0(output_dir,"node_conditions"), showWarnings = FALSE)
+  dir.create(paste0(output_dir,"node_conditions_discr"), showWarnings = FALSE)
+  dir.create(paste0(output_dir,"communities"), showWarnings = FALSE)
+  dir.create(paste0(output_dir,"interactions"), showWarnings = FALSE)
 
   # create a file for each community
   #the files should be:
@@ -89,9 +96,9 @@ create_input_graphs <- function(graph, node_conditions, community_data){
     subgraph_node_conditions <- node_conditions[as_ids(node_conditions$node_name) %in% as_ids(V(subgraph)), ]
     subgraph_community_data <- community_data[as_ids(community_data$node_name) %in% as_ids(V(subgraph)), ]
     # write the files, no quotes
-    write.csv(subgraph_edge_data, paste0("graphs/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
-    write.csv(subgraph_node_conditions, paste0("node_conditions/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
-    write.csv(subgraph_community_data, paste0("communities/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+    write.csv(subgraph_edge_data, paste0(output_dir,"graphs/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+    write.csv(subgraph_node_conditions, paste0(output_dir,"node_conditions/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+    write.csv(subgraph_community_data, paste0(output_dir,"communities/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
 
     # also save the node conditions for the community as 0 for Susceptible and 1 for Infectious
     subgraph_node_conditions$conditiondiscr <- ifelse(subgraph_node_conditions$condition == "Susceptible", 0, 1)
@@ -100,7 +107,7 @@ create_input_graphs <- function(graph, node_conditions, community_data){
       rename(name = node_name) %>%
       rename(value = conditiondiscr)
 
-    write.csv(subgraph_node_conditions_discr, paste0("node_conditions_discr/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+    write.csv(subgraph_node_conditions_discr, paste0(output_dir,"node_conditions_discr/", community, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
 
   }
 
@@ -132,10 +139,10 @@ create_input_graphs <- function(graph, node_conditions, community_data){
     rename(startNodeName = from, endNodeName = to)
   
   # write the file
-  write.csv(edges_between_communities, "interactions/interactions.tsv", sep = "\t", row.names = FALSE)
+  write.csv(edges_between_communities, paste0(output_dir,"interactions/interactions.tsv"), sep = "\t", row.names = FALSE)
 }
 
-create_input_graphs(graph, node_conditions, community_data)
+create_input_graphs(graph, node_conditions, community_data, "syntheticGraphs/")
 # Write data to tsv files
 write.csv(edge_data, "edge_data.csv", sep = "\t" , row.names = FALSE)
 write.csv(node_conditions, "node_conditions.csv", sep = "\t", row.names = FALSE)
