@@ -53,3 +53,4 @@ CMakeFiles/
 outputs/
 outputsTimeSeries/
 CmakeListsFolder/
+scripts/R/epidemics/*.tsv
