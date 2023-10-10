@@ -846,7 +846,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
                 if(splittedVirtual[0]=="v-in"){
                     outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 } else if(splittedVirtual[0]=="v-out"){
-                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-output\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 }
             }
             outfile << std::endl;
@@ -860,9 +860,9 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
                 if(splittedVirtual[0]=="v-in"){
                     outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 } else if(splittedVirtual[0]=="v-out"){
-                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-output\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 } else{ //when the node names are not genes but something else
-                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the pathway\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i]);
+                    outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the graph\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i]);
                 }
             }
             outfile << std::endl;
