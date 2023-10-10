@@ -107,9 +107,9 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     # filter the community data to only have the nodes in the subgraph
     subgraph_community_data <- community_data[as_ids(community_data$node_name) %in% as_ids(V(subgraph)), ]
     # write the files, no quotes
-    write_tsv(subgraph_edge_data, paste0(output_dir,"graphs/", community, ".tsv"), quote = FALSE)
-    write_tsv(subgraph_node_conditions, paste0(output_dir,"node_conditions/", community, ".tsv"), quote = FALSE)
-    write_tsv(subgraph_community_data, paste0(output_dir,"communities/", community, ".tsv"), quote = FALSE)
+    write_tsv(subgraph_edge_data, paste0(output_dir,"graphs/", community, ".tsv"), quote = "none")
+    write_tsv(subgraph_node_conditions, paste0(output_dir,"node_conditions/", community, ".tsv"), quote = "none")
+    write_tsv(subgraph_community_data, paste0(output_dir,"communities/", community, ".tsv"), quote = "none")
 
     # also save the node conditions for the community as 0 for Susceptible and 1 for Infectious
     subgraph_node_conditions$conditiondiscr <- ifelse(subgraph_node_conditions$condition == "Susceptible", 0, 1)
@@ -118,7 +118,7 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
       rename(name = node_name) %>%
       rename(value = conditiondiscr)
 
-    write_tsv(subgraph_node_conditions_discr, paste0(output_dir,"node_conditions_discr/", community, ".tsv"), quote = FALSE)
+    write_tsv(subgraph_node_conditions_discr, paste0(output_dir,"node_conditions_discr/", community, ".tsv"), quote = "none")
 
   }
 
@@ -150,7 +150,7 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     rename(startNodeName = from, endNodeName = to)
   
   # write the file
-  write_tsv(edges_between_communities, paste0(output_dir,"interactions/interactions.tsv"))
+  write_tsv(edges_between_communities, paste0(output_dir,"interactions/interactions.tsv"), quote = "none")
 }
 
 create_input_graphs(graph, node_conditions, community_data, "syntheticGraphs/100Nodes/")
