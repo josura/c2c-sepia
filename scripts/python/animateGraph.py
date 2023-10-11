@@ -25,14 +25,14 @@ def update(iteration):
     plt.title(f'Iteration {iteration}')
     plt.show()
 
-# Function to update node colors based on their values
+# Function to update node colors based on their values, maintains node positions
 def updateTrue(iteration):
     plt.cla()  # Clear previous plot
-    indexRowIteration = nodes_data[nodes_data['iteration'] == iteration].index
-    node_values = nodes_data.iloc[indexRowIteration, 1:].values.astype(float)
-    # Color interpolation (blue to red)
-    node_colors = plt.cm.RdYlBu(node_values)
-    nx.draw(G, with_labels=True, node_color=node_colors, node_size=500, font_size=12)
+    # search for the row where iteration is equal to the current iteration
+    # rowIteration = nodes_data[nodes_data['iteration'] == iteration]
+    node_colors = [nodes_data[node][nodes_data['iteration'] == iteration] for node in nodes_data.columns[1:]]
+    # interpolate values from 0 to 1 to node colors, from white to blue
+    nx.draw(G, with_labels=True, node_color=node_colors, cmap=plt.cm.cool , node_size=500, font_size=12, pos=nx.spring_layout(G, seed=42))
     plt.title(f'Iteration {iteration}')
     plt.show()
 
