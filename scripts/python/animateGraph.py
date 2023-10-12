@@ -8,6 +8,10 @@ import numpy as np
 nodes_data = pd.read_csv('/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/fullGraph_output.tsv', sep='\t')
 edges_data = pd.read_csv('/home/josura/Projects/ccc/c2c-sepia/scripts/R/epidemics/syntheticGraphs/100Nodes/edge_data.tsv', sep='\t')
 
+#cast Start and End columns to Strings
+edges_data['Start'] = edges_data['Start'].astype(str)
+edges_data['End'] = edges_data['End'].astype(str)
+
 # Initialize the graph
 G = nx.Graph()
 
