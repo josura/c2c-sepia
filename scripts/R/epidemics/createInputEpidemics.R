@@ -11,9 +11,6 @@ generate_graph <- function(num_nodes, m) {
   return(g)
 }
 
-# Generate a graph with preferential attachment (100 nodes, m=2 for preferential attachment)
-graph <- generate_graph(100, m = 2)
-
 # Function to assign node conditions (Susceptible or Infectious)
 assign_node_conditions <- function(graph, prob_infectious = 0.1) {
   nodes <- V(graph)
@@ -22,8 +19,6 @@ assign_node_conditions <- function(graph, prob_infectious = 0.1) {
   return(node_conditions)
 }
 
-# Assign node conditions to the graph
-node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
 
 # Function to create communities using Louvain community detection
 create_communities <- function(graph) {
@@ -32,9 +27,6 @@ create_communities <- function(graph) {
   community_data <- data.frame(node_name = nodes, community = communities$membership)
   return(community_data)
 }
-
-# Create communities based on the graph
-community_data <- create_communities(graph)
 
 # Function to generate edge data with edge weights
 generate_edge_data <- function(graph) {
@@ -48,9 +40,6 @@ generate_edge_data <- function(graph) {
   edge_data$Weight <- E(graph)$weight
   return(edge_data)
 }
-
-# Generate edge data with edge weights
-edge_data <- generate_edge_data(graph)
 
 # Plot the graph
 plot_graph <- function(graph, node_conditions) {
@@ -70,9 +59,6 @@ plot_graph <- function(graph, node_conditions) {
   )
 }
 
-# Plot the graph with node colors and edge widths
-plot_graph(graph, node_conditions)
-
 # Create the input graphs for single types(communities) and create file for interactions between communities
 # The interaction file should have the following format:
 # startType	startNodeName	endType	endNodeName	weight
@@ -86,14 +72,14 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     subgraph <- induced_subgraph(graph, V(graph)[community_data$community == community])
     subgraphs[[community]] <- subgraph
   }
-
+  
   # create the output directories
   dir.create(paste0(output_dir,"graphs"), showWarnings = FALSE)
   dir.create(paste0(output_dir,"node_conditions"), showWarnings = FALSE)
   dir.create(paste0(output_dir,"node_conditions_discr"), showWarnings = FALSE)
   dir.create(paste0(output_dir,"communities"), showWarnings = FALSE)
   dir.create(paste0(output_dir,"interactions"), showWarnings = FALSE)
-
+  
   # create a file for each community
   #the files should be:
   # a file for each community graph, has the format of a graph with Start End and Weight
@@ -110,30 +96,30 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     write_tsv(subgraph_edge_data, paste0(output_dir,"graphs/", community, ".tsv"), quote = "none",append = FALSE)
     write_tsv(subgraph_node_conditions, paste0(output_dir,"node_conditions/", community, ".tsv"), quote = "none",append = FALSE)
     write_tsv(subgraph_community_data, paste0(output_dir,"communities/", community, ".tsv"), quote = "none",append = FALSE)
-
+    
     # also save the node conditions for the community as 0 for Susceptible and 1 for Infectious
     subgraph_node_conditions$conditiondiscr <- ifelse(subgraph_node_conditions$condition == "Susceptible", 0, 1)
     subgraph_node_conditions_discr <- subgraph_node_conditions %>%
       select(node_name, conditiondiscr) %>%
       rename(name = node_name) %>%
       rename(value = conditiondiscr)
-
+    
     write_tsv(subgraph_node_conditions_discr, paste0(output_dir,"node_conditions_discr/", community, ".tsv"), quote = "none", append = FALSE)
-
+    
   }
-
+  
   # create a file for the interactions between communities
   # the file should be:
   # startType	startNodeName	endType	endNodeName	weight
   # where startType and endType are the community names
   # startNodeName and endNodeName are the node names
   # weight is the edge weight
-
+  
   # get the edges between communities
   edges_between_communities <- get.data.frame(graph, what = "edges")
   # filter out edges that are not between communities, that is the edge is not between nodes that belong to different communities, so the edge is between nodes that belong to the same community
   edges_between_communities <- edges_between_communities[community_data[edges_between_communities$from, ]$community != community_data[edges_between_communities$to, ]$community, ]
-
+  
   community_data.asids <- community_data
   community_data.asids$node_name <- as_ids(community_data.asids$node_name)
   
@@ -144,7 +130,7 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     rename(startType = community) %>%
     left_join(community_data.asids, by = c("to" = "node_name")) %>%
     rename(endType = community)
-
+  
   # get the edge weights
   edges_between_communities <- edges_between_communities %>%
     rename(startNodeName = from, endNodeName = to)
@@ -153,9 +139,94 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
   write_tsv(edges_between_communities, paste0(output_dir,"interactions/interactions.tsv"), quote = "none",append = FALSE)
 }
 
-create_input_graphs(graph, node_conditions, community_data, "syntheticGraphs/100Nodes/")
+
+
+
+#100 nodes
+
+# Generate a graph with preferential attachment (100 nodes, m=2 for preferential attachment)
+graph.100Nodes <- generate_graph(100, m = 2)
+
+
+# Assign node conditions to the graph
+node_conditions.100Nodes <- assign_node_conditions(graph.100Nodes, prob_infectious = 0.1)
+
+
+# Create communities based on the graph
+community_data.100Nodes <- create_communities(graph.100Nodes)
+
+
+# Generate edge data with edge weights
+edge_data.100Nodes <- generate_edge_data(graph.100Nodes)
+
+
+# Plot the graph with node colors and edge widths
+plot_graph(graph.100Nodes, node_conditions.100Nodes)
+
+
+create_input_graphs(graph.100Nodes, node_conditions.100Nodes, community_data.100Nodes, "syntheticGraphs/100Nodes/")
 # Write data to tsv files
-write_tsv(edge_data, "syntheticGraphs/100Nodes/edge_data.tsv")
-write_tsv(node_conditions, "syntheticGraphs/100Nodes/node_conditions.tsv")
-write_tsv(community_data, "syntheticGraphs/100Nodes/communities.tsv")
+write_tsv(edge_data.100Nodes, "syntheticGraphs/100Nodes/edge_data.tsv")
+write_tsv(node_conditions.100Nodes, "syntheticGraphs/100Nodes/node_conditions.tsv")
+write_tsv(community_data.100Nodes, "syntheticGraphs/100Nodes/communities.tsv")
+
+
+
+#1000 nodes
+
+# Generate a graph with preferential attachment (m=2 for preferential attachment)
+graph.1000Nodes <- generate_graph(1000, m = 2)
+
+
+# Assign node conditions to the graph
+node_conditions.1000Nodes <- assign_node_conditions(graph.1000Nodes, prob_infectious = 0.1)
+
+
+# Create communities based on the graph
+community_data.1000Nodes <- create_communities(graph.1000Nodes)
+
+
+# Generate edge data with edge weights
+edge_data.1000Nodes <- generate_edge_data(graph.1000Nodes)
+
+
+# Plot the graph with node colors and edge widths
+plot_graph(graph.1000Nodes, node_conditions.1000Nodes)
+
+
+create_input_graphs(graph.1000Nodes, node_conditions.1000Nodes, community_data.1000Nodes, "syntheticGraphs/1000Nodes/")
+# Write data to tsv files
+write_tsv(edge_data.1000Nodes, "syntheticGraphs/1000Nodes/edge_data.tsv")
+write_tsv(node_conditions.1000Nodes, "syntheticGraphs/1000Nodes/node_conditions.tsv")
+write_tsv(community_data.1000Nodes, "syntheticGraphs/1000Nodes/communities.tsv")
+
+
+#10000 nodes
+
+# Generate a graph with preferential attachment (m=2 for preferential attachment)
+graph.10000Nodes <- generate_graph(10000, m = 2)
+
+
+# Assign node conditions to the graph
+node_conditions.10000Nodes <- assign_node_conditions(graph.10000Nodes, prob_infectious = 0.1)
+
+
+# Create communities based on the graph
+community_data.10000Nodes <- create_communities(graph.10000Nodes)
+
+
+# Generate edge data with edge weights
+edge_data.10000Nodes <- generate_edge_data(graph.10000Nodes)
+
+
+# Plot the graph with node colors and edge widths
+plot_graph(graph.10000Nodes, node_conditions.10000Nodes)
+
+
+create_input_graphs(graph.10000Nodes, node_conditions.10000Nodes, community_data.10000Nodes, "syntheticGraphs/10000Nodes/")
+# Write data to tsv files
+write_tsv(edge_data.10000Nodes, "syntheticGraphs/10000Nodes/edge_data.tsv")
+write_tsv(node_conditions.10000Nodes, "syntheticGraphs/10000Nodes/node_conditions.tsv")
+write_tsv(community_data.10000Nodes, "syntheticGraphs/10000Nodes/communities.tsv")
+
 
