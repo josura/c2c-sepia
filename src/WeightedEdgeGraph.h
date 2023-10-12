@@ -39,8 +39,8 @@ class WeightedEdgeGraph{
 
         ~WeightedEdgeGraph();
 
-        WeightedEdgeGraph* addEdge(int node1, int node2, double weight);
-        WeightedEdgeGraph* addEdge(std::string node1name, std::string node2name, double weight);
+        WeightedEdgeGraph* addEdge(int node1, int node2, double weight, bool directed=true);
+        WeightedEdgeGraph* addEdge(std::string node1name, std::string node2name, double weight, bool directed=true);
 
         double getEdgeWeight(int node1, int node2)const{
             if(node1 >= 0 && node2 >= 0)

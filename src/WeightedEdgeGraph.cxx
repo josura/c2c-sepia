@@ -122,7 +122,7 @@ int WeightedEdgeGraph::degreeOfNode(int node)const{
     return adjList[node].size();
 }
 
-WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weight){
+WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weight, bool directed){
     if(node1 >= numberOfNodes || node2 >= numberOfNodes){
         std::cerr << "add edge failed for edges " << std::to_string(node1) << " and " << std::to_string(node2) << std::endl;
         if(node1 >= numberOfNodes){
@@ -138,15 +138,19 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(int node1, int node2, double weigh
         numberOfEdges++;
         edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
-        //adjList[node2].insert(node1);  //graph is directed
         adjMatrix(node1,node2) = weight;
+        if(!directed){
+            adjList[node2].insert(node1);
+            adjMatrix(node2,node1) = weight;
+        }
+
     }
 
     return this;
 }
 
 
-WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string node2name, double weight){
+WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string node2name, double weight, bool directed){
     if(!(nodeToIndex.contains(node1name) && nodeToIndex.contains(node2name)) ){
         std::cerr << "add edge failed for edges " << node1name << " and " << node2name << std::endl;
         if(!nodeToIndex.contains(node1name)){
@@ -164,8 +168,11 @@ WeightedEdgeGraph* WeightedEdgeGraph::addEdge(std::string node1name, std::string
         numberOfEdges++;
         edgesVector.push_back(std::tuple<int, int, double>(node1,node2, weight));
         adjList[node1].insert(node2);
-        //adjList[node2].insert(node1); //undirected graph addition
         adjMatrix(node1,node2) = weight;
+        if(!directed){
+            adjList[node2].insert(node1);
+            adjMatrix(node2,node1) = weight;
+        }
     }
 
     return this;
