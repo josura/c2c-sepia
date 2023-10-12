@@ -1,8 +1,8 @@
 
 # set the path to the folder containing the files
 pathToPerturbation <- "~/Projects/ccc/c2c-sepia/outputs/100NodesEpidemics/"
-# set the path to the output folder
-pathToOutput <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/"
+# set the path to the output folder 
+pathToOutput <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
 library(dplyr)
 library(readr)
 
@@ -86,7 +86,7 @@ getAllGraph <- function(pathToSingleFiles,pathToOutput){
     if (endsWith(file_name, "_outputAll.tsv")) {
       # read the file into a dataframe
       file_path <- paste0(pathToSingleFiles, file_name)
-      df <- read.delim(file_path)
+      df <- read.delim(file_path, check.names = FALSE)
       # add the dataframe to the list
       df_list[[file_name]] <- df
     }
