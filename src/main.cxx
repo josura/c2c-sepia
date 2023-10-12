@@ -24,6 +24,7 @@ int main(int argc, char** argv ) {
     bool sameTypeCommunication=false;
     bool saturation=false;
     bool conservateInitialNorm=false;
+    bool undirected = true;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -47,6 +48,7 @@ int main(int argc, char** argv ) {
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
+        ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
     ;
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
@@ -420,12 +422,12 @@ int main(int argc, char** argv ) {
     //add the edges to the graphs
     if(vm.count("fUniqueGraph")){
         for(auto edge = namesAndEdges[0].second.cbegin() ; edge != namesAndEdges[0].second.cend(); edge++ ){
-            graphs[0]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+            graphs[0]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) ,!undirected);
         }
     } else if (vm.count("graphsFilesFolder")) {
         for(uint i = 0; i < types.size(); i++){
             for(auto edge = namesAndEdges[i].second.cbegin() ; edge != namesAndEdges[i].second.cend(); edge++ ){
-                graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
+                graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) ,!undirected);
             }
         }
     }
