@@ -104,7 +104,7 @@ int main(int argc, char** argv ) {
 
     if (vm.count("intertypeIterations")) {
         std::cout << "[LOG] iterations intertype set to " 
-    << vm["intertypeIterations"].as<std::string>() << ".\n";
+    << vm["intertypeIterations"].as<uint>() << ".\n";
         intertypeIterations = vm["intertypeIterations"].as<uint>();
     } else {
         std::cout << "[LOG] iterations intertype not set, set to default: 10 iterations \n";
@@ -113,7 +113,7 @@ int main(int argc, char** argv ) {
 
     if (vm.count("intratypeIterations")) {
         std::cout << "[LOG] iterations intratype set to " 
-    << vm["intratypeIterations"].as<std::string>() << ".\n";
+    << vm["intratypeIterations"].as<uint>() << ".\n";
         intratypeIterations = vm["intratypeIterations"].as<uint>();
     } else {
         std::cout << "[LOG] iterations intratype not set, set to default: 5 iterations \n";
@@ -123,7 +123,7 @@ int main(int argc, char** argv ) {
 
     if(vm.count("timestep")){
         std::cout << "[LOG] timestep set to " 
-    << vm["timestep"].as<std::string>() << ".\n";
+    << vm["timestep"].as<double>() << ".\n";
         timestep = vm["timestep"].as<double>();
     } else {
         std::cout << "[LOG] timestep not set, set to default (1)"<<std::endl;
