@@ -55,7 +55,7 @@ edge_data <- generate_edge_data(graph)
 # Plot the graph
 plot_graph <- function(graph, node_conditions) {
   # Assign node colors based on conditions
-  node_colors <- ifelse(node_conditions$condition == "Susceptible", "blue", "red")
+  node_colors <- ifelse(node_conditions$condition == "Susceptible", "white", "blue")
   
   # Assign edge widths based on edge weights
   edge_weights <- E(graph)$weight * 5  # Multiply by a factor for better visualization
