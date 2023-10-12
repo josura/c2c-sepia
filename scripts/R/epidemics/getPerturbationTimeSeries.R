@@ -1,10 +1,6 @@
-
-# set the path to the folder containing the files
-pathToPerturbation <- "~/Projects/ccc/c2c-sepia/outputs/100NodesEpidemics/"
-# set the path to the output folder 
-pathToOutput <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
 library(dplyr)
 library(readr)
+
 
 getperturbationTimeSeries <- function(path,output){
   # get a list of all files in the folder
@@ -65,21 +61,15 @@ getperturbationTimeSeries <- function(path,output){
   }
   
 }
-getperturbationTimeSeries(path = pathToPerturbation,output = pathToOutput)
 
-
-
-pathToSingleFiles <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
-pathToOutputAll <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
-# get a single file with all the values like before, but without the virtual nodes
 getAllGraph <- function(pathToSingleFiles,pathToOutput){
   # read the files written in the previous function in a dataframe
   # get a list of all files in the folder
   file_list <- list.files(pathToSingleFiles)
-
+  
   # initialize an empty list to store the dataframes
   df_list <- list()
-
+  
   # iterate over the files
   for (file_name in file_list) {
     # check if the file ends with ".tsv"
@@ -91,7 +81,7 @@ getAllGraph <- function(pathToSingleFiles,pathToOutput){
       df_list[[file_name]] <- df
     }
   }
-
+  
   # filter all the columns in the dataframes that contain in their names v.in or v.out
   # remove the columns from all the dataframes
   for (i in 1:length(df_list)) {
@@ -99,13 +89,66 @@ getAllGraph <- function(pathToSingleFiles,pathToOutput){
     columns_to_remove <- grep("v.in|v.out", names(df_list[[i]]))
     df_list[[i]] <- df_list[[i]][-columns_to_remove]
   }
-
+  
   # join the dataframe to create a single dataframe, join is done on the iteration column
   df <- Reduce(function(x, y) left_join(x, y, by = "iteration"), df_list)
-
+  
   # write the dataframe to the output file
   outputFileNameAll <- paste0(pathToOutput,"fullGraph_output.tsv")
   write_tsv(df, outputFileNameAll, quote = "none", append = FALSE)
 }
 
-getAllGraph(pathToSingleFiles,pathToOutputAll)
+
+#100 nodes
+
+# set the path to the folder containing the files
+pathToPerturbation.100Nodes <- "~/Projects/ccc/c2c-sepia/outputs/100NodesEpidemics/"
+# set the path to the output folder 
+pathToOutput.100Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
+
+
+getperturbationTimeSeries(path = pathToPerturbation.100Nodes,output = pathToOutput.100Nodes)
+
+
+
+pathToSingleFiles.100Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
+pathToOutputAll.100Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics100Nodes/"
+# get a single file with all the values like before, but without the virtual nodes
+
+getAllGraph(pathToSingleFiles.100Nodes,pathToOutputAll.100Nodes)
+
+
+#1000 nodes
+
+# set the path to the folder containing the files
+pathToPerturbation.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputs/1000NodesEpidemics/"
+# set the path to the output folder 
+pathToOutput.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics1000Nodes/"
+
+getperturbationTimeSeries(path = pathToPerturbation.1000Nodes,output = pathToOutput.1000Nodes)
+
+
+
+pathToSingleFiles.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics1000Nodes/"
+pathToOutputAll.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics1000Nodes/"
+# get a single file with all the values like before, but without the virtual nodes
+
+getAllGraph(pathToSingleFiles.1000Nodes,pathToOutputAll.1000Nodes)
+
+
+#10000 nodes
+
+# set the path to the folder containing the files
+pathToPerturbation.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputs/10000NodesEpidemics/"
+# set the path to the output folder 
+pathToOutput.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics10000Nodes/"
+
+getperturbationTimeSeries(path = pathToPerturbation.10000Nodes,output = pathToOutput.10000Nodes)
+
+
+
+pathToSingleFiles.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics10000Nodes/"
+pathToOutputAll.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics10000Nodes/"
+# get a single file with all the values like before, but without the virtual nodes
+
+getAllGraph(pathToSingleFiles.10000Nodes,pathToOutputAll.10000Nodes)
