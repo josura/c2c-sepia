@@ -24,7 +24,8 @@ int main(int argc, char** argv ) {
     bool sameTypeCommunication=false;
     bool saturation=false;
     bool conservateInitialNorm=false;
-    bool undirected = true;
+    bool undirected = false;
+    bool undirectedTypeEdges = false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -49,6 +50,7 @@ int main(int argc, char** argv ) {
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
         ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
+        ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
     ;
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
@@ -516,7 +518,7 @@ int main(int argc, char** argv ) {
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
             if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
-                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]]);
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges);
                 //typeComputations[i]->freeAugmentedGraphs();
             }
         }
