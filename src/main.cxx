@@ -124,13 +124,27 @@ int main(int argc, char** argv ) {
         intratypeIterations = 5;
     }
 
-
+    //logging timestep settings
     if(vm.count("timestep")){
         std::cout << "[LOG] timestep set to " 
     << vm["timestep"].as<double>() << ".\n";
         timestep = vm["timestep"].as<double>();
     } else {
         std::cout << "[LOG] timestep not set, set to default (1)"<<std::endl;
+    }
+
+    //logging edges direction in the graphs
+    if(undirected){
+        std::cout << "[LOG] undirectedEdges specified, undirected edges in the graphs"<<std::endl;
+    } else {
+        std::cout << "[LOG] undirectedEdges not specified, directed edges in the graphs(only the edges specified in the graph files will be added)"<<std::endl;
+    }
+
+    //logging edges direction in the graphs
+    if(undirectedTypeEdges){
+        std::cout << "[LOG] undirectedTypeEdges specified, undirected edges between types"<<std::endl;
+    } else {
+        std::cout << "[LOG] undirectedTypeEdges not specified, directed edges between types"<<std::endl;
     }
 
 
@@ -518,7 +532,7 @@ int main(int argc, char** argv ) {
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
             if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
-                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges);
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges); // TODO additional case when no inverse is computed (in the future when taking into account the propagation in the network from one node to its neighbors)
                 //typeComputations[i]->freeAugmentedGraphs();
             }
         }
