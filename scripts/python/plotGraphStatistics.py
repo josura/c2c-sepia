@@ -23,7 +23,7 @@ for _, row in edges_data.iterrows():
 thresholded_data = nodes_data.copy()
 thresholded_data.iloc[:, 1:] = np.where(thresholded_data.iloc[:, 1:] > 0.5, 1, 0)
 
-# create a list of lists with the nodes that are infected at each time step
+# create a list of lists with the nodes that are infected at each time step, the index of the list is the time step (iteration column in the dataframe)
 infected_nodes = []
 for _, row in thresholded_data.iterrows():
     infected_nodes.append(row[row == 1].index.tolist())
@@ -32,5 +32,22 @@ for _, row in thresholded_data.iterrows():
 susceptible_nodes = []
 for _, row in thresholded_data.iterrows():
     susceptible_nodes.append(row[row == 0].index.tolist())
+
+
+# get the statistics(number of infected vs number of susceptible) of the states of the nodes at each time step
+infected_nodes_stats = []
+susceptible_nodes_stats = []
+for i in range(len(infected_nodes)):
+    infected_nodes_stats.append(len(infected_nodes[i]))
+    susceptible_nodes_stats.append(len(susceptible_nodes[i]))
+
+# plot the statistics
+fig, ax = plt.subplots()
+ax.set_xlim(0, len(infected_nodes))
+ax.set_ylim(0, len(G.nodes))
+ax.set_xlabel('Time')
+ax.set_ylabel('Number of Nodes')
+ax.set_title('Number of Infected vs Number of Susceptible Nodes')
+ax.plot(infected_nodes_stats, label='Infected Nodes')
 
 
