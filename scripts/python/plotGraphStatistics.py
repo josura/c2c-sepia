@@ -20,17 +20,20 @@ for _, row in edges_data.iterrows():
     G.add_edge(row['Start'], row['End'], weight=row['Weight'])
 
 # create another dataframe with thresholded values, all the columns after the first one should be thresholded since they are the time series, 0 values means that the node is not infected and 1 means that it is infected
-thresholded_data = nodes_data.copy()
-thresholded_data.iloc[:, 1:] = np.where(thresholded_data.iloc[:, 1:] > 0.5, 1, 0)
+thresholded_data_sorted = nodes_data.copy()
+thresholded_data_sorted.iloc[:, 1:] = np.where(thresholded_data_sorted.iloc[:, 1:] > 0.5, 1, 0)
+
+# order the rows by the iteration column
+thresholded_data_sorted = thresholded_data_sorted.sort_values(by=['Iteration'])
 
 # create a list of lists with the nodes that are infected at each time step, the index of the list is the time step (iteration column in the dataframe)
 infected_nodes = []
-for _, row in thresholded_data.iterrows():
+for _, row in thresholded_data_sorted.iterrows():
     infected_nodes.append(row[row == 1].index.tolist())
 
 # create a list of lists with the nodes that are not infected at each time step
 susceptible_nodes = []
-for _, row in thresholded_data.iterrows():
+for _, row in thresholded_data_sorted.iterrows():
     susceptible_nodes.append(row[row == 0].index.tolist())
 
 
@@ -41,7 +44,9 @@ for i in range(len(infected_nodes)):
     infected_nodes_stats.append(len(infected_nodes[i]))
     susceptible_nodes_stats.append(len(susceptible_nodes[i]))
 
-# plot the statistics
+
+
+# plot the statistics, on the x axis we have the time steps and on the y axis we have the number of infected and susceptible nodes
 fig, ax = plt.subplots()
 ax.set_xlim(0, len(infected_nodes))
 ax.set_ylim(0, len(G.nodes))
