@@ -24,7 +24,7 @@ thresholded_data_sorted = nodes_data.copy()
 thresholded_data_sorted.iloc[:, 1:] = np.where(thresholded_data_sorted.iloc[:, 1:] > 0.5, 1, 0)
 
 # order the rows by the iteration column
-thresholded_data_sorted = thresholded_data_sorted.sort_values(by=['Iteration'])
+thresholded_data_sorted = thresholded_data_sorted.sort_values(by=['iteration'])
 
 # create a list of lists with the nodes that are infected at each time step, the index of the list is the time step (iteration column in the dataframe)
 infected_nodes = []
@@ -55,4 +55,8 @@ ax.set_ylabel('Number of Nodes')
 ax.set_title('Number of Infected vs Number of Susceptible Nodes')
 ax.plot(infected_nodes_stats, label='Infected Nodes')
 
+# plot the number of susceptible nodes
+ax.plot(susceptible_nodes_stats, label='Susceptible Nodes')
+ax.legend()
+plt.show()
 
