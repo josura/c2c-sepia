@@ -1,6 +1,8 @@
 #pragma once
 #include <armadillo>
 #include <functional>
+#include <vector>
+#include "WeightedEdgeGraph.h"
 
 class PropagationModel{
     protected:
@@ -10,8 +12,8 @@ class PropagationModel{
         PropagationModel(std::function<double(double)> scaleFunction);
         virtual ~PropagationModel();
         //using the scale function as a parameter itself, dependency injection
-        virtual arma::Col<double> propagate(arma::Col<double> input, arma::Col<double> inputDissipated,arma::Mat<double> Wstar, double time, std::vector<double> q = std::vector<double>());
-        virtual arma::Col<double> propagationTerm(arma::Col<double> input,arma::Mat<double> Wstar, double time, std::vector<double> q = std::vector<double>());
+        virtual arma::Col<double> propagate(arma::Col<double> input, const WeightedEdgeGraph& graph, double time);
+        virtual arma::Col<double> propagationTerm(arma::Col<double> input, const WeightedEdgeGraph& graph, double time);
 
         //getters and setters
         std::function<double(double)> getScaleFunction(){return this->scaleFunction;}
