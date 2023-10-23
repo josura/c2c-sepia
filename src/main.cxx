@@ -46,6 +46,8 @@ int main(int argc, char** argv ) {
         ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder, for an example see in data data/testdata/testHeterogeneousGraph/graphsDifferentStructure")
         ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
+        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default)','scaled' and 'custom' (not available yet) ")
+        ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
@@ -343,6 +345,42 @@ int main(int argc, char** argv ) {
     } else {
         std::cout << "[LOG] conservation model was not set. set to default (none)\n";
         conservationModel = new ConservationModel([](double time)->double{return 0;});
+    }
+
+    std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
+    if(vm.count("propagationModel")){
+        std::cout << "[LOG] propagation model was set to "
+    << vm["propagationModel"].as<std::string>() << ".\n";
+        std::string propagationModelName = vm["propagationModel"].as<std::string>();
+        if(propagationModelName == "none"){
+            std::cout << "[LOG] propagation model set to default (none)\n";
+            //nothing to do, default propagation scaling function is the identity
+        } else if (propagationModelName == "scaled"){
+            if (vm.count("propagationModelParameters")) {
+                std::cout << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
+                //nothing to do, default propagation scaling function is the identity
+            }
+        } else if (propagationModelName == "custom"){
+            std::cout << "not implemented yet\n";
+            return 1;
+            //TODO
+        } else {
+            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled and custom \n";
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] propagation model was not set. set to default (none)\n";
+        //TODO
     }
 
     //logging if saturation is set and saturation parameters are set
