@@ -255,7 +255,8 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
                 }
             }
             if(indexStart < 0 || indexEnd < 0 || indexWeight < 0){
-                throw std::invalid_argument("invalid file, the header does not contain a start, an end and a weight feature");
+                std::string error = "utilities::edgesFileToEdgesListAndNodesByName: header of file" + filename + " does not contain start, end or weight";
+                throw std::invalid_argument(error);
             }
             while ( getline (myfile,line) )
             {
