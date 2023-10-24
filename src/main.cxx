@@ -202,8 +202,11 @@ int main(int argc, char** argv ) {
     << vm["outputFolder"].as<std::string>() << ".\n";
         outputFoldername = vm["outputFolder"].as<std::string>();
         if(!folderExists(outputFoldername)){
-            std::cerr << "[ERROR] folder for the output do not exist: aborting"<<std::endl;
-            return 1;
+            std::cerr << "[WARNING] folder for the output do not exist: creating the folder"<<std::endl;
+            if(!createFolder(outputFoldername)){
+                std::cerr << "[ERROR] folder for the output could not be created: aborting"<<std::endl;
+                return 1;
+            }
         }
     } else {
         std::cout << "[LOG] output folder was not set. aborting\n";

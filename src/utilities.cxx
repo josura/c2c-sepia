@@ -152,6 +152,21 @@ bool folderExists(const std::string& folderPath)
     return exists;
 }
 
+bool createFolder(const std::string& folderPath)
+{
+    // Check if the folder already exists
+    if (folderExists(folderPath)) {
+        // The folder already exists
+        return true;
+    }
+    
+    // Create the folder
+    bool success = std::filesystem::create_directory(folderPath);
+    
+    // Return the result
+    return success;
+}
+
 
 std::vector<std::string> splitString(std::string toSplit , std::string delimiter){
 
