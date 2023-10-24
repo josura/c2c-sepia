@@ -599,16 +599,16 @@ int main(int argc, char** argv ) {
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         //TODO TEST
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector); 
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
                     }
                 } else{
-                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false);
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                 }
             }
             //save output values
