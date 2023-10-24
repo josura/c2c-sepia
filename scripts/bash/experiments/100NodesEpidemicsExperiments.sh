@@ -1,5 +1,8 @@
+
+#example usage: sh scripts/bash/experiments/100NodesEpidemicsExperiments.sh scripts/R/epidemics/syntheticGraphs/100Nodes/ outputs/100NodesEpidemics/ 
 # get the directory of the inputs from the first argument
 inputsFolder=$1
+outputsFolder=$2
 
 #get the graph file, the initial perturbation and the type interactions from the folder
 graphsFolderName=$(ls $inputsFolder | grep "graph")
@@ -7,9 +10,9 @@ initialPerturbationFolderName=$(ls $inputsFolder | grep "node_conditions_discr")
 typeInteractionsFolderName=$(ls $inputsFolder | grep "interactions")
 
 # get the full path for the graph file, the initial perturbation and the type interactions 
-graphsFolder=$inputsFolder/$graphsFolderName
-initialPerturbationFolder=$inputsFolder/$initialPerturbationFolderName
-typeInteractionsFolder=$inputsFolder/$typeInteractionsFolderName
+graphsFolder=$inputsFolder$graphsFolderName
+initialPerturbationFolder=$inputsFolder$initialPerturbationFolderName
+typeInteractionsFolder=$inputsFolder$typeInteractionsFolderName
 
 echo "Graph file: $graphsFolderName"
 echo "Initial perturbation file: $initialPerturbationFolderName"
@@ -24,7 +27,7 @@ for dissipationScaleFactor in ${listDissipationScaleFactors[@]}; do
         echo "Dissipation scale factor: $dissipationScaleFactor"
         echo "Propagation scale factor: $propagationScaleFactor"
         # get the output folder
-        outputFolder="outputs/100NodesEpidemics/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
+        outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
         # run the simulation
         ./build/build/c2c-sepia --graphsFilesFolder $graphsFolder \
             --initialPerturbationPerTypeFolder $initialPerturbationFolder \
