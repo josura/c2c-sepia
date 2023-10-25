@@ -118,32 +118,31 @@ for (subfolder in subfolders) {
   pathToPerturbation.100Nodes <- paste0(pathToPerturbationFolder.100Nodes, subfolder_name, "/")
   # set the path to the output folder 
   pathToOutput.100Nodes <- paste0(pathToOutputFolder.100Nodes, subfolder_name, "/")
+  pathToSingleFiles.100Nodes <- paste0(pathToOutput.100Nodes, "singleFiles/")
   
   # create the output folder if it does not exist
   dir.create(pathToOutput.100Nodes, showWarnings = FALSE, recursive = TRUE)
-  
-  # get the perturbation time series
-  getperturbationTimeSeries(path = pathToPerturbation.100Nodes,output = pathToOutput.100Nodes)
-  
-  # get a single file with all the values like before, but without the virtual nodes
-  pathToSingleFiles.100Nodes <- paste0(pathToOutput.100Nodes, "singleFiles/")
-  pathToOutputAll.100Nodes <- paste0(pathToOutput.100Nodes, "allFiles/")
-  dir.create(pathToOutputAll.100Nodes, showWarnings = FALSE, recursive = TRUE)
   dir.create(pathToSingleFiles.100Nodes, showWarnings = FALSE, recursive = TRUE)
   
-  getAllGraph(pathToSingleFiles.100Nodes,pathToOutputAll.100Nodes)
+  # get the perturbation time series
+  getperturbationTimeSeries(path = pathToPerturbation.100Nodes,output = pathToSingleFiles.100Nodes)
   
+  # get a single file with all the values like before, but without the virtual nodes
+  pathToOutputAll.100Nodes <- paste0(pathToOutput.100Nodes, "allFiles/")
+  dir.create(pathToOutputAll.100Nodes, showWarnings = FALSE, recursive = TRUE)
+  
+  getAllGraph(pathToSingleFiles.100Nodes,pathToOutputAll.100Nodes)
 }
 
 #1000 nodes
 
 # set the path to the folder containing the files
-pathToPerturbation.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputs/1000NodesEpidemics/"
+pathToPerturbationFolder.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputs/1000NodesEpidemics/"
 # set the path to the output folder 
-pathToOutput.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics1000Nodes/"
+pathToOutputFolder.1000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics1000Nodes/"
 
 # get the subfolders in the folder
-subfolders <- list.dirs(pathToPerturbation.1000Nodes, recursive = FALSE)
+subfolders <- list.dirs(pathToPerturbationFolder.1000Nodes, recursive = FALSE)
 
 # iterate over the subfolders
 for (subfolder in subfolders) {
@@ -151,36 +150,34 @@ for (subfolder in subfolders) {
   subfolder_name <- basename(subfolder)
   
   # set the path to the folder containing the files
-  pathToPerturbation.1000Nodes <- paste0(pathToPerturbation.1000Nodes, subfolder_name, "/")
+  pathToPerturbation.1000Nodes <- paste0(pathToPerturbationFolder.1000Nodes, subfolder_name, "/")
   # set the path to the output folder 
-  pathToOutput.1000Nodes <- paste0(pathToOutput.1000Nodes, subfolder_name, "/")
+  pathToOutput.1000Nodes <- paste0(pathToOutputFolder.1000Nodes, subfolder_name, "/")
+  pathToSingleFiles.1000Nodes <- paste0(pathToOutput.1000Nodes, "singleFiles/")
   
   # create the output folder if it does not exist
   dir.create(pathToOutput.1000Nodes, showWarnings = FALSE, recursive = TRUE)
-  
-  # get the perturbation time series
-  getperturbationTimeSeries(path = pathToPerturbation.1000Nodes,output = pathToOutput.1000Nodes)
-  
-  # get a single file with all the values like before, but without the virtual nodes
-  pathToSingleFiles.1000Nodes <- paste0(pathToOutput.1000Nodes, "singleFiles/")
-  pathToOutputAll.1000Nodes <- paste0(pathToOutput.1000Nodes, "allFiles/")
-  dir.create(pathToOutputAll.1000Nodes, showWarnings = FALSE, recursive = TRUE)
   dir.create(pathToSingleFiles.1000Nodes, showWarnings = FALSE, recursive = TRUE)
   
-  getAllGraph(pathToSingleFiles.1000Nodes,pathToOutputAll.1000Nodes)
+  # get the perturbation time series
+  getperturbationTimeSeries(path = pathToPerturbation.1000Nodes,output = pathToSingleFiles.1000Nodes)
   
+  # get a single file with all the values like before, but without the virtual nodes
+  pathToOutputAll.1000Nodes <- paste0(pathToOutput.1000Nodes, "allFiles/")
+  dir.create(pathToOutputAll.1000Nodes, showWarnings = FALSE, recursive = TRUE)
+  
+  getAllGraph(pathToSingleFiles.1000Nodes,pathToOutputAll.1000Nodes)
 }
-
 
 #10000 nodes
 
 # set the path to the folder containing the files
-pathToPerturbation.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputs/10000NodesEpidemics/"
+pathToPerturbationFolder.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputs/10000NodesEpidemics/"
 # set the path to the output folder 
-pathToOutput.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics10000Nodes/"
+pathToOutputFolder.10000Nodes <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics10000Nodes/"
 
 # get the subfolders in the folder
-subfolders <- list.dirs(pathToPerturbation.10000Nodes, recursive = FALSE)
+subfolders <- list.dirs(pathToPerturbationFolder.10000Nodes, recursive = FALSE)
 
 # iterate over the subfolders
 for (subfolder in subfolders) {
@@ -188,22 +185,21 @@ for (subfolder in subfolders) {
   subfolder_name <- basename(subfolder)
   
   # set the path to the folder containing the files
-  pathToPerturbation.10000Nodes <- paste0(pathToPerturbation.10000Nodes, subfolder_name, "/")
+  pathToPerturbation.10000Nodes <- paste0(pathToPerturbationFolder.10000Nodes, subfolder_name, "/")
   # set the path to the output folder 
-  pathToOutput.10000Nodes <- paste0(pathToOutput.10000Nodes, subfolder_name, "/")
+  pathToOutput.10000Nodes <- paste0(pathToOutputFolder.10000Nodes, subfolder_name, "/")
+  pathToSingleFiles.10000Nodes <- paste0(pathToOutput.10000Nodes, "singleFiles/")
   
   # create the output folder if it does not exist
   dir.create(pathToOutput.10000Nodes, showWarnings = FALSE, recursive = TRUE)
-  
-  # get the perturbation time series
-  getperturbationTimeSeries(path = pathToPerturbation.10000Nodes,output = pathToOutput.10000Nodes)
-  
-  # get a single file with all the values like before, but without the virtual nodes
-  pathToSingleFiles.10000Nodes <- paste0(pathToOutput.10000Nodes, "singleFiles/")
-  pathToOutputAll.10000Nodes <- paste0(pathToOutput.10000Nodes, "allFiles/")
-  dir.create(pathToOutputAll.10000Nodes, showWarnings = FALSE, recursive = TRUE)
   dir.create(pathToSingleFiles.10000Nodes, showWarnings = FALSE, recursive = TRUE)
   
-  getAllGraph(pathToSingleFiles.10000Nodes,pathToOutputAll.10000Nodes)
+  # get the perturbation time series
+  getperturbationTimeSeries(path = pathToPerturbation.10000Nodes,output = pathToSingleFiles.10000Nodes)
   
+  # get a single file with all the values like before, but without the virtual nodes
+  pathToOutputAll.10000Nodes <- paste0(pathToOutput.10000Nodes, "allFiles/")
+  dir.create(pathToOutputAll.10000Nodes, showWarnings = FALSE, recursive = TRUE)
+  
+  getAllGraph(pathToSingleFiles.10000Nodes,pathToOutputAll.10000Nodes)
 }
