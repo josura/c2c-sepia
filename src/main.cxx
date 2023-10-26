@@ -8,6 +8,7 @@
 #include <tuple>
 #include <vector>
 #include "Computation.h"
+#include "PropagationModel.hxx"
 #include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
@@ -46,7 +47,7 @@ int main(int argc, char** argv ) {
         ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder, for an example see in data data/testdata/testHeterogeneousGraph/graphsDifferentStructure")
         ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
-        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default)','scaled' and 'custom' (not available yet) ")
+        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)' and 'custom' (not available yet) ")
         ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
@@ -65,6 +66,7 @@ int main(int argc, char** argv ) {
     uint intertypeIterations,intratypeIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
+    PropagationModel* propagationModel = nullptr;
     double timestep = 1;
 
     if (vm.count("help")) {
@@ -579,6 +581,25 @@ int main(int argc, char** argv ) {
         }
     }
 
+    //TESTING
+    // std::cout<< "[DEBUG] adjacency matrix for type \"2\":"<<std::endl;
+    // int index = -1;
+    // for(int i = 0; i < SizeToInt(types.size());i++){
+    //     if(types[i] == "2"){
+    //         index = i;
+    //         break;
+    //     }
+    // }
+    // typeComputations[index]->getAugmentedMetapathway()->adjMatrix.printMatrix();
+    // std::cout<< "[DEBUG] input vector for type \"2\":"<<std::endl;
+    // std::vector<double> input = typeComputations[index]->getInputAugmented();
+    // for(int i = 0; i < SizeToInt(input.size());i++){
+    //     //std::cout << typeComputations[index]->getInput()[i] << ", ";
+    //     std::cout << input[i] << ", ";
+    // }
+    // std::cout <<  ")\n";
+    //TESTING
+
 
     //freeing some data structures inside computation to consume less RAM
     // std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
@@ -602,16 +623,19 @@ int main(int argc, char** argv ) {
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         //TODO TEST
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
+                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
                     }
                 } else{
-                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3(iterationIntertype*intratypeIterations + iterationIntratype, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
+                    //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                 }
             }
             //save output values

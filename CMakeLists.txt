@@ -45,6 +45,7 @@ set(LIB_SRCS
     src/DissipationModelPeriodic.cxx
     src/DissipationModelScaled.cxx
     src/ConservationModel.cxx
+    src/PropagationModel.cxx
     src/CustomScalingFunctions.cxx
 )
 
