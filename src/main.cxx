@@ -9,6 +9,8 @@
 #include <vector>
 #include "Computation.h"
 #include "PropagationModel.hxx"
+#include "PropagationModelOriginal.hxx"
+#include "PropagationModelNeighbors.hxx"
 #include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
@@ -47,7 +49,7 @@ int main(int argc, char** argv ) {
         ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder, for an example see in data data/testdata/testHeterogeneousGraph/graphsDifferentStructure")
         ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
-        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)' and 'custom' (not available yet) ")
+        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)', neighbors(propagate the values only on neighbors at every iteration) and 'custom' (not available yet) ")
         ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
@@ -66,7 +68,6 @@ int main(int argc, char** argv ) {
     uint intertypeIterations,intratypeIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
-    PropagationModel* propagationModel = nullptr;
     double timestep = 1;
 
     if (vm.count("help")) {
@@ -352,42 +353,6 @@ int main(int argc, char** argv ) {
         conservationModel = new ConservationModel([](double time)->double{return 0;});
     }
 
-    std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
-    if(vm.count("propagationModel")){
-        std::cout << "[LOG] propagation model was set to "
-    << vm["propagationModel"].as<std::string>() << ".\n";
-        std::string propagationModelName = vm["propagationModel"].as<std::string>();
-        if(propagationModelName == "none"){
-            std::cout << "[LOG] propagation model set to default (none)\n";
-            //nothing to do, default propagation scaling function is the identity
-        } else if (propagationModelName == "scaled"){
-            if (vm.count("propagationModelParameters")) {
-                std::cout << "[LOG] propagation model parameters were declared to be "
-            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
-                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
-                if(propagationModelParameters.size() == 1){
-                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
-                } else {
-                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
-                    return 1;
-                }
-            } else {
-                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
-                //nothing to do, default propagation scaling function is the identity
-            }
-        } else if (propagationModelName == "custom"){
-            std::cout << "not implemented yet\n";
-            return 1;
-            //TODO
-        } else {
-            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled and custom \n";
-            return 1;
-        }
-    } else {
-        std::cout << "[LOG] propagation model was not set. set to default (none)\n";
-        //TODO
-    }
-
     //logging if saturation is set and saturation parameters are set
     if (saturation) {
         if(vm.count("saturationTerm") == 0){
@@ -575,11 +540,89 @@ int main(int argc, char** argv ) {
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
             if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
+                //TODO maybe do not compute pseudoinverse since the computation was moved into the PropagationModels classes
                 typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges); // TODO additional case when no inverse is computed (in the future when taking into account the propagation in the network from one node to its neighbors)
                 //typeComputations[i]->freeAugmentedGraphs();
             }
         }
     }
+
+    // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
+
+    std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
+    if(vm.count("propagationModel")){
+        std::cout << "[LOG] propagation model was set to "
+    << vm["propagationModel"].as<std::string>() << ".\n";
+        std::string propagationModelName = vm["propagationModel"].as<std::string>();
+        if(propagationModelName == "none"){
+            std::cout << "[LOG] propagation model set to default (none)\n";
+            for(uint i = 0; i < typesFiltered.size();i++ ){
+                typeComputations[i]->setPropagationModel(new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction));
+            }
+            //nothing to do, default propagation scaling function is the identity
+        } else if (propagationModelName == "scaled"){
+            if (vm.count("propagationModelParameters")) {
+                std::cout << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
+                    for(uint i = 0; i < typesFiltered.size();i++ ){
+                        PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                        typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                    }
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
+                for(uint i = 0; i < typesFiltered.size();i++ ){
+                    PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                    typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                }
+                //nothing to do, default propagation scaling function is the identity
+            }
+        } else if (propagationModelName == "neighbors"){
+            if (vm.count("propagationModelParameters")) {
+                std::cout << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
+                    for(uint i = 0; i < typesFiltered.size();i++ ){
+                        PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                        typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                    }
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
+                for(uint i = 0; i < typesFiltered.size();i++ ){
+                    PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                    typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                }
+                //nothing to do, default propagation scaling function is the identity
+            }
+        } else if (propagationModelName == "custom"){
+            std::cout << "not implemented yet\n";
+            return 1;
+            //TODO
+        } else {
+            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] propagation model was not set. set to default (none)\n";
+        for(uint i = 0; i < typesFiltered.size();i++ ){
+            PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+            typeComputations[i]->setPropagationModel(tmpPropagationModel);
+        }
+        //TODO
+    }
+
 
     //TESTING
     // std::cout<< "[DEBUG] adjacency matrix for type \"2\":"<<std::endl;
@@ -623,19 +666,22 @@ int main(int argc, char** argv ) {
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                        // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         //TODO TEST
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
+                        // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
                     }
                 } else{
-                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
+                    // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
                     //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
                 }
             }
             //save output values
