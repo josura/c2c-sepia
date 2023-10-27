@@ -2,11 +2,13 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <map>
+#include <ostream>
 #include <string>
 #include <sys/types.h>
 #include <tuple>
 #include <vector>
 #include "Computation.h"
+#include "PropagationModel.hxx"
 #include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
@@ -17,59 +19,78 @@
 #include "CustomScalingFunctions.h"
 
 
-void printHelp(){
-    //TODO fix this help
-    std::cout << "usage: ./c2c-sepia --fMETAPATHWAY <metapathway>.tsv --fLogfoldPerCell <logfoldPerCell>.tsv [<subcelltypes>.txt] --dirCellInteraction <cellInteractionFolder>(containing .tsv files)]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart\tend\tweight\n<gene1>\t<gene2>\t <0.something>\n...\n\n\nlogfoldPerCell.tsv\n\tcell1\tcell2\t...\tcellN\ngene1\t<lfc_cell1:gene1>\t<lfc_cell2:gene1>\t...\t<lfc_cellN:gene1>\ngene1\t<lfc_cell1:gene2>\t<lfc_cell2:gene2>\t...\t<lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand\tendCell:geneReceptor\tweight\n<cell1:geneLigand>\t<cell2:genereceptor>\t <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n..."<<std::endl;
-    std::cout << "LEGEND:\n <> := placeholder for the name of the file\n[] := optional\n{} := at least one"<<std::endl;
-}
-
 int main(int argc, char** argv ) {
     //program options
     bool ensembleGeneNames=false;
-    bool sameCellCommunication=false;
+    bool sameTypeCommunication=false;
     bool saturation=false;
     bool conservateInitialNorm=false;
-    std::string subcelltypesFilename="";
+    bool undirected = false;
+    bool undirectedTypeEdges = false;
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
-    //TODO implement subcelltypes
     desc.add_options()
-        ("help", "print help section")//<logfoldPerCell>.tsv [<subcelltypes>.txt] [<celltypesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\nmetapathway.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\nlogfoldPerCell.tsv\n cell1 cell2 ... cellN\ngene1 <lfc_cell1:gene1> <lfc_cell2:gene1> ... <lfc_cellN:gene1>\ngene1 <lfc_cell1:gene2> <lfc_cell2:gene2> ... <lfc_cellN:gene2>\n...\n\n\ncelltypesInteraction.tsv\nstartCell:geneLigand endCell:geneReceptor weight\n<cell1:geneLigand> <cell2:genereceptor>  <0.something>\n...\n\n\nsubcelltypes.txt\ncell1\ncell3\n...")
-        ("fMETAPATHWAY", po::value<std::string>(), "metapathway filename, for an example metapathway see in resources. NOTE: if this option is chosen")
-        ("subcelltypes", po::value<std::string>(), "subcelltypes filename, for an example see in data")
-        ("fLogfoldPerCell", po::value<std::string>()->required(), "logfoldPerCell matrix filename, for an example see in data")
-        ("dirCellInteraction", po::value<std::string>(), "directory for the cell interactions, for an example see in data")
-        ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"use ensemble gene names, since the metapathway used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
-        ("sameCellCommunication",po::bool_switch(&sameCellCommunication),"use same cell communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same cell type")
-        ("output",po::value<std::string>()->required(),"output folder for output of the algorithm at each iteration")
-        ("intercellIterations",po::value<uint>(),"number of iterations for intercell communication")
-        ("intracellIterations",po::value<uint>(),"number of iterations for intracell communication")
+        ("help", "() print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
+        ("fUniqueGraph", po::value<std::string>(), "(string) graph filename, for an example graph see in resources. NOTE: if this option is chosen, graphsFilesFolder cannot be used. For an example see in data data/testdata/testGraph/edges-Graph1-general.tsv")
+        ("fInitialPerturbationPerType", po::value<std::string>(), "(string) initialPerturbationPerType matrix filename, for an example see in data data/testdata/testGraph/initialValues-general.tsv")
+        ("subtypes", po::value<std::string>(), "subtypes filename, for an example see in data, see data/testdata/testGraph/subcelltypes.txt")
+        ("initialPerturbationPerTypeFolder", po::value<std::string>(), "(string) initialPerturbationPerType folder, for an example see in data data/testdata/testGraph/initialValues")
+        ("typeInteractionFolder", po::value<std::string>(), "(string) directory for the type interactions, for an example see in data data/testdata/testHeterogeneousGraph/interactions")
+        ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"() use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
+        ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"() use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
+        ("outputFolder",po::value<std::string>()->required(),"(string) output folder for output of the algorithm at each iteration")
+        ("intertypeIterations",po::value<uint>(),"(positive integer) number of iterations for intertype communication")
+        ("intratypeIterations",po::value<uint>(),"(positive integer) number of iterations for intratype communication")
         ("timestep",po::value<double>(),"timestep to use for the iteration, the final time is iterationIntracell*iterationIntercell*timestep")
-        ("dissipationModel",po::value<std::string>(),"the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
-        ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
-        ("graphsFilesFolder",po::value<std::string>(),"graphs (pathways or other types of graphs) file folder TODO implement different graphs loading")
-        ("conservationModel",po::value<std::string>(),"the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
-        ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
+        ("dissipationModel",po::value<std::string>(),"(string) the dissipation model for the computation, available models are: 'none (default)','power','random','periodic','scaled' and 'custom'")
+        ("dissipationModelParameters",po::value<std::vector<double>>()->multitoken(),"(string) the parameters for the dissipation model, for the power dissipation indicate the base, for the random dissipation indicate the min and max value, for the periodic dissipation indicate the period")
+        ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder, for an example see in data data/testdata/testHeterogeneousGraph/graphsDifferentStructure")
+        ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
+        ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
+        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)' and 'custom' (not available yet) ")
+        ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
+        ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
+        ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
     ;
-    //TODO add additional parameter for different metapathway(graphs) files
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
+
+    
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-    std::string filename,celltypesFilename,celltypesInteractionFoldername,cellLogFoldMatrixFilename,outputFoldername;
-    uint intercellIterations,intracellIterations;
+    std::string filename,subtypesFilename,typesFilename,typesInteractionFoldername,typesInitialPerturbationMatrixFilename,graphsFilesFolder, typeInitialPerturbationFolderFilename,outputFoldername;
+    uint intertypeIterations,intratypeIterations;
     DissipationModel* dissipationModel = nullptr;
     ConservationModel* conservationModel = nullptr;
+    PropagationModel* propagationModel = nullptr;
     double timestep = 1;
 
     if (vm.count("help")) {
-        //printHelp();
         std::cout << desc << std::endl;
         return 1;
+    }
+
+
+    //controls over impossible configurations
+    if(vm.count("fUniqueGraph") == 0 && vm.count("graphsFilesFolder") == 0){
+        //no unique graph of folder of the graphs was set
+        std::cout << "[ERROR] no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
+        return 1;
+    }
+
+    if(vm.count("fInitialPerturbationPerType") == 0 && vm.count("initialPerturbationPerTypeFolder") == 0){
+        //no way of getting the initial perturbation values
+        std::cout << "[ERROR] no matrix for the initial values was passed as filename or single vector in files contained in the folder specified was set, set one "<<std::endl;
+        return 1;
+    }
+
+    if(vm.count("fInitialPerturbationPerType") && vm.count("graphsFilesFolder")){
+        //unstable configuration of different graphs and single matrix with the same nodes
+        std::cout << "[WARNING] unstable configuration of different graphs and a single matrix with the initial perturbations"<<std::endl;
     }
 
     if(saturation && conservateInitialNorm){
@@ -78,87 +99,116 @@ int main(int argc, char** argv ) {
     }
 
 
-    std::vector<std::string> subcelltypes;
-    if(vm.count("subcelltypes")){
-        std::cout << "[LOG] subcelltypes filename set to "
-    << vm["subcelltypes"].as<std::string>() << ".\n";
-        subcelltypesFilename = vm["subcelltypes"].as<std::string>();
-        subcelltypes = getVectorFromFile<std::string>(subcelltypesFilename);
-    }else{
-        std::cout << "[LOG] subcelltypes filename not set, set to default: all types \n";
-        subcelltypesFilename = "";
+    if(vm.count("graphsFilesFolder") && vm.count("fUniqueGraph")){
+        std::cout << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
+        return 1;
+    }
+    if(vm.count("initialPerturbationPerTypeFolder") && vm.count("fInitialPerturbationPerType")){
+        std::cout << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
+        return 1;
     }
 
-    if (vm.count("intercellIterations")) {
-        std::cout << "[LOG] iterations intercell set to " 
-    << vm["intercellIterations"].as<std::string>() << ".\n";
-        intercellIterations = vm["intercellIterations"].as<uint>();
+    // reading the parameters
+
+    if (vm.count("intertypeIterations")) {
+        std::cout << "[LOG] iterations intertype set to " 
+    << vm["intertypeIterations"].as<uint>() << ".\n";
+        intertypeIterations = vm["intertypeIterations"].as<uint>();
     } else {
-        std::cout << "[LOG] iterations intercell not set, set to default: 10 iterations \n";
-        intercellIterations = 10;
+        std::cout << "[LOG] iterations intertype not set, set to default: 10 iterations \n";
+        intertypeIterations = 10;
     }
 
-    if (vm.count("intracellIterations")) {
-        std::cout << "[LOG] iterations intracell set to " 
-    << vm["intracellIterations"].as<std::string>() << ".\n";
-        intracellIterations = vm["intracellIterations"].as<uint>();
+    if (vm.count("intratypeIterations")) {
+        std::cout << "[LOG] iterations intratype set to " 
+    << vm["intratypeIterations"].as<uint>() << ".\n";
+        intratypeIterations = vm["intratypeIterations"].as<uint>();
     } else {
-        std::cout << "[LOG] iterations intracell not set, set to default: 5 iterations \n";
-        intracellIterations = 5;
+        std::cout << "[LOG] iterations intratype not set, set to default: 5 iterations \n";
+        intratypeIterations = 5;
     }
 
+    //logging timestep settings
     if(vm.count("timestep")){
         std::cout << "[LOG] timestep set to " 
-    << vm["timestep"].as<std::string>() << ".\n";
+    << vm["timestep"].as<double>() << ".\n";
         timestep = vm["timestep"].as<double>();
     } else {
         std::cout << "[LOG] timestep not set, set to default (1)"<<std::endl;
     }
 
+    //logging edges direction in the graphs
+    if(undirected){
+        std::cout << "[LOG] undirectedEdges specified, undirected edges in the graphs"<<std::endl;
+    } else {
+        std::cout << "[LOG] undirectedEdges not specified, directed edges in the graphs(only the edges specified in the graph files will be added)"<<std::endl;
+    }
 
-    if (vm.count("fMETAPATHWAY")) {
-        std::cout << "[LOG] file for the metapathway was set to " 
-    << vm["fMETAPATHWAY"].as<std::string>() << ".\n";
-        filename = vm["fMETAPATHWAY"].as<std::string>();
+    //logging edges direction in the graphs
+    if(undirectedTypeEdges){
+        std::cout << "[LOG] undirectedTypeEdges specified, undirected edges between types"<<std::endl;
+    } else {
+        std::cout << "[LOG] undirectedTypeEdges not specified, directed edges between types"<<std::endl;
+    }
+
+
+    if (vm.count("fUniqueGraph")) {
+        std::cout << "[LOG] file for the graph was set to " 
+    << vm["fUniqueGraph"].as<std::string>() << ".\n";
+        filename = vm["fUniqueGraph"].as<std::string>();
         if(!fileExistsPath(filename)){
-            std::cerr << "[ERROR] file for the metapathway do not exist: aborting"<<std::endl;
+            std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
             return 1;
         }
     } else if(vm.count("graphsFilesFolder")){
-        std::cout << "[ERROR] fMETAPATHWAY or graphsFilesFolder was not set(only one need to be set at least). Aborting\n";
-        return 1;
+        std::cout << "[LOG] folder for the graphs was set to " 
+    << vm["graphsFilesFolder"].as<std::string>() << ".\n";
+        graphsFilesFolder = vm["graphsFilesFolder"].as<std::string>();
+        if(!folderExists(graphsFilesFolder)){
+            std::cerr << "[ERROR] folder for the graphs do not exist: aborting"<<std::endl;
+            return 1;
+        }
     }
-    if (vm.count("fLogfoldPerCell")) {
-        std::cout << "[LOG] file for the logfoldPerCell matrix was set to " 
-    << vm["fLogfoldPerCell"].as<std::string>() << ".\n";
-        cellLogFoldMatrixFilename = vm["fLogfoldPerCell"].as<std::string>();
-        if(!fileExistsPath(cellLogFoldMatrixFilename)){
-            std::cerr << "[ERROR] file for the logfoldPerCell does not exist: aborting"<<std::endl;
+    if (vm.count("fInitialPerturbationPerType")) {
+        std::cout << "[LOG] file for the initialPerturbationPerType matrix was set to " 
+    << vm["fInitialPerturbationPerType"].as<std::string>() << ".\n";
+        typesInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
+        if(!fileExistsPath(typesInitialPerturbationMatrixFilename)){
+            std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
+            return 1;
+        }
+    } else if (vm.count("initialPerturbationPerTypeFolder")) {
+        std::cout << "[LOG] folder for the initialPerturbationPerType was set to "
+    << vm["initialPerturbationPerTypeFolder"].as<std::string>() << ".\n";
+        typeInitialPerturbationFolderFilename = vm["initialPerturbationPerTypeFolder"].as<std::string>();
+        if(!folderExists(typeInitialPerturbationFolderFilename)){
+            std::cerr << "[ERROR] folder for the initialPerturbationPerType do not exist: aborting"<<std::endl;
+            return 1;
+        }
+    }
+
+    if (vm.count("typeInteractionFolder")) {
+        std::cout << "[LOG] folder for the type interactions was set to " 
+    << vm["typeInteractionFolder"].as<std::string>() << ".\n";
+        typesInteractionFoldername = vm["typeInteractionFolder"].as<std::string>();
+        if(!folderExists(typesInteractionFoldername)){
+            std::cerr << "[ERROR] folder for the type interactions do not exist: aborting"<<std::endl;
             return 1;
         }
     } else {
-        std::cerr << "[ERROR] fLogfoldPerCell file was not set. Aborting\n";
-        return 1;
-    }
-    if (vm.count("dirCellInteraction")) {
-        std::cout << "[LOG] folder for the cell interactions was set to " 
-    << vm["dirCellInteraction"].as<std::string>() << ".\n";
-        celltypesInteractionFoldername = vm["dirCellInteraction"].as<std::string>();
-        if(!folderExists(celltypesInteractionFoldername)){
-            std::cerr << "[ERROR] folder for the cell interactions do not exist: aborting"<<std::endl;
-            return 1;
-        }
-    } else {
-        std::cout << "[LOG] dirCellInteraction folder was not set. computing without taking into account cell interactions\n";
+        std::cout << "[LOG] typeInteractionFolder folder was not set. computing without taking into account type interactions\n";
         //TODO
     }
-    if (vm.count("output")) {
+    if (vm.count("outputFolder")) {
         std::cout << "[LOG] output folder  was set to " 
-    << vm["output"].as<std::string>() << ".\n";
-        outputFoldername = vm["output"].as<std::string>();
+    << vm["outputFolder"].as<std::string>() << ".\n";
+        outputFoldername = vm["outputFolder"].as<std::string>();
         if(!folderExists(outputFoldername)){
-            std::cerr << "[ERROR] folder for the output do not exist: aborting"<<std::endl;
-            return 1;
+            std::cerr << "[WARNING] folder for the output do not exist: creating the folder"<<std::endl;
+            if(!createFolder(outputFoldername)){
+                std::cerr << "[ERROR] folder for the output could not be created: aborting"<<std::endl;
+                return 1;
+            }
         }
     } else {
         std::cout << "[LOG] output folder was not set. aborting\n";
@@ -302,6 +352,42 @@ int main(int argc, char** argv ) {
         conservationModel = new ConservationModel([](double time)->double{return 0;});
     }
 
+    std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
+    if(vm.count("propagationModel")){
+        std::cout << "[LOG] propagation model was set to "
+    << vm["propagationModel"].as<std::string>() << ".\n";
+        std::string propagationModelName = vm["propagationModel"].as<std::string>();
+        if(propagationModelName == "none"){
+            std::cout << "[LOG] propagation model set to default (none)\n";
+            //nothing to do, default propagation scaling function is the identity
+        } else if (propagationModelName == "scaled"){
+            if (vm.count("propagationModelParameters")) {
+                std::cout << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
+                //nothing to do, default propagation scaling function is the identity
+            }
+        } else if (propagationModelName == "custom"){
+            std::cout << "not implemented yet\n";
+            return 1;
+            //TODO
+        } else {
+            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled and custom \n";
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] propagation model was not set. set to default (none)\n";
+        //TODO
+    }
+
     //logging if saturation is set and saturation parameters are set
     if (saturation) {
         if(vm.count("saturationTerm") == 0){
@@ -320,175 +406,324 @@ int main(int argc, char** argv ) {
     if(ensembleGeneNames){
         std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
     }
-        auto namesAndEdges = edgesFileToEdgesListAndNodesByName(filename);
-    std::vector<std::string> metapathwayNodes = namesAndEdges.first;
-    WeightedEdgeGraph *metapathway = new WeightedEdgeGraph(metapathwayNodes);
-        for(auto edge = namesAndEdges.second.cbegin() ; edge != namesAndEdges.second.cend(); edge++ ){
-            metapathway->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) );
-        }
-    std::cout << "[LOG] metapathway loaded with " << metapathway->getNumNodes() << " nodes and " << metapathway->getNumEdges() << " edges" << std::endl;
-    std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> logFolds;
-    if(subcelltypes.size()==0){
-        std::cout << "[LOG] no subcelltypes specified, using all the celltypes in the log fold matrix"<<std::endl;
-        logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,ensembleGeneNames);
-    } else {
-        std::cout << "[LOG] subcelltypes specified, using only the celltypes in the log fold matrix that are in the list"<<std::endl;
-        logFolds = logFoldChangeMatrixToCellVectors(cellLogFoldMatrixFilename,metapathwayNodes,subcelltypes,ensembleGeneNames);
-    }
-    std::vector<std::string> geneslogfoldNames = std::get<0>(logFolds);
-    std::vector<std::string> cellTypes = std::get<1>(logFolds);
-    Computation** cellComputations = new Computation*[cellTypes.size()];
-    for(uint i = 0; i < cellTypes.size();i++){
-        std::vector<double> inputCelllogfold = std::get<2>(logFolds)[i];
-        Computation* tmpCompPointer = new Computation(cellTypes[i],inputCelllogfold,metapathway,metapathwayNodes);  //TODO order the genes directly or use the names and set them one by one 
-        tmpCompPointer->setDissipationModel(dissipationModel);
-        tmpCompPointer->setConservationModel(conservationModel);
-        cellComputations[i] = tmpCompPointer;
-        //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-        cellComputations[i]->augmentMetapathwayNoComputeInverse(cellTypes);
-    }
-    std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
-    for(uint i = 0; i < cellTypes.size();i++ ){
-        cellToNodeNames[i] = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();    
-    }
-    auto allFilesInteraction = get_all(celltypesInteractionFoldername,".tsv");
-    for(auto cellInteractionFilename = allFilesInteraction.cbegin() ; cellInteractionFilename != allFilesInteraction.cend() ; cellInteractionFilename++){
-        std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> cellInteractionsEdges;
-        if (subcelltypes.size() == 0) {
-            cellInteractionsEdges  = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename,ensembleGeneNames);
+    //take the types before with another function TODO define function
+    std::vector<std::string> types;
+    if(vm.count("fUniqueGraph")){
+        if(vm.count("fInitialPerturbationPerType")){
+            types = getTypesFromMatrixFile(typesInitialPerturbationMatrixFilename);
+
+        } else if (vm.count("initialPerturbationPerTypeFolder")){
+            types = getTypesFromFolderFileNames(typeInitialPerturbationFolderFilename);
         } else {
-            cellInteractionsEdges = cellInteractionFileToEdgesListAndNodesByName(*cellInteractionFilename, subcelltypes, ensembleGeneNames);
+            std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
+            return 1;
         }
-        //TODO insert edges to the correspondent cell metapathway
-        #pragma omp parallel for
-        for (uint i = 0; i < cellTypes.size();i++) {
-            if(cellInteractionsEdges.contains(cellTypes[i])){
-                cellComputations[i]->addEdges(cellInteractionsEdges[cellTypes[i]]);
-                //cellComputations[i]->freeAugmentedGraphs();
+    } else if (vm.count("graphsFilesFolder")) {
+        types = getTypesFromFolderFileNames(graphsFilesFolder);
+    } else {
+        std::cerr << "[ERROR] no graph file or folder specified: aborting"<<std::endl;
+        return 1;
+    }
+
+    std::vector<std::string> subtypes;
+    if(vm.count("subtypes")){
+        std::cout << "[LOG] subtypes filename set to "
+    << vm["subtypes"].as<std::string>() << ".\n";
+        subtypesFilename = vm["subtypes"].as<std::string>();
+        subtypes = getVectorFromFile<std::string>(subtypesFilename);
+    }else{
+        std::cout << "[LOG] subtypes filename not set, set to default: all types \n";
+        subtypes = types;
+    }
+    
+    //filter types with the subtypes
+    std::vector<std::string> typesFiltered = vectorsIntersection(types, subtypes);
+    if (typesFiltered.size() == 0) {
+        std::cerr << "[ERROR] no types in common between the types and subtypes: aborting"<<std::endl;
+        return 1;
+    }
+    
+    
+    //use the number of types to allocate an array of pointers to contain the graph for every type
+    WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[types.size()];
+    std::vector<std::vector<std::string>> graphsNodes;
+    std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
+    if(vm.count("fUniqueGraph")){
+        namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
+        graphsNodes.push_back(namesAndEdges[0].first);
+        graphs[0] = new WeightedEdgeGraph(graphsNodes[0]);
+        for(uint i = 1; i < types.size(); i++){
+            namesAndEdges.push_back(namesAndEdges[0]);
+            graphsNodes.push_back(namesAndEdges[0].first);
+            graphs[i] = graphs[0];
+        }
+    } else if (vm.count("graphsFilesFolder")) {
+        // TODO get the nodes from the single files
+        auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
+        auto typesFromFolder = allGraphs.first;
+        if(typesFromFolder.size() != types.size()){
+            std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+            return 1;
+        }
+        for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
+            if(typesFromFolder[i] != types[i]){
+                std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+                return 1;
+            }
+        }
+        namesAndEdges = allGraphs.second;
+        for(uint i = 0; i < types.size(); i++){
+            graphsNodes.push_back(namesAndEdges[i].first);
+            graphs[i] = new WeightedEdgeGraph(graphsNodes[i]);
+        }
+    } 
+
+    //add the edges to the graphs
+    if(vm.count("fUniqueGraph")){
+        for(auto edge = namesAndEdges[0].second.cbegin() ; edge != namesAndEdges[0].second.cend(); edge++ ){
+            graphs[0]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) ,!undirected);
+        }
+    } else if (vm.count("graphsFilesFolder")) {
+        for(uint i = 0; i < types.size(); i++){
+            for(auto edge = namesAndEdges[i].second.cbegin() ; edge != namesAndEdges[i].second.cend(); edge++ ){
+                graphs[i]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) ,!undirected);
             }
         }
     }
+
+
+    std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> initialValues;
+    std::vector<std::vector<double>> inputInitials;
+    if(vm.count("fInitialPerturbationPerType")){
+        std::cout << "[LOG] initial perturbation per type specified, using the file "<<typesInitialPerturbationMatrixFilename<<std::endl;
+        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
+    } else if (vm.count("initialPerturbationPerTypeFolder")){
+        std::cout << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
+        initialValues = logFoldChangeCellVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodes,subtypes,ensembleGeneNames);
+    } else {
+        std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
+        return 1;
+    }
+    std::vector<std::string> initialNames = std::get<0>(initialValues);
+    inputInitials = std::get<2>(initialValues);
+    std::vector<std::string> typesFromValues = std::get<1>(initialValues);
+    //this condition should take into account the intersection of the types and the subtypes
+    if(typesFromValues.size() == 0){
+        std::cerr << "[ERROR] types from the initial values folder are 0, control if the types are the same to the one specified in the matrix, in the graphs folder and in the subtypes: aborting"<<std::endl;
+        std::cerr << "[ERROR] types specified(subtypes): ";
+        for(auto type: subtypes)
+            std::cerr << type << " ";
+        std::cerr << std::endl;
+        std::cerr << "[ERROR] types from file(from graphs folder or from matrix): ";
+        for(auto type: types)
+            std::cerr << type << " ";
+        std::cerr << std::endl;
+        std::cerr << "[ERROR] types from values(from initial values folder or from values matrix) intersected with subtypes: ";
+        for(auto type: typesFromValues)
+            std::cerr << type << " ";
+        std::cerr << std::endl;
+        return 1;
+    }
+    auto indexMapGraphTypesToValuesTypes = get_indexmap_vector_values_full(types, typesFromValues);
+    if(indexMapGraphTypesToValuesTypes.size() == 0){
+        std::cerr << "[ERROR] types from folder and types from file do not match even on one instance: aborting"<<std::endl;
+        return 1;
+    }
+
+    Computation** typeComputations = new Computation*[typesFiltered.size()];
+    int indexComputation = 0;
+    std::vector<int> typesIndexes = std::vector<int>(types.size(),-1); 
+    std::vector<int> invertedTypesIndexes = std::vector<int>(typesFiltered.size(),-1); 
+    for(uint i = 0; i < types.size();i++){
+        if(vectorContains(typesFiltered, types[i])){
+            if(indexMapGraphTypesToValuesTypes[i] == -1){
+                std::cout << "[LOG] type "<<types[i]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
+                std::vector<double> input = std::vector<double>(graphsNodes[i].size(),0);
+                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]);   
+                tmpCompPointer->setDissipationModel(dissipationModel);
+                tmpCompPointer->setConservationModel(conservationModel);
+                typeComputations[indexComputation] = tmpCompPointer;
+                //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(typesFiltered);
+            } else {
+                int index = indexMapGraphTypesToValuesTypes[i];
+                std::vector<double> input = inputInitials[index];
+                Computation* tmpCompPointer = new Computation(types[i],input,graphs[i],graphsNodes[i]); 
+                tmpCompPointer->setDissipationModel(dissipationModel);
+                tmpCompPointer->setConservationModel(conservationModel);
+                typeComputations[indexComputation] = tmpCompPointer;
+                //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
+                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(typesFiltered);
+            }
+            typesIndexes[i] = indexComputation;
+            invertedTypesIndexes[indexComputation] = i;
+            indexComputation++;
+        }
+    }
+    std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(typesFiltered.size(),std::vector<std::string>());
+    for(uint i = 0; i < typesFiltered.size();i++ ){
+        typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();    
+    }
+    auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
+    for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
+        std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> typeInteractionsEdges;
+        if (subtypes.size() == 0) {
+            typeInteractionsEdges  = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
+        } else {
+            typeInteractionsEdges = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
+        }
+        #pragma omp parallel for
+        for (uint i = 0; i < types.size();i++) {
+            if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges); // TODO additional case when no inverse is computed (in the future when taking into account the propagation in the network from one node to its neighbors)
+                //typeComputations[i]->freeAugmentedGraphs();
+            }
+        }
+    }
+
+    //TESTING
+    // std::cout<< "[DEBUG] adjacency matrix for type \"2\":"<<std::endl;
+    // int index = -1;
+    // for(int i = 0; i < SizeToInt(types.size());i++){
+    //     if(types[i] == "2"){
+    //         index = i;
+    //         break;
+    //     }
+    // }
+    // typeComputations[index]->getAugmentedMetapathway()->adjMatrix.printMatrix();
+    // std::cout<< "[DEBUG] input vector for type \"2\":"<<std::endl;
+    // std::vector<double> input = typeComputations[index]->getInputAugmented();
+    // for(int i = 0; i < SizeToInt(input.size());i++){
+    //     //std::cout << typeComputations[index]->getInput()[i] << ", ";
+    //     std::cout << input[i] << ", ";
+    // }
+    // std::cout <<  ")\n";
+    //TESTING
 
 
     //freeing some data structures inside computation to consume less RAM
-    // std::vector<std::vector<std::string>> cellToNodeNames = std::vector<std::vector<std::string>>(cellTypes.size(),std::vector<std::string>());
-    // for(uint i = 0; i < cellTypes.size();i++ ){
-    //     cellToNodeNames[i] = cellComputations[i]->getAugmentedMetapathway()->getNodeNames();  
-    //     cellComputations[i]->freeAugmentedGraphs();  
+    // std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
+    // for(uint i = 0; i < types.size();i++ ){
+    //     typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();  
+    //     typeComputations[i]->freeAugmentedGraphs();  
     // }
 
-    // EndCelltype -> (sourceCellType -> value)
+    // EndTypetype -> (sourceTypeType -> value)
 
-    uint iterationIntercell = 0;
-    while(iterationIntercell < intercellIterations){
+    uint iterationIntertype = 0;
+    while(iterationIntertype < intertypeIterations){
         //computation of perturbation
-        uint iterationIntracell = 0;
-        //intracell iteration with no passing of values to the virtual nodes
-        while (iterationIntracell < intracellIterations) {
+        uint iterationIntratype = 0;
+        //intratype iteration with no passing of values to the virtual nodes
+        while (iterationIntratype < intratypeIterations) {
             #pragma omp parallel for
-            for(uint i = 0; i < cellTypes.size(); i++){
-                std::vector<std::string> nodeNames = cellToNodeNames[i];
-                std::cout << "[LOG] computation of perturbation for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl; 
+            for(uint i = 0; i < typesFiltered.size(); i++){
+                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl; 
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntercell*intracellIterations + iterationIntracell)*timestep, saturation = true); // TODO check if iteration intracell should be multiplied by iteration intercell
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                     } else if (vm.count("saturationTerm") >= 1) {
                         //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
-                        std::vector<double> saturationVector = std::vector<double>(metapathwayNodes.size(),saturationTerm);
-                        std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntercell*intracellIterations + iterationIntracell)*timestep, saturation = true, saturationVector); // TODO check if iteration intracell should be multiplied by iteration intercell
+                        //TODO TEST
+                        std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
+                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
                     }
                 } else{
-                    std::vector<double> outputValues = cellComputations[i]->computeAugmentedPerturbationEnhanced2(iterationIntercell*intracellIterations + iterationIntracell, saturation = false); // TODO check if iteration intracell should be multiplied by iteration intercell
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
+                    //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                 }
             }
             //save output values
-            for(uint i = 0; i < cellTypes.size(); i++){
-                std::vector<std::string> nodeNames = cellToNodeNames[i];
-                //TODO change how to save files to get more information about intracell and intercell iterations
-                saveNodeValues(outputFoldername, iterationIntercell*intracellIterations + iterationIntracell, cellTypes[i], cellComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+            for(uint i = 0; i < typesFiltered.size(); i++){
+                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                //TODO change how to save files to get more information about intratype and intertype iterations
+                saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, typesFiltered[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
             }
             // std::cout<< "[DEBUG] output values before updating input"<<std::endl;
-            // for(uint i = 0; i < cellTypes.size(); i++){
-            //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-            //     for(uint j = 0; j < cellComputations[i]->getOutputAugmented().size(); j++){
-            //         std::cout << cellComputations[i]->getOutputAugmented()[j] << " ";
+            // for(uint i = 0; i < types.size(); i++){
+            //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+            //     for(uint j = 0; j < typeComputations[i]->getOutputAugmented().size(); j++){
+            //         std::cout << typeComputations[i]->getOutputAugmented()[j] << " ";
             //     }
             //     std::cout << std::endl;
             // }
             //update input
-            for(uint i = 0; i < cellTypes.size(); i++){
+            for(uint i = 0; i < typesFiltered.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
                 if (conservateInitialNorm) {
-                    std::vector<double> inputInitial = std::get<2>(logFolds)[i];
+                    std::vector<double> inputInitial = inputInitials[i];
                     double initialNorm = vectorNorm(inputInitial);
-                    double outputNorm = vectorNorm(cellComputations[i]->getOutputAugmented());
+                    double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
                     double normRatio = initialNorm/outputNorm;
-                    std::vector<double> newInput = vectorScalarMultiplication(cellComputations[i]->getOutputAugmented(),normRatio);
-                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl;
-                    cellComputations[i]->updateInput(newInput,true);
+                    std::vector<double> newInput = vectorScalarMultiplication(typeComputations[i]->getOutputAugmented(),normRatio);
+                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    typeComputations[i]->updateInput(newInput,true);
                 } else {
-                    std::cout << "[LOG] update input for iteration intercell-intracell ("+ std::to_string(iterationIntercell) + "<->"+ std::to_string(iterationIntracell) + ") for cell (" + cellTypes[i]<<std::endl;
-                    cellComputations[i]->updateInput(std::vector<double>(),true);
+                    std::cout << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    typeComputations[i]->updateInput(std::vector<double>(),true);
                 }
                 
             }
             // std::cout<< "[DEBUG] input values after updating input"<<std::endl;
-            // for(uint i = 0; i < cellTypes.size(); i++){
-            //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-            //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-            //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+            // for(uint i = 0; i < types.size(); i++){
+            //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+            //     for(uint j = 0; j < typeComputations[i]->getInputAugmented().size(); j++){
+            //         std::cout << typeComputations[i]->getInputAugmented()[j] << " ";
             //     }
             //     std::cout << std::endl;
             // }
-            iterationIntracell++;
+            iterationIntratype++;
         }
         //update input with virtual node values update
         
         // std::cout<< "[DEBUG] input values before updating with virtual"<<std::endl;
-        // for(uint i = 0; i < cellTypes.size(); i++){
-        //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-        //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-        //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+        // for(uint i = 0; i < types.size(); i++){
+        //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+        //     for(uint j = 0; j < typeComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << typeComputations[i]->getInputAugmented()[j] << " ";
         //     }
         //     std::cout << std::endl;
         // }
 
-        for (uint i = 0; i < cellTypes.size(); i++) {
-            //queuesCellTypes[i] = cellComputations[i]->computeAugmentedPerturbation();
-            //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent cells to finish
+        for (uint i = 0; i < typesFiltered.size(); i++) {
+            //queuesTypeTypes[i] = typeComputations[i]->computeAugmentedPerturbation();
+            //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent types to finish
             //also take into account REpast framework
-            for(uint j = 0; j < cellTypes.size(); j++){
+            for(uint j = 0; j < typesFiltered.size(); j++){
                 if(i==j){
-                    if(sameCellCommunication) cellComputations[i]->setInputVinForCell(cellTypes[j], cellComputations[j]->getVirtualOutputForCell(cellTypes[i]));
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
                 } else {
-                    cellComputations[i]->setInputVinForCell(cellTypes[j], cellComputations[j]->getVirtualOutputForCell(cellTypes[i]));
+                    typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
                 }
             }
         }
         // std::cout<< "[DEBUG] input values after updating with virtual"<<std::endl;
-        // for(uint i = 0; i < cellTypes.size(); i++){
-        //     std::cout << "[DEBUG] cell " << cellTypes[i] << " values: ";
-        //     for(uint j = 0; j < cellComputations[i]->getInputAugmented().size(); j++){
-        //         std::cout << cellComputations[i]->getInputAugmented()[j] << " ";
+        // for(uint i = 0; i < types.size(); i++){
+        //     std::cout << "[DEBUG] type " << types[i] << " values: ";
+        //     for(uint j = 0; j < typeComputations[i]->getInputAugmented().size(); j++){
+        //         std::cout << typeComputations[i]->getInputAugmented()[j] << " ";
         //     }
         //     std::cout << std::endl;
         // }
 
         
-        iterationIntercell++;
+        iterationIntertype++;
 
     }
     
 
 
     //cleaning memory
-    // for(uint i = 0; i< cellTypes.size(); i++){
-    //     delete cellComputations[i];
+    // for(uint i = 0; i< types.size(); i++){
+    //     delete typeComputations[i];
     // }
-    // delete [] cellComputations;
-    //delete metapathway
+    // delete [] typeComputations;
+    //delete graph
     
 
     
