@@ -2,6 +2,7 @@
 
 #include "DissipationModel.h"
 #include "ConservationModel.h"
+#include "PropagationModel.hxx"
 #include "Matrix.h"
 #include "WeightedEdgeGraph.h"
 #include <map>
@@ -25,6 +26,7 @@ class Computation{
         std::map<std::string,int> nodeToIndex;
         DissipationModel* dissipationModel=nullptr;
         ConservationModel* conservationModel=nullptr;
+        PropagationModel* propagationModel=nullptr;
     public:
         Computation();
         ~Computation();
@@ -73,6 +75,7 @@ class Computation{
         std::vector<double> computeAugmentedPerturbationEnhanced1(double timeStep, bool saturation = true, const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) and dissipation after every iteration
         std::vector<double> computeAugmentedPerturbationEnhanced2(double timeStep, bool saturation = true, const std::vector<double>& saturationsVector = std::vector<double>(),const std::vector<double>& qVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling), dissipation and conservation after every iteration
         std::vector<double> computeAugmentedPerturbationEnhanced3(double timeStep, bool saturation = true, const std::vector<double>& saturationsVector = std::vector<double>(),const std::vector<double>& qVector = std::vector<double>(), std::function<double(double)> propagationScaleFunction = [](double time)-> double{return 1.0;}); //taking into account scaling
+        std::vector<double> computeAugmentedPerturbationEnhanced4(double timeStep, bool saturation = true, const std::vector<double>& saturationsVector = std::vector<double>(),const std::vector<double>& qVector = std::vector<double>()); //all the models
         std::pair<std::string,double> getMapVirtualOutputsToCellInputs(); //TODO
         void updateInput(const std::vector<double>& newInp = std::vector<double>(), bool augmented = false);
 
@@ -99,6 +102,7 @@ class Computation{
         void setInputVoutForCell(std::string celltype, double value);
         void setDissipationModel(DissipationModel* dissipationModel);
         void setConservationModel(ConservationModel* conservationModel);
+        void setPropagationModel(PropagationModel* propagationModel);
 
         //optimization
         void freeAugmentedGraphs();

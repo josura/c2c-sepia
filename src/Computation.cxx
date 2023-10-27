@@ -443,13 +443,13 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced3(double ti
             saturationVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
         }
         if(saturationVectorVar.size() != InputAugmentedArma.n_elem ){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: saturationVector is not of the same size as output vector. abort");
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: saturationVector is not of the same size as output vector. abort");
         }
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
         if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: augmentedMetapathway is not set. abort");
         }
         arma::Col<double> outputArma = pseudoInverseAugmentedArma * dissipatedPerturbationArma * propagationScaleFunction(timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
@@ -464,7 +464,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced3(double ti
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
         if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: augmentedMetapathway is not set. abort");
         }
         arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
         arma::Col<double> outputArma = pseudoInverseAugmentedArma * dissipatedPerturbationArma * propagationScaleFunction(timeStep) - conservationVector;
@@ -472,6 +472,46 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced3(double ti
         return outputAugmented;
     }
 }
+
+
+std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double timeStep, bool saturation, const std::vector<double>& saturationsVector, const std::vector<double>& qVector){
+    if (saturation) {
+        std::vector<double> saturationVectorVar = saturationsVector;
+        std::vector<double> qVectorVar = qVector;
+        if(saturationVectorVar.size() == 0){
+            saturationVectorVar = std::vector<double>(InputAugmentedArma.n_elem,1);
+        }
+        if(saturationVectorVar.size() != InputAugmentedArma.n_elem ){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: saturationVector is not of the same size as output vector. abort");
+        }
+        //dissipation
+        arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
+        //conservation
+        if(augmentedMetapathway == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedMetapathway is not set. abort");
+        }
+        arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
+        //saturation
+        for(uint i = 0;i<outputArma.n_elem;i++){
+            double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
+            outputArma[i] = saturatedValue;
+        }
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
+    } else {
+        //dissipation
+        arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
+        //conservation
+        if(augmentedMetapathway == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedMetapathway is not set. abort");
+        }
+        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
+        arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationVector;
+        outputAugmented = armaColumnToVector(outputArma);
+        return outputAugmented;
+    }
+}
+
         
 
 double Computation::getVirtualInputForCell(std::string celltype)const{
@@ -513,6 +553,10 @@ void Computation::setDissipationModel(DissipationModel *dissipationModel){
 
 void Computation::setConservationModel(ConservationModel *conservationModel){
     this->conservationModel = conservationModel;
+}
+
+void Computation::setPropagationModel(PropagationModel *propagationModel){
+    this->propagationModel = propagationModel;
 }
 
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
