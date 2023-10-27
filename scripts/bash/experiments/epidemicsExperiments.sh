@@ -34,7 +34,7 @@ for dissipationScaleFactor in ${listDissipationScaleFactors[@]}; do
             --typeInteractionFolder $typeInteractionsFolder \
             --dissipationModel scaled \
             --dissipationModelParameters $dissipationScaleFactor \
-            --propagationModel scaled \
+            --propagationModel neighbors \
             --propagationModelParameters $propagationScaleFactor \
             --saturation \
             --undirectedEdges \
