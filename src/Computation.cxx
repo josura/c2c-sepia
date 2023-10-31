@@ -18,79 +18,79 @@ Computation::Computation(){
     input=std::vector<double>();
     output=std::vector<double>();
     localCellType = "";
-    metapathway = new WeightedEdgeGraph();
-    augmentedMetapathway = new WeightedEdgeGraph();
+    graph = new WeightedEdgeGraph();
+    augmentedGraph = new WeightedEdgeGraph();
     cellTypes = std::vector<std::string>();
 }
 
 Computation::~Computation(){
-    if(metapathway) {delete metapathway; metapathway=nullptr;}
-    if(augmentedMetapathway) {delete augmentedMetapathway; augmentedMetapathway=nullptr;}
+    if(graph) {delete graph; graph=nullptr;}
+    if(augmentedGraph) {delete augmentedGraph; augmentedGraph=nullptr;}
 }
 
 Computation::Computation(std::string _thisCellType,const std::vector<double>& _input){
     input=_input;
     output=std::vector<double>();
     localCellType = _thisCellType;
-    metapathway = new WeightedEdgeGraph();
-    augmentedMetapathway = new WeightedEdgeGraph();
+    graph = new WeightedEdgeGraph();
+    augmentedGraph = new WeightedEdgeGraph();
     cellTypes = std::vector<std::string>();
 }
 
 
-Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& metapathwayNames){
+Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& graphNames){
     input=_input;
     output=std::vector<double>();
     localCellType = _thisCellType;
-    metapathway = new WeightedEdgeGraph(_W);
-    augmentedMetapathway = new WeightedEdgeGraph();
-    metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
+    graph = new WeightedEdgeGraph(_W);
+    augmentedGraph = new WeightedEdgeGraph();
+    graph->setNodesNames(graphNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
     cellTypes = std::vector<std::string>();
 
 
-    std::vector<double> normalizationFactors(metapathway->getNumNodes(),0);
-    for (int i = 0; i < metapathway->getNumNodes(); i++) {
-        for(int j = 0; j < metapathway->getNumNodes();j++){
-            normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
+    std::vector<double> normalizationFactors(graph->getNumNodes(),0);
+    for (int i = 0; i < graph->getNumNodes(); i++) {
+        for(int j = 0; j < graph->getNumNodes();j++){
+            normalizationFactors[i] += std::abs(graph->getEdgeWeight(i,j)); 
         }
     }
-    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransArma = graph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     
-    arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
+    arma::Mat<double> IdentityArma = arma::eye(graph->getNumNodes(),graph->getNumNodes());
     
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     armaInitializedNotAugmented = true;
 }
 
-Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _metapathway, const std::vector<std::string>& metapathwayNames){
+Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _graph, const std::vector<std::string>& graphNames){
     input=_input;
     output=std::vector<double>();
     localCellType = _thisCellType;
-    metapathway = _metapathway;
-    augmentedMetapathway = new WeightedEdgeGraph();
-    metapathway->setNodesNames(metapathwayNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
+    graph = _graph;
+    augmentedGraph = new WeightedEdgeGraph();
+    graph->setNodesNames(graphNames); //With default selection of the node names to change(all the nodes in the order established by the matrix rows and columns)
     cellTypes = std::vector<std::string>();
 
 
-    std::vector<double> normalizationFactors(metapathway->getNumNodes(),0);
-    for (int i = 0; i < metapathway->getNumNodes(); i++) {
-        for(int j = 0; j < metapathway->getNumNodes();j++){
-            normalizationFactors[i] += std::abs(metapathway->getEdgeWeight(i,j)); 
+    std::vector<double> normalizationFactors(graph->getNumNodes(),0);
+    for (int i = 0; i < graph->getNumNodes(); i++) {
+        for(int j = 0; j < graph->getNumNodes();j++){
+            normalizationFactors[i] += std::abs(graph->getEdgeWeight(i,j)); 
         }
     }
-    arma::Mat<double> WtransArma = metapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+    arma::Mat<double> WtransArma = graph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     
-    arma::Mat<double> IdentityArma = arma::eye(metapathway->getNumNodes(),metapathway->getNumNodes());
+    arma::Mat<double> IdentityArma = arma::eye(graph->getNumNodes(),graph->getNumNodes());
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
-    // std::cout << "[LOG] computing pseudoinverse for metapathway cell : " + localCellType << std::endl;
+    // std::cout << "[LOG] computing pseudoinverse for graph cell : " + localCellType << std::endl;
     // pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     // armaInitializedNotAugmented = true;
 }
 
-void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
-    if(augmentedMetapathway) {
-        delete augmentedMetapathway;
+void Computation::augmentGraph(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
+    if(augmentedGraph) {
+        delete augmentedGraph;
     }
     try {
         std::vector<std::string> tmpcelltypes;
@@ -108,46 +108,46 @@ void Computation::augmentMetapathway(const std::vector<std::string>& _celltypes,
             virtualNodes[i] = "v-in:" + cellTyp;
             virtualNodes.push_back("v-out:" + cellTyp);
         }
-        augmentedMetapathway = metapathway->addNodesAndCopyNew(virtualNodes);
+        augmentedGraph = graph->addNodesAndCopyNew(virtualNodes);
         for(uint it = 0; it < newEdgesList.size(); it++){
             std::string node1Name = newEdgesList[it].first; 
             std::string node2Name = newEdgesList[it].second;
             double edgeWeight = newEdgesValue[it];
 
-            augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+            augmentedGraph->addEdge(node1Name,node2Name, edgeWeight);
         }
-        std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
-        for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
-            for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
+        std::vector<double> normalizationFactors(augmentedGraph->getNumNodes(),0);
+        for (int i = 0; i < augmentedGraph->getNumNodes(); i++) {
+            for(int j = 0; j < augmentedGraph->getNumNodes();j++){
+                double betaToAdd = std::abs(augmentedGraph->getEdgeWeight(i,j));
                 normalizationFactors[i] += betaToAdd; 
             }
         }
-        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedGraph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         
-        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedGraph->getNumNodes(),augmentedGraph->getNumNodes());
         inputAugmented = input;
         for(uint i = 0; i < tmpcelltypes.size()*2; i++){
             inputAugmented.push_back(0.0);
         }
         InputAugmentedArma = arma::Col<double>(inputAugmented);
-        std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        std::cout << "[LOG] computing pseudoinverse for augmented graph cell : " + localCellType << std::endl;
         pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         armaInitializedAugmented = true;
 
 
         //get nodeToIndex map as well
-        nodeToIndex = augmentedMetapathway->getNodeToIndexMap();
+        nodeToIndex = augmentedGraph->getNodeToIndexMap();
     } catch (...) {
-        std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
+        std::cerr<< "[ERROR] Computation::augmentGraph: catch section";
         return;
     }
 }
 
-void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
-    if(augmentedMetapathway) {
-        delete augmentedMetapathway;
+void Computation::augmentGraphNoComputeInverse(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
+    if(augmentedGraph) {
+        delete augmentedGraph;
     }
     try {
         std::vector<std::string> tmpcelltypes;
@@ -155,7 +155,6 @@ void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::stri
             for (uint i = 0; i < _celltypes.size(); i++) {
                 if(_celltypes[i] != localCellType) tmpcelltypes.push_back(_celltypes[i]);
             }
-            
         } else {
             tmpcelltypes = _celltypes;
         }
@@ -166,47 +165,47 @@ void Computation::augmentMetapathwayNoComputeInverse(const std::vector<std::stri
             virtualNodes[i] = "v-in:" + cellTyp;
             virtualNodes.push_back("v-out:" + cellTyp);
         }
-        augmentedMetapathway = metapathway->addNodesAndCopyNew(virtualNodes);
+        augmentedGraph = graph->addNodesAndCopyNew(virtualNodes);
         for(uint it = 0; it < newEdgesList.size(); it++){
             std::string node1Name = newEdgesList[it].first; 
             std::string node2Name = newEdgesList[it].second;
             double edgeWeight = newEdgesValue[it];
 
-            augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+            augmentedGraph->addEdge(node1Name,node2Name, edgeWeight);
         }
-        std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
-        for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
-            for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-                double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
+        std::vector<double> normalizationFactors(augmentedGraph->getNumNodes(),0);
+        for (int i = 0; i < augmentedGraph->getNumNodes(); i++) {
+            for(int j = 0; j < augmentedGraph->getNumNodes();j++){
+                double betaToAdd = std::abs(augmentedGraph->getEdgeWeight(i,j));
                 normalizationFactors[i] += betaToAdd; 
             }
         }
 
-        // std::cout << "[LOG + TESTING] normalization factors for augmented metapathway cell : " + localCellType << std::endl;
+        // std::cout << "[LOG + TESTING] normalization factors for augmented graph cell : " + localCellType << std::endl;
         // printVector(normalizationFactors);
-        // std::cout << "[LOG + TESTING] augmented metapathway matrix : " + localCellType << std::endl;
-        // augmentedMetapathway->adjMatrix.printMatrix();
-        // std::cout << "[LOG + TESTING] augmented metapathway matrix transposed : " + localCellType << std::endl;
-        // augmentedMetapathway->adjMatrix.transpose().printMatrix();
-        // std::cout << "[LOG + TESTING] augmented metapathway matrix transposed normalized : " + localCellType << std::endl;
-        // augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).printMatrix();
-        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+        // std::cout << "[LOG + TESTING] augmented graph matrix : " + localCellType << std::endl;
+        // augmentedGraph->adjMatrix.printMatrix();
+        // std::cout << "[LOG + TESTING] augmented graph matrix transposed : " + localCellType << std::endl;
+        // augmentedGraph->adjMatrix.transpose().printMatrix();
+        // std::cout << "[LOG + TESTING] augmented graph matrix transposed normalized : " + localCellType << std::endl;
+        // augmentedGraph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).printMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedGraph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
         
-        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedGraph->getNumNodes(),augmentedGraph->getNumNodes());
         inputAugmented = input;
         for(uint i = 0; i < tmpcelltypes.size()*2; i++){
             inputAugmented.push_back(0.0);
         }
         InputAugmentedArma = arma::Col<double>(inputAugmented);
-        // std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        // std::cout << "[LOG] computing pseudoinverse for augmented graph cell : " + localCellType << std::endl;
         // pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         // armaInitializedAugmented = true;
 
         //get nodeToIndex map as well
-        nodeToIndex = augmentedMetapathway->getNodeToIndexMap();
+        nodeToIndex = augmentedGraph->getNodeToIndexMap();
     } catch (...) {
-        std::cerr<< "[ERROR] Computation::augmentMetapathway: catch section";
+        std::cerr<< "[ERROR] Computation::augmentGraph: catch section";
         return;
     }
 }
@@ -219,22 +218,22 @@ void Computation::addEdges(const std::vector<std::pair<std::string,std::string>>
         std::string node2Name = it->second;
         double edgeWeight = newEdgesValues[itVal++];
         if (bothDirections) {
-            augmentedMetapathway->addEdge(node2Name,node1Name, edgeWeight);
+            augmentedGraph->addEdge(node2Name,node1Name, edgeWeight);
         }
-        augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+        augmentedGraph->addEdge(node1Name,node2Name, edgeWeight);
     }
-    std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
-    for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
-        for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
+    std::vector<double> normalizationFactors(augmentedGraph->getNumNodes(),0);
+    for (int i = 0; i < augmentedGraph->getNumNodes(); i++) {
+        for(int j = 0; j < augmentedGraph->getNumNodes();j++){
+            double betaToAdd = std::abs(augmentedGraph->getEdgeWeight(i,j));
             normalizationFactors[i] += betaToAdd; 
         }
     }
     if(inverseComputation){
-        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedGraph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
-        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
-        std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedGraph->getNumNodes(),augmentedGraph->getNumNodes());
+        std::cout << "[LOG] computing pseudoinverse for augmented graph cell : " + localCellType << std::endl;
         pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         armaInitializedAugmented = true;
     }
@@ -248,22 +247,22 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
         std::string node2Name = std::get<1>(*it);
         double edgeWeight = std::get<2>(*it);
         if (bothDirections) {
-            augmentedMetapathway->addEdge(node2Name,node1Name, edgeWeight);
+            augmentedGraph->addEdge(node2Name,node1Name, edgeWeight);
         }
-        augmentedMetapathway->addEdge(node1Name,node2Name, edgeWeight);
+        augmentedGraph->addEdge(node1Name,node2Name, edgeWeight);
     }
-    std::vector<double> normalizationFactors(augmentedMetapathway->getNumNodes(),0);
-    for (int i = 0; i < augmentedMetapathway->getNumNodes(); i++) {
-        for(int j = 0; j < augmentedMetapathway->getNumNodes();j++){
-            double betaToAdd = std::abs(augmentedMetapathway->getEdgeWeight(i,j));
+    std::vector<double> normalizationFactors(augmentedGraph->getNumNodes(),0);
+    for (int i = 0; i < augmentedGraph->getNumNodes(); i++) {
+        for(int j = 0; j < augmentedGraph->getNumNodes();j++){
+            double betaToAdd = std::abs(augmentedGraph->getEdgeWeight(i,j));
             normalizationFactors[i] += betaToAdd; 
         }
     }
     if(inverseComputation){
-        arma::Mat<double> WtransAugmentedArma = augmentedMetapathway->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
+        arma::Mat<double> WtransAugmentedArma = augmentedGraph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
         //TODO normalization by previous weight nodes for the matrix
-        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedMetapathway->getNumNodes(),augmentedMetapathway->getNumNodes());
-        std::cout << "[LOG] computing pseudoinverse for augmented metapathway cell : " + localCellType << std::endl;
+        arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedGraph->getNumNodes(),augmentedGraph->getNumNodes());
+        std::cout << "[LOG] computing pseudoinverse for augmented graph cell : " + localCellType << std::endl;
         pseudoInverseAugmentedArma = arma::pinv(IdentityAugmentedArma - WtransAugmentedArma);
         armaInitializedAugmented = true;
     }
@@ -410,10 +409,10 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
-        if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
+        if(augmentedGraph == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedGraph is not set. abort");
         }
-        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
+        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
         for(uint i = 0;i<outputArma.n_elem;i++){
             double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
@@ -425,10 +424,10 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced2(double ti
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
-        if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedMetapathway is not set. abort");
+        if(augmentedGraph == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced2: augmentedGraph is not set. abort");
         }
-        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
+        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
         arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipatedPerturbationArma - conservationVector;
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
@@ -448,10 +447,10 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced3(double ti
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
-        if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: augmentedMetapathway is not set. abort");
+        if(augmentedGraph == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: augmentedGraph is not set. abort");
         }
-        arma::Col<double> outputArma = pseudoInverseAugmentedArma * dissipatedPerturbationArma * propagationScaleFunction(timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
+        arma::Col<double> outputArma = pseudoInverseAugmentedArma * dissipatedPerturbationArma * propagationScaleFunction(timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
         for(uint i = 0;i<outputArma.n_elem;i++){
             double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
@@ -463,10 +462,10 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced3(double ti
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
-        if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: augmentedMetapathway is not set. abort");
+        if(augmentedGraph == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced3: augmentedGraph is not set. abort");
         }
-        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
+        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
         arma::Col<double> outputArma = pseudoInverseAugmentedArma * dissipatedPerturbationArma * propagationScaleFunction(timeStep) - conservationVector;
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
@@ -487,10 +486,10 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
-        if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedMetapathway is not set. abort");
+        if(augmentedGraph == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedGraph is not set. abort");
         }
-        arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
+        arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
         for(uint i = 0;i<outputArma.n_elem;i++){
             double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
@@ -502,10 +501,10 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
         //dissipation
         arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
         //conservation
-        if(augmentedMetapathway == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedMetapathway is not set. abort");
+        if(augmentedGraph == nullptr){
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedGraph is not set. abort");
         }
-        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedMetapathway->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
+        arma::Col<double> conservationVector = conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()), timeStep, qVector);
         arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationVector;
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
@@ -527,8 +526,8 @@ double Computation::getVirtualOutputForCell(std::string celltype)const{
 }
 
 void Computation::setInputVinForCell(std::string celltype, double value){
-    //TODO if the augmented metapathway is deleted, switch to a direct map saved before deleting the metapathway
-    //int index = augmentedMetapathway->getIndexFromName("v-in:" + celltype);
+    //TODO if the augmented graph is deleted, switch to a direct map saved before deleting the graph
+    //int index = augmentedGraph->getIndexFromName("v-in:" + celltype);
     int index = nodeToIndex.at("v-in:" + celltype);
     if(index > 0) {
         inputAugmented[index]=value;
@@ -538,7 +537,7 @@ void Computation::setInputVinForCell(std::string celltype, double value){
 
 }
 void Computation::setInputVoutForCell(std::string celltype, double value){
-    //int index = augmentedMetapathway->getIndexFromName("v-out:" + celltype);
+    //int index = augmentedGraph->getIndexFromName("v-out:" + celltype);
     int index = nodeToIndex.at("v-out:" + celltype);
     if(index > 0) {
         inputAugmented[index]=value;
@@ -587,8 +586,8 @@ void Computation::updateInput(const std::vector<double>& newInp, bool augmented)
 
 
 Computation& Computation::operator=( const Computation& rhs){
-    metapathway =  rhs.getMetapathway()->copyNew();
-    augmentedMetapathway =  rhs.getAugmentedMetapathway()->copyNew();
+    graph =  rhs.getGraph()->copyNew();
+    augmentedGraph =  rhs.getAugmentedGraph()->copyNew();
     input = rhs.getInput();
     output = rhs.getOutput();
     inputAugmented = rhs.getInputAugmented();
@@ -610,16 +609,16 @@ Computation Computation::copy()const{
 
 void Computation::assign(const Computation & rhs){
     //delete old data in dynamic memory
-    if(metapathway){
-        delete metapathway;
-        metapathway = nullptr;
-    }if(augmentedMetapathway){
-        delete augmentedMetapathway;
-        augmentedMetapathway = nullptr;
+    if(graph){
+        delete graph;
+        graph = nullptr;
+    }if(augmentedGraph){
+        delete augmentedGraph;
+        augmentedGraph = nullptr;
     }
     //copy and allocate new structures
-    metapathway =  rhs.getMetapathway()->copyNew();
-    augmentedMetapathway =  rhs.getAugmentedMetapathway()->copyNew();
+    graph =  rhs.getGraph()->copyNew();
+    augmentedGraph =  rhs.getAugmentedGraph()->copyNew();
     input = rhs.getInput();
     output = rhs.getOutput();
     inputAugmented = rhs.getInputAugmented();
@@ -636,6 +635,6 @@ void Computation::assign(const Computation & rhs){
 
 // optimization
 void Computation::freeAugmentedGraphs(){
-    nodeToIndex = augmentedMetapathway->getNodeToIndexMap();
-    delete augmentedMetapathway;
+    nodeToIndex = augmentedGraph->getNodeToIndexMap();
+    delete augmentedGraph;
 }

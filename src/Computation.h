@@ -14,8 +14,8 @@
 class Computation{
     private:
         std::vector<double> input,output,inputAugmented,outputAugmented;
-        WeightedEdgeGraph* metapathway;
-        WeightedEdgeGraph* augmentedMetapathway;
+        WeightedEdgeGraph* graph;
+        WeightedEdgeGraph* augmentedGraph;
         std::vector<std::string> cellTypes;
         std::string localCellType;
         bool armaInitializedNotAugmented = false, armaInitializedAugmented = false;
@@ -38,9 +38,9 @@ class Computation{
         @param std::string _thisCellType: the celltype of this computation, this information will be used as the unique name for the Agent
         @param const std::vector<double>& _input: input vector of the nodes values, initially the one passed in the input
         @param const Matrix<double>& _W: the adjacency matrix along the values of every edge in the graph that it represents
-        @param const std::vector<std::string>& metapathwayNames: the graph nodes names, in order defined by the adjacency matrix
+        @param const std::vector<std::string>& graphNames: the graph nodes names, in order defined by the adjacency matrix
         */
-        Computation(std::string _thisCellType,const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& metapathwayNames);
+        Computation(std::string _thisCellType,const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& graphNames);
 
 
         /*
@@ -49,23 +49,23 @@ class Computation{
         @param std::string _thisCellType: the celltype of this computation, this information will be used as the unique name for the Agent
         @param const std::vector<double>& _input: input vector of the nodes values, initially the one passed in the input
         @param const Matrix<double>& _W: the adjacency matrix along the values of every edge in the graph that it represents
-        @param const std::vector<std::string>& metapathwayNames: the graph nodes names, in order defined by the adjacency matrix
+        @param const std::vector<std::string>& graphNames: the graph nodes names, in order defined by the adjacency matrix
         */
-        Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _metapathway, const std::vector<std::string>& metapathwayNames);
+        Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _graph, const std::vector<std::string>& graphNames);
         
         /*
-        Augment the metapathway with celltypes and a new set of edges from virtual nodes in the augmented metapathway to the metapathway(virtual inputs and virtual outputs) 
+        Augment the graph with celltypes and a new set of edges from virtual nodes in the augmented graph to the graph(virtual inputs and virtual outputs) 
         @param const std::vector<std::string>& _cellTypes: the celltypes other than this celltype, the other agents in the network
         @param 
         */
-        void augmentMetapathway(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
-        void augmentMetapathwayNoComputeInverse(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
+        void augmentGraph(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
+        void augmentGraphNoComputeInverse(const std::vector<std::string>&,const std::vector<std::pair<std::string,std::string>>& newEdgesList =std::vector<std::pair<std::string,std::string>>(), const std::vector<double>& newEdgesValue = std::vector<double>(), bool includeSelfVirtual=false);
         void addEdges(const std::vector<std::pair<std::string,std::string>>& , const std::vector<double>& , bool bothDirections = false, bool inverseComputation = true);
         void addEdges(const std::vector<std::tuple<std::string,std::string,double>>&  , bool bothDirections = false, bool inverseComputation = true);
         void addEdges(const std::vector<std::pair<int,int>>& , const std::vector<double>& , bool bothDirections = false, bool inverseComputation = true);
         void addEdges(const std::vector<std::tuple<int,int,double>>&  , bool bothDirections = false, bool inverseComputation = true);
         std::vector<double> computePerturbation();
-        std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented metapathway
+        std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented graph
         std::vector<double> computeAugmentedPerturbationNorm(); //taking into account normalization
         std::vector<double> computeAugmentedPerturbationDissipatedPow2(); //taking into account dissipation after every iteration(a kind of starvation probably) subtracting the pow2 of every perturbation before the computation
         std::vector<double> computeAugmentedPerturbationDissipatedAfterCompute(double timeStep); //taking into account dissipation after every iteration(Dissipation model), dissipation after the computation of the perturbated value
@@ -85,8 +85,8 @@ class Computation{
         std::vector<double> getOutput()const{return output;}
         std::vector<double> getInputAugmented()const{return inputAugmented;}
         std::vector<double> getOutputAugmented()const{return outputAugmented;}
-        WeightedEdgeGraph* getMetapathway()const{return metapathway;}
-        WeightedEdgeGraph* getAugmentedMetapathway()const{return augmentedMetapathway;}
+        WeightedEdgeGraph* getGraph()const{return graph;}
+        WeightedEdgeGraph* getAugmentedGraph()const{return augmentedGraph;}
         std::vector<std::string> getCellTypes()const{return cellTypes;}
         std::string getLocalCellType()const{return localCellType;}
         bool isInitializedArmaNotAugmented()const{return armaInitializedNotAugmented;}

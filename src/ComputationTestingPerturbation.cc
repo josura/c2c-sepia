@@ -57,7 +57,7 @@ class ComputationTestingPerturbation : public ::testing::Test {
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefaultNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -73,7 +73,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationDefaultSaturationSingle) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -91,7 +91,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDefaultNoConservationNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms2);
@@ -109,7 +109,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDe
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDefaultNoConservationSaturationsingle) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms2);
@@ -127,7 +127,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDe
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationDefaultQemptyNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -145,7 +145,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationDefaultQemptySaturationsingle) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -165,7 +165,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassedNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -186,7 +186,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassedSaturationdefault) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -207,7 +207,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationConservationQpassedSaturationsingle) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms);
@@ -228,7 +228,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQemptyNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms2);
@@ -248,7 +248,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationCo
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQemptySaturationsingle) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms2);
@@ -269,7 +269,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationCo
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationConservationQpassedNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
-    computationTest.augmentMetapathwayNoComputeInverse(types);
+    computationTest.augmentGraphNoComputeInverse(types);
     computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
     computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
     computationTest.setDissipationModel(dms2);

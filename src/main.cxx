@@ -508,8 +508,8 @@ int main(int argc, char** argv ) {
                 tmpCompPointer->setDissipationModel(dissipationModel);
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
-                //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(typesFiltered);
+                //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(typesFiltered);
             } else {
                 int index = indexMapGraphTypesToValuesTypes[i];
                 std::vector<double> input = inputInitials[index];
@@ -517,8 +517,8 @@ int main(int argc, char** argv ) {
                 tmpCompPointer->setDissipationModel(dissipationModel);
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
-                //No inverse computation with the augmented pathway since virtual nodes edges are not yet inserted
-                typeComputations[indexComputation]->augmentMetapathwayNoComputeInverse(typesFiltered);
+                //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(typesFiltered);
             }
             typesIndexes[i] = indexComputation;
             invertedTypesIndexes[indexComputation] = i;
@@ -527,7 +527,7 @@ int main(int argc, char** argv ) {
     }
     std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(typesFiltered.size(),std::vector<std::string>());
     for(uint i = 0; i < typesFiltered.size();i++ ){
-        typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();    
+        typeToNodeNames[i] = typeComputations[i]->getAugmentedGraph()->getNodeNames();    
     }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
@@ -557,7 +557,7 @@ int main(int argc, char** argv ) {
         if(propagationModelName == "none"){
             std::cout << "[LOG] propagation model set to default (none)\n";
             for(uint i = 0; i < typesFiltered.size();i++ ){
-                typeComputations[i]->setPropagationModel(new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction));
+                typeComputations[i]->setPropagationModel(new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction));
             }
             //nothing to do, default propagation scaling function is the identity
         } else if (propagationModelName == "scaled"){
@@ -568,7 +568,7 @@ int main(int argc, char** argv ) {
                 if(propagationModelParameters.size() == 1){
                     propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
                     for(uint i = 0; i < typesFiltered.size();i++ ){
-                        PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                        PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
                         typeComputations[i]->setPropagationModel(tmpPropagationModel);
                     }
                 } else {
@@ -578,7 +578,7 @@ int main(int argc, char** argv ) {
             } else {
                 std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
                 for(uint i = 0; i < typesFiltered.size();i++ ){
-                    PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                    PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
                     typeComputations[i]->setPropagationModel(tmpPropagationModel);
                 }
                 //nothing to do, default propagation scaling function is the identity
@@ -591,7 +591,7 @@ int main(int argc, char** argv ) {
                 if(propagationModelParameters.size() == 1){
                     propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
                     for(uint i = 0; i < typesFiltered.size();i++ ){
-                        PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                        PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
                         typeComputations[i]->setPropagationModel(tmpPropagationModel);
                     }
                 } else {
@@ -601,7 +601,7 @@ int main(int argc, char** argv ) {
             } else {
                 std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
                 for(uint i = 0; i < typesFiltered.size();i++ ){
-                    PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+                    PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
                     typeComputations[i]->setPropagationModel(tmpPropagationModel);
                 }
                 //nothing to do, default propagation scaling function is the identity
@@ -617,7 +617,7 @@ int main(int argc, char** argv ) {
     } else {
         std::cout << "[LOG] propagation model was not set. set to default (none)\n";
         for(uint i = 0; i < typesFiltered.size();i++ ){
-            PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedMetapathway(),propagationScalingFunction);
+            PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
             typeComputations[i]->setPropagationModel(tmpPropagationModel);
         }
         //TODO
@@ -633,7 +633,7 @@ int main(int argc, char** argv ) {
     //         break;
     //     }
     // }
-    // typeComputations[index]->getAugmentedMetapathway()->adjMatrix.printMatrix();
+    // typeComputations[index]->getAugmentedGraph()->adjMatrix.printMatrix();
     // std::cout<< "[DEBUG] input vector for type \"2\":"<<std::endl;
     // std::vector<double> input = typeComputations[index]->getInputAugmented();
     // for(int i = 0; i < SizeToInt(input.size());i++){
@@ -647,7 +647,7 @@ int main(int argc, char** argv ) {
     //freeing some data structures inside computation to consume less RAM
     // std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(types.size(),std::vector<std::string>());
     // for(uint i = 0; i < types.size();i++ ){
-    //     typeToNodeNames[i] = typeComputations[i]->getAugmentedMetapathway()->getNodeNames();  
+    //     typeToNodeNames[i] = typeComputations[i]->getAugmentedGraph()->getNodeNames();  
     //     typeComputations[i]->freeAugmentedGraphs();  
     // }
 
