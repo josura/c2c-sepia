@@ -66,6 +66,7 @@ for i in range(len(infected_nodes)):
     propagationScaleFactor = propagationScaleFactor.split('propagationScaleFactor')[1]
     label = '( ' + dissipationScaleFactor + ' , ' + propagationScaleFactor + ' )'
     ax.plot(infected_nodes[i], label=label)
-ax.legend()
+# augment dimensions of the legend box
+ax.legend(title="(\u03BB (n), \u03C9 (n))", fontsize=12)
 plt.show()
 
