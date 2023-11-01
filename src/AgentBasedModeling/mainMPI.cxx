@@ -429,10 +429,19 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    // workloads for each process
+    // control if the number of processes is greater than the number of types, exit if true (useless process are not accepted)
+    if (numProcesses > types.size()) {
+        std::cerr << "[ERROR] number of processes is greater than the number of types: aborting"<<std::endl;
+        std::cerr << "[ERROR] number of processes: " << numProcesses << std::endl;
+        std::cerr << "[ERROR] number of types: " << types.size() << std::endl;
+        return 1;
+    }
+
+    // workloads for each process, 
     int workloadPerProcess = ceil((types.size() + 0.0) / numProcesses);
     int startIdx = rank * workloadPerProcess;
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
+    
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[workloadPerProcess];
