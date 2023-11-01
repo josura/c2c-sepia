@@ -373,11 +373,53 @@ int main(int argc, char** argv) {
     //end program options section
 
 
+    std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
+    if(ensembleGeneNames){
+        std::cout <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
+    }
+
+
     // these types will be used for indexing the single processes, rank 0 is the master process, rank 1 will get the first type, rank 2 the second and so on
-    std::vector<std::string> types = {"type1", "type2", "type3", "type4"}; //TODO get from files
-    std::map<std::string, int> typeToIndex;
+    std::vector<std::string> types;
+    if(vm.count("fUniqueGraph")){
+        if(vm.count("fInitialPerturbationPerType")){
+            types = getTypesFromMatrixFile(typesInitialPerturbationMatrixFilename);
+
+        } else if (vm.count("initialPerturbationPerTypeFolder")){
+            types = getTypesFromFolderFileNames(typeInitialPerturbationFolderFilename);
+        } else {
+            std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
+            return 1;
+        }
+    } else if (vm.count("graphsFilesFolder")) {
+        types = getTypesFromFolderFileNames(graphsFilesFolder);
+    } else {
+        std::cerr << "[ERROR] no graph file or folder specified: aborting"<<std::endl;
+        return 1;
+    }
+
+    std::vector<std::string> subtypes;
+    if(vm.count("subtypes")){
+        std::cout << "[LOG] subtypes filename set to "
+    << vm["subtypes"].as<std::string>() << ".\n";
+        subtypesFilename = vm["subtypes"].as<std::string>();
+        subtypes = getVectorFromFile<std::string>(subtypesFilename);
+    }else{
+        std::cout << "[LOG] subtypes filename not set, set to default: all types \n";
+        subtypes = types;
+    }
+    
+    //filter types with the subtypes
+    std::vector<std::string> types = vectorsIntersection(types, subtypes);
+    if (types.size() == 0) {
+        std::cerr << "[ERROR] no types in common between the types and subtypes: aborting"<<std::endl;
+        return 1;
+    }
+
+    //map types to rank
+    std::map<std::string, int> typesToRank;
     for (int i = 0; i < types.size(); ++i) {
-        typeToIndex[types[i]] = i;
+        typeToRank[types[i]] = i;
     }
 
     // initialize MPI
@@ -387,9 +429,44 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    int workloadPerProcess = types.size() / numProcesses;
+    // workloads for each process
+    int workloadPerProcess = ceil((types.size() + 0.0) / numProcesses);
     int startIdx = rank * workloadPerProcess;
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
+
+    //use the number of types for workload to allocate an array of pointers to contain the graph for each type
+    WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[workloadPerProcess];
+    std::vector<std::vector<std::string>> graphsNodes;
+    std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
+    if(vm.count("fUniqueGraph")){
+        namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
+        graphsNodes.push_back(namesAndEdges[0].first);
+        graphs[0] = new WeightedEdgeGraph(graphsNodes[0]);
+        for(uint i = 1; i < types.size(); i++){
+            namesAndEdges.push_back(namesAndEdges[0]);
+            graphsNodes.push_back(namesAndEdges[0].first);
+            graphs[i] = graphs[0];
+        }
+    } else if (vm.count("graphsFilesFolder")) {
+        // TODO get the nodes from the single files
+        auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
+        auto typesFromFolder = allGraphs.first;
+        if(typesFromFolder.size() != types.size()){
+            std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+            return 1;
+        }
+        for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
+            if(typesFromFolder[i] != types[i]){
+                std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+                return 1;
+            }
+        }
+        namesAndEdges = allGraphs.second;
+        for(uint i = 0; i < types.size(); i++){
+            graphsNodes.push_back(namesAndEdges[i].first);
+            graphs[i] = new WeightedEdgeGraph(graphsNodes[i]);
+        }
+    } 
 
     // Each process works on its assigned workload
     for (int i = startIdx; i < endIdx; ++i) {
@@ -400,8 +477,8 @@ int main(int argc, char** argv) {
         // Send results to master process
         //MPI_Send(&types[i], 1, MPI_STRING, 0, 0, MPI_COMM_WORLD);
 
-        // Send virtual outputs in the current process to the target process taken from the typeToIndex map
-        // MPI_Send(&virtualOutputs, 1, MPI_STRING, typeToIndex[types[i]], 0, MPI_COMM_WORLD);
+        // Send virtual outputs in the current process to the target process taken from the typeToRank map
+        // MPI_Send(&virtualOutputs, 1, MPI_STRING, typeToRank[types[i]], 0, MPI_COMM_WORLD);
 
         // Receive results from master process
 
