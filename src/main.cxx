@@ -541,7 +541,7 @@ int main(int argc, char** argv ) {
         for (uint i = 0; i < types.size();i++) {
             if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
                 //TODO maybe do not compute pseudoinverse since the computation was moved into the PropagationModels classes
-                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges); // TODO additional case when no inverse is computed (in the future when taking into account the propagation in the network from one node to its neighbors)
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
                 //typeComputations[i]->freeAugmentedGraphs();
             }
         }
@@ -739,7 +739,7 @@ int main(int argc, char** argv ) {
         for (uint i = 0; i < typesFiltered.size(); i++) {
             //queuesTypeTypes[i] = typeComputations[i]->computeAugmentedPerturbation();
             //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent types to finish
-            //also take into account REpast framework
+            //also take into account MPI (repast framework was removed since it is too old and not supported anymore)
             for(uint j = 0; j < typesFiltered.size(); j++){
                 if(i==j){
                     if(sameTypeCommunication) typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
