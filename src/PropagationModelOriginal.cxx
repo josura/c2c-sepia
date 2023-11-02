@@ -15,8 +15,13 @@ PropagationModelOriginal::PropagationModelOriginal(const WeightedEdgeGraph* grap
     arma::Mat<double> WtransArma = graph->adjMatrix.transpose().normalizeByVectorColumn(normalizationFactors).asArmadilloMatrix();
     
     arma::Mat<double> IdentityArma = arma::eye(graph->getNumNodes(),graph->getNumNodes());
+    arma::Mat<double> temp = IdentityArma - WtransArma;
     
-    pseudoinverse = arma::pinv(IdentityArma - WtransArma);
+    //control determinant and invertibility, print warning if not invertible
+    if(arma::det(temp) == 0){
+        std::cout << "WARNING: The graph is not invertible, the pseudoinverse could lead to faulty results" << std::endl;
+    }
+    pseudoinverse = arma::pinv(temp);
 }
 
 PropagationModelOriginal::~PropagationModelOriginal(){
