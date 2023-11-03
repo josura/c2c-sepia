@@ -534,30 +534,52 @@ int main(int argc, char** argv) {
     int indexComputation = 0;
     std::vector<int> typesIndexes = std::vector<int>(finalWorkload,-1); 
     std::vector<int> invertedTypesIndexes = std::vector<int>(finalWorkload,-1); 
-    for(uint i = startIdx; i < endIdx; i++){
-        if(indexMapGraphTypesToValuesTypes[i] == -1){
-            std::cout << "[LOG] type "<<types[i]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
-            std::vector<double> input = std::vector<double>(graphsNodes[i-startIdx].size(),0);
-            Computation* tmpCompPointer = new Computation(types[i],input,graphs[i-startIdx],graphsNodes[i-startIdx]);   
+    for(uint i = 0; i < finalWorkload; i++){
+        if(indexMapGraphTypesToValuesTypes[i+startIdx] == -1){
+            std::cout << "[LOG] type "<<types[i+startIdx]<<" not found in the initial perturbation files, using zero vector as input"<<std::endl;
+            std::vector<double> input = std::vector<double>(graphsNodes[i].size(),0);
+            Computation* tmpCompPointer = new Computation(types[i+startIdx],input,graphs[i],graphsNodes[i]);   
             tmpCompPointer->setDissipationModel(dissipationModel);
             tmpCompPointer->setConservationModel(conservationModel);
             typeComputations[indexComputation] = tmpCompPointer;
             //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
             typeComputations[indexComputation]->augmentGraphNoComputeInverse(types);
         } else {
-            int index = indexMapGraphTypesToValuesTypes[i];
+            int index = indexMapGraphTypesToValuesTypes[i+startIdx];
             std::vector<double> input = inputInitials[index];
-            Computation* tmpCompPointer = new Computation(types[i],input,graphs[i-startIdx],graphsNodes[i-startIdx]); 
+            Computation* tmpCompPointer = new Computation(types[i+startIdx],input,graphs[i],graphsNodes[i]); 
             tmpCompPointer->setDissipationModel(dissipationModel);
             tmpCompPointer->setConservationModel(conservationModel);
             typeComputations[indexComputation] = tmpCompPointer;
             //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
             typeComputations[indexComputation]->augmentGraphNoComputeInverse(types);
         }
-        typesIndexes[i-startIdx] = indexComputation;
-        invertedTypesIndexes[indexComputation] = i-startIdx;
+        typesIndexes[i] = indexComputation;
+        invertedTypesIndexes[indexComputation] = i;
         indexComputation++;
 
+    }
+
+    // read the type interactions
+    std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(finalWorkload,std::vector<std::string>());
+    for(uint i = 0; i < finalWorkload;i++ ){
+        typeToNodeNames[i] = typeComputations[i]->getAugmentedGraph()->getNodeNames();    
+    }
+    auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
+    for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
+        std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> typeInteractionsEdges;
+        if (subtypes.size() == 0) {
+            typeInteractionsEdges  = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
+        } else {
+            typeInteractionsEdges = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
+        }
+        #pragma omp parallel for
+        for (uint i = 0; i < finalWorkload;i++) {
+            if(typeInteractionsEdges.contains(types[i+startIdx]) && typesIndexes[i] != -1){
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i+startIdx]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
+                //typeComputations[i]->freeAugmentedGraphs();
+            }
+        }
     }
 
 
