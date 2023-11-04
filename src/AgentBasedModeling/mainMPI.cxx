@@ -577,9 +577,85 @@ int main(int argc, char** argv) {
         for (uint i = 0; i < finalWorkload;i++) {
             if(typeInteractionsEdges.contains(types[i+startIdx]) && typesIndexes[i] != -1){
                 typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i+startIdx]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
-                //typeComputations[i]->freeAugmentedGraphs();
             }
         }
+    }
+
+    
+    // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
+
+    std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
+    if(vm.count("propagationModel")){
+        std::cout << "[LOG] propagation model was set to "
+    << vm["propagationModel"].as<std::string>() << ".\n";
+        std::string propagationModelName = vm["propagationModel"].as<std::string>();
+        if(propagationModelName == "none"){
+            std::cout << "[LOG] propagation model set to default (none)\n";
+            for(uint i = 0; i < finalWorkload ;i++ ){
+                typeComputations[i]->setPropagationModel(new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction));
+            }
+            //nothing to do, default propagation scaling function is the identity
+        } else if (propagationModelName == "scaled"){
+            if (vm.count("propagationModelParameters")) {
+                std::cout << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
+                    for(uint i = 0; i < finalWorkload ;i++ ){
+                        PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                        typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                    }
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
+                for(uint i = 0; i < finalWorkload ;i++ ){
+                    PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                    typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                }
+                //nothing to do, default propagation scaling function is the identity
+            }
+        } else if (propagationModelName == "neighbors"){
+            if (vm.count("propagationModelParameters")) {
+                std::cout << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ".\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = [propagationModelParameters](double time)->double{return propagationModelParameters[0];};
+                    for(uint i = 0; i < finalWorkload;i++ ){
+                        PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                        typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                    }
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for scaled propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for scaled propagation was not set: setting to default 1 costant"<<std::endl;
+                for(uint i = 0; i < finalWorkload;i++ ){
+                    PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                    typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                }
+                //nothing to do, default propagation scaling function is the identity
+            }
+        } else if (propagationModelName == "custom"){
+            std::cout << "not implemented yet\n";
+            return 1;
+            //TODO
+        } else {
+            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
+            return 1;
+        }
+    } else {
+        std::cout << "[LOG] propagation model was not set. set to default (none)\n";
+        for(uint i = 0; i < finalWorkload;i++ ){
+            PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+            typeComputations[i]->setPropagationModel(tmpPropagationModel);
+        }
+        //TODO
     }
 
 
