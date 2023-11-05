@@ -742,9 +742,9 @@ int main(int argc, char** argv ) {
             //also take into account MPI (repast framework was removed since it is too old and not supported anymore)
             for(uint j = 0; j < typesFiltered.size(); j++){
                 if(i==j){
-                    if(sameTypeCommunication) typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
                 } else {
-                    typeComputations[i]->setInputVinForCell(typesFiltered[j], typeComputations[j]->getVirtualOutputForCell(typesFiltered[i]));
+                    typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
                 }
             }
         }

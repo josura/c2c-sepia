@@ -88,22 +88,22 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     // armaInitializedNotAugmented = true;
 }
 
-void Computation::augmentGraph(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
+void Computation::augmentGraph(const std::vector<std::string>& _types,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
     if(augmentedGraph) {
         delete augmentedGraph;
     }
     try {
-        std::vector<std::string> tmpcelltypes;
+        std::vector<std::string> tmptypes;
         if (!includeSelfVirtual){
-            for (uint i = 0; i < _celltypes.size(); i++) {
-                if(_celltypes[i] != localCellType) tmpcelltypes.push_back(_celltypes[i]);
+            for (uint i = 0; i < _types.size(); i++) {
+                if(_types[i] != localCellType) tmptypes.push_back(_types[i]);
             }
         } else {
-            tmpcelltypes = _celltypes;
+            tmptypes = _types;
         }
-        cellTypes = tmpcelltypes;
-        auto virtualNodes = tmpcelltypes;
-        for (int i = 0; i < SizeToInt( tmpcelltypes.size()); i++) {
+        cellTypes = tmptypes;
+        auto virtualNodes = tmptypes;
+        for (int i = 0; i < SizeToInt( tmptypes.size()); i++) {
             std::string cellTyp = virtualNodes[i];
             virtualNodes[i] = "v-in:" + cellTyp;
             virtualNodes.push_back("v-out:" + cellTyp);
@@ -128,7 +128,7 @@ void Computation::augmentGraph(const std::vector<std::string>& _celltypes,const 
         
         arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedGraph->getNumNodes(),augmentedGraph->getNumNodes());
         inputAugmented = input;
-        for(uint i = 0; i < tmpcelltypes.size()*2; i++){
+        for(uint i = 0; i < tmptypes.size()*2; i++){
             inputAugmented.push_back(0.0);
         }
         InputAugmentedArma = arma::Col<double>(inputAugmented);
@@ -145,22 +145,22 @@ void Computation::augmentGraph(const std::vector<std::string>& _celltypes,const 
     }
 }
 
-void Computation::augmentGraphNoComputeInverse(const std::vector<std::string>& _celltypes,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
+void Computation::augmentGraphNoComputeInverse(const std::vector<std::string>& _types,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
     if(augmentedGraph) {
         delete augmentedGraph;
     }
     try {
-        std::vector<std::string> tmpcelltypes;
+        std::vector<std::string> tmptypes;
         if (!includeSelfVirtual){
-            for (uint i = 0; i < _celltypes.size(); i++) {
-                if(_celltypes[i] != localCellType) tmpcelltypes.push_back(_celltypes[i]);
+            for (uint i = 0; i < _types.size(); i++) {
+                if(_types[i] != localCellType) tmptypes.push_back(_types[i]);
             }
         } else {
-            tmpcelltypes = _celltypes;
+            tmptypes = _types;
         }
-        cellTypes = tmpcelltypes;
-        auto virtualNodes = tmpcelltypes;
-        for (int i = 0; i < SizeToInt( tmpcelltypes.size()); i++) {
+        cellTypes = tmptypes;
+        auto virtualNodes = tmptypes;
+        for (int i = 0; i < SizeToInt( tmptypes.size()); i++) {
             std::string cellTyp = virtualNodes[i];
             virtualNodes[i] = "v-in:" + cellTyp;
             virtualNodes.push_back("v-out:" + cellTyp);
@@ -194,7 +194,7 @@ void Computation::augmentGraphNoComputeInverse(const std::vector<std::string>& _
         
         arma::Mat<double> IdentityAugmentedArma = arma::eye(augmentedGraph->getNumNodes(),augmentedGraph->getNumNodes());
         inputAugmented = input;
-        for(uint i = 0; i < tmpcelltypes.size()*2; i++){
+        for(uint i = 0; i < tmptypes.size()*2; i++){
             inputAugmented.push_back(0.0);
         }
         InputAugmentedArma = arma::Col<double>(inputAugmented);
@@ -513,37 +513,37 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
 
         
 
-double Computation::getVirtualInputForCell(std::string celltype)const{
-    int index = nodeToIndex.at("v-in:" + celltype);
+double Computation::getVirtualInputForType(std::string type)const{
+    int index = nodeToIndex.at("v-in:" + type);
     if(index > 0) return outputAugmented[index];
     else return 0;
 
 }
-double Computation::getVirtualOutputForCell(std::string celltype)const{
-    int index = nodeToIndex.at("v-out:" + celltype);
+double Computation::getVirtualOutputForType(std::string type)const{
+    int index = nodeToIndex.at("v-out:" + type);
     if(index > 0) return outputAugmented[index];
     else return 0;
 }
 
-void Computation::setInputVinForCell(std::string celltype, double value){
+void Computation::setInputVinForType(std::string type, double value){
     //TODO if the augmented graph is deleted, switch to a direct map saved before deleting the graph
-    //int index = augmentedGraph->getIndexFromName("v-in:" + celltype);
-    int index = nodeToIndex.at("v-in:" + celltype);
+    //int index = augmentedGraph->getIndexFromName("v-in:" + type);
+    int index = nodeToIndex.at("v-in:" + type);
     if(index > 0) {
         inputAugmented[index]=value;
         InputAugmentedArma[index]=value;
     }
-    else throw std::invalid_argument("Computation::setInputVinForCell: invalid set for virtual input: celltype:" + celltype + "does not exist");
+    else throw std::invalid_argument("Computation::setInputVinForType: invalid set for virtual input: type:" + type + "does not exist");
 
 }
-void Computation::setInputVoutForCell(std::string celltype, double value){
-    //int index = augmentedGraph->getIndexFromName("v-out:" + celltype);
-    int index = nodeToIndex.at("v-out:" + celltype);
+void Computation::setInputVoutForType(std::string type, double value){
+    //int index = augmentedGraph->getIndexFromName("v-out:" + type);
+    int index = nodeToIndex.at("v-out:" + type);
     if(index > 0) {
         inputAugmented[index]=value;
         InputAugmentedArma[index]=value;
     }
-    else throw std::invalid_argument("Computation::setInputVinForCell: invalid set for virtual input: celltype:" + celltype + "does not exist");
+    else throw std::invalid_argument("Computation::setInputVinForType: invalid set for virtual input: type:" + type + "does not exist");
 }
 
 void Computation::setDissipationModel(DissipationModel *dissipationModel){
