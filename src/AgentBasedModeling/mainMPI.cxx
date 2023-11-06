@@ -417,7 +417,7 @@ int main(int argc, char** argv) {
     }
 
     //map types to rank
-    std::map<std::string, int> typesToRank;
+    std::map<std::string, int> typeToRank;
     for (int i = 0; i < types.size(); ++i) {
         typeToRank[types[i]] = i;
     }
@@ -657,6 +657,93 @@ int main(int argc, char** argv) {
         }
         //TODO
     }
+
+    for(int iterationInterType = 0; iterationIntertype < intertypeIterations; iterationInterType++){
+        for(int iterationIntraType = 0; iterationIntraType < intratypeIterations; iterationIntraType++){
+            // computation of perturbation
+            #pragma omp parallel for
+            for(uint i = 0; i < finalWorkload; i++){
+                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl; 
+                
+                if (saturation) {
+                    if(vm.count("saturationTerm") == 0){
+                        // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                    } else if (vm.count("saturationTerm") >= 1) {
+                        //TODO create saturation vector
+                        double saturationTerm = vm["saturationTerm"].as<double>();
+                        //TODO TEST
+                        std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
+                        // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
+                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
+                    }
+                } else{
+                    // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
+                    //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
+                }
+            }
+
+            //save output values
+            for(uint i = 0; i < finalWorkload; i++){
+                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                //TODO change how to save files to get more information about intratype and intertype iterations
+                saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+            }
+
+            //update input
+            for(uint i = 0; i < finalWorkload; i++){
+                //If conservation of the initial values is required, the input is first updated with the initial norm value
+                if (conservateInitialNorm) {
+                    int index = indexMapGraphTypesToValuesTypes[i+startIdx];
+                    std::vector<double> inputInitial = inputInitials[index];
+                    double initialNorm = vectorNorm(inputInitial);
+                    double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
+                    double normRatio = initialNorm/outputNorm;
+                    std::vector<double> newInput = vectorScalarMultiplication(typeComputations[i]->getOutputAugmented(),normRatio);
+                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    typeComputations[i]->updateInput(newInput,true);
+                } else {
+                    std::cout << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    typeComputations[i]->updateInput(std::vector<double>(),true);
+                }
+                
+            }
+        }
+
+        // send virtual outputs to the other processes
+        for (uint i = 0; i < finalWorkload; i++) {
+            // for every type, send the virtual outputs to the other processes
+            for(int j = 0; j < types.size(); j++){
+               double tmpVirtualOutputs = typeComputations[i]->getVirtualOutputForType(types[j]);
+               // TODO to test since the synchronized communication will lead to deadlocks with this type of implementation
+                MPI_Send(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], 0, MPI_COMM_WORLD);
+            }
+            // MPI_Send(&virtualOutputs, 1, MPI_STRING, typeToRank[types[i]], 0, MPI_COMM_WORLD);
+        }
+
+
+        //update input with virtual node values updated in the previous iteration
+        for (uint i = 0; i < finalWorkload; i++) {
+            // receive outputs from the other processes and update the input
+            if(i > startIdx && i < endIdx){
+                // the outputs are from local computations so they are already in the typeComputations
+                if(i==j){
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                } else {
+                    typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                }
+            }
+            for(uint j = 0; j < types.size(); j++){
+                double virtualOutput;
+                MPI_Recv(&virtualOutputs, 1, MPI_DOUBLE, typeToRank[types[i]], 0, MPI_COMM_WORLD)
+            }
+        }
+    }
+
 
 
     // Each process works on its assigned workload
