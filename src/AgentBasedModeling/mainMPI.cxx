@@ -719,7 +719,7 @@ int main(int argc, char** argv) {
             // for every type, send the virtual outputs to the other processes
             for(int j = 0; j < types.size(); j++){
                double tmpVirtualOutputs = typeComputations[i]->getVirtualOutputForType(types[j]);
-               // TODO to test since the synchronized communication will lead to deadlocks with this type of implementation
+               //synchronized communication will lead to deadlocks with this type of implementation
                 MPI_Send(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], 0, MPI_COMM_WORLD);
             }
             // MPI_Send(&virtualOutputs, 1, MPI_STRING, typeToRank[types[i]], 0, MPI_COMM_WORLD);
