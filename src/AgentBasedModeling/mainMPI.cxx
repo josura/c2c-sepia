@@ -732,9 +732,9 @@ int main(int argc, char** argv) {
             if(i > startIdx && i < endIdx){
                 // the outputs are from local computations so they are already in the typeComputations
                 if(i==j){
-                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
                 } else {
-                    typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                    typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
                 }
             }
             for(uint j = 0; j < types.size(); j++){
