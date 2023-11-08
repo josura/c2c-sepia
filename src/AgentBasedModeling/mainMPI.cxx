@@ -744,25 +744,6 @@ int main(int argc, char** argv) {
         }
     }
 
-
-
-    // Each process works on its assigned workload
-    for (int i = startIdx; i < endIdx; ++i) {
-        // Compute for types[i]
-        std::cout << "Process " << rank << " is computing for type: " << types[i] << "\n";
-        // ... Perform computation for types[i]
-
-        // Send results to master process
-        //MPI_Send(&types[i], 1, MPI_STRING, 0, 0, MPI_COMM_WORLD);
-
-        // Send virtual outputs in the current process to the target process taken from the typeToRank map
-        // MPI_Send(&virtualOutputs, 1, MPI_STRING, typeToRank[types[i]], 0, MPI_COMM_WORLD);
-
-        // Receive results from master process
-
-        // MPI_Recv(&types[i], 1, MPI_STRING, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    }
-
     MPI_Finalize();
     return 0;
 }
