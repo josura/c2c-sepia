@@ -203,7 +203,6 @@ int main(int argc, char** argv) {
         }
     } else {
         std::cout << "[LOG] typeInteractionFolder folder was not set. computing without taking into account type interactions\n";
-        //TODO
     }
     if (vm.count("outputFolder")) {
         std::cout << "[LOG] output folder  was set to " 
@@ -644,7 +643,6 @@ int main(int argc, char** argv) {
         } else if (propagationModelName == "custom"){
             std::cout << "not implemented yet\n";
             return 1;
-            //TODO
         } else {
             std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
             return 1;
@@ -655,7 +653,6 @@ int main(int argc, char** argv) {
             PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
             typeComputations[i]->setPropagationModel(tmpPropagationModel);
         }
-        //TODO
     }
 
     for(int iterationInterType = 0; iterationIntertype < intertypeIterations; iterationInterType++){
@@ -672,9 +669,7 @@ int main(int argc, char** argv) {
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
                     } else if (vm.count("saturationTerm") >= 1) {
-                        //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
-                        //TODO TEST
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
                         // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
@@ -722,8 +717,8 @@ int main(int argc, char** argv) {
                //synchronized communication will lead to deadlocks with this type of implementation
                 MPI_Send(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], 0, MPI_COMM_WORLD);
             }
-            // MPI_Send(&virtualOutputs, 1, MPI_STRING, typeToRank[types[i]], 0, MPI_COMM_WORLD);
         }
+
 
 
         //update input with virtual node values updated in the previous iteration
