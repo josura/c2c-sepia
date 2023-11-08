@@ -254,9 +254,17 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
                     indexWeight = i;
                 }
             }
+
             if(indexStart < 0 || indexEnd < 0 || indexWeight < 0){
-                std::string error = "utilities::edgesFileToEdgesListAndNodesByName: header of file" + filename + " does not contain start, end or weight";
-                throw std::invalid_argument(error);
+                if(entriesHeader.size()==3){
+                    indexStart = 0;
+                    indexEnd = 1;
+                    indexWeight = 2;
+                    std::cout << "[WARNING] using the first, second and third column as start, end and weight in the graph file:" << filename << std::endl;
+                } else {
+                    std::string error = "utilities::edgesFileToEdgesListAndNodesByName: header of file" + filename + " does not contain start, end or weight";
+                    throw std::invalid_argument(error);
+                }
             }
             while ( getline (myfile,line) )
             {
