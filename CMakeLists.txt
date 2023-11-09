@@ -7,13 +7,15 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fopenmp")   #  -lblas -llap
 #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -lopenblas")
 
 add_definitions(-DARMA_DONT_USE_WRAPPER)
-set (CMAKE_BINARY_DIR "build")
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+# set (CMAKE_BINARY_DIR "bin")
+# set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+find_package(MPI REQUIRED)
 
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
@@ -31,6 +33,7 @@ FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 set(EXEC_MAIN "src/main.cxx")
+set(EXEC_MPI_MAIN "src/mainMPI.cxx")
 set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
 set(LIB_SRCS 
     src/WeightedEdgeGraph.cxx
@@ -75,6 +78,14 @@ target_link_libraries( c2c-sepia
                        mysharedlib
                        ${lapackblas_libraries}
                        ${Boost_LIBRARIES})
+
+
+add_executable( c2c-sepia-MPI ${EXEC_MPI_MAIN} )
+target_link_libraries( c2c-sepia-MPI 
+                        mysharedlib
+                        ${lapackblas_libraries}
+                        ${Boost_LIBRARIES}
+                        MPI::MPI_CXX)
 
 add_executable( experiments ${EXPERIMENT_MAIN})
 target_link_libraries( experiments 
