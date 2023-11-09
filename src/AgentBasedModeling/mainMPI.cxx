@@ -415,11 +415,6 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    //map types to rank
-    std::map<std::string, int> typeToRank;
-    for (int i = 0; i < types.size(); ++i) {
-        typeToRank[types[i]] = i;
-    }
 
     // initialize MPI
     MPI_Init(&argc, &argv);
@@ -442,6 +437,13 @@ int main(int argc, char** argv) {
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
     
     int finalWorkload = endIdx - startIdx;
+
+
+    //map types to rank
+    std::map<std::string, int> typeToRank;
+    for (int i = 0; i < types.size(); ++i) {
+        typeToRank[types[i]] = i / workloadPerProcess; // integer division to get the process rank associated to each type, since the workload per type could be different than one per process
+    }
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
@@ -715,7 +717,7 @@ int main(int argc, char** argv) {
             for(int j = 0; j < types.size(); j++){
                double tmpVirtualOutputs = typeComputations[i]->getVirtualOutputForType(types[j]);
                //synchronized communication will lead to deadlocks with this type of implementation
-                MPI_Send(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], 0, MPI_COMM_WORLD);
+                MPI_Send(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD);
             }
         }
 
@@ -724,17 +726,23 @@ int main(int argc, char** argv) {
         //update input with virtual node values updated in the previous iteration
         for (uint i = 0; i < finalWorkload; i++) {
             // receive outputs from the other processes and update the input
-            if(i > startIdx && i < endIdx){
-                // the outputs are from local computations so they are already in the typeComputations
-                if(i==j){
-                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
-                } else {
-                    typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
-                }
-            }
+            // if the outputs are from local computations, they are already in the typeComputations but will be read from the MPI_Recv buffer as well to maintain the logic
+            // if(i > startIdx && i < endIdx){
+            //     for(uint j = 0; j < types.size(); j++){
+            //     if(i==j){
+            //         if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
+            //     } else {
+            //         typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
+            //     }
+            // }
             for(uint j = 0; j < types.size(); j++){
                 double virtualOutput;
-                MPI_Recv(&virtualOutputs, 1, MPI_DOUBLE, typeToRank[types[i]], 0, MPI_COMM_WORLD)
+                MPI_Recv(&virtualOutput, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                if(i==j){
+                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], virtualOutput);
+                } else {
+                    typeComputations[i]->setInputVinForType(types[j], virtualOutput);
+                }
             }
         }
     }
