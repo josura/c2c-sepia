@@ -544,7 +544,7 @@ int main(int argc, char** argv) {
             tmpCompPointer->setConservationModel(conservationModel);
             typeComputations[indexComputation] = tmpCompPointer;
             //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
-            typeComputations[indexComputation]->augmentGraphNoComputeInverse(types);
+            typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true); //self included since the code in MPI needs it
         } else {
             int index = indexMapGraphTypesToValuesTypes[i+startIdx];
             std::vector<double> input = inputInitials[index];
