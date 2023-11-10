@@ -475,7 +475,7 @@ int main(int argc, char** argv) {
         namesAndEdges = allGraphs.second;
         for(int i = startIdx; i < endIdx; i++){
             graphsNodes.push_back(namesAndEdges[i].first);
-            graphs[i-startIdx] = new WeightedEdgeGraph(graphsNodes[i]);
+            graphs[i-startIdx] = new WeightedEdgeGraph(graphsNodes[i-startIdx]);
         }
     } 
 
