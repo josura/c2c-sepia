@@ -432,7 +432,7 @@ int main(int argc, char** argv) {
     }
 
     // workloads for each process, 
-    int workloadPerProcess = ceil((types.size() + 0.0) / numProcesses);
+    int workloadPerProcess = round((types.size() + 0.0) / numProcesses); // one process minimum for each type, if number of processes = number of types then one process for each type, rounded to account for close number of types and processes(almost 1 process for every type) and to not leave a process without work
     int startIdx = rank * workloadPerProcess;
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
     
