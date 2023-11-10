@@ -29,7 +29,7 @@ for dissipationScaleFactor in ${listDissipationScaleFactors[@]}; do
         # get the output folder
         outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
         # run the simulation
-        ./build/build/c2c-sepia --graphsFilesFolder $graphsFolder \
+        ./build/c2c-sepia --graphsFilesFolder $graphsFolder \
             --initialPerturbationPerTypeFolder $initialPerturbationFolder \
             --typeInteractionFolder $typeInteractionsFolder \
             --dissipationModel scaled \
