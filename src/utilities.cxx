@@ -393,11 +393,11 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                 }
             }
             myfile.close();
-            std::cout << "[LOG] No node in the metapathway for genes: " << std::endl;
+            std::cout << "[LOG] No node in the type specified for nodes: " << std::endl;
             for(auto iter = discardedGenes.cbegin();iter!=discardedGenes.cend();iter++){
                 std::cout << "," << *iter;
             }
-            std::cout << std::endl <<"[LOG] discarding logfold for the genes not in the metapathway" << std::endl;
+            std::cout << std::endl <<"[LOG] discarding values for the nodes not in the type" << std::endl;
             
         }
     } else {
