@@ -448,6 +448,7 @@ int main(int argc, char** argv) {
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
     std::vector<std::vector<std::string>> graphsNodes;
+    std::vector<std::vector<std::string>> graphsNodesAll; // used only initially to read the values, contains all types
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     // a single graph is used for all the types
     if(vm.count("fUniqueGraph")){
@@ -473,6 +474,9 @@ int main(int argc, char** argv) {
             }
         }
         namesAndEdges = allGraphs.second;
+        for(uint i = 0; i < types.size(); i++){
+            graphsNodesAll.push_back(namesAndEdges[i].first);
+        }
         for(int i = startIdx; i < endIdx; i++){
             graphsNodes.push_back(namesAndEdges[i].first);
             graphs[i-startIdx] = new WeightedEdgeGraph(graphsNodes[i-startIdx]);
@@ -500,7 +504,7 @@ int main(int argc, char** argv) {
         initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
     } else if (vm.count("initialPerturbationPerTypeFolder")){
         std::cout << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
-        initialValues = logFoldChangeCellVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodes,subtypes,ensembleGeneNames);
+        initialValues = logFoldChangeCellVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodesAll,subtypes,ensembleGeneNames);
     } else {
         std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
         return 1;
@@ -553,7 +557,7 @@ int main(int argc, char** argv) {
             tmpCompPointer->setConservationModel(conservationModel);
             typeComputations[indexComputation] = tmpCompPointer;
             //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
-            typeComputations[indexComputation]->augmentGraphNoComputeInverse(types);
+            typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true);
         }
         typesIndexes[i] = indexComputation;
         invertedTypesIndexes[indexComputation] = i;
