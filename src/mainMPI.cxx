@@ -715,18 +715,49 @@ int main(int argc, char** argv) {
             }
         }
 
+        //TESTING
+        //printing type to rank map
+        std::cout << "[LOG] type to rank map: " << std::endl;
+        for (auto const& x : typeToRank)
+        {
+            std::cout << x.first  // string (key)
+            << ':'
+            << x.second // string's value
+            << ", " ;
+        }
+        std::cout << std::endl;
+        //printing start idx and end idx with rank
+        std::cout << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
+        // printing types
+        std::cout << "[LOG] types for rank "<< rank <<": " << std::endl;
+        for (auto const& x : types)
+        {
+            std::cout << x << ", " ;
+        }
+        //TESTING
+
         // send virtual outputs to the other processes
         for (int i = 0; i < finalWorkload; i++) {
             // for every type, send the virtual outputs to the other processes
             for(uint j = 0; j < types.size(); j++){
-               double tmpVirtualOutputs = typeComputations[i]->getVirtualOutputForType(types[j]);
-               //synchronized communication will lead to deadlocks with this type of implementation
-                MPI_Send(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD);
+                double tmpVirtualOutputs = typeComputations[i]->getVirtualOutputForType(types[j]);
+                //sending virtual outputs to target cell
+                std::cout << "[LOG] sending virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
+                //synchronized communication will lead to deadlocks with this type of implementation
+                MPI_Request request;
+                MPI_Isend(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, &request);
+                //control if the send was successful
+                int flag = 0;
+                MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
+                if(flag == 0){
+                    std::cerr << "[ERROR] send of virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << " was not successful: aborting"<<std::endl;
+                    return 1;
+                }
+                std::cout << "[LOG] sent virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
             }
         }
 
-
-
+        std::cout << "receiving virtual outputs" << std::endl;
         //update input with virtual node values updated in the previous iteration
         for (int i = 0; i < finalWorkload; i++) {
             // receive outputs from the other processes and update the input
@@ -741,7 +772,17 @@ int main(int argc, char** argv) {
             // }
             for(uint j = 0; j < types.size(); j++){
                 double virtualOutput;
-                MPI_Recv(&virtualOutput, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                std::cout << "[LOG] receiving virtual output for type " << types[j] << " from process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
+                MPI_Request request;
+                MPI_Irecv(&virtualOutput, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, &request);
+                //control if the receive was successful
+                int flag = 0;
+                MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
+                if(flag == 0){
+                    std::cerr << "[ERROR] receive of virtual output for type " << types[j] << " from process " << typeToRank[types[j]] << " with type " << types[j] << " was not successful: aborting"<<std::endl;
+                    return 1;
+                }
+                std::cout << "[LOG] received virtual output for type " << types[j] << " from process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
                 if(i==SizeToInt(j)){
                     if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], virtualOutput);
                 } else {
