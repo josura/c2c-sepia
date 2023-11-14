@@ -744,20 +744,20 @@ int main(int argc, char** argv) {
                 //sending virtual outputs to target cell
                 std::cout << "[LOG] sending virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
                 //synchronized communication will lead to deadlocks with this type of implementation
-                MPI_Request request;
-                MPI_Isend(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, &request);
-                //control if the send was successful
-                int flag = 0;
-                MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
-                if(flag == 0){
-                    std::cerr << "[ERROR] send of virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << " was not successful: aborting"<<std::endl;
-                    return 1;
-                }
-                std::cout << "[LOG] sent virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
+                    MPI_Request request;
+                    MPI_Isend(&tmpVirtualOutputs, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, &request);
+                    //control if the send was successful
+                    int flag = 0;
+                    MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
+                    if(flag == 0){
+                        std::cerr << "[ERROR] send of virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << " was not successful: aborting"<<std::endl;
+                        return 1;
+                    }
+                    std::cout << "[LOG] sent virtual output from type " << types[i+startIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
             }
         }
 
-        std::cout << "receiving virtual outputs" << std::endl;
+        std::cout << "[LOG] receiving virtual outputs" << std::endl;
         //update input with virtual node values updated in the previous iteration
         for (int i = 0; i < finalWorkload; i++) {
             // receive outputs from the other processes and update the input
