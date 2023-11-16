@@ -755,9 +755,23 @@ int main(int argc, char** argv) {
                 virtualOutputs.at(targetRank)[j] = typeComputations[j]->getVirtualOutputForType(types[i]);
             }
         }
+        // preliminary asynchronous receive
+        double virtualOutputBuffer[workloadPerProcess*workloadPerProcess]; // buffer for the virtual outputs, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
+        MPI_Request request[numProcesses];
+        for(int i = 0; i < numProcesses; i++){
+            int targetRank = i;
+            int targetWorkload;
+            if(i == (numProcesses-1)){
+                targetWorkload = types.size() - (i*workloadPerProcess);
+            } else {
+                targetWorkload = workloadPerProcess;
+            }
+            MPI_Irecv(virtualOutputBuffer, finalWorkload * targetWorkload, MPI_DOUBLE, targetRank, i, MPI_COMM_WORLD, &request[i]);
+        }
+        // send the virtual outputs to the other processes
         for(uint j = 0; j < numProcesses; j++){
             //sending virtual outputs to target cell
-            std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
+            std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
             // target workload
             int targetWorkload;
             if(j == (numProcesses-1)){
@@ -766,16 +780,8 @@ int main(int argc, char** argv) {
                 targetWorkload = workloadPerProcess;
             }
             //synchronized communication will lead to deadlocks with this type of implementation
-            MPI_Request request;
-            MPI_Isend(virtualOutputs.at(j), finalWorkload*, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, &request);
-            //control if the send was successful
-            int flag = 0;
-            MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
-            if(flag == 0){
-                std::cerr << "[ERROR] send of virtual output from type " << types[startIdx] << " to type " << types[endIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << " was not successful: aborting"<<std::endl;
-                return 1;
-            }
-            std::cout << "[LOG] sent virtual output from type " << types[startIdx] << " to type " << types[endIdx] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
+            MPI_Send(virtualOutputs.at(j), finalWorkload * targetWorkload, MPI_DOUBLE, j, j, MPI_COMM_WORLD);
+            std::cout << "[LOG] sent virtual outputs from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j  << std::endl;
         }
 
         // delete the virtual outputs vector of arrays
@@ -785,35 +791,16 @@ int main(int argc, char** argv) {
 
         std::cout << "[LOG] receiving virtual outputs" << std::endl;
         //update input with virtual node values updated in the previous iteration
-        for (int i = 0; i < finalWorkload; i++) {
-            // receive outputs from the other processes and update the input
-            // if the outputs are from local computations, they are already in the typeComputations but will be read from the MPI_Recv buffer as well to maintain the logic
-            // if(i > startIdx && i < endIdx){
-            //     for(uint j = 0; j < types.size(); j++){
-            //     if(i==j){
-            //         if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
-            //     } else {
-            //         typeComputations[i]->setInputVinForType(types[j], typeComputations[j]->getVirtualOutputForType(types[i]));
-            //     }
-            // }
-            for(uint j = 0; j < types.size(); j++){
-                double virtualOutput;
-                std::cout << "[LOG] receiving virtual output for type " << types[j] << " from process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
-                MPI_Request request;
-                MPI_Irecv(&virtualOutput, 1, MPI_DOUBLE, typeToRank[types[j]], j, MPI_COMM_WORLD, &request);
-                //control if the receive was successful
-                int flag = 0;
-                MPI_Test(&request, &flag, MPI_STATUS_IGNORE);
-                if(flag == 0){
-                    std::cerr << "[ERROR] receive of virtual output for type " << types[j] << " from process " << typeToRank[types[j]] << " with type " << types[j] << " was not successful: aborting"<<std::endl;
-                    return 1;
-                }
-                std::cout << "[LOG] received virtual output for type " << types[j] << " from process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
-                if(i==SizeToInt(j)){
-                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], virtualOutput);
-                } else {
-                    typeComputations[i]->setInputVinForType(types[j], virtualOutput);
-                }
+        
+        // receive outputs from the other processes and update the input
+        for(uint j = 0; j < numProcesses; j++){
+            std::cout << "[LOG] receiving virtuals output from process " << j << " to process " << rank << std::endl;
+            MPI_Wait(&request[j], MPI_STATUS_IGNORE);
+            std::cout << "[LOG] received virtual output from process " << j << " to process " << rank << std::endl;
+            if(i==SizeToInt(j)){
+                if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], virtualOutput);
+            } else {
+                typeComputations[i]->setInputVinForType(types[j], virtualOutput);
             }
         }
     }
