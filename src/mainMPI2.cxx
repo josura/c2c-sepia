@@ -756,7 +756,17 @@ int main(int argc, char** argv) {
             }
         }
         // preliminary asynchronous receive
-        double virtualOutputBuffer[workloadPerProcess*workloadPerProcess]; // buffer for the virtual outputs, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
+        // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
+        std::vector<double*> virtualOutputBuffer;
+        for(int i = 0; i < numProcesses; i++){
+            int currentWorkload;
+            if(i == (numProcesses-1)){
+                currentWorkload = types.size() - (i*workloadPerProcess);
+            } else {
+                currentWorkload = workloadPerProcess;
+            }
+            virtualOutputBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
+        }
         MPI_Request request[numProcesses];
         for(int i = 0; i < numProcesses; i++){
             int targetRank = i;
@@ -766,7 +776,7 @@ int main(int argc, char** argv) {
             } else {
                 targetWorkload = workloadPerProcess;
             }
-            MPI_Irecv(virtualOutputBuffer, finalWorkload * targetWorkload, MPI_DOUBLE, targetRank, i, MPI_COMM_WORLD, &request[i]);
+            MPI_Irecv(virtualOutputBuffer[i], finalWorkload * targetWorkload, MPI_DOUBLE, targetRank, i, MPI_COMM_WORLD, &request[i]);
         }
         // send the virtual outputs to the other processes
         for(uint j = 0; j < numProcesses; j++){
@@ -793,14 +803,27 @@ int main(int argc, char** argv) {
         //update input with virtual node values updated in the previous iteration
         
         // receive outputs from the other processes and update the input
-        for(uint j = 0; j < numProcesses; j++){
-            std::cout << "[LOG] receiving virtuals output from process " << j << " to process " << rank << std::endl;
-            MPI_Wait(&request[j], MPI_STATUS_IGNORE);
-            std::cout << "[LOG] received virtual output from process " << j << " to process " << rank << std::endl;
-            if(i==SizeToInt(j)){
-                if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], virtualOutput);
+        for(uint sourceRank = 0; sourceRank < numProcesses; sourceRank++){
+            std::cout << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
+            MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
+            std::cout << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
+            // source workload and virtual outputs decomposition on the target
+            int sourceWorkload;
+            if(sourceRank == (numProcesses-1)){
+                sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
             } else {
-                typeComputations[i]->setInputVinForType(types[j], virtualOutput);
+                sourceWorkload = workloadPerProcess;
+            }
+            for(int isource = 0; isource < sourceWorkload; isource++){
+                for(int ilocal = 0; ilocal < finalWorkload; ilocal++){
+                    std::cout << "[LOG] updating input for type " << types[startIdx] << " from process " << rank << " with virtual output from type " << types[j] << " from process " << j << std::endl;
+                    if(i==SizeToInt(j)){
+                        if(sameTypeCommunication) typeComputations[i]->setInputVinForType(types[j], virtualOutputBuffer[j][i]);
+                    } else {
+                        typeComputations[i]->setInputVinForType(types[j], virtualOutputBuffer[j][i]);
+                    }
+                    std::cout << "[LOG] updated input for type " << types[startIdx] << " from process " << rank << " with virtual output from type " << types[j] << " from process " << j << std::endl;
+                }
             }
         }
     }
