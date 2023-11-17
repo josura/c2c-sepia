@@ -761,7 +761,7 @@ int main(int argc, char** argv) {
 
         // preliminary asynchronous receive
         // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
-        std::vector<double*> virtualOutputBuffer;
+        std::vector<double*> virtualInputsBuffer;
         for(int i = 0; i < numProcesses; i++){
             int currentWorkload;
             if(i == (numProcesses-1)){
@@ -769,7 +769,7 @@ int main(int argc, char** argv) {
             } else {
                 currentWorkload = workloadPerProcess;
             }
-            virtualOutputBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
+            virtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
         }
         MPI_Request request[numProcesses];
         for(int i = 0; i < numProcesses; i++){
@@ -780,14 +780,16 @@ int main(int argc, char** argv) {
             } else {
                 targetWorkload = workloadPerProcess;
             }
-            MPI_Irecv(virtualOutputBuffer[i], finalWorkload * targetWorkload, MPI_DOUBLE, targetRank, i, MPI_COMM_WORLD, &request[i]);
+            MPI_Irecv(virtualInputsBuffer[i], finalWorkload * targetWorkload, MPI_DOUBLE, targetRank, i, MPI_COMM_WORLD, &request[i]);
         }
 
 
         // send the virtual outputs to the other processes
         for(uint j = 0; j < numProcesses; j++){
             //sending virtual outputs to target cell
-            std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << typeToRank[types[j]] << " with type " << types[j] << std::endl;
+            int targetStartIdx = j * workloadPerProcess;
+            int targetEndIdx = (j == numProcesses - 1) ? types.size() : (j + 1) * workloadPerProcess;
+            std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
             // target workload
             int targetWorkload;
             if(j == (numProcesses-1)){
@@ -797,7 +799,7 @@ int main(int argc, char** argv) {
             }
             //synchronized communication will lead to deadlocks with this type of implementation
             MPI_Send(virtualOutputs.at(j), finalWorkload * targetWorkload, MPI_DOUBLE, j, j, MPI_COMM_WORLD);
-            std::cout << "[LOG] sent virtual outputs from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j  << std::endl;
+            std::cout << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
         }
 
         // delete the virtual outputs vector of arrays
@@ -822,14 +824,14 @@ int main(int argc, char** argv) {
             }
             for(int isource = 0; isource < sourceWorkload; isource++){
                 for(int ilocal = 0; ilocal < finalWorkload; ilocal++){
-                    int virtualOutputPosition = isource + ilocal*sourceWorkload;
+                    int virtualOutputPosition = ilocal + isource * finalWorkload;
                     int localTypePosition = ilocal + startIdx;
                     int sourceTypePosition = isource + sourceRank*workloadPerProcess;
                     std::cout << "[LOG] updating input for type " << types[localTypePosition] << " from process " << rank << " with virtual output from type " << types[sourceTypePosition] << " from process " << sourceRank << std::endl;
                     if(localTypePosition==sourceTypePosition){
-                        if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualOutputBuffer[sourceRank][virtualOutputPosition]);
+                        if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualOutputPosition]);
                     } else {
-                        typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualOutputBuffer[sourceRank][virtualOutputPosition]);
+                        typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualOutputPosition]);
                     }
                     std::cout << "[LOG] updated input for type " << types[localTypePosition] << " from process " << rank << " with virtual output from type " << types[sourceTypePosition] << " from process " << sourceRank << std::endl;
                 }
