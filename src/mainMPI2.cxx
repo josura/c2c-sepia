@@ -863,9 +863,6 @@ int main(int argc, char** argv) {
                     int virtualInputPosition = ilocal + isource * finalWorkload;
                     int localTypePosition = ilocal + startIdx;
                     int sourceTypePosition = isource + sourceRank*workloadPerProcess;
-                    // // TESTING
-                    // std::cout << "[LOG] virtual input position: " << virtualInputPosition << " for v(" << types[localTypePosition]<< "<-" << types[sourceTypePosition] << ")" << std::endl;
-                    // // TESTING
                     if(localTypePosition==sourceTypePosition){
                         if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
                     } else {
