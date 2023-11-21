@@ -823,8 +823,8 @@ int main(int argc, char** argv) {
         // send the virtual outputs to the other processes
         for(int j = 0; j < numProcesses; j++){
             //sending virtual outputs to target cell
-            int targetStartIdx = j * workloadPerProcess;
-            int targetEndIdx = (j == numProcesses - 1) ? types.size() : (j + 1) * workloadPerProcess;
+            // int targetStartIdx = j * workloadPerProcess;
+            // int targetEndIdx = (j == numProcesses - 1) ? types.size() : (j + 1) * workloadPerProcess;
             //std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
             // target workload
             int targetWorkload;
