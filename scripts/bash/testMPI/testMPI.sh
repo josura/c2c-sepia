@@ -6,6 +6,8 @@ mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 
             --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
             --dissipationModel scaled \
             --dissipationModelParameters 0.2 \
+            --conservationModel scaled \
+            --conservationModelParameters 0.2 \
             --propagationModel neighbors \
             --propagationModelParameters 0.2 \
             --saturation \

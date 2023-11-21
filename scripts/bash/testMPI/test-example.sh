@@ -3,6 +3,8 @@
             --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
             --dissipationModel scaled \
             --dissipationModelParameters 0.2 \
+            --conservationModel scaled \
+            --conservationModelParameters 0.2 \
             --propagationModel neighbors \
             --propagationModelParameters 0.2 \
             --saturation \
