@@ -667,7 +667,7 @@ int main(int argc, char** argv) {
             #pragma omp parallel for
             for(int i = 0; i < finalWorkload; i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
-                std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i]<<std::endl; 
+                std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx]<<std::endl; 
                 
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
@@ -705,10 +705,10 @@ int main(int argc, char** argv) {
                     double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
                     double normRatio = initialNorm/outputNorm;
                     std::vector<double> newInput = vectorScalarMultiplication(typeComputations[i]->getOutputAugmented(),normRatio);
-                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i]<<std::endl;
+                    std::cout << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx]<<std::endl;
                     typeComputations[i]->updateInput(newInput,true);
                 } else {
-                    std::cout << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i]<<std::endl;
+                    std::cout << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx]<<std::endl;
                     typeComputations[i]->updateInput(std::vector<double>(),true);
                 }
                 
