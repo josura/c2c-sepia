@@ -715,26 +715,26 @@ int main(int argc, char** argv) {
             }
         }
 
-        //TESTING
-        //printing type to rank map
-        std::cout << "[LOG] type to rank map: " << std::endl;
-        for (auto const& x : typeToRank)
-        {
-            std::cout << x.first  // string (key)
-            << ':'
-            << x.second // string's value
-            << ", " ;
-        }
-        std::cout << std::endl;
-        //printing start idx and end idx with rank
-        std::cout << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
-        // printing types
-        std::cout << "[LOG] types for rank "<< rank <<": " << std::endl;
-        for (auto const& x : types)
-        {
-            std::cout << x << ", " ;
-        }
-        //TESTING
+        // //TESTING
+        // //printing type to rank map
+        // std::cout << "[LOG] type to rank map: " << std::endl;
+        // for (auto const& x : typeToRank)
+        // {
+        //     std::cout << x.first  // string (key)
+        //     << ':'
+        //     << x.second // string's value
+        //     << ", " ;
+        // }
+        // std::cout << std::endl;
+        // //printing start idx and end idx with rank
+        // std::cout << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
+        // // printing types
+        // std::cout << "[LOG] types for rank "<< rank <<": " << std::endl;
+        // for (auto const& x : types)
+        // {
+        //     std::cout << x << ", " ;
+        // }
+        // //TESTING
 
         // send virtual outputs to the other processes
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
@@ -769,28 +769,28 @@ int main(int argc, char** argv) {
         }
 
 
-        // TESTING
-        // print the virtual outputs arrays
-        std::cout << "[LOG] virtual outputs for process "<< rank<< "  after: " << std::endl;
-        for(int i = 0; i < numProcesses; i++){
-            std::cout << std::endl << "[LOG] to process "<< i << " : " << std::endl;
-            int targetWorkload;
-            if(i == (numProcesses-1)){
-                targetWorkload = types.size() - (i*workloadPerProcess);
-            } else {
-                targetWorkload = workloadPerProcess;
-            }
-            for(int j = 0; j < finalWorkload; j++){
-                for(int k = 0; k < targetWorkload; k++){
-                    int virtualOutputPosition = j + k * finalWorkload;
-                    int localTypePosition = j + startIdx;
-                    int targetTypePosition = k + i*workloadPerProcess;
-                    std::cout << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")=" << virtualOutputs.at(i)[virtualOutputPosition] << ", ";
-                }
-            }
-        }
-        std::cout << std::endl;
-        // TESTING
+        // // TESTING
+        // // print the virtual outputs arrays
+        // std::cout << "[LOG] virtual outputs for process "<< rank<< "  after: " << std::endl;
+        // for(int i = 0; i < numProcesses; i++){
+        //     std::cout << std::endl << "[LOG] to process "<< i << " : " << std::endl;
+        //     int targetWorkload;
+        //     if(i == (numProcesses-1)){
+        //         targetWorkload = types.size() - (i*workloadPerProcess);
+        //     } else {
+        //         targetWorkload = workloadPerProcess;
+        //     }
+        //     for(int j = 0; j < finalWorkload; j++){
+        //         for(int k = 0; k < targetWorkload; k++){
+        //             int virtualOutputPosition = j + k * finalWorkload;
+        //             int localTypePosition = j + startIdx;
+        //             int targetTypePosition = k + i*workloadPerProcess;
+        //             std::cout << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")=" << virtualOutputs.at(i)[virtualOutputPosition] << ", ";
+        //         }
+        //     }
+        // }
+        // std::cout << std::endl;
+        // // TESTING
 
         
 
@@ -825,7 +825,7 @@ int main(int argc, char** argv) {
             //sending virtual outputs to target cell
             int targetStartIdx = j * workloadPerProcess;
             int targetEndIdx = (j == numProcesses - 1) ? types.size() : (j + 1) * workloadPerProcess;
-            std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
+            //std::cout << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
             // target workload
             int targetWorkload;
             if(j == (numProcesses-1)){
@@ -843,12 +843,9 @@ int main(int argc, char** argv) {
             delete[] virtualOutputs.at(i);
         }
 
-        std::cout << "[LOG] receiving virtual outputs for rank" << rank << std::endl;
-        //update input with virtual node values updated in the previous iteration
-        
         // receive outputs from the other processes and update the input
         for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-            std::cout << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
+            //std::cout << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
             MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
             std::cout << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
             // source workload and virtual outputs decomposition on the target
