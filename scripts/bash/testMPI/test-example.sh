@@ -1,0 +1,11 @@
+./build/c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
+            --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
+            --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
+            --dissipationModel scaled \
+            --dissipationModelParameters 0.2 \
+            --propagationModel neighbors \
+            --propagationModelParameters 0.2 \
+            --saturation \
+            --undirectedEdges \
+            --undirectedTypeEdges \
+            --outputFolder outputs/testing-example
