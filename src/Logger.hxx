@@ -15,6 +15,9 @@ class Logger{
             os_ << pf;
             return *this;
         }
+        Logger& printLog(const std::string& msg);
+        void enable();
     private:
         std::ostream& os_;
+        bool enabled_ = true;
 };
