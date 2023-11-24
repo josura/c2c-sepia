@@ -33,7 +33,7 @@ FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 set(EXEC_MAIN "src/main.cxx")
-set(EXEC_MPI_MAIN "src/mainMPI.cxx")
+set(EXEC_MPI_MAIN "src/mainMPI2.cxx")
 set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
 set(LIB_SRCS 
     src/WeightedEdgeGraph.cxx
@@ -52,6 +52,7 @@ set(LIB_SRCS
     src/PropagationModelNeighbors.cxx
     src/PropagationModelOriginal.cxx
     src/CustomScalingFunctions.cxx
+    src/Logger.cxx
 )
 
 if(CUDAavailable)

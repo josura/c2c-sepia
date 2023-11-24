@@ -20,6 +20,7 @@
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 #include "CustomScalingFunctions.h"
+#include "Logger.hxx"
 
 
 
@@ -33,6 +34,7 @@ int main(int argc, char** argv) {
     bool conservateInitialNorm=false;
     bool undirected = false;
     bool undirectedTypeEdges = false;
+    std::string logMode="";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -60,6 +62,7 @@ int main(int argc, char** argv) {
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
         ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
         ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
+        ("loggingOptions",po::value<std::string>(&logMode),"(string) logging options, available options are: 'all','none', default to all")
     ;
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
@@ -78,6 +81,24 @@ int main(int argc, char** argv) {
     if (vm.count("help")) {
         std::cout << desc << std::endl;
         return 1;
+    }
+
+    //logging options
+    Logger logger(std::cout);
+    if(vm.count("loggingOptions")){
+        if(logMode == "all"){
+            std::cout << "[LOG] logging options set to all"<<std::endl;
+            logger.enable();
+        } else if (logMode == "none"){
+            std::cout << "[LOG] logging options set to none"<<std::endl;
+            logger.disable();
+        } else {
+            std::cout << "[LOG] logging options set to default (all)"<<std::endl;
+            logger.enable();
+        }
+    } else {
+        std::cout << "[LOG] logging options set to default (all)"<<std::endl;
+        logger.enable();
     }
 
 
