@@ -16,6 +16,8 @@ class Logger{
             return *this;
         }
         Logger& printLog(const std::string& msg);
+        Logger& printError(const std::string& msg);
+        Logger& printWarning(const std::string& msg);
         void enable();
     private:
         std::ostream& os_;
