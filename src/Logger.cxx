@@ -25,3 +25,7 @@ Logger& Logger::printWarning(const std::string& msg){
 void Logger::enable(){
     enabled_ = true;
 }
+
+void Logger::disable(){
+    enabled_ = false;
+}

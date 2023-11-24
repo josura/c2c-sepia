@@ -19,6 +19,7 @@ class Logger{
         Logger& printError(const std::string& msg);
         Logger& printWarning(const std::string& msg);
         void enable();
+        void disable();
     private:
         std::ostream& os_;
         bool enabled_ = true;
