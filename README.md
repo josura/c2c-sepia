@@ -49,6 +49,9 @@ The options are the following:
 - **--saturation** => use saturation of values, default to 1, if another value is needed, use the saturationTerm
 - **--saturationTerm** => defines the limits of the saturation [-saturationTerm,saturationTerm]
 - **--conservateInitialNorm** => conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false
+- **undirectedEdges** => edges in the graphs are undirected
+- **undirectedTypeEdges** => edges between types are undirected
+- **loggingOptions** => (string) logging options, available options are: 'all','none', default to all
     
 
 ## INPUTS 
