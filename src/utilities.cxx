@@ -574,9 +574,6 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 }
 
 
-//TODO, understand what file or files(maybe a directory) should be read into the program, dependent on how the cells are represented
-//TODO, understand if the translation from ensemble gene names to entrez should be done here
-//TODO, filtering genes also since I have seen nodes not in the metapathway
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez){
     string line;
     std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> ret;
@@ -590,14 +587,14 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
             int indexTypeStart=-1,indexTypeEnd=-1,indexStartNode=-1,indexEndNode=-1,indexWeight=-1;
             //TODO change attributes names to be more general
             for(uint i = 0; i < entriesHeader.size(); i++){
-                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startType") != std::string::npos) {
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("starttype") != std::string::npos) {
                     indexTypeStart = i;
                 }
-                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endType") != std::string::npos) {
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endtype") != std::string::npos) {
                     indexTypeEnd = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startNodeName") != std::string::npos) {
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startnodename") != std::string::npos) {
                     indexStartNode = i;
-                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endNodeName") != std::string::npos) {
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endnodename") != std::string::npos) {
                     indexEndNode = i;
                 } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
                     indexWeight = i;

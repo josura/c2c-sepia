@@ -239,7 +239,6 @@ int main(int argc, char** argv) {
     } else {
         std::cerr << "[ERROR] output folder was not set. aborting\n";
         return 1;
-        //TODO
     }
     if (vm.count("dissipationModel")) {
         logger << "[LOG] dissipation model was set to "
