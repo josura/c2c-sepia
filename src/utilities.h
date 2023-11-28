@@ -180,7 +180,7 @@ std::vector<T> getVectorFromFile(std::string filename){
 }
 
 std::map<std::string, std::string>getEnsembletoEntrezidMap();
-std::map<std::string, std::vector<std::string>> getFullNodesDescription();
+std::map<std::string, std::vector<std::string>> getFullNodesDescription(std::string filename = "resources/graphs/metapathwayNew/nodes.tsv"); 
 /**
  * \brief   Return the filenames of all files that have the specified extension
  *          in the specified directory and all subdirectories.

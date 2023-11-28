@@ -803,13 +803,12 @@ std::map<std::string, std::string> getEnsembletoEntrezidMap(){
     return ret;
 }
 
-std::map<std::string, std::vector<std::string>> getFullNodesDescription(){
+std::map<std::string, std::vector<std::string>> getFullNodesDescription(std::string filename){
     string line;
     // schema is #Id	Name	Type	Aliases
     std::map<std::string,std::vector<std::string>> ret;
-    std::string mapFilename = "resources/graphs/metapathwayNew/nodes.tsv";  //TODO parametrize the map file with the nodes description
-    if(file_exists(mapFilename)){
-        ifstream myfile (mapFilename);
+    if(file_exists(filename)){
+        ifstream myfile (filename);
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
@@ -828,7 +827,7 @@ std::map<std::string, std::vector<std::string>> getFullNodesDescription(){
             myfile.close();
         }
     } else {
-        throw std::invalid_argument("utilities::getFullNodesDescription: file does not exists " + mapFilename);
+        throw std::invalid_argument("utilities::getFullNodesDescription: file does not exists " + filename);
     }
     return ret;
 }
