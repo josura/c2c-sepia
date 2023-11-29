@@ -844,7 +844,7 @@ std::vector<std::string> get_all(std::string const & root, std::string const & e
     return paths;
 } 
 
-void saveNodeValues(std::string folderName, int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez){
+void saveNodeValues(std::string folderName, int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile){
     std::string outputFilename = folderName + "/" + cellName + "--"+std::to_string(iteration) + ".tsv";
     std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
@@ -852,7 +852,14 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
         std::cout << "Unable to open file " << outputFilename << std::endl;
         return;
     }
-    auto mapToEverything = getFullNodesDescription();
+    if(nodesDescriptionFile.length()==0){
+        nodesDescriptionFile = "resources/graphs/metapathwayNew/nodes.tsv";
+    } else {
+        if(!file_exists(nodesDescriptionFile)){
+            throw std::invalid_argument("utilities::saveNodeValues: file does not exists " + nodesDescriptionFile);
+        }
+    }
+    auto mapToEverything = getFullNodesDescription(nodesDescriptionFile);
     //auto mapToEnsemble = getEnsembletoEntrezidMap();
     //header
     outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\n";
