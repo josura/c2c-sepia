@@ -864,7 +864,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     //header
     outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\n";
     //body
-    if(useEntrez){
+    if(useEntrez || nodesDescriptionFile.length()!=0){
         for(uint i = 0; i < nodeValues.size(); i++){
             if(mapToEverything.contains(nodeNames[i]))
                 outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
@@ -880,7 +880,8 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
             }
             outfile << std::endl;
         }
-    }else{
+    }  
+    else{
         for(uint i = 0; i < nodeValues.size(); i++){
             auto splittedVirtual = splitString(nodeNames[i], ":");
             if(splittedVirtual[0]=="v-in"){
