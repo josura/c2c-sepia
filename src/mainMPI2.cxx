@@ -392,10 +392,14 @@ int main(int argc, char** argv) {
     }
     //end program options section
 
-
-    std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
+    std::string nodesDescriptionFilename="";
     if(ensembleGeneNames){
         logger <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
+    } else if(vm.count("nodeDescriptionFile")){
+        logger <<"[LOG] using node description file to get the names of the nodes in the graphs"<<std::endl;
+        nodesDescriptionFilename = vm["nodeDescriptionFile"].as<std::string>();
+    } else {
+        logger <<"[LOG] no nodes description"<<std::endl;
     }
 
 
@@ -713,7 +717,7 @@ int main(int argc, char** argv) {
             for(int i = 0; i < finalWorkload; i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 //TODO change how to save files to get more information about intratype and intertype iterations
-                saveNodeValues(outputFoldername, iterationInterType*intratypeIterations + iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+                saveNodeValues(outputFoldername, iterationInterType*intratypeIterations + iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename);
             }
 
             //update input
