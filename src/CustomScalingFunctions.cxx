@@ -15,3 +15,10 @@ std::function<double(double)> getConservationScalingFunction(){
         return 1.0;      
     };
 }
+
+std::function<double(double)> getPropagationScalingFunction(){
+    return [](double x) {
+        //rewrite accordingly
+        return 1.0;      
+    };
+}
