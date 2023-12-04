@@ -93,6 +93,8 @@ The map file that is used for the mapping of ensemble gene names to entrez ids (
 
 The mapping file is only available to use entrez ids for the metapathway used and loaded into this repository, if the graph used for the computation is different there is no need to the mapping file and it will not be even considered during the computation
 
+If the custom  functions and scaling functions are used, the project need to be rebuilt with make
+
 
 Under development
 
