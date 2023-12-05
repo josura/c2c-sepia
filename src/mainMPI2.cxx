@@ -462,9 +462,9 @@ int main(int argc, char** argv) {
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
     
     int finalWorkload = endIdx - startIdx;
-    // TESTING
-    std::cout << "rank: " << rank << " startIdx: " << startIdx << " endIdx: " << endIdx << " finalWorkload: " << finalWorkload << std::endl;
-    // END TESTING
+    // // TESTING
+    // std::cout << "rank: " << rank << " startIdx: " << startIdx << " endIdx: " << endIdx << " finalWorkload: " << finalWorkload << std::endl;
+    // // END TESTING
 
 
     //map types to rank
@@ -479,16 +479,16 @@ int main(int argc, char** argv) {
         typeToRank[types[i]] = rankType;
     }
 
-    // TESTING
-    std::cout << "rank: " << rank << " typeToRank: " << std::endl;
-    for (auto const& x : typeToRank)
-    {
-        std::cout << x.first  // string (key)
-                  << ':'
-                  << x.second // string's value 
-                  << std::endl ;
-    }
-    // END TESTING
+    // // TESTING
+    // std::cout << "rank: " << rank << " typeToRank: " << std::endl;
+    // for (auto const& x : typeToRank)
+    // {
+    //     std::cout << x.first  // string (key)
+    //               << ':'
+    //               << x.second // string's value 
+    //               << std::endl ;
+    // }
+    // // END TESTING
 
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
@@ -763,26 +763,26 @@ int main(int argc, char** argv) {
             }
         }
 
-        //TESTING
-        //printing type to rank map
-        logger << "[LOG] type to rank map: " << std::endl;
-        for (auto const& x : typeToRank)
-        {
-            logger << x.first  // string (key)
-            << ':'
-            << x.second // string's value
-            << ", " ;
-        }
-        logger << std::endl;
-        //printing start idx and end idx with rank
-        logger << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
-        // printing types
-        logger << "[LOG] types for rank "<< rank <<": " << std::endl;
-        for (auto const& x : types)
-        {
-            logger << x << ", " ;
-        }
-        //TESTING
+        // //TESTING
+        // //printing type to rank map
+        // logger << "[LOG] type to rank map: " << std::endl;
+        // for (auto const& x : typeToRank)
+        // {
+        //     logger << x.first  // string (key)
+        //     << ':'
+        //     << x.second // string's value
+        //     << ", " ;
+        // }
+        // logger << std::endl;
+        // //printing start idx and end idx with rank
+        // logger << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
+        // // printing types
+        // logger << "[LOG] types for rank "<< rank <<": " << std::endl;
+        // for (auto const& x : types)
+        // {
+        //     logger << x << ", " ;
+        // }
+        // //TESTING
 
         // send virtual outputs to the other processes
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
