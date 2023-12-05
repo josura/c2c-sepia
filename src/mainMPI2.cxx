@@ -312,7 +312,7 @@ int main(int argc, char** argv) {
             }
         } else if(dissipationModelName == "custom"){
             //control if custom function for dissipation returns double and takes a single parameter as double
-            logger << "[LOG] dissipation model was set to custom, HIGH RISK OF FAILURE\n " << std::endl;
+            logger << "[LOG] dissipation model was set to custom, if the function is not correctly defined there will be errors\n " << std::endl;
             dissipationModel = new DissipationModelScaled(getDissipationScalingFunction());
         } else {
             std::cerr << "[ERROR] dissipation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
@@ -368,7 +368,7 @@ int main(int argc, char** argv) {
             }
         } else if(conservationModelName == "custom"){
             //control if custom function for conservation returns double and takes a single parameter as double
-            logger << "[LOG] conservation model was set to custom, HIGH RISK OF FAILURE\n " << std::endl;
+            logger << "[LOG] conservation model was set to custom, if the custom function defined for scaling is not correctly implemented, there will be errors\n " << std::endl;
             conservationModel = new ConservationModel(getConservationScalingFunction());
         } else {
             std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
