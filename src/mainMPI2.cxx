@@ -462,13 +462,34 @@ int main(int argc, char** argv) {
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
     
     int finalWorkload = endIdx - startIdx;
+    // TESTING
+    std::cout << "rank: " << rank << " startIdx: " << startIdx << " endIdx: " << endIdx << " finalWorkload: " << finalWorkload << std::endl;
+    // END TESTING
 
 
     //map types to rank
     std::map<std::string, int> typeToRank;
-    for (uint i = 0; i < types.size(); ++i) {
-        typeToRank[types[i]] = i / workloadPerProcess; // integer division to get the process rank associated to each type, since the workload per type could be different than one per process
+    for (int i = 0; i < SizeToInt(types.size()); ++i) {
+        int rankType;
+        if (i >= (numProcesses - 1)*workloadPerProcess) {
+            rankType = numProcesses - 1;
+        } else {
+            rankType = i / workloadPerProcess;
+        }
+        typeToRank[types[i]] = rankType;
     }
+
+    // TESTING
+    std::cout << "rank: " << rank << " typeToRank: " << std::endl;
+    for (auto const& x : typeToRank)
+    {
+        std::cout << x.first  // string (key)
+                  << ':'
+                  << x.second // string's value 
+                  << std::endl ;
+    }
+    // END TESTING
+
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
@@ -673,6 +694,7 @@ int main(int argc, char** argv) {
             }
         } else if (propagationModelName == "custom"){
             std::cerr << "[ERROR] not implemented yet\n";
+            //TODO
             return 1;
         } else {
             std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
@@ -717,6 +739,7 @@ int main(int argc, char** argv) {
             for(int i = 0; i < finalWorkload; i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 //TODO change how to save files to get more information about intratype and intertype iterations
+                //logger << "saving output values for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx] << ") in process " << rank <<std::endl;
                 saveNodeValues(outputFoldername, iterationInterType*intratypeIterations + iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename);
             }
 
@@ -740,26 +763,26 @@ int main(int argc, char** argv) {
             }
         }
 
-        // //TESTING
-        // //printing type to rank map
-        // logger << "[LOG] type to rank map: " << std::endl;
-        // for (auto const& x : typeToRank)
-        // {
-        //     logger << x.first  // string (key)
-        //     << ':'
-        //     << x.second // string's value
-        //     << ", " ;
-        // }
-        // logger << std::endl;
-        // //printing start idx and end idx with rank
-        // logger << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
-        // // printing types
-        // logger << "[LOG] types for rank "<< rank <<": " << std::endl;
-        // for (auto const& x : types)
-        // {
-        //     logger << x << ", " ;
-        // }
-        // //TESTING
+        //TESTING
+        //printing type to rank map
+        logger << "[LOG] type to rank map: " << std::endl;
+        for (auto const& x : typeToRank)
+        {
+            logger << x.first  // string (key)
+            << ':'
+            << x.second // string's value
+            << ", " ;
+        }
+        logger << std::endl;
+        //printing start idx and end idx with rank
+        logger << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
+        // printing types
+        logger << "[LOG] types for rank "<< rank <<": " << std::endl;
+        for (auto const& x : types)
+        {
+            logger << x << ", " ;
+        }
+        //TESTING
 
         // send virtual outputs to the other processes
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
@@ -850,7 +873,7 @@ int main(int argc, char** argv) {
             //sending virtual outputs to target cell
             // int targetStartIdx = j * workloadPerProcess;
             // int targetEndIdx = (j == numProcesses - 1) ? types.size() : (j + 1) * workloadPerProcess;
-            //logger << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
+            // logger << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
             // target workload
             int targetWorkload;
             if(j == (numProcesses-1)){
