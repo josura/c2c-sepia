@@ -12,6 +12,7 @@
 #include "PropagationModel.hxx"
 #include "PropagationModelOriginal.hxx"
 #include "PropagationModelNeighbors.hxx"
+#include "PropagationModelCustom.hxx"
 #include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
@@ -56,7 +57,7 @@ int main(int argc, char** argv) {
         ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder, for an example see in data data/testdata/testHeterogeneousGraph/graphsDifferentStructure")
         ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
-        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)', neighbors(propagate the values only on neighbors at every iteration and scale parameter) and 'customScaling' (pseudoinverse*scalingFunction(parameters)), 'customScalingNeighbors' (neighbors propagation and scalingFunction(parameters)), 'customPropagation' (custom scaling function and custom propagation function defined in src/PropagationModelCustom) ")
+        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'default(pseudoinverse creation)','scaled (pseudoinverse * scale parameter)', neighbors(propagate the values only on neighbors at every iteration and scale parameter) and 'customScaling' (pseudoinverse*scalingFunction(parameters)), 'customScalingNeighbors' (neighbors propagation and scalingFunction(parameters)), 'customPropagation' (custom scaling function and custom propagation function defined in src/PropagationModelCustom) ")
         ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
@@ -640,8 +641,8 @@ int main(int argc, char** argv) {
         logger << "[LOG] propagation model was set to "
     << vm["propagationModel"].as<std::string>() << ".\n";
         std::string propagationModelName = vm["propagationModel"].as<std::string>();
-        if(propagationModelName == "none"){
-            logger << "[LOG] propagation model set to default (none)\n";
+        if(propagationModelName == "default"){
+            logger << "[LOG] propagation model set to default (pseudoinverse propagation)\n";
             for(int i = 0; i < finalWorkload ;i++ ){
                 typeComputations[i]->setPropagationModel(new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction));
             }
@@ -718,10 +719,14 @@ int main(int argc, char** argv) {
                 logger << "[LOG] propagation model parameters were declared to be "
                 << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ", these parameters are not used since the propagation scaling function was set to custom.\n";
             }
-             
+            propagationScalingFunction = getPropagationScalingFunction();
+            for(int i = 0; i < finalWorkload;i++ ){
+                PropagationModel* tmpPropagationModel = new PropagationModelCustom(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                typeComputations[i]->setPropagationModel(tmpPropagationModel);
+            }
         
         } else {
-            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
+            std::cerr << "[ERROR] propagation model is not any of the types. propagation model scale functions available are default, scaled, neighbors and custom \n";
             return 1;
         }
     } else {

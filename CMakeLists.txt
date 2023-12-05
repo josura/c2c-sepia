@@ -51,6 +51,7 @@ set(LIB_SRCS
     src/PropagationModel.cxx
     src/PropagationModelNeighbors.cxx
     src/PropagationModelOriginal.cxx
+    src/PropagationModelCustom.cxx
     src/CustomScalingFunctions.cxx
     src/Logger.cxx
 )
