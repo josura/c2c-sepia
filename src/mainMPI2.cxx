@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
         ("graphsFilesFolder",po::value<std::string>(),"(string) graphs (pathways or other types of graphs) file folder, for an example see in data data/testdata/testHeterogeneousGraph/graphsDifferentStructure")
         ("conservationModel",po::value<std::string>(),"(string) the conservation model used for the computation, available models are: 'none (default)','scaled','random' and 'custom' ")
         ("conservationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the dissipation model, for the scaled parameter the constant used to scale the conservation final results, in the case of random the upper and lower limit (between 0 and 1)")
-        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)', neighbors(propagate the values only on neighbors at every iteration and scale parameter) and 'customScaling' (pseudoinverse*scalingFunction(parameters)), 'customScalingNeighbors' (neighbors propagation and scalingFunction(parameters)), 'customPropagation' (custom scaling function and custom propagation function defined in src/PropagationModelCustom.hxx) ")
+        ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'none (default to pseudoinverse creation)','scaled (pseudoinverse * scale parameter)', neighbors(propagate the values only on neighbors at every iteration and scale parameter) and 'customScaling' (pseudoinverse*scalingFunction(parameters)), 'customScalingNeighbors' (neighbors propagation and scalingFunction(parameters)), 'customPropagation' (custom scaling function and custom propagation function defined in src/PropagationModelCustom) ")
         ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
         ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
@@ -692,10 +692,34 @@ int main(int argc, char** argv) {
                 }
                 //nothing to do, default propagation scaling function is the identity
             }
-        } else if (propagationModelName == "custom"){
-            std::cerr << "[ERROR] not implemented yet\n";
-            //TODO
-            return 1;
+        } else if(propagationModelName == "customScaling"){ 
+            if(vm.count("propagationModelParameters")){
+                logger << "[LOG] propagation model parameters were declared to be "
+            << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ", these parameters are not used since the propagation scaling function was set to custom.\n";
+                std::vector<double> propagationModelParameters = vm["propagationModelParameters"].as<std::vector<double>>();
+                if(propagationModelParameters.size() == 1){
+                    propagationScalingFunction = getPropagationScalingFunction();
+                    for(int i = 0; i < finalWorkload;i++ ){
+                        PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                        typeComputations[i]->setPropagationModel(tmpPropagationModel);
+                    }
+                } else {
+                    std::cerr << "[ERROR] propagation model parameters for custom propagation must be one parameter: aborting"<<std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "[ERROR] propagation model parameters for custom propagation was not set: aborting"<<std::endl;
+                return 1;
+            }
+            
+        } else if(propagationModelName == "customScalingNeighbors"){ 
+        
+        } else if(propagationModelName == "customPropagation"){
+            if(vm.count("propagationModelParameters") >= 0){
+                std::cerr << "[ERROR] propagation model parameter for custom propagation was set: aborting, parameters are not supported for custom Propagation"<<std::endl;
+                return 1;
+            } 
+        
         } else {
             std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
             return 1;
