@@ -7,9 +7,7 @@ A framework to work with scRNA-seq profiles is presented here, the algorithm wil
 
 ## DEPENDENCIES
 - armadillo
-- mlpack(latest)
-- FUTURE repast HPC
-- FUTURE RELOGO
+- MPI implementation (tested on OpenMPI)
 
 ## BUILD
 ```bash
