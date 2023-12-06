@@ -666,7 +666,7 @@ int main(int argc, char** argv ) {
             for(uint i = 0; i < typesFiltered.size(); i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 std::cout << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl; 
-                
+                // TODO use stateful scaling function to consider previous times
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
                         // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);

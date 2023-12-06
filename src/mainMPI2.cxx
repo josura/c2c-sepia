@@ -744,7 +744,7 @@ int main(int argc, char** argv) {
             for(int i = 0; i < finalWorkload; i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 logger << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx]<<std::endl; 
-                
+                // TODO use stateful scaling function to consider previous times
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
                         // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true);
