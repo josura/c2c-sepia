@@ -186,7 +186,8 @@ for (i in 1:30){
   
   
   # Create communities based on the graph
-  community_data <- create_communities(graph)
+  resolutionLouv <- 0.1 * i
+  community_data <- create_communities(graph,resolutionLouv)
   
   
   # Generate edge data with edge weights
