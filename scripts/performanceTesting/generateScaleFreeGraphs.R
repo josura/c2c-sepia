@@ -21,8 +21,8 @@ assign_node_conditions <- function(graph, prob_infectious = 0.1) {
 
 
 # Function to create communities using Louvain community detection
-create_communities <- function(graph) {
-  communities <- cluster_louvain(graph)
+create_communities <- function(graph, resolutionLouv = 1) {
+  communities <- cluster_louvain(graph, resolution = resolutionLouv)
   nodes <- V(graph)
   community_data <- data.frame(node_name = nodes, community = communities$membership)
   return(community_data)
@@ -165,7 +165,7 @@ for (i in 1:30){
   plot_graph(graph, node_conditions)
   
   
-  create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphs/",num_nodes,"Nodes/"))
+  create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphsWeakScalingDifferentNodes/",num_nodes,"Nodes/"))
   # Write data to tsv files
   write_tsv(edge_data, paste0("syntheticGraphs/",num_nodes,"Nodes/edge_data.tsv"))
   write_tsv(node_conditions, paste0("syntheticGraphs/",num_nodes,"Nodes/node_conditions.tsv"))
@@ -173,3 +173,34 @@ for (i in 1:30){
   
 }
 
+
+#generate 30 graphs, each graph has 10000 nodes, the mean population of the communities should increase, starting from the default louvain community detection
+for (i in 1:30){
+  num_nodes <- 10000
+  # Generate a graph with preferential attachment (m=2 for preferential attachment)
+  graph <- generate_graph(num_nodes, m = 2)
+  
+  
+  # Assign node conditions to the graph
+  node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
+  
+  
+  # Create communities based on the graph
+  community_data <- create_communities(graph)
+  
+  
+  # Generate edge data with edge weights
+  edge_data <- generate_edge_data(graph)
+  
+  
+  # Plot the graph with node colors and edge widths
+  plot_graph(graph, node_conditions)
+  
+  
+  create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphsWeakScalingDifferentCommunities/",num_nodes,"Nodes/"))
+  # Write data to tsv files
+  write_tsv(edge_data, paste0("syntheticGraphs/",num_nodes,"Nodes/edge_data.tsv"))
+  write_tsv(node_conditions, paste0("syntheticGraphs/",num_nodes,"Nodes/node_conditions.tsv"))
+  write_tsv(community_data, paste0("syntheticGraphs/",num_nodes,"Nodes/communities.tsv"))
+  
+}
