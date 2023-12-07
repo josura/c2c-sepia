@@ -174,7 +174,7 @@ for (i in 1:30){
 }
 
 
-#generate 30 graphs, each graph has 10000 nodes, the mean population of the communities should increase, starting from the default louvain community detection
+#generate 30 graphs, each graph has 10000 nodes, the mean population of the communities should increase, starting from the 0.1 to 3 resolution for Louvain
 for (i in 1:30){
   num_nodes <- 10000
   # Generate a graph with preferential attachment (m=2 for preferential attachment)
@@ -198,7 +198,7 @@ for (i in 1:30){
   plot_graph(graph, node_conditions)
   
   
-  create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphsWeakScalingDifferentCommunities/",num_nodes,"Nodes/"))
+  create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphsWeakScalingDifferentCommunities/","Nodes-resolutionLouv",resolutionLouv,"/"))
   # Write data to tsv files
   write_tsv(edge_data, paste0("syntheticGraphs/",num_nodes,"Nodes/edge_data.tsv"))
   write_tsv(node_conditions, paste0("syntheticGraphs/",num_nodes,"Nodes/node_conditions.tsv"))
