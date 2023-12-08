@@ -962,8 +962,10 @@ int main(int argc, char** argv) {
             int numberTypes = types.size();
             int numberIterations = intratypeIterations * intertypeIterations;
             // append mode
-            performanceFile.open (performanceFilename, std::ios_base::app);
-            // performanceFile << "inputFolderGraphs\t" << "numberProcesses" << "\t" << "numberTypes" << "\t" << "numberIterations" << "\t" << "time" << std::endl;
+            performanceFile.open (performanceFilename, std::ios::out | std::ios::app);
+            if (performanceFile.fail())
+                throw std::ios_base::failure(std::strerror(errno));
+            //performanceFile << "inputFolderGraphs\t" << "numberProcesses" << "\t" << "numberTypes" << "\t" << "numberIterations" << "\t" << "time" << std::endl;
             performanceFile << graphsFilesFolder << "\t" << numberProcesses << "\t" << numberTypes << "\t" << numberIterations << "\t" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
             performanceFile.close();
         }
