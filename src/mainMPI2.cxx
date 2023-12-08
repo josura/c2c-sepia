@@ -955,17 +955,18 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     // take ending time after the computation
     auto end = std::chrono::steady_clock::now();
-    if(vm.count("savePerformance")){
-        std::ofstream performanceFile;
-        int numberProcesses = numProcesses;
-        int numberTypes = types.size();
-        int numberIterations = intratypeIterations * intertypeIterations;
-        std::string performanceFilename = outputFoldername + "/performance.tsv";
-
-        performanceFile.open (performanceFilename);
-        performanceFile << "inputFolderGraphs\t" << "numberProcesses" << "\t" << "numberTypes" << "\t" << "numberIterations" << "\t" << "time" << std::endl;
-        performanceFile << graphsFilesFolder << "\t" << numberProcesses << "\t" << numberTypes << "\t" << numberIterations << "\t" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
-        performanceFile.close();
+    if(rank == 0){
+        if(vm.count("savePerformance")){
+            std::ofstream performanceFile;
+            int numberProcesses = numProcesses;
+            int numberTypes = types.size();
+            int numberIterations = intratypeIterations * intertypeIterations;
+            // append mode
+            performanceFile.open (performanceFilename, std::ios_base::app);
+            // performanceFile << "inputFolderGraphs\t" << "numberProcesses" << "\t" << "numberTypes" << "\t" << "numberIterations" << "\t" << "time" << std::endl;
+            performanceFile << graphsFilesFolder << "\t" << numberProcesses << "\t" << numberTypes << "\t" << numberIterations << "\t" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+            performanceFile.close();
+        }
     }
     return 0;
 }
