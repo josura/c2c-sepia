@@ -141,7 +141,8 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
 
 
 
-
+# create the folder for the graphs
+dir.create("syntheticGraphsWeakScalingDifferentNodes", showWarnings = FALSE)
 #generate 30 graphs, each graph has 1000 nodes more than the previous one, starting from 1000 nodes
 for (i in 1:30){
   num_nodes <- 1000 * i
@@ -162,18 +163,19 @@ for (i in 1:30){
   
   
   # Plot the graph with node colors and edge widths
-  plot_graph(graph, node_conditions)
+  #plot_graph(graph, node_conditions)
   
-  
+  dir.create(paste0("syntheticGraphsWeakScalingDifferentNodes/",num_nodes,"Nodes/"), showWarnings = FALSE)
   create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphsWeakScalingDifferentNodes/",num_nodes,"Nodes/"))
   # Write data to tsv files
-  write_tsv(edge_data, paste0("syntheticGraphs/",num_nodes,"Nodes/edge_data.tsv"))
-  write_tsv(node_conditions, paste0("syntheticGraphs/",num_nodes,"Nodes/node_conditions.tsv"))
-  write_tsv(community_data, paste0("syntheticGraphs/",num_nodes,"Nodes/communities.tsv"))
+  write_tsv(edge_data, paste0("syntheticGraphsWeakScalingDifferentNodes/",num_nodes,"Nodes/edge_data.tsv"), quote = "none",append = FALSE)
+  write_tsv(node_conditions, paste0("syntheticGraphsWeakScalingDifferentNodes/",num_nodes,"Nodes/node_conditions.tsv"), quote = "none",append = FALSE)
+  write_tsv(community_data, paste0("syntheticGraphsWeakScalingDifferentNodes/",num_nodes,"Nodes/communities.tsv"), quote = "none",append = FALSE)
   
 }
 
-
+#create the folder for the graphs
+dir.create("syntheticGraphsWeakScalingDifferentCommunities", showWarnings = FALSE)
 #generate 30 graphs, each graph has 10000 nodes, the mean population of the communities should increase, starting from the 0.1 to 3 resolution for Louvain
 for (i in 1:30){
   num_nodes <- 10000
@@ -197,11 +199,11 @@ for (i in 1:30){
   # Plot the graph with node colors and edge widths
   plot_graph(graph, node_conditions)
   
-  
+  dir.create(paste0("syntheticGraphsWeakScalingDifferentCommunities/",num_nodes,"Nodes-resolutionLouv",resolutionLouv,"/"), showWarnings = FALSE)
   create_input_graphs(graph, node_conditions, community_data, paste0("syntheticGraphsWeakScalingDifferentCommunities/","Nodes-resolutionLouv",resolutionLouv,"/"))
   # Write data to tsv files
-  write_tsv(edge_data, paste0("syntheticGraphs/",num_nodes,"Nodes/edge_data.tsv"))
-  write_tsv(node_conditions, paste0("syntheticGraphs/",num_nodes,"Nodes/node_conditions.tsv"))
-  write_tsv(community_data, paste0("syntheticGraphs/",num_nodes,"Nodes/communities.tsv"))
+  write_tsv(edge_data, paste0("syntheticGraphsWeakScalingDifferentCommunities/",num_nodes,"Nodes/edge_data.tsv"), quote = "none",append = FALSE)
+  write_tsv(node_conditions, paste0("syntheticGraphsWeakScalingDifferentCommunities/",num_nodes,"Nodes/node_conditions.tsv"), quote = "none",append = FALSE)
+  write_tsv(community_data, paste0("syntheticGraphsWeakScalingDifferentCommunities/",num_nodes,"Nodes/communities.tsv"), quote = "none",append = FALSE)
   
 }

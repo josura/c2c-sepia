@@ -1,8 +1,14 @@
+# example usage: sh generatePerformanceTimesDifferentGraphs.sh <interface> graphsFolder/ outputs/times/ 
+
+# control if parameters are passed
+if [ $# -ne 3 ]; then
+    echo "Please pass the interface, the folder with the inputs and the folder where to save the outputs"
+    exit 1
+fi
+
 # interface is passed as an argument
 interface=$1
 
-
-#example usage: sh scripts/bash/experiments/100NodesEpidemicsExperiments.sh scripts/R/epidemics/syntheticGraphs/100Nodes/ outputs/100NodesEpidemics/ 
 # get the directory of the inputs from the first argument
 inputsFolder=$2
 outputsFolder=$3
@@ -21,25 +27,29 @@ echo "Graph file: $graphsFolderName"
 echo "Initial perturbation file: $initialPerturbationFolderName"
 echo "Type interactions file: $typeInteractionsFolderName"
 
-listDissipationScaleFactors=(0 0.2 0.4 0.6)
-listPropagationScaleFactors=(0.5 1.0 2.0 4.0)
 
-# loop through the permutation of scale factors (propagation vs dissipation)
-for dissipationScaleFactor in ${listDissipationScaleFactors[@]}; do
-    for propagationScaleFactor in ${listPropagationScaleFactors[@]}; do
 
-        mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
-                    --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
-                    --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
-                    --dissipationModel scaled \
-                    --dissipationModelParameters 0.2 \
-                    --conservationModel scaled \
-                    --conservationModelParameters 0.2 \
-                    --propagationModel customPropagation \
-                    --propagationModelParameters 0.2 \
-                    --saturation \
-                    --undirectedEdges \
-                    --undirectedTypeEdges \
-                    --outputFolder outputs/testingMPI
-    done
+# loop through the files (the name of the file should be <numnodes>Nodes.tsv), the number of nodes start from 1000 and increase by 1000 until 30000
+for graphFile in $(ls $graphsFolder | grep "Nodes.tsv"); do
+    echo "Graph file: $graphFile"
+    # get the number of nodes from the file name
+    numNodes=$(echo $graphFile | cut -d'N' -f 1)
+    echo "$numNodes\t" >> $outputsFolder/times.txt
+    # run the simulation
+    echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI \ 
+                --graphsFilesFolder $graphsFolder \
+                --initialPerturbationPerTypeFolder $initialPerturbationFolder \
+                --typeInteractionFolder $typeInteractionsFolder \
+                --dissipationModel scaled \
+                --dissipationModelParameters 0.2 \
+                --conservationModel scaled \
+                --conservationModelParameters 0.2 \
+                --propagationModel scaled \
+                --propagationModelParameters 0.2 \
+                --saturation \
+                --undirectedEdges \
+                --undirectedTypeEdges \
+                --outputFolder $outputFolder \
+                --savePerformance scripts/performanceTesting/timesDifferentGraphs.tsv"
+
 done
