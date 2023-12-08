@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
     std::string logMode="";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
+    std::string performanceFilename = "";
     desc.add_options()
         ("help", "() print help section")//<initialPerturbationPerType>.tsv [<subtypes>.txt] [<typesInteraction>.tsv]\nFILE STRUCTURE SCHEMA:\ngraph.tsv\nstart end weight\n<gene1> <gene2>  <0.something>\n...\n\n\ninitialPerturbationPerType.tsv\n type1 type2 ... typeN\ngene1 <lfc_type1:gene1> <lfc_type2:gene1> ... <lfc_typeN:gene1>\ngene1 <lfc_type1:gene2> <lfc_type2:gene2> ... <lfc_typeN:gene2>\n...\n\n\ntypesInteraction.tsv\nstartType:geneLigand endType:geneReceptor weight\n<type1:geneLigand> <type2:genereceptor>  <0.something>\n...\n\n\nsubtypes.txt\ntype1\ntype3\n...")
         ("fUniqueGraph", po::value<std::string>(), "(string) graph filename, for an example graph see in resources. NOTE: if this option is chosen, graphsFilesFolder cannot be used. For an example see in data data/testdata/testGraph/edges-Graph1-general.tsv")
@@ -65,6 +66,7 @@ int main(int argc, char** argv) {
         ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
         ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
         ("loggingOptions",po::value<std::string>(&logMode),"(string) logging options, available options are: 'all','none', default to all")
+        ("savePerformance",po::value<std::string>(&performanceFilename), "(string) output performance (running time, number of total nodes, number of communities, number of total edges) to the defined file, if nothing is specified the performance are not saved")
     ;
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
@@ -442,6 +444,8 @@ int main(int argc, char** argv) {
     }
 
 
+    // take starting time before initializing MPI and the computation
+    auto start = std::chrono::steady_clock::now();
     // initialize MPI
     MPI_Init(&argc, &argv);
 
@@ -949,5 +953,19 @@ int main(int argc, char** argv) {
     }
 
     MPI_Finalize();
+    // take ending time after the computation
+    auto end = std::chrono::steady_clock::now();
+    if(vm.count("savePerformance")){
+        std::ofstream performanceFile;
+        int numberProcesses = numProcesses;
+        int numberTypes = types.size();
+        int numberIterations = intratypeIterations * intertypeIterations;
+        std::string performanceFilename = outputFoldername + "/performance.tsv";
+
+        performanceFile.open (performanceFilename);
+        performanceFile << "inputFolderGraphs\t" << "numberProcesses" << "\t" << "numberTypes" << "\t" << "numberIterations" << "\t" << "time" << std::endl;
+        performanceFile << graphsFilesFolder << "\t" << numberProcesses << "\t" << numberTypes << "\t" << numberIterations << "\t" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+        performanceFile.close();
+    }
     return 0;
 }
