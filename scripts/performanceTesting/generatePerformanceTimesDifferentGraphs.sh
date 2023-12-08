@@ -25,9 +25,9 @@ for graphFolder in $(ls $inputsFolder | grep "Nodes"); do
     typeInteractionsFolderName=$(ls $inputsFolder$graphFolder | grep "interactions")
 
     # get the full path for the graph file, the initial perturbation and the type interactions 
-    graphsFolder=$inputsFolder$graphFolder$graphsFolderName
-    initialPerturbationFolder=$inputsFolder$graphFolder$initialPerturbationFolderName
-    typeInteractionsFolder=$inputsFolder$graphFolder$typeInteractionsFolderName
+    graphsFolder=$inputsFolder$graphFolder/$graphsFolderName
+    initialPerturbationFolder=$inputsFolder$graphFolder/$initialPerturbationFolderName
+    typeInteractionsFolder=$inputsFolder$graphFolder/$typeInteractionsFolderName
 
     echo "Graph file: $graphsFolderName"
     echo "Initial perturbation file: $initialPerturbationFolderName"
