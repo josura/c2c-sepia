@@ -33,11 +33,13 @@ for graphFolder in $(ls $inputsFolder | grep "Nodes"); do
     echo "Initial perturbation file: $initialPerturbationFolderName"
     echo "Type interactions file: $typeInteractionsFolderName"
 
+    # create the folder where to save the outputs
+    mkdir -p $outputsFolder/$graphFolder
+
     # get the number of nodes from the file name
     numNodes=$(echo $graphsFolderName | cut -d'N' -f 1)
     # run the simulation
-    echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI \ 
-                --graphsFilesFolder $graphsFolder \
+    mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
                 --initialPerturbationPerTypeFolder $initialPerturbationFolder \
                 --typeInteractionFolder $typeInteractionsFolder \
                 --dissipationModel scaled \
@@ -49,7 +51,7 @@ for graphFolder in $(ls $inputsFolder | grep "Nodes"); do
                 --saturation \
                 --undirectedEdges \
                 --undirectedTypeEdges \
-                --outputFolder $outputFolder \
-                --savePerformance scripts/performanceTesting/timesDifferentGraphs.tsv"
+                --outputFolder $outputsFolder/$graphFolder \
+                --savePerformance scripts/performanceTesting/timesDifferentGraphs.tsv
 
 done
