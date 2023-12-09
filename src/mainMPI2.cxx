@@ -961,7 +961,6 @@ int main(int argc, char** argv) {
             int numberProcesses = numProcesses;
             int numberTypes = types.size();
             int numberIterations = intratypeIterations * intertypeIterations;
-            // append mode
             performanceFile.open (performanceFilename, std::ios::out | std::ios::app);
             if (performanceFile.fail())
                 throw std::ios_base::failure(std::strerror(errno));
