@@ -625,6 +625,7 @@ int main(int argc, char** argv) {
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
         std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> typeInteractionsEdges;
         if (subtypes.size() == 0) {
+            // TODO add different contact times for the interactions between different types
             typeInteractionsEdges  = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
         } else {
             typeInteractionsEdges = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
