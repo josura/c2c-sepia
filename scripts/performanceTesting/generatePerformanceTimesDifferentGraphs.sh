@@ -48,10 +48,12 @@ for graphFolder in $(ls $inputsFolder | grep "Nodes"); do
                 --conservationModelParameters 0.2 \
                 --propagationModel scaled \
                 --propagationModelParameters 0.2 \
+                --intertypeIterations 3 \
+                --intratypeIterations 3 \
                 --saturation \
                 --undirectedEdges \
                 --undirectedTypeEdges \
                 --outputFolder $outputsFolder/$graphFolder \
-                --savePerformance scripts/performanceTesting/timesDifferentGraphs.tsv
+                --savePerformance scripts/performanceTesting/times.tsv
 
 done
