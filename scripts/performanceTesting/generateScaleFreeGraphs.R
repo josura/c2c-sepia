@@ -176,7 +176,7 @@ for (i in 1:30){
 
 #create the folder for the graphs
 dir.create("syntheticGraphsWeakScalingDifferentCommunities", showWarnings = FALSE)
-#generate 30 graphs, each graph has 20000 nodes, the mean population of the communities should increase, starting from the 0.1 to 3 resolution for Louvain
+#generate 30 graphs, each graph has 20000 nodes, the mean population of the communities should increase, starting from the 0.2 to 2.3  for Louvain
 for (i in 1:30){
   num_nodes <- 10000
   # Generate a graph with preferential attachment (m=2 for preferential attachment)
@@ -188,7 +188,7 @@ for (i in 1:30){
   
   
   # Create communities based on the graph
-  resolutionLouv <- 0.1 * i
+  resolutionLouv <- 0.2 + (0.07 * i)
   community_data <- create_communities(graph,resolutionLouv)
   
   
