@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-12-15T12:37:08.546Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="sJOpP9pJjNKy6SaqgCO8" version="22.1.9" type="github">
+<mxfile host="app.diagrams.net" modified="2023-12-15T12:37:41.865Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="2eHRMgTkIe8dy0YsSUGN" version="22.1.9" type="github">
   <diagram name="Page-1" id="8378b5f6-a2b2-b727-a746-972ab9d02e00">
     <mxGraphModel dx="1018" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1.5" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
       <root>
@@ -148,7 +148,7 @@
         <mxCell id="110" value="HPC resource setup" style="align=left;strokeColor=#DEEDFF" parent="1" vertex="1">
           <mxGeometry x="126.50000000000028" y="560.000000000001" width="319.9999999999997" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="111" value="2 days" style="strokeColor=#DEEDFF" parent="1" vertex="1">
+        <mxCell id="111" value="1 months" style="strokeColor=#DEEDFF" parent="1" vertex="1">
           <mxGeometry x="446.50000000000205" y="560.0000000000009" width="80.00000000000028" height="20" as="geometry" />
         </mxCell>
         <mxCell id="112" value="01/04/2024" style="strokeColor=#DEEDFF" parent="1" vertex="1">
@@ -163,7 +163,7 @@
         <mxCell id="115" value="HPC testing and monitoring" style="align=left;strokeColor=#DEEDFF" parent="1" vertex="1">
           <mxGeometry x="126.50000000000027" y="580.0000000000013" width="319.9999999999997" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="116" value="2 days" style="strokeColor=#DEEDFF" parent="1" vertex="1">
+        <mxCell id="116" value="2 months" style="strokeColor=#DEEDFF" parent="1" vertex="1">
           <mxGeometry x="446.50000000000205" y="580.0000000000011" width="80.00000000000028" height="20" as="geometry" />
         </mxCell>
         <mxCell id="117" value="01/05/2024" style="strokeColor=#DEEDFF" parent="1" vertex="1">
@@ -178,7 +178,7 @@
         <mxCell id="120" value="Performance analysis" style="align=left;strokeColor=#DEEDFF" parent="1" vertex="1">
           <mxGeometry x="126.49999999999997" y="600.0000000000016" width="320" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="121" value="3 days" style="strokeColor=#DEEDFF" parent="1" vertex="1">
+        <mxCell id="121" value="2 months" style="strokeColor=#DEEDFF" parent="1" vertex="1">
           <mxGeometry x="446.5000000000017" y="600.0000000000015" width="80.00000000000028" height="20" as="geometry" />
         </mxCell>
         <mxCell id="122" value="01/05/2024" style="strokeColor=#DEEDFF" parent="1" vertex="1">
