@@ -111,4 +111,4 @@ plotSpeedup <- function(data, title){
   return(p)
 }
 
-plotSpeedup(data.differentProcessors, "strong-scaling: speedup for different number of processors for the same graph")
+plotSpeedup(data.differentProcessors, "strong-scaling: average speedup for different number of processors for the same graph")
