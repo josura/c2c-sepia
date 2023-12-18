@@ -85,5 +85,30 @@ plotTimesDifferentProcessors <- function(data, title){
 }
 
 plotTimesDifferentNodes(data.differentNodes, "weak-scaling: different number of nodes")
-plotTimesDifferentCommunities(data.differentCommunities, "weak-scaling: different number of communities for the same number of nodes")
-plotTimesDifferentProcessors(data.differentProcessors, "strong-scaling: different number of processors for the same graph")
+plotTimesDifferentCommunities(data.differentCommunities, "weak-scaling: different number of communities for the same number of nodes(10000)")
+plotTimesDifferentProcessors(data.differentProcessors, "strong-scaling: different number of processors for the same graph(30000 nodes, 113 communities)")
+
+
+# plot speedup for strong scaling
+# the data is the same as for the plotTimesDifferentProcessors, but we need to calculate the speedup
+# speedup = avg_time(1 processor) / avg_time(n processors)
+plotSpeedup <- function(data, title){
+  # prepare the data
+  data.prepared <- data %>% 
+    group_by(numberProcesses, numberIterations) %>% 
+    summarise(value = mean(time), sd = sd(time))
+  # calculate the speedup
+  data.prepared$speedup <- data.prepared$value[1] / data.prepared$value
+  # plot the data
+  p <- ggplot(data.prepared, aes(x=numberProcesses, y=speedup)) + 
+    #geom_line() + 
+    geom_line() +
+    ggtitle(title) +
+    xlab("number of processors") +
+    ylab("speedup") +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  return(p)
+}
+
+plotSpeedup(data.differentProcessors, "strong-scaling: speedup for different number of processors for the same graph")
