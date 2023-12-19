@@ -10,7 +10,7 @@ services:
       #add env variables
 
     volumes:
-      - .:c2c-sepia
+      - .:/opt/sepia
 
 
 volumes:
