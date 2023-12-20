@@ -774,6 +774,15 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
     return ret;
 }
 
+std::map<std::string,std::vector<std::tuple<std::string,std::string,double, int>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez){
+    string line;
+    std::map<std::string,std::vector<std::tuple<std::string,std::string,double,int>>> ret;
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
+    // TODO write a function that is similar to the one above but that takes the fourth column as the instants of the interactions(maybe change the arguments passed as well to take into account the maximum amount of intertype-iterations)
+    return ret;
+}
+
+
 std::map<std::string, std::string> getEnsembletoEntrezidMap(){
     string line;
     std::map<std::string,std::string> ret;

@@ -149,6 +149,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath,const std::vector<std::string>& allTypes, const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType = std::vector<std::string>(), bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez=false);
+std::map<std::string,std::vector<std::tuple<std::string,std::string,double, int>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez=false);
 std::vector<double> saturationFileToVector(std::string filename,const std::map<std::string, int>& ensembleToIndexMap);
 /**
  * \brief   Return the types taken from the file names in a folder with the extension .tsv
