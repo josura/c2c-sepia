@@ -1,9 +1,6 @@
-# c2c-sepia
-Cell-to-cell communication with enriched pathways project, using scRNA-seq data.
-
-A framework to work with scRNA-seq profiles is presented here, the algorithm will take as an input:
-- The scRNA-seq profiles and log2fold-change
-- The type for every cell.
+# c2c-sepia(also called MASFENON)
+Framework for the perturbation in networks of networks using a MAS(Multi-agent system), enhanced with parallel and distributed processing.
+Specifically built for Cell-to-cell communication with enriched pathways, using scRNA-seq data.
 
 ## DEPENDENCIES
 - armadillo
