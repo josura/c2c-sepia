@@ -774,11 +774,116 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
     return ret;
 }
 
-std::map<std::string,std::vector<std::tuple<std::string,std::string,double, int>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez){
+std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::tuple<std::string, std::string, std::vector<int>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez){
     string line;
-    std::map<std::string,std::vector<std::tuple<std::string,std::string,double,int>>> ret;
+    std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::tuple<std::string, std::string, std::vector<int>>> ret;
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
     // TODO write a function that is similar to the one above but that takes the fourth column as the instants of the interactions(maybe change the arguments passed as well to take into account the maximum amount of intertype-iterations)
+    if(file_exists(filename)){
+        ifstream myfile (filename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            int indexTypeStart=-1, indexTypeEnd=-1, indexStartNode=-1, indexEndNode=-1, indexWeight=-1, indexContactTimes=-1;
+            for(uint i = 0; i < entriesHeader.size(); i++){ //TODO change names in the header to be more general
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("starttype") != std::string::npos) {
+                    indexTypeStart = i;
+                }
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endtype") != std::string::npos) {
+                    indexTypeEnd = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startnodename") != std::string::npos) {
+                    indexStartNode = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endnodename") != std::string::npos) {
+                    indexEndNode = i;
+                } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
+                    indexWeight = i;
+                } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("contacttimes") != std::string::npos) {
+                    indexContactTimes = i;
+                }
+                //startType	startNodeName	endType	endNodeName	weight
+            }
+            if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0|| indexContactTimes < 0){
+                throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a start node, or an end node, or a weight feature, or a contact times feature");
+            }
+            // while ( getline (myfile,line) )
+            // {
+            //     std::vector<std::string> entries = splitString(line, "\t");
+            //     if(entries.size()==5){
+            //         std::string startNodeName,endNodeName;
+            //         if(!useEntrez){
+            //             startNodeName = entries[indexStartNode];
+            //             endNodeName = entries[indexEndNode];    
+
+            //             std::string startType = entries[indexTypeStart];
+            //             std::string endType = entries[indexTypeEnd];
+            //             std::string contactTimesString = entries[indexContactTimes];
+            //             std::vector<int> contactTimes;
+            //             std::vector<std::string> splittedContactTimes = splitString(contactTimesString, ",");
+            //             for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend();iter++){
+            //                 contactTimes.push_back(std::stoi(*iter));
+            //             }
+            //             if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
+            //                 double weight = std::stod( entries[indexWeight]);
+            //                 std::string virtualInputEndType = "v-in:" + startType;
+            //                 std::string virtualOutputstartType = "v-out:" + endType;
+            //                 std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight,contactTimes);
+            //                 std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight,contactTimes);
+            //                 if(ret.contains(startType)){
+            //                     ret[startType].push_back(edgestartType);
+            //                 }else{
+            //                     ret[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+            //                     ret[startType].push_back(edgestartType);
+            //                 }
+
+            //                 if(ret.contains(endType)){
+            //                     ret[endType].push_back(edgeEndType);
+            //                 }else{
+            //                     ret[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+            //                     ret[endType].push_back(edgeEndType);
+            //                 }
+            //             } else {
+            //                 //ignored because not in the subtypes
+            //             }
+                        
+            //         } else{
+            //             if(mapEnsembleToEntrez.contains(entries[indexStartNode]) && mapEnsembleToEntrez.contains(entries[indexEndNode])){
+            //                 startNodeName = mapEnsembleToEntrez[entries[indexStartNode]];
+            //                 endNodeName = mapEnsembleToEntrez[entries[indexEndNode]];
+
+            //                 std::string startType = entries[indexTypeStart];
+            //                 std::string endType = entries[indexTypeEnd];
+            //                 if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
+            //                     double weight = std::stod( entries[indexWeight]);
+            //                     std::string virtualInputEndType = "v-in:" + startType;
+            //                     std::string virtualOutputstartType = "v-out:" + endType;
+            //                     std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
+            //                     std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
+            //                     if(ret.contains(startType)){
+            //                         ret[startType].push_back(edgestartType);
+            //                     }else{
+            //                         ret[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+            //                         ret[startType].push_back(edgestartType);
+            //                     }
+
+            //                     if(ret.contains(endType)){
+            //                         ret[endType].push_back(edgeEndType);
+            //                     }else{
+            //                         ret[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+            //                         ret[endType].push_back(edgeEndType);
+            //                     }
+            //                 } else {
+            //                     //ignored because not in the subtypes
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: file does not exists " + filename);
+    }
     return ret;
 }
 
