@@ -1,0 +1,6 @@
+startType	startNodeName	endType	endNodeName	weight
+t0	e0	t1	a1	1.0
+t1	f1	t0	a0	1.0
+t0	e0	t2	a2	1.0
+t3	e3	t0	a0	1.0
+t3	f3	t2	a2	1.0
