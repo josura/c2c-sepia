@@ -31,3 +31,9 @@ input <- c(1,1,0.1,2,0,0,0,0)
 perturbation <- inverted %*% input
 
 perturvation.conserverd <- inverted %*% input - (input/2)
+
+perturbation.iterated <- inverted %*% perturbation
+
+for(i in range(0,20)){
+  perturbation.iterated <- inverted %*% perturbation.iterated
+}
