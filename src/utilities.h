@@ -156,7 +156,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
  *         - the contact times of the interaction
  *         the function will return the vector {"A","B","C","D","E"}
  */
-std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::tuple<std::string, std::string, std::vector<int>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,int maximumIntertypeTime=INT32_MAX,bool useEntrez=false);
+std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::tuple<std::string, std::string, std::unordered_set<int>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,int maximumIntertypeTime=INT32_MAX,bool useEntrez=false);
 std::vector<double> saturationFileToVector(std::string filename,const std::map<std::string, int>& ensembleToIndexMap);
 /**
  * \brief   Return the types taken from the file names in a folder with the extension .tsv
