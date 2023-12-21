@@ -803,8 +803,12 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                 }
                 //startType	startNodeName	endType	endNodeName	weight
             }
-            if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0|| indexContactTimes < 0){
-                throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a start node, or an end node, or a weight feature, or a contact times feature");
+            bool noContactTimes = false;
+            if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0){
+                throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a start node, or an end node, or a weight feature");
+            }
+            if(indexContactTimes < 0){
+                noContactTimes = true;
             }
             while ( getline (myfile,line) )
             {
@@ -823,12 +827,18 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                     std::string startType = entries[indexTypeStart];
                     std::string endType = entries[indexTypeEnd];
-                    std::string contactTimesString = entries[indexContactTimes];
                     std::unordered_set<int> contactTimes;
-                    std::vector<std::string> splittedContactTimes = splitString(contactTimesString, ",");
-                    for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend(); iter++){
-                        //contactTimes.push_back(std::stoi(*iter));
-                        contactTimes.insert(std::stoi(*iter));
+                    if(noContactTimes){
+                        // if no contact times are specified, then every time is a contact time, so all contact times from 0 to maximumIntertypeTime are added
+                        for(int i = 0; i <= maximumIntertypeTime; i++){
+                            contactTimes.insert(i);
+                        }
+                    } else {
+                        std::string contactTimesString = entries[indexContactTimes];
+                        std::vector<std::string> splittedContactTimes = splitString(contactTimesString, ",");
+                        for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend(); iter++){
+                            contactTimes.insert(std::stoi(*iter));
+                        }
                     }
                     if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                         double weight = std::stod( entries[indexWeight]);
