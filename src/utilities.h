@@ -46,22 +46,42 @@ void printNodeBitArray(NodeBitArray nodeArray,int size);
 void printVector(std::vector<int> vec);
 void printVector(std::vector<double> vec);
 
-//random generation for integers
+/**
+ * \brief   Generate a random integer number between min and max
+ * \return  the random number
+*/
 int randomNumber(int min, int max);
-//random generation for doubles
+/**
+ * \brief   Generate a random real number between min and max
+ * \return  the random number
+*/
 double randomRealNumber(double min, double max);
-//random generation for character
+/**
+ * \brief   Generate a random character between A and Z
+ * \return  the random character
+*/
 char generateRandomCharacter();
 
-//generate random vector
+/**
+ * \brief   Generate a random integer vector of length size
+ * \return  the random vector
+*/
 std::vector<int> randomVector(int min, int max , int size);
 
+/**
+ * \brief   Generate a random Boolean vector of length size
+ * \return  the random vector
+*/
 NodeBitArray randomBooleanArray(int size);
 
 void printUsage(std::string execName);
 
 std::string nodeBitArrayToString(NodeBitArray nodeArray,int size);
 
+/**
+ * \brief  Generate the intersection of two sets
+ * \return  the intersection of the two sets
+*/
 std::unordered_set<int> intersectionSet(std::unordered_set<int> set1,std::unordered_set<int> set2);
 
 void setRandom(int& val);
@@ -69,9 +89,9 @@ void setRandom(double& val);
 void setRandom(char& val);
 
 //generate random matrix
-/*
-@param rows: number of rows
-@param cols: number of cols
+/**
+ * \brief   Generate a random matrix of size rows x cols
+ * \return  the random matrix
 */
 template<typename T>
 std::vector<std::vector< T>> createRandomMatrixVector(int rows,int cols){
@@ -135,10 +155,31 @@ std::vector<T> arrayToVector(T* array, int size){
     return std::vector<T>(array, array + size);
 }
 
+/**
+ * \brief   Control if the file exists in the current directory
+ * \return  true if the file exists, false otherwise
+ */
 bool file_exists (const std::string& name);
+
+/**
+ * \brief   Control if the file exists in the specified path
+ * \return  true if the file exists, false otherwise
+ */
 bool fileExistsPath(const std::string& filePath);
+/**
+ * \brief   Control if the folder exists in the specified path
+ * \return  true if the folder exists, false otherwise
+ */
 bool folderExists(const std::string& folderPath);
+/**
+ * \brief   Create the folder in the specified path
+ * \return  true if the folder is created, false otherwise
+ */
 bool createFolder(const std::string& folderPath);
+/**
+ * \brief  Split a string into a vector of strings using the specified delimiter
+ * \return  the vector of strings
+*/
 std::vector<std::string> splitString(std::string toSplit , std::string delimiter);
 
 std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToEdgesListByIndex(std::string filename);
@@ -154,7 +195,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
  *         - the start type/agent
  *         - the end type/agent
  *         - the contact times of the interaction
- *         the function will return the vector {"A","B","C","D","E"}
+ * \return the pair (map of the new virtual nodes associated with a type, graph of the interactions between types)
  */
 std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,int maximumIntertypeTime=INT32_MAX,bool useEntrez=false);
 std::vector<double> saturationFileToVector(std::string filename,const std::map<std::string, int>& ensembleToIndexMap);
