@@ -830,14 +830,17 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     std::unordered_set<int> contactTimes;
                     if(noContactTimes){
                         // if no contact times are specified, then every time is a contact time, so all contact times from 0 to maximumIntertypeTime are added
-                        for(int i = 0; i <= maximumIntertypeTime; i++){
+                        for(int i = 0; i < maximumIntertypeTime; i++){
                             contactTimes.insert(i);
                         }
                     } else {
                         std::string contactTimesString = entries[indexContactTimes];
                         std::vector<std::string> splittedContactTimes = splitString(contactTimesString, ",");
                         for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend(); iter++){
-                            contactTimes.insert(std::stoi(*iter));
+                            int contactTime = std::stoi(*iter);
+                            if(contactTime <= maximumIntertypeTime){
+                                contactTimes.insert(contactTime);
+                            }
                         }
                     }
                     // add the edge to the augmented graph, only if the startType and the endType are in the subtypes
