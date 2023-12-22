@@ -640,6 +640,15 @@ int main(int argc, char** argv) {
                 typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges.first[types[i+startIdx]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
             }
         }
+        for(auto edge = typeInteractionsEdges.second.cbegin() ; edge != typeInteractionsEdges.second.cend(); edge++ ){
+            // first two types are the nodes in the two networks/types ,types are the third and fourth element of the tuple, while the fifth is the set of contact times
+            std::pair<std::string,std::string> keyTypes = std::make_pair(std::get<2> (*edge), std::get<3> (*edge));
+            if(interactionBetweenTypesMap.contains(keyTypes)){
+                interactionBetweenTypesMap[keyTypes].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
+            } else {
+                interactionBetweenTypesMap[keyTypes] = std::get<4>(*edge);
+            }
+        }
     }
 
     
@@ -946,10 +955,13 @@ int main(int argc, char** argv) {
                     int virtualInputPosition = ilocal + isource * finalWorkload;
                     int localTypePosition = ilocal + startIdx;
                     int sourceTypePosition = isource + sourceRank*workloadPerProcess;
-                    if(localTypePosition==sourceTypePosition){
-                        if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
-                    } else {
-                        typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                    std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
+                    if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
+                        if(localTypePosition==sourceTypePosition){
+                            if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                        } else {
+                            typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                        }
                     }
                 }
             }
