@@ -813,7 +813,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
             while ( getline (myfile,line) )
             {
                 std::vector<std::string> entries = splitString(line, "\t");
-                if(entries.size()==5){
+                if(entries.size()==5 || entries.size()==6){
                     std::string startNodeName,endNodeName;
                     if(!useEntrez){
                         startNodeName = entries[indexStartNode];
@@ -868,6 +868,9 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                     // add the edge with the contact times to the second vector in ret
                     ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>(startNodeName, endNodeName, startType, endType, contactTimes));
+                } else {
+                    std::cout << "[ERROR] columns detected: " << entries.size() << " columns " <<std::endl;
+                    throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: header doesn't have the right amount of columns(5 or 6 when considering interaction times) ");
                 }
             }
             myfile.close();
