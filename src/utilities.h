@@ -25,6 +25,9 @@
 #include <boost/algorithm/string.hpp>
 #include<cmath>
 
+// hash function for unordered_map
+#include <bits/stdc++.h>
+
 #define INTMAX 100
 #define DOUBLEMAX 100.0
 
@@ -190,6 +193,29 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath,const std::vector<std::string>& allTypes, const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType = std::vector<std::string>(), bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez=false);
+
+// A hash function used to hash a pair of any kind
+struct hash_pair_strings {
+    size_t operator()(const std::pair<std::string, std::string>& p) const
+    {
+        std::string tmp;
+        // in case the order of the pair does not matter
+        // if( p.first < p.second ) {
+        //     tmp = p.first + p.second;
+        // }
+        // else {
+        //     tmp = p.second + p.first;
+        // }
+
+        // in case the order of the pair matters
+        tmp = p.first + p.second;
+
+        auto hashStrings = std::hash<std::string>();
+         
+        // If hash1 == hash2, their XOR is zero.
+        return hashStrings(tmp);
+    }
+};
 /**
  * \brief   Returns the new virtual nodes associated with a type along the edges in the augmented graph, it also return the graph of the interactions between types(as a tuple of:
  *         - the start type/agent
