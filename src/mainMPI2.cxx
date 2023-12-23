@@ -956,7 +956,13 @@ int main(int argc, char** argv) {
                     int localTypePosition = ilocal + startIdx;
                     int sourceTypePosition = isource + sourceRank*workloadPerProcess;
                     std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
+                    // TODO take into account granularity of virtual nodes in the future
                     if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
+                        // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
+                        // for(auto time: interactionBetweenTypesMap[keyTypes]){
+                        //     logger << time << ", ";
+                        // } 
+                        logger << std::endl;
                         if(localTypePosition==sourceTypePosition){
                             if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
                         } else {
@@ -966,7 +972,6 @@ int main(int argc, char** argv) {
                 }
             }
         }
-
     }
 
     MPI_Finalize();
