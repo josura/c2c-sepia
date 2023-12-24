@@ -59,7 +59,7 @@ For the structure of the input see the following reference example data in the r
     - Matrix (only with same graph for every type): data/testdata/testGraph/initialValues-general.tsv
     - Single vector (usable in both cases of homogeneous and heterogeneous graphs): data/testdata/testHeterogeneousGraph/initialValues/t0.tsv
 - Initial values files folder: data/testdata/testHeterogeneousGraph/initialValues
-- Type interactions(see the file in the folder for the structure, you can create more files that will be seen during the execution in the directory specified as a parameter): data/testdata/testHeterogeneousGraph/interactions
+- Type interactions(see the file in the folder for the structure, you can create more files that will be seen during the execution in the directory specified as a parameter): data/testdata/testHeterogeneousGraph/interactions , type of interaction supported are weighted and with contact times (see data/testdata/testHeterogeneousTemporalGraph/interactions for an example of input)
 
 ## EXAMPLES
 
