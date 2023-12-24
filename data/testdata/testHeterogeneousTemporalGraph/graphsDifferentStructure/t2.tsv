@@ -1,0 +1,4 @@
+Start	End	Type	Subtype	Weight
+a2	b2	TEST	ACTIVATION	1.0
+b2	e2	TEST	ACTIVATION	1.0
+b2	d2	TEST	ACTIVATION	1.0
