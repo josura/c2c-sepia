@@ -1,16 +1,17 @@
+#include <iostream>
+#include <vector>
+#include <string>
 #include <boost/program_options/value_semantic.hpp>
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <map>
-#include <ostream>
-#include <string>
 #include <sys/types.h>
 #include <tuple>
-#include <vector>
 #include "Computation.h"
 #include "PropagationModel.hxx"
 #include "PropagationModelOriginal.hxx"
 #include "PropagationModelNeighbors.hxx"
+#include "PropagationModelCustom.hxx"
 #include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelPow.h"
@@ -19,6 +20,8 @@
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
 #include "CustomScalingFunctions.h"
+#include "Logger.hxx"
+
 
 
 int main(int argc, char** argv ) {
