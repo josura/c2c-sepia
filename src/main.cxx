@@ -106,13 +106,13 @@ int main(int argc, char** argv ) {
     //controls over impossible configurations
     if(vm.count("fUniqueGraph") == 0 && vm.count("graphsFilesFolder") == 0){
         //no unique graph of folder of the graphs was set
-        logger << "[ERROR] no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
+        std::cerr << "[ERROR] no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
         return 1;
     }
 
     if(vm.count("fInitialPerturbationPerType") == 0 && vm.count("initialPerturbationPerTypeFolder") == 0){
         //no way of getting the initial perturbation values
-        logger << "[ERROR] no matrix for the initial values was passed as filename or single vector in files contained in the folder specified was set, set one "<<std::endl;
+        std::cerr << "[ERROR] no matrix for the initial values was passed as filename or single vector in files contained in the folder specified was set, set one "<<std::endl;
         return 1;
     }
 
@@ -128,11 +128,11 @@ int main(int argc, char** argv ) {
 
 
     if(vm.count("graphsFilesFolder") && vm.count("fUniqueGraph")){
-        logger << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
+        std::cerr << "[ERROR] fUniqueGraph and graphsFilesFolder were both set. Aborting\n";
         return 1;
     }
     if(vm.count("initialPerturbationPerTypeFolder") && vm.count("fInitialPerturbationPerType")){
-        logger << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
+        std::cerr << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
         return 1;
     }
 
