@@ -225,7 +225,6 @@ int main(int argc, char** argv ) {
         }
     } else {
         logger << "[LOG] typeInteractionFolder folder was not set. computing without taking into account type interactions\n";
-        //TODO
     }
     if (vm.count("outputFolder")) {
         logger << "[LOG] output folder  was set to " 
@@ -239,9 +238,8 @@ int main(int argc, char** argv ) {
             }
         }
     } else {
-        logger << "[LOG] output folder was not set. aborting\n";
+        std::cerr << "[ERROR] output folder was not set. aborting\n";
         return 1;
-        //TODO
     }
     if (vm.count("dissipationModel")) {
         logger << "[LOG] dissipation model was set to "
@@ -313,7 +311,7 @@ int main(int argc, char** argv ) {
             }
         } else if(dissipationModelName == "custom"){
             //control if custom function for dissipation returns double and takes a single parameter as double
-            logger << "[LOG] dissipation model was set to custom, HIGH RISK OF FAILURE\n " << std::endl;
+            logger << "[LOG] dissipation model was set to custom, if the function is not correctly defined there will be errors\n " << std::endl;
             dissipationModel = new DissipationModelScaled(getDissipationScalingFunction());
         } else {
             std::cerr << "[ERROR] dissipation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
@@ -369,7 +367,7 @@ int main(int argc, char** argv ) {
             }
         } else if(conservationModelName == "custom"){
             //control if custom function for conservation returns double and takes a single parameter as double
-            logger << "[LOG] conservation model was set to custom, HIGH RISK OF FAILURE\n " << std::endl;
+            logger << "[LOG] conservation model was set to custom, if the custom function defined for scaling is not correctly implemented, there will be errors\n " << std::endl;
             conservationModel = new ConservationModel(getConservationScalingFunction());
         } else {
             std::cerr << "[ERROR] conservation model scale function is not any of the types. Conservation model scale functions available are none(default), scaled, random and custom \n";
@@ -394,11 +392,18 @@ int main(int argc, char** argv ) {
     }
     //end program options section
 
-    std::map<std::string,std::string> ensembletoEntrez = getEnsembletoEntrezidMap();
+    std::string nodesDescriptionFilename="";
     if(ensembleGeneNames){
         logger <<"[LOG] mapping ensemble gene names to entrez ids"<<std::endl;
+    } else if(vm.count("nodeDescriptionFile")){
+        logger <<"[LOG] using node description file to get the names of the nodes in the graphs"<<std::endl;
+        nodesDescriptionFilename = vm["nodeDescriptionFile"].as<std::string>();
+    } else {
+        logger <<"[LOG] no nodes description"<<std::endl;
     }
-    //take the types before with another function TODO define function
+
+
+    //take the types from the matrix file or from the folder
     std::vector<std::string> types;
     if(vm.count("fUniqueGraph")){
         if(vm.count("fInitialPerturbationPerType")){

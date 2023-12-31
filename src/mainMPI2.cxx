@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
 
     if(vm.count("fInitialPerturbationPerType") && vm.count("graphsFilesFolder")){
         //unstable configuration of different graphs and single matrix with the same nodes
-        std::cout << "[WARNING] unstable configuration of different graphs and a single matrix with the initial perturbations"<<std::endl;
+        logger << "[WARNING] unstable configuration of different graphs and a single matrix with the initial perturbations"<<std::endl;
     }
 
     if(saturation && conservateInitialNorm){
