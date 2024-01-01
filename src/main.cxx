@@ -455,7 +455,6 @@ int main(int argc, char** argv ) {
             graphs[i] = graphs[0];
         }
     } else if (vm.count("graphsFilesFolder")) {
-        // TODO get the nodes from the single files
         auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
         auto typesFromFolder = allGraphs.first;
         if(typesFromFolder.size() != types.size()){
@@ -488,7 +487,7 @@ int main(int argc, char** argv ) {
         }
     }
 
-
+    //get initial input values
     std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::vector<double>>> initialValues;
     std::vector<std::vector<double>> inputInitials;
     if(vm.count("fInitialPerturbationPerType")){
@@ -541,7 +540,7 @@ int main(int argc, char** argv ) {
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
                 //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
-                typeComputations[indexComputation]->augmentGraphNoComputeInverse(typesFiltered);
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(typesFiltered,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true); //self included for uniformation with the code in MPI
             } else {
                 int index = indexMapGraphTypesToValuesTypes[i];
                 std::vector<double> input = inputInitials[index];
@@ -550,7 +549,7 @@ int main(int argc, char** argv ) {
                 tmpCompPointer->setConservationModel(conservationModel);
                 typeComputations[indexComputation] = tmpCompPointer;
                 //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
-                typeComputations[indexComputation]->augmentGraphNoComputeInverse(typesFiltered);
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(typesFiltered,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true); //self included for uniformation with the code in MPI
             }
             typesIndexes[i] = indexComputation;
             invertedTypesIndexes[indexComputation] = i;
