@@ -561,19 +561,30 @@ int main(int argc, char** argv ) {
         typeToNodeNames[i] = typeComputations[i]->getAugmentedGraph()->getNodeNames();    
     }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
+    // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
+    std::unordered_map<std::pair<std::string, std::string>, std::unordered_set<int>, hash_pair_strings> interactionBetweenTypesMap;
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
-        std::map<std::string, std::vector<std::tuple<std::string, std::string, double>>> typeInteractionsEdges;
+        std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> typeInteractionsEdges;
         if (subtypes.size() == 0) {
-            typeInteractionsEdges  = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename,ensembleGeneNames);
+            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames);
         } else {
-            typeInteractionsEdges = interactionFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, ensembleGeneNames);
+            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames);
         }
         #pragma omp parallel for
         for (uint i = 0; i < types.size();i++) {
-            if(typeInteractionsEdges.contains(types[i]) && typesIndexes[i] != -1){
+            if(typeInteractionsEdges.first.contains(types[i]) && typesIndexes[i] != -1){
                 //TODO maybe do not compute pseudoinverse since the computation was moved into the PropagationModels classes
-                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges[types[i]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
+                typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges.first[types[i]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
                 //typeComputations[i]->freeAugmentedGraphs();
+            }
+        }
+        for(auto edge = typeInteractionsEdges.second.cbegin() ; edge != typeInteractionsEdges.second.cend(); edge++ ){
+            // first two types are the nodes in the two networks/types ,types are the third and fourth element of the tuple, while the fifth is the set of contact times
+            std::pair<std::string,std::string> keyTypes = std::make_pair(std::get<2> (*edge), std::get<3> (*edge));
+            if(interactionBetweenTypesMap.contains(keyTypes)){
+                interactionBetweenTypesMap[keyTypes].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
+            } else {
+                interactionBetweenTypesMap[keyTypes] = std::get<4>(*edge);
             }
         }
     }
