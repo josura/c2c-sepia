@@ -621,12 +621,11 @@ int main(int argc, char** argv) {
     // read the type interactions
     std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(finalWorkload,std::vector<std::string>());
     
-    // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
-    //std::unordered_map<std::pair<std::string,std::string>, std::unordered_set<int>> typeEdgesMap;
     for(int i = 0; i < finalWorkload;i++ ){
         typeToNodeNames[i] = typeComputations[i]->getAugmentedGraph()->getNodeNames();    
     }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
+    // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
     std::unordered_map<std::pair<std::string, std::string>, std::unordered_set<int>, hash_pair_strings> interactionBetweenTypesMap;
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
         std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> typeInteractionsEdges;
