@@ -630,7 +630,8 @@ int main(int argc, char** argv) {
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
         std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> typeInteractionsEdges;
         if (subtypes.size() == 0) {
-            // TODO add different contact times for the interactions between different types
+            // TODO add different contact times inside the network (quite difficult since the structure of the graphs is static)
+            // SOLUTION: granularity
             typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames);
         } else {
             typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames);
