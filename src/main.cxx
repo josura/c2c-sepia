@@ -648,12 +648,40 @@ int main(int argc, char** argv ) {
                 }
                 //nothing to do, default propagation scaling function is the identity
             }
-        } else if (propagationModelName == "custom"){
-            logger << "not implemented yet\n";
-            return 1;
-            //TODO
+        }  else if(propagationModelName == "customScaling"){ 
+            if(vm.count("propagationModelParameters")){
+                logger << "[LOG] propagation model parameters were declared to be "
+                << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ", these parameters are not used since the propagation scaling function was set to custom.\n";
+            }
+            propagationScalingFunction = getPropagationScalingFunction();
+            for(uint i = 0; i < typesFiltered.size();i++ ){
+                PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                typeComputations[i]->setPropagationModel(tmpPropagationModel);
+            }
+        } else if(propagationModelName == "customScalingNeighbors"){ 
+            if(vm.count("propagationModelParameters")){
+                logger << "[LOG] propagation model parameters were declared to be "
+                << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ", these parameters are not used since the propagation scaling function was set to custom.\n";
+            }
+            propagationScalingFunction = getPropagationScalingFunction();
+            for(uint i = 0; i < typesFiltered.size();i++ ){
+                PropagationModel* tmpPropagationModel = new PropagationModelNeighbors(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                typeComputations[i]->setPropagationModel(tmpPropagationModel);
+            }
+            
+        } else if(propagationModelName == "customPropagation"){
+            if(vm.count("propagationModelParameters")){
+                logger << "[LOG] propagation model parameters were declared to be "
+                << vm["propagationModelParameters"].as<std::vector<double>>()[0] << ", these parameters are not used since the propagation scaling function was set to custom.\n";
+            }
+            propagationScalingFunction = getPropagationScalingFunction();
+            for(uint i = 0; i < typesFiltered.size();i++ ){
+                PropagationModel* tmpPropagationModel = new PropagationModelCustom(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
+                typeComputations[i]->setPropagationModel(tmpPropagationModel);
+            }
+        
         } else {
-            std::cerr << "[ERROR] propagation model scale function is not any of the types. propagation model scale functions available are none(default), scaled, neighbors and custom \n";
+            std::cerr << "[ERROR] propagation model is not any of the types. propagation model scale functions available are default, scaled, neighbors and custom \n";
             return 1;
         }
     } else {
