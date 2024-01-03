@@ -800,14 +800,17 @@ int main(int argc, char** argv ) {
         // }
 
         for (uint i = 0; i < typesFiltered.size(); i++) {
-            //queuesTypeTypes[i] = typeComputations[i]->computeAugmentedPerturbation();
-            //TODO when computation will be done in parallel, this step should wait for all the computations of the other adjacent types to finish
-            //also take into account MPI (repast framework was removed since it is too old and not supported anymore)
             for(uint j = 0; j < typesFiltered.size(); j++){
-                if(i==j){
-                    if(sameTypeCommunication) typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
-                } else {
-                    typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                std::pair<std::string,std::string> keyTypes = std::make_pair(typesFiltered[i], typesFiltered[j]);
+                if(interactionBetweenTypesMap.contains(keyTypes)){
+                    std::unordered_set<int> interactionTimes = interactionBetweenTypesMap[keyTypes];
+                    if(interactionTimes.contains(iterationInterType)){
+                        if(i==j){
+                            if(sameTypeCommunication) typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                        } else {
+                            typeComputations[i]->setInputVinForType(typesFiltered[j], typeComputations[j]->getVirtualOutputForType(typesFiltered[i]));
+                        }
+                    }
                 }
             }
         }

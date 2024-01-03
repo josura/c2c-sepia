@@ -964,7 +964,7 @@ int main(int argc, char** argv) {
                         // for(auto time: interactionBetweenTypesMap[keyTypes]){
                         //     logger << time << ", ";
                         // } 
-                        logger << std::endl;
+                        // logger << std::endl;
                         if(localTypePosition==sourceTypePosition){
                             if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
                         } else {
