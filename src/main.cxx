@@ -690,7 +690,6 @@ int main(int argc, char** argv ) {
             PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
             typeComputations[i]->setPropagationModel(tmpPropagationModel);
         }
-        //TODO
     }
 
 
@@ -723,42 +722,36 @@ int main(int argc, char** argv ) {
 
     // EndTypetype -> (sourceTypeType -> value)
 
-    uint iterationIntertype = 0;
-    while(iterationIntertype < intertypeIterations){
-        //computation of perturbation
-        uint iterationIntratype = 0;
-        //intratype iteration with no passing of values to the virtual nodes
-        while (iterationIntratype < intratypeIterations) {
+    for(uint iterationInterType = 0; iterationInterType < intertypeIterations; iterationInterType++){
+        for(uint iterationIntraType = 0; iterationIntraType < intratypeIterations; iterationIntraType++){
             #pragma omp parallel for
             for(uint i = 0; i < typesFiltered.size(); i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
-                logger << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl; 
+                logger << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i]<<std::endl; 
                 // TODO use stateful scaling function to consider previous times
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
                         // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true);
                     } else if (vm.count("saturationTerm") >= 1) {
-                        //TODO create saturation vector
                         double saturationTerm = vm["saturationTerm"].as<double>();
-                        //TODO TEST
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
                         // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
-                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = true, saturationVector);
+                        std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, saturationVector);
                     }
                 } else{
                     // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
                     //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
-                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationIntertype*intratypeIterations + iterationIntratype)*timestep, saturation = false);
+                    std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = false);
                 }
             }
             //save output values
             for(uint i = 0; i < typesFiltered.size(); i++){
                 std::vector<std::string> nodeNames = typeToNodeNames[i];
                 //TODO change how to save files to get more information about intratype and intertype iterations
-                saveNodeValues(outputFoldername, iterationIntertype*intratypeIterations + iterationIntratype, typesFiltered[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames);
+                saveNodeValues(outputFoldername, iterationInterType*intratypeIterations + iterationIntraType, typesFiltered[i], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename);
             }
             // logger<< "[DEBUG] output values before updating input"<<std::endl;
             // for(uint i = 0; i < types.size(); i++){
@@ -768,6 +761,7 @@ int main(int argc, char** argv ) {
             //     }
             //     logger << std::endl;
             // }
+
             //update input
             for(uint i = 0; i < typesFiltered.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
@@ -777,10 +771,10 @@ int main(int argc, char** argv ) {
                     double outputNorm = vectorNorm(typeComputations[i]->getOutputAugmented());
                     double normRatio = initialNorm/outputNorm;
                     std::vector<double> newInput = vectorScalarMultiplication(typeComputations[i]->getOutputAugmented(),normRatio);
-                    logger << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    logger << "[LOG] update input with conservation of the initial perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i]<<std::endl;
                     typeComputations[i]->updateInput(newInput,true);
                 } else {
-                    logger << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationIntertype) + "<->"+ std::to_string(iterationIntratype) + ") for type (" + types[i]<<std::endl;
+                    logger << "[LOG] update input for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i]<<std::endl;
                     typeComputations[i]->updateInput(std::vector<double>(),true);
                 }
                 
@@ -793,7 +787,6 @@ int main(int argc, char** argv ) {
             //     }
             //     logger << std::endl;
             // }
-            iterationIntratype++;
         }
         //update input with virtual node values update
         
@@ -826,9 +819,6 @@ int main(int argc, char** argv ) {
         //     }
         //     logger << std::endl;
         // }
-
-        
-        iterationIntertype++;
 
     }
     
