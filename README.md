@@ -65,7 +65,7 @@ For the structure of the input see the following reference example data in the r
 
 ### different graphs, saturation at 1, dissipation scaled at 0.2, conservation scaled at 0.5
 ```bash
-./c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
+./build/c2c-sepia --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
             --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
             --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
             --subtypes data/testdata/testGraph/subcelltypes.txt \
@@ -76,6 +76,21 @@ For the structure of the input see the following reference example data in the r
             --conservationModelParameters 0.5 \
             --outputFolder outputs
 ```
+
+To use the MPI version with 4 processors, the command is the following
+```bash
+mpirun -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
+            --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
+            --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
+            --subtypes data/testdata/testGraph/subcelltypes.txt \
+            --dissipationModel scaled \
+            --dissipationModelParameters 0.2 \
+            --saturation \
+            --conservationModel scaled \
+            --conservationModelParameters 0.5 \
+            --outputFolder outputs
+```
+
 
 ## USE CASES
 The framework can be used in every situation with the following structure:
