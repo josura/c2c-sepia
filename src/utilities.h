@@ -216,6 +216,28 @@ struct hash_pair_strings {
         return hashStrings(tmp);
     }
 };
+
+struct hash_quadruple_strings {
+    size_t operator()(const std::tuple<std::string, std::string,std::string, std::string>& t) const
+    {
+        std::string tmp;
+        // in case the order of the pair does not matter
+        // if( p.first < p.second ) {
+        //     tmp = p.first + p.second;
+        // }
+        // else {
+        //     tmp = p.second + p.first;
+        // }
+
+        // in case the order of the tuple matters
+        tmp = std::get<0>(t) + std::get<1>(t) + std::get<2>(t) + std::get<3>(t);
+
+        auto hashStrings = std::hash<std::string>();
+         
+        // If hash1 == hash2, their XOR is zero.
+        return hashStrings(tmp);
+    }
+};
 /**
  * \brief   Returns the new virtual nodes associated with a type along the edges in the augmented graph, it also return the graph of the interactions between types(as a tuple of:
  *         - the start type/agent
