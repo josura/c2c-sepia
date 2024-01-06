@@ -513,13 +513,19 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
 
         
 
-double Computation::getVirtualInputForType(std::string type)const{
+double Computation::getVirtualInputForType(std::string type, std::string sourceNode)const{
+    if(sourceNode != ""){
+        type = type + "_" + sourceNode;
+    }
     int index = nodeToIndex.at("v-in:" + type);
     if(index > 0) return outputAugmented[index];
     else return 0;
 
 }
-double Computation::getVirtualOutputForType(std::string type)const{
+double Computation::getVirtualOutputForType(std::string type, std::string targetNode)const{
+    if(targetNode != ""){
+        type = type + "_" + targetNode;
+    }
     int index = nodeToIndex.at("v-out:" + type);
     if(index > 0) return outputAugmented[index];
     else return 0;

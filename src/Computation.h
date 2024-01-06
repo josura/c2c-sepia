@@ -96,8 +96,8 @@ class Computation{
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
 
-        double getVirtualInputForType(std::string type)const;
-        double getVirtualOutputForType(std::string type)const;
+        double getVirtualInputForType(std::string type, std::string sourceNode="")const;
+        double getVirtualOutputForType(std::string type, std::string targetNode="")const;
         void setInputVinForType(std::string type, double value);
         void setInputVoutForType(std::string type, double value);
         void setDissipationModel(DissipationModel* dissipationModel);
