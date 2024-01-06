@@ -626,6 +626,7 @@ int main(int argc, char** argv) {
     }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
     // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
+    // TODO substitute with another class that represents granularity and returns the interactions between the types or the pairs of types+node, along the lists of contact times and virtual nodes (just a superclass that is extended by the two classes for different granularity)
     std::unordered_map<std::pair<std::string, std::string>, std::unordered_set<int>, hash_pair_strings> interactionBetweenTypesMap;
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
         std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> typeInteractionsEdges;
