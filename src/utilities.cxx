@@ -774,9 +774,9 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
     return ret;
 }
 
-std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez){
+std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez){
     string line;
-    std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>>> ret;
+    std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>>> ret;
     auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
     // TODO write a function that is similar to the one above but that takes the fourth column as the instants of the interactions(maybe change the arguments passed as well to take into account the maximum amount of intertype-iterations)
     if(file_exists(filename)){
@@ -828,6 +828,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     std::string startType = entries[indexTypeStart];
                     std::string endType = entries[indexTypeEnd];
                     std::unordered_set<int> contactTimes;
+                    double weight = std::stod( entries[indexWeight]);
                     if(noContactTimes){
                         // if no contact times are specified, then every time is a contact time, so all contact times from 0 to maximumIntertypeTime are added
                         for(int i = 0; i < maximumIntertypeTime; i++){
@@ -845,7 +846,6 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                     // add the edge to the augmented graph, only if the startType and the endType are in the subtypes
                     if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
-                        double weight = std::stod( entries[indexWeight]);
                         std::string virtualInputEndType = "v-in:" + startType;
                         std::string virtualOutputstartType = "v-out:" + endType;
                         std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
@@ -867,7 +867,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                         //ignored because not in the subtypes
                     }
                     // add the edge with the contact times to the second vector in ret
-                    ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>>(startNodeName, endNodeName, startType, endType, contactTimes));
+                    ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>(startNodeName, endNodeName, startType, endType, contactTimes, weight));
                 } else {
                     std::cout << "[ERROR] columns detected: " << entries.size() << " columns " <<std::endl;
                     throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: header doesn't have the right amount of columns(5 or 6 when considering interaction times) ");
