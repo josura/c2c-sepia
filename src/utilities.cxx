@@ -852,8 +852,15 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                     // add the edge to the augmented graph, only if the startType and the endType are in the subtypes
                     if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
-                        std::string virtualInputEndType = "v-in:" + startType;
-                        std::string virtualOutputstartType = "v-out:" + endType;
+                        std::string virtualInputEndType = "";
+                        std::string virtualOutputstartType = "";
+                        if(granularity == "node"){
+                            virtualInputEndType = "v-in:" + startType + "_" + startNodeName;
+                            virtualOutputstartType = "v-out:" + endType + "_" + endNodeName;
+                        } else{
+                            virtualInputEndType = "v-in:" + startType;
+                            virtualOutputstartType = "v-out:" + endType;
+                        }    
                         std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
                         std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
                         if(ret.first.contains(startType)){
