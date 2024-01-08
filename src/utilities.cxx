@@ -778,8 +778,8 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
     string line;
     std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>>> ret;
     // control if the granularity is valid
-    if(granularity != "" && granularity != "type" && granularity != "node"){
-        throw std::invalid_argument("utilities::interactionContactsFileToEdgesListAndNodesByName: invalid granularity, it must be node(finer) or type(coarser)");
+    if(granularity != "" && granularity != "type" && granularity != "node" && granularity != "typeAndNode"){
+        throw std::invalid_argument("utilities::interactionContactsFileToEdgesListAndNodesByName: invalid granularity, it must be typeAndNode(finer) or type(coarser), or only node(no types)");
     }
     if(granularity == ""){
         granularity = "type";
@@ -854,13 +854,16 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                         std::string virtualInputEndType = "";
                         std::string virtualOutputstartType = "";
-                        if(granularity == "node"){
+                        if(granularity == "typeAndNode"){
                             virtualInputEndType = "v-in:" + startType + "_" + startNodeName;
                             virtualOutputstartType = "v-out:" + endType + "_" + endNodeName;
-                        } else{
+                        } else if (granularity == "type"){
                             virtualInputEndType = "v-in:" + startType;
                             virtualOutputstartType = "v-out:" + endType;
-                        }    
+                        } else {
+                            virtualInputEndType = "v-in:" + startNodeName;
+                            virtualOutputstartType = "v-out:" + endNodeName;
+                        }
                         std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
                         std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
                         if(ret.first.contains(startType)){
