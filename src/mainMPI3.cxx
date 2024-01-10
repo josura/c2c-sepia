@@ -188,6 +188,19 @@ int main(int argc, char** argv) {
         logger << "[LOG] undirectedTypeEdges not specified, directed edges between types"<<std::endl;
     }
 
+    //logging virtual nodes reset
+    if(resetVirtualInputs){
+        logger << "[LOG] resetVirtualInputs specified, virtual inputs will be reset to 0 after each inter-propagation"<<std::endl;
+    } else {
+        logger << "[LOG] resetVirtualInputs not specified, virtual inputs will not be reset to 0 after each inter-propagation"<<std::endl;
+    }
+
+    if(resetVirtualOutputs){
+        logger << "[LOG] resetVirtualOutputs specified, virtual outputs will be reset to 0 after each inter-propagation"<<std::endl;
+    } else {
+        logger << "[LOG] resetVirtualOutputs not specified, virtual outputs will not be reset to 0 after each inter-propagation"<<std::endl;
+    }
+
 
     if (vm.count("fUniqueGraph")) {
         logger << "[LOG] file for the graph was set to " 
