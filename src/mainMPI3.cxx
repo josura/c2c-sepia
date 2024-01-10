@@ -35,6 +35,8 @@ int main(int argc, char** argv) {
     bool conservateInitialNorm=false;
     bool undirected = false;
     bool undirectedTypeEdges = false;
+    bool resetVirtualInputs = false;
+    bool resetVirtualOutputs = false;
     std::string logMode="";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
@@ -65,6 +67,8 @@ int main(int argc, char** argv) {
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
         ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
         ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
+        ("resetVirtualInputs",po::bool_switch(&resetVirtualInputs), "reset the virtual inputs to 0 at each iteration, default to false")
+        ("resetVirtualOutputs",po::bool_switch(&resetVirtualOutputs), "reset the virtual outputs to 0 at each iteration, default to false")
         ("virtualNodesGranularity", po::value<std::string>(), "(string) granularity of the virtual nodes, available options are: 'type', 'node'(unstable), 'typeAndNode', default to type")
         ("virtualNodesGranularityParameters", po::value<std::vector<std::string>>()->multitoken(), "(vector<string>) parameters for the virtual nodes granularity, NOT USED for now")
         ("loggingOptions",po::value<std::string>(&logMode),"(string) logging options, available options are: 'all','none', default to all")
