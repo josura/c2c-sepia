@@ -564,10 +564,10 @@ void Computation::setPropagationModel(PropagationModel *propagationModel){
     this->propagationModel = propagationModel;
 }
 
-void Computation::resetVirtualInputs(){
-    //virtual inputs have the names starting with v-in:
+void Computation::resetVirtualOutputs(){
+    //virtual outputs have the names starting with v-out:
     for(auto it = nodeToIndex.cbegin(); it!=nodeToIndex.cend();it++){
-        if(it->first.find("v-in:") != std::string::npos){
+        if(it->first.find("v-out:") != std::string::npos){
             InputAugmentedArma[it->second] = 0;
         }
     } 

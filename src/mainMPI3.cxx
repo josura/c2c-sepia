@@ -877,10 +877,10 @@ int main(int argc, char** argv) {
             }
         }
 
-        // reset virtual inputs if specified
-        if(vm.count("resetVirtualInputs")){
+        // reset virtual outputs if specified
+        if(vm.count("resetVirtualOutputs")){
             for(int i = 0; i < finalWorkload; i++){
-                typeComputations[i]->resetVirtualInputs();
+                typeComputations[i]->resetVirtualOutputs();
             }
         }
 

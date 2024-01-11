@@ -104,7 +104,7 @@ class Computation{
         void setConservationModel(ConservationModel* conservationModel);
         void setPropagationModel(PropagationModel* propagationModel);
 
-        void resetVirtualInputs();
+        void resetVirtualOutputs();
 
         //optimization
         void freeAugmentedGraphs();

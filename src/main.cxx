@@ -31,6 +31,7 @@ int main(int argc, char** argv ) {
     bool conservateInitialNorm=false;
     bool undirected = false;
     bool undirectedTypeEdges = false;
+    bool resetVirtualOutputs = false;
     std::string logMode="";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
@@ -61,6 +62,7 @@ int main(int argc, char** argv ) {
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
         ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
         ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
+        ("resetVirtualOutputs",po::bool_switch(&resetVirtualOutputs), "reset the virtual outputs to 0 at each iteration, default to false")
         ("virtualNodesGranularity", po::value<std::string>(), "(string) granularity of the virtual nodes, available options are: 'type', 'node', 'typeAndNode', default to type")
         ("virtualNodesGranularityParameters", po::value<std::vector<std::string>>()->multitoken(), "(vector<string>) parameters for the virtual nodes granularity, NOT USED for now")
         ("loggingOptions",po::value<std::string>(&logMode),"(string) logging options, available options are: 'all','none', default to all")
@@ -178,6 +180,15 @@ int main(int argc, char** argv ) {
     } else {
         logger << "[LOG] undirectedTypeEdges not specified, directed edges between types"<<std::endl;
     }
+
+    //logging virtual nodes reset
+
+    if(resetVirtualOutputs){
+        logger << "[LOG] resetVirtualOutputs specified, virtual outputs will be reset to 0 after each inter-propagation"<<std::endl;
+    } else {
+        logger << "[LOG] resetVirtualOutputs not specified, virtual outputs will not be reset to 0 after each inter-propagation"<<std::endl;
+    }
+
 
 
     if (vm.count("fUniqueGraph")) {
@@ -761,6 +772,14 @@ int main(int argc, char** argv ) {
             //     }
             //     logger << std::endl;
             // }
+
+
+            // reset virtual outputs if specified
+            if (resetVirtualOutputs) {
+                for(uint i = 0; i < typesFiltered.size(); i++){
+                    typeComputations[i]->resetVirtualOutputs();
+                }
+            }
 
             //update input
             for(uint i = 0; i < typesFiltered.size(); i++){
