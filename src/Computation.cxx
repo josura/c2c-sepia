@@ -564,6 +564,16 @@ void Computation::setPropagationModel(PropagationModel *propagationModel){
     this->propagationModel = propagationModel;
 }
 
+void Computation::resetVirtualInputs(){
+    //virtual inputs have the names starting with v-in:
+    for(auto it = nodeToIndex.cbegin(); it!=nodeToIndex.cend();it++){
+        if(it->first.find("v-in:") != std::string::npos){
+            InputAugmentedArma[it->second] = 0;
+        }
+    } 
+
+}
+
 void Computation::updateInput(const std::vector<double>& newInp, bool augmented){
     if (!augmented) {
         if (newInp.size() == 0) {
