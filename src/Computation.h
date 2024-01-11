@@ -98,8 +98,8 @@ class Computation{
 
         double getVirtualInputForType(std::string type, std::string sourceNode="")const;
         double getVirtualOutputForType(std::string type, std::string targetNode="")const;
-        void setInputVinForType(std::string type, double value);
-        void setInputVoutForType(std::string type, double value);
+        void setInputVinForType(std::string type, double value, std::string sourceNode="");
+        void setInputVoutForType(std::string type, double value, std::string targetNode="");
         void setDissipationModel(DissipationModel* dissipationModel);
         void setConservationModel(ConservationModel* conservationModel);
         void setPropagationModel(PropagationModel* propagationModel);

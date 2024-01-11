@@ -531,9 +531,13 @@ double Computation::getVirtualOutputForType(std::string type, std::string target
     else return 0;
 }
 
-void Computation::setInputVinForType(std::string type, double value){
+void Computation::setInputVinForType(std::string type, double value, std::string sourceNode){
     //TODO if the augmented graph is deleted, switch to a direct map saved before deleting the graph
     //int index = augmentedGraph->getIndexFromName("v-in:" + type);
+    std::string vinName = "v-in:" + type;
+    if(sourceNode != ""){
+        vinName = vinName + "_" + sourceNode;
+    }
     int index = nodeToIndex.at("v-in:" + type);
     if(index > 0) {
         inputAugmented[index]=value;
@@ -542,9 +546,13 @@ void Computation::setInputVinForType(std::string type, double value){
     else throw std::invalid_argument("Computation::setInputVinForType: invalid set for virtual input: type:" + type + "does not exist");
 
 }
-void Computation::setInputVoutForType(std::string type, double value){
+void Computation::setInputVoutForType(std::string type, double value, std::string targetNode){
     //int index = augmentedGraph->getIndexFromName("v-out:" + type);
-    int index = nodeToIndex.at("v-out:" + type);
+    std::string voutName = "v-out:" + type;
+    if(targetNode != ""){
+        voutName = voutName + "_" + targetNode;
+    }
+    int index = nodeToIndex.at(voutName);
     if(index > 0) {
         inputAugmented[index]=value;
         InputAugmentedArma[index]=value;
