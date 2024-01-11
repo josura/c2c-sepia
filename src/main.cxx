@@ -773,14 +773,6 @@ int main(int argc, char** argv ) {
             //     logger << std::endl;
             // }
 
-
-            // reset virtual outputs if specified
-            if (resetVirtualOutputs) {
-                for(uint i = 0; i < typesFiltered.size(); i++){
-                    typeComputations[i]->resetVirtualOutputs();
-                }
-            }
-
             //update input
             for(uint i = 0; i < typesFiltered.size(); i++){
                 //If conservation of the initial values is required, the input is first updated with the initial norm value
@@ -807,6 +799,10 @@ int main(int argc, char** argv ) {
             //     logger << std::endl;
             // }
         }
+
+
+
+
         //update input with virtual node values update
         
         // logger<< "[DEBUG] input values before updating with virtual"<<std::endl;
@@ -841,6 +837,14 @@ int main(int argc, char** argv ) {
         //     }
         //     logger << std::endl;
         // }
+
+
+        // reset virtual outputs if specified
+        if (resetVirtualOutputs) {
+            for(uint i = 0; i < typesFiltered.size(); i++){
+                typeComputations[i]->resetVirtualOutputs();
+            }
+        }
 
     }
     
