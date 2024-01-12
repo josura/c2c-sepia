@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
     bool undirectedTypeEdges = false;
     bool resetVirtualOutputs = false;
     std::string logMode="";
+    std::string virtualNodesGranularity = "type";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
     std::string performanceFilename = "";
@@ -161,6 +162,24 @@ int main(int argc, char** argv) {
     } else {
         logger << "[LOG] iterations intratype not set, set to default: 5 iterations \n";
         intratypeIterations = 5;
+    }
+
+    // reading granularity
+    if(vm.count("virtualNodesGranularity")){
+        virtualNodesGranularity = vm["virtualNodesGranularity"].as<std::string>();
+        logger << "[LOG] virtual nodes granularity set to " << virtualNodesGranularity << std::endl;
+        // controls over the value
+        if(virtualNodesGranularity != "type" && virtualNodesGranularity != "node" && virtualNodesGranularity != "typeAndNode"){
+            std::cerr << "[ERROR] virtual nodes granularity must be one of the following: 'type', 'node' or 'typeAndNode': aborting"<<std::endl;
+            return 1;
+        }
+        if(virtualNodesGranularity == "node"){
+            std::cerr << "[WARNING] virtual nodes granularity set to 'node', this option is unstable and not fully implemented: aborting"<<std::endl;
+            return 1;
+        }
+    } else {
+        logger << "[LOG] virtual nodes granularity not set, set to default: type \n";
+        virtualNodesGranularity = "type";
     }
 
     //logging timestep settings
@@ -638,33 +657,42 @@ int main(int argc, char** argv) {
     // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
     // TODO substitute with another class that represents granularity and returns the interactions between the types or the pairs of types+node, along the lists of contact times and virtual nodes (just a superclass that is extended by the two classes for different granularity)
     std::unordered_map<std::pair<std::string, std::string>, std::unordered_set<int>, hash_pair_strings> interactionBetweenTypesMap;
+    std::unordered_map<std::tuple<std::string, std::string, std::string, std::string>, std::unordered_set<int>, hash_quadruple_strings> interactionBetweenTypesFinerMap;
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
         std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>,double>>> typeInteractionsEdges;
         if (subtypes.size() == 0) {
             // TODO add different contact times inside the network (quite difficult since the structure of the graphs is static)
             // SOLUTION: granularity
-            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames);
+            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity);
         } else {
-            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames);
+            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames, virtualNodesGranularity);
         }
         #pragma omp parallel for
         for (int i = 0; i < finalWorkload;i++) {
             if(typeInteractionsEdges.first.contains(types[i+startIdx]) && typesIndexes[i] != -1){
+                // granularity is already considered in the function that reads from the file previously called
                 typeComputations[typesIndexes[i]]->addEdges(typeInteractionsEdges.first[types[i+startIdx]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
             }
         }
         for(auto edge = typeInteractionsEdges.second.cbegin() ; edge != typeInteractionsEdges.second.cend(); edge++ ){
             // first two types are the nodes in the two networks/types ,types are the third and fourth element of the tuple, while the fifth is the set of contact times
+            // startNodeName, endNodeName, startType, endType, contactTimes, weight
             std::pair<std::string,std::string> keyTypes = std::make_pair(std::get<2> (*edge), std::get<3> (*edge));
+            std::tuple<std::string,std::string,std::string,std::string> keyTypesFiner = std::make_tuple(std::get<0> (*edge), std::get<1> (*edge), std::get<2> (*edge), std::get<3> (*edge));
             if(interactionBetweenTypesMap.contains(keyTypes)){
                 interactionBetweenTypesMap[keyTypes].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
             } else {
                 interactionBetweenTypesMap[keyTypes] = std::get<4>(*edge);
             }
+
+            if(interactionBetweenTypesFinerMap.contains(keyTypesFiner)){
+                interactionBetweenTypesFinerMap[keyTypesFiner].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
+            } else {
+                interactionBetweenTypesFinerMap[keyTypesFiner] = std::get<4>(*edge);
+            }
         }
     }
 
-    
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
 
     std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
