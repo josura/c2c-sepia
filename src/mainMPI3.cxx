@@ -693,6 +693,8 @@ int main(int argc, char** argv) {
         }
     }
 
+    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings?, representing how the virtual outputs are mapped in the array passed to MPI send 
+    std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> mappedVirtualOutputsVectors;
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
 
     std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
