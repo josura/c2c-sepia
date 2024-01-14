@@ -1001,26 +1001,33 @@ int main(int argc, char** argv) {
             } else {
                 sourceWorkload = workloadPerProcess;
             }
-            for(int isource = 0; isource < sourceWorkload; isource++){
-                for(int ilocal = 0; ilocal < finalWorkload; ilocal++){
-                    int virtualInputPosition = ilocal + isource * finalWorkload;
-                    int localTypePosition = ilocal + startIdx;
-                    int sourceTypePosition = isource + sourceRank*workloadPerProcess;
-                    std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
-                    // TODO take into account granularity of virtual nodes in the future
-                    if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
-                        // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
-                        // for(auto time: interactionBetweenTypesMap[keyTypes]){
-                        //     logger << time << ", ";
-                        // } 
-                        // logger << std::endl;
-                        if(localTypePosition==sourceTypePosition){
-                            if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
-                        } else {
-                            typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+            if(virtualNodesGranularity == "type"){
+                for(int isource = 0; isource < sourceWorkload; isource++){
+                    for(int ilocal = 0; ilocal < finalWorkload; ilocal++){
+                        int virtualInputPosition = ilocal + isource * finalWorkload;
+                        int localTypePosition = ilocal + startIdx;
+                        int sourceTypePosition = isource + sourceRank*workloadPerProcess;
+                        std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
+                        // TODO take into account granularity of virtual nodes in the future
+                        if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
+                            // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
+                            // for(auto time: interactionBetweenTypesMap[keyTypes]){
+                            //     logger << time << ", ";
+                            // } 
+                            // logger << std::endl;
+                            if(localTypePosition==sourceTypePosition){
+                                if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                            } else {
+                                typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                            }
                         }
                     }
                 }
+            } else if (virtualNodesGranularity == "node"){
+                logger << "[ERROR] virtual nodes granularity is not supported yet: aborting"<<std::endl;
+                return 1;
+            } else if (virtualNodesGranularity == "typeAndNode"){
+                // TODO implement the logic of reading the subvectors of the virtual outputs   
             }
         }
     }
