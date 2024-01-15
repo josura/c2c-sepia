@@ -896,14 +896,21 @@ int main(int argc, char** argv) {
             } else {
                 targetWorkload = workloadPerProcess;
             }
-            int targetPosition = i - targetRank * workloadPerProcess;
-            for(int j = 0; j < finalWorkload; j++ ){
-                int virtualOutputPosition = targetPosition + j * targetWorkload;
-                // // TESTING
-                // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
-                // // TESTING
+            if(virtualNodesGranularity == "type"){
+                int targetPosition = i - targetRank * workloadPerProcess;
+                for(int j = 0; j < finalWorkload; j++ ){
+                    int virtualOutputPosition = targetPosition + j * targetWorkload;
+                    // // TESTING
+                    // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
+                    // // TESTING
+                    // TODO take into account granularity of the virtual nodes
+                    virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
+                }
+            } else if (virtualNodesGranularity == "typeAndNode"){
                 // TODO take into account granularity of the virtual nodes
-                virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
+            } else {
+                std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
+                return 1;
             }
         }
 
