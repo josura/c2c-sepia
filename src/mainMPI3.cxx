@@ -962,7 +962,12 @@ int main(int argc, char** argv) {
             } else {
                 sourceWorkload = workloadPerProcess;
             }
-            MPI_Irecv(virtualInputsBuffer[i], finalWorkload * sourceWorkload, MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+            if(virtualNodesGranularity == "typeAndNode"){
+                // TODO receive the subvectors of the virtual outputs for the combination of types and nodes
+            } else {
+                // receive only the virtual outputs for the types granularity (v-out for each type)
+                MPI_Irecv(virtualInputsBuffer[i], finalWorkload * sourceWorkload, MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+            }
         }
 
 
