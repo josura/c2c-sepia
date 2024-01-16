@@ -925,7 +925,7 @@ int main(int argc, char** argv) {
                     }
                     for(int targetIndexLocal = 0; targetIndexLocal < SizeToInt(types.size()); targetIndexLocal++){
                         std::string targetType = types[targetIndexLocal + targetStartIdx];
-
+                        virtualOutputsSizes[targetRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
                     }
                 }
             }
