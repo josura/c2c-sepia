@@ -874,44 +874,46 @@ int main(int argc, char** argv) {
         // }
         // //TESTING
 
-        // send virtual outputs to the other processes
+        // send virtual outputs to the other processes, the vector contains the virtual outputs for each type as an array
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
         std::vector<double*> virtualOutputs;
-        for(int i = 0; i < numProcesses; i++){
-            int currentWorkload;
-            if(i == (numProcesses-1)){
-                currentWorkload = types.size() - (i*workloadPerProcess);
-            } else {
-                currentWorkload = workloadPerProcess;
-            }
-            virtualOutputs.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
-        }
-
-        for(int i = 0; i < SizeToInt(types.size()); i++){
-            int targetRank = typeToRank[types[i]];
-            int targetWorkload;
-            if(targetRank == (numProcesses-1)){
-                targetWorkload = types.size() - (targetRank*workloadPerProcess);
-            } else {
-                targetWorkload = workloadPerProcess;
-            }
-            if(virtualNodesGranularity == "type"){
-                int targetPosition = i - targetRank * workloadPerProcess;
-                for(int j = 0; j < finalWorkload; j++ ){
-                    int virtualOutputPosition = targetPosition + j * targetWorkload;
-                    // // TESTING
-                    // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
-                    // // TESTING
-                    // TODO take into account granularity of the virtual nodes
-                    virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
+        // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
+        if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
+            for(int i = 0; i < numProcesses; i++){
+                int currentWorkload;
+                if(i == (numProcesses-1)){
+                    currentWorkload = types.size() - (i*workloadPerProcess);
+                } else {
+                    currentWorkload = workloadPerProcess;
                 }
-            } else if (virtualNodesGranularity == "typeAndNode"){
-                // TODO take into account granularity of the virtual nodes
-            } else {
-                std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
-                return 1;
+                virtualOutputs.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
             }
+
+            for(int i = 0; i < SizeToInt(types.size()); i++){
+                int targetRank = typeToRank[types[i]];
+                int targetWorkload;
+                if(targetRank == (numProcesses-1)){
+                    targetWorkload = types.size() - (targetRank*workloadPerProcess);
+                } else {
+                    targetWorkload = workloadPerProcess;
+                }
+                    int targetPosition = i - targetRank * workloadPerProcess;
+                    for(int j = 0; j < finalWorkload; j++ ){
+                        int virtualOutputPosition = targetPosition + j * targetWorkload;
+                        // // TESTING
+                        // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
+                        // // TESTING
+                        // TODO take into account granularity of the virtual nodes
+                        virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
+                    }
+                
+            }
+        } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)
+            // TODO take into account granularity of the virtual nodes
+        } else {
+            std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
+            return 1;
         }
 
         // reset virtual outputs if specified
