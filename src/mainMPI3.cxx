@@ -925,9 +925,16 @@ int main(int argc, char** argv) {
                     }
                     for(int targetIndexLocal = 0; targetIndexLocal < SizeToInt(types.size()); targetIndexLocal++){
                         std::string targetType = types[targetIndexLocal + targetStartIdx];
-                        virtualOutputsSizes[targetRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                        // if there is at least an interaction between the two types, the size is increased
+                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            virtualOutputsSizes[targetRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                        }
                     }
                 }
+
+                // allocate the array for the virtual outputs directed to the target rank types
+                virtualOutputs.push_back(new double[virtualOutputsSizes[targetRank]]);
+
             }
         } else {
             std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
