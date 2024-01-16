@@ -911,6 +911,24 @@ int main(int argc, char** argv) {
             }
         } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)
             // TODO take into account granularity of the virtual nodes
+            std::vector<uint> virtualOutputsSizes = std::vector<uint>(numProcesses,0);
+            //initialize the virtual outputs arrays
+            for(int targetRank = 0; targetRank < numProcesses; targetRank++){
+                for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
+                    std::string sourceType = types[sourceIndexLocal + startIdx];
+                    int targetWorkload;
+                    int targetStartIdx = targetRank * workloadPerProcess;
+                    if(targetRank == (numProcesses-1)){
+                        targetWorkload = types.size() - (targetRank*workloadPerProcess);
+                    } else {
+                        targetWorkload = workloadPerProcess;
+                    }
+                    for(int targetIndexLocal = 0; targetIndexLocal < SizeToInt(types.size()); targetIndexLocal++){
+                        std::string targetType = types[targetIndexLocal + targetStartIdx];
+
+                    }
+                }
+            }
         } else {
             std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
             return 1;
