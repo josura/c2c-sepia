@@ -1130,6 +1130,11 @@ int main(int argc, char** argv) {
                 // TODO implement the logic of reading the subvectors of the virtual outputs   
             }
         }
+
+        // delete the virtual inputs vector of arrays
+        for(int i = 0; i < numProcesses; i++){
+            delete[] virtualInputsBuffer.at(i);
+        }
     }
 
     MPI_Finalize();
