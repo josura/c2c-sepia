@@ -878,6 +878,7 @@ int main(int argc, char** argv) {
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
         std::vector<double*> virtualOutputs;
+        std::vector<uint> virtualOutputsSizes = std::vector<uint>(numProcesses,0);
         // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
         if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
             for(int i = 0; i < numProcesses; i++){
@@ -911,7 +912,6 @@ int main(int argc, char** argv) {
             }
         } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)
             // TODO take into account granularity of the virtual nodes
-            std::vector<uint> virtualOutputsSizes = std::vector<uint>(numProcesses,0);
             //allocate the virtual outputs arrays
             for(int targetRank = 0; targetRank < numProcesses; targetRank++){
                 for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
@@ -1002,15 +1002,25 @@ int main(int argc, char** argv) {
         // preliminary asynchronous receive
         // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
         std::vector<double*> virtualInputsBuffer;
-        for(int i = 0; i < numProcesses; i++){
-            int currentWorkload;
-            if(i == (numProcesses-1)){
-                currentWorkload = types.size() - (i*workloadPerProcess);
-            } else {
-                currentWorkload = workloadPerProcess;
+        if(virtualNodesGranularity == "type"){
+            for(int i = 0; i < numProcesses; i++){
+                int currentWorkload;
+                if(i == (numProcesses-1)){
+                    currentWorkload = types.size() - (i*workloadPerProcess);
+                } else {
+                    currentWorkload = workloadPerProcess;
+                }
+                virtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
             }
-            virtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
+        } else if (virtualNodesGranularity == "typeAndNode"){
+            // TODO allocate the buffer for the virtual outputs for the combination of types and nodes
+            for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
+                int sourceVectorLength = virtualOutputsSizes[sourceRank];
+                virtualInputsBuffer.push_back(new double[sourceVectorLength]);
+            }
+                
         }
+        // receive the virtual outputs from the other processes
         MPI_Request request[numProcesses];
         for(int i = 0; i < numProcesses; i++){
             int sourceRank = i;
@@ -1022,6 +1032,8 @@ int main(int argc, char** argv) {
             }
             if(virtualNodesGranularity == "typeAndNode"){
                 // TODO receive the subvectors of the virtual outputs for the combination of types and nodes
+                MPI_Irecv(virtualInputsBuffer[i], virtualOutputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+
             } else {
                 // receive only the virtual outputs for the types granularity (v-out for each type)
                 MPI_Irecv(virtualInputsBuffer[i], finalWorkload * sourceWorkload, MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
