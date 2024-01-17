@@ -1017,7 +1017,23 @@ int main(int argc, char** argv) {
             // TODO allocate the buffer for the virtual outputs for the combination of types and nodes
             for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
                 // compute the virtual inputs sizes for the source rank types to the local rank types
-
+                int sourceStartIdx = sourceRank * workloadPerProcess;
+                int sourceWorkload;
+                if(sourceRank == (numProcesses-1)){
+                    sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
+                } else {
+                    sourceWorkload = workloadPerProcess;
+                }
+                for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
+                    std::string targetType = types[targetIndexLocal + startIdx];
+                    for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
+                        std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
+                        // if there is at least an interaction between the two types, the size is increased
+                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            virtualInputsSizes[sourceRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                        }
+                    }
+                }
                 virtualInputsBuffer.push_back(new double[virtualInputsSizes[sourceRank]]);
             }
                 
@@ -1034,7 +1050,7 @@ int main(int argc, char** argv) {
             }
             if(virtualNodesGranularity == "typeAndNode"){
                 // TODO receive the subvectors of the virtual outputs for the combination of types and nodes
-                MPI_Irecv(virtualInputsBuffer[i], virtualOutputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+                MPI_Irecv(virtualInputsBuffer[i], virtualInputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
 
             } else {
                 // receive only the virtual outputs for the types granularity (v-out for each type)
