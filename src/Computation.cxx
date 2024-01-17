@@ -269,6 +269,26 @@ void Computation::addEdges(const std::vector<std::tuple<std::string,std::string,
 }
 
 
+void Computation::addEdgesAndNodes(const std::vector<std::tuple<std::string,std::string,double>>& newEdgesList,bool bothDirections, bool inverseComputation){
+    // get the nodes that are not in the graph yet and add them
+    std::vector<std::string> nodesToAdd;
+    for(auto it = newEdgesList.cbegin(); it != newEdgesList.cend(); it++){
+        std::string node1Name = std::get<0>(*it); 
+        std::string node2Name = std::get<1>(*it);        
+
+        if(!augmentedGraph->containsNode(node1Name)){
+            nodesToAdd.push_back(node1Name);
+        }
+        if(!augmentedGraph->containsNode(node2Name)){
+            nodesToAdd.push_back(node2Name);
+        }
+    }
+    augmentedGraph->addNodes(nodesToAdd);
+    // add the edges
+    this->addEdges(newEdgesList,bothDirections,inverseComputation);
+}
+
+
 std::vector<double> Computation::computePerturbation(){
     arma::Col<double> outputArma =  pseudoInverseArma * InputArma;
     output = armaColumnToVector(outputArma);
