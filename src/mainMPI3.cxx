@@ -1002,6 +1002,7 @@ int main(int argc, char** argv) {
         // preliminary asynchronous receive
         // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
         std::vector<double*> virtualInputsBuffer;
+        std::vector<uint> virtualInputsSizes = std::vector<uint>(numProcesses,0);
         if(virtualNodesGranularity == "type"){
             for(int i = 0; i < numProcesses; i++){
                 int currentWorkload;
@@ -1015,8 +1016,9 @@ int main(int argc, char** argv) {
         } else if (virtualNodesGranularity == "typeAndNode"){
             // TODO allocate the buffer for the virtual outputs for the combination of types and nodes
             for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-                int sourceVectorLength = virtualOutputsSizes[sourceRank];
-                virtualInputsBuffer.push_back(new double[sourceVectorLength]);
+                // compute the virtual inputs sizes for the source rank types to the local rank types
+
+                virtualInputsBuffer.push_back(new double[virtualInputsSizes[sourceRank]]);
             }
                 
         }
