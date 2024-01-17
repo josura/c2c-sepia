@@ -443,6 +443,10 @@ std::string WeightedEdgeGraph::getAdjListStr(int node)const{
     return stringa;
 }
 
+bool WeightedEdgeGraph::containsNode(std::string node)const{
+    return nodeToIndex.contains(node);
+}
+
 
 std::string WeightedEdgeGraph::getAdjListStr(std::string node)const{
     return getAdjListStr(nodeToIndex.at(node));

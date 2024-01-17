@@ -126,6 +126,7 @@ class WeightedEdgeGraph{
         int getNumEdges()const ;
         std::vector<std::string> getNodeNames()const{ return nameVector;}
         int degreeOfNode(int node)const;
+        bool containsNode(std::string node)const;
 
 
         std::string getnodeValuesStr()const;
