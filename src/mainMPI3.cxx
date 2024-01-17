@@ -1128,6 +1128,21 @@ int main(int argc, char** argv) {
                 return 1;
             } else if (virtualNodesGranularity == "typeAndNode"){
                 // TODO implement the logic of reading the subvectors of the virtual outputs   
+                int sourceStartIdx = sourceRank * workloadPerProcess;
+                int virtualInputPosition = 0;
+                for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
+                    std::string targetType = types[targetIndexLocal + startIdx];
+                    for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
+                        std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
+                        // if there is at least an interaction between the two types, the size is increased
+                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+                                typeComputations[targetIndexLocal]->setInputVinForType(sourceType, virtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
+                                virtualInputPosition++;
+                            }
+                        }
+                    }
+                }
             }
         }
 
