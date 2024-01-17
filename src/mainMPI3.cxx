@@ -1073,8 +1073,15 @@ int main(int argc, char** argv) {
                 targetWorkload = workloadPerProcess;
             }
             //synchronized communication will lead to deadlocks with this type of implementation
-            MPI_Send(virtualOutputs.at(j), finalWorkload * targetWorkload, MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
-            logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
+            if(virtualNodesGranularity == "typeAndNode"){
+                // TODO send the subvectors of the virtual outputs for the combination of types and nodes
+                MPI_Send(virtualOutputs.at(j), virtualOutputsSizes[j], MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
+                logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
+            } else {
+                // send only the virtual outputs for the types granularity (v-out for each type
+                MPI_Send(virtualOutputs.at(j), finalWorkload * targetWorkload, MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
+                logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
+            }
         }
 
         // delete the virtual outputs vector of arrays
