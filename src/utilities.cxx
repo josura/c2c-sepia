@@ -833,6 +833,18 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                     std::string startType = entries[indexTypeStart];
                     std::string endType = entries[indexTypeEnd];
+                    if(typeToNodeNames.size() != 0){
+                        if(!vectorContains(typeToNodeNames[startType],startNodeName)){
+                            std::cout << "[ERROR] start node <"<< startNodeName <<"> for type: " << startType << " is not in the specified network, aborting " <<std::endl;
+                            throw std::invalid_argument("utilities::interactionContactsFileToEdgesListAndNodesByName: invalid file, the start node" + startNodeName + " is not in the type specified, aborting");
+                        }
+
+                        if(!vectorContains(typeToNodeNames[endType],endNodeName)){
+                            std::cout << "[ERROR] end node <"<< endNodeName <<"> for type: " << endType << " is not in the specified network, aborting " <<std::endl;
+                            throw std::invalid_argument("utilities::interactionContactsFileToEdgesListAndNodesByName: invalid file, the end node" + endNodeName + " is not in the type specified, aborting");
+                        }
+                    }
+
                     std::unordered_set<int> contactTimes;
                     double weight = std::stod( entries[indexWeight]);
                     if(noContactTimes){
