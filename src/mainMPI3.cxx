@@ -552,7 +552,10 @@ int main(int argc, char** argv) {
             graphsNodes.push_back(namesAndEdges[0].first);
             graphs[i] = graphs[0];
         }
-        // TODO create the map also for the use case of a single graph
+        // create the map also for the use case of a single graph, TODO only use the map for the single graph case without filling all the maps
+        for(uint i = 0; i < types.size(); i++){
+            typeToNodeNamesMap[types[i]] = namesAndEdges[0].first;
+        }
 
     } else if (vm.count("graphsFilesFolder")) { // the graphs are in a folder, each graph is a type
         auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
