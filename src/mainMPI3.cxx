@@ -182,6 +182,15 @@ int main(int argc, char** argv) {
         virtualNodesGranularity = "type";
     }
 
+    // reading granularity parameters (not used for now)
+    if(vm.count("virtualNodesGranularityParameters")){
+        std::vector<std::string> virtualNodesGranularityParameters = vm["virtualNodesGranularityParameters"].as<std::vector<std::string>>();
+        logger << "[LOG] virtual nodes granularity parameters set to " << virtualNodesGranularityParameters << std::endl;
+        logger << "[WARNING] virtual nodes granularity parameters are not used for now"<<std::endl;
+    } else {
+        // logger << "[LOG] virtual nodes granularity parameters not set, set to default: empty vector \n";  // not used for now
+    }
+
     //logging timestep settings
     if(vm.count("timestep")){
         logger << "[LOG] timestep set to " 
@@ -531,6 +540,7 @@ int main(int argc, char** argv) {
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
     std::vector<std::vector<std::string>> graphsNodes;
     std::vector<std::vector<std::string>> graphsNodesAll; // used only initially to read the values, contains all types
+    std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     // a single graph is used for all the types
     if(vm.count("fUniqueGraph")){
@@ -542,6 +552,8 @@ int main(int argc, char** argv) {
             graphsNodes.push_back(namesAndEdges[0].first);
             graphs[i] = graphs[0];
         }
+        // TODO create the map also for the use case of a single graph
+
     } else if (vm.count("graphsFilesFolder")) { // the graphs are in a folder, each graph is a type
         auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
         auto typesFromFolder = allGraphs.first;
@@ -558,6 +570,7 @@ int main(int argc, char** argv) {
         namesAndEdges = allGraphs.second;
         for(uint i = 0; i < types.size(); i++){
             graphsNodesAll.push_back(namesAndEdges[i].first);
+            typeToNodeNamesMap[types[i]] = namesAndEdges[i].first;
         }
         for(int i = startIdx; i < endIdx; i++){
             graphsNodes.push_back(namesAndEdges[i].first);
@@ -630,7 +643,11 @@ int main(int argc, char** argv) {
             tmpCompPointer->setConservationModel(conservationModel);
             typeComputations[indexComputation] = tmpCompPointer;
             //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
-            typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true); //self included since the code in MPI needs it
+            if(virtualNodesGranularity == "type"){
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true); //self included since the code in MPI needs it
+            } else if (virtualNodesGranularity == "typeAndNode"){
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(std::vector<std::string>(), std::vector<std::pair<std::string,std::string>>(), std::vector<double>(), false); //no types are passed since the virtual nodes will be added to the graph in the interaction section of this code
+            }
         } else {
             int index = indexMapGraphTypesToValuesTypes[i+startIdx];
             std::vector<double> input = inputInitials[index];
@@ -639,6 +656,11 @@ int main(int argc, char** argv) {
             tmpCompPointer->setConservationModel(conservationModel);
             typeComputations[indexComputation] = tmpCompPointer;
             //No inverse computation with the augmented graph since virtual nodes edges are not yet inserted
+            if(virtualNodesGranularity == "type"){
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true); //self included since the code in MPI needs it
+            } else if (virtualNodesGranularity == "typeAndNode"){
+                typeComputations[indexComputation]->augmentGraphNoComputeInverse(std::vector<std::string>(), std::vector<std::pair<std::string,std::string>>(), std::vector<double>(), false); //no types are passed since the virtual nodes will be added to the graph in the interaction section of this code
+            }
             typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true);
         }
         typesIndexes[i] = indexComputation;
@@ -693,8 +715,26 @@ int main(int argc, char** argv) {
         }
     }
 
-    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings?, representing how the virtual outputs are mapped in the array passed to MPI send 
+    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual outputs are mapped in the array passed to MPI send 
     std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> mappedVirtualOutputsVectors;
+    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual inputs are mapped in the array passed to MPI send
+    std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> mappedVirtualInputsVectors;
+
+    // populate the maps
+    for(auto interaction = interactionBetweenTypesFinerMap.cbegin() ; interaction != interactionBetweenTypesFinerMap.cend(); interaction++ ){
+        std::pair<std::string, std::string> keyTypes = std::make_pair(std::get<2> (interaction->first), std::get<3> (interaction->first));
+        // inverted interaction only used when specified by the command line argument (undirectedTypeEdges)
+        std::pair<std::string, std::string> keyTypesInverted = std::make_pair(std::get<3> (interaction->first), std::get<2> (interaction->first));
+        
+        
+
+        if(mappedVirtualInputsVectors.contains(keyTypesInverted)){
+            mappedVirtualInputsVectors[keyTypesInverted].insert(mappedVirtualInputsVectors[keyTypesInverted].end(),virtualInputsVector.begin(),virtualInputsVector.end());
+        } else {
+            mappedVirtualInputsVectors[keyTypesInverted] = virtualInputsVector;
+        }
+    }
+    
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
 
     std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
