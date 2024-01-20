@@ -633,6 +633,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    // TODO get rid of the augment graph function and use the addition of nodes or edges directly
     Computation** typeComputations = new Computation*[finalWorkload];
     int indexComputation = 0;
     std::vector<int> typesIndexes = std::vector<int>(finalWorkload,-1); 
