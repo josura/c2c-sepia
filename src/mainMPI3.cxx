@@ -689,9 +689,9 @@ int main(int argc, char** argv) {
         if (subtypes.size() == 0) {
             // TODO add different contact times inside the network (quite difficult since the structure of the graphs is static)
             // SOLUTION: granularity
-            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity);
+            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap);
         } else {
-            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames, virtualNodesGranularity);
+            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap);
         }
         #pragma omp parallel for
         for (int i = 0; i < finalWorkload;i++) {
