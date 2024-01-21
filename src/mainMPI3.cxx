@@ -738,8 +738,9 @@ int main(int argc, char** argv) {
         std::vector<std::pair<std::string, std::string>> virtualInputsVector;
         std::string virtualOutputNodeName = "v-out:" + endType + "_" + endNodeName;
         std::string virtualInputNodeName = "v-in:" + startType + "_" + startNodeName;
-        virtualOutputsVector.push_back(std::make_pair(startNodeName, virtualOutputNodeName));
-        virtualInputsVector.push_back(std::make_pair(virtualInputNodeName, endNodeName));
+
+        mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
+        mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
 
         // if(mappedVirtualInputsVectors.contains(keyTypesInverted)){
         //     mappedVirtualInputsVectors[keyTypesInverted].insert(mappedVirtualInputsVectors[keyTypesInverted].end(),virtualInputsVector.begin(),virtualInputsVector.end());
