@@ -726,17 +726,26 @@ int main(int argc, char** argv) {
 
     // populate the maps
     for(auto interaction = interactionBetweenTypesFinerMap.cbegin() ; interaction != interactionBetweenTypesFinerMap.cend(); interaction++ ){
-        std::pair<std::string, std::string> keyTypes = std::make_pair(std::get<2> (interaction->first), std::get<3> (interaction->first));
+        std::string startNodeName = std::get<0> (interaction->first);
+        std::string endNodeName = std::get<1> (interaction->first);
+        std::string startType = std::get<2> (interaction->first);
+        std::string endType = std::get<3> (interaction->first);
+        std::pair<std::string, std::string> keyTypes = std::make_pair(startType, endType);
         // inverted interaction only used when specified by the command line argument (undirectedTypeEdges)
-        std::pair<std::string, std::string> keyTypesInverted = std::make_pair(std::get<3> (interaction->first), std::get<2> (interaction->first));
+        std::pair<std::string, std::string> keyTypesInverted = std::make_pair(endType, startType);
         
-        
+        std::vector<std::pair<std::string, std::string>> virtualOutputsVector;
+        std::vector<std::pair<std::string, std::string>> virtualInputsVector;
+        std::string virtualOutputNodeName = "v-out:" + endType + "_" + endNodeName;
+        std::string virtualInputNodeName = "v-in:" + startType + "_" + startNodeName;
+        virtualOutputsVector.push_back(std::make_pair(virtualNodeName, std::get<0> (interaction->first)));
+        virtualInputsVector.push_back(std::make_pair(virtualNodeName, std::get<1> (interaction->first)));
 
-        if(mappedVirtualInputsVectors.contains(keyTypesInverted)){
-            mappedVirtualInputsVectors[keyTypesInverted].insert(mappedVirtualInputsVectors[keyTypesInverted].end(),virtualInputsVector.begin(),virtualInputsVector.end());
-        } else {
-            mappedVirtualInputsVectors[keyTypesInverted] = virtualInputsVector;
-        }
+        // if(mappedVirtualInputsVectors.contains(keyTypesInverted)){
+        //     mappedVirtualInputsVectors[keyTypesInverted].insert(mappedVirtualInputsVectors[keyTypesInverted].end(),virtualInputsVector.begin(),virtualInputsVector.end());
+        // } else {
+        //     mappedVirtualInputsVectors[keyTypesInverted] = virtualInputsVector;
+        // }
     }
     
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
