@@ -758,12 +758,6 @@ int main(int argc, char** argv) {
                 mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
             }
         }
-
-        // if(mappedVirtualInputsVectors.contains(keyTypesInverted)){
-        //     mappedVirtualInputsVectors[keyTypesInverted].insert(mappedVirtualInputsVectors[keyTypesInverted].end(),virtualInputsVector.begin(),virtualInputsVector.end());
-        // } else {
-        //     mappedVirtualInputsVectors[keyTypesInverted] = virtualInputsVector;
-        // }
     }
     
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
@@ -949,7 +943,7 @@ int main(int argc, char** argv) {
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
         std::vector<double*> virtualOutputs;
-        std::vector<uint> virtualOutputsSizes = std::vector<uint>(numProcesses,0);
+        std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
         // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
         if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
             for(int i = 0; i < numProcesses; i++){
@@ -998,13 +992,13 @@ int main(int argc, char** argv) {
                         std::string targetType = types[targetIndexLocal + targetStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
                         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            virtualOutputsSizes[targetRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                            rankVirtualOutputsSizes[targetRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
                         }
                     }
                 }
 
                 // allocate the array for the virtual outputs directed to the target rank types
-                virtualOutputs.push_back(new double[virtualOutputsSizes[targetRank]]);
+                virtualOutputs.push_back(new double[rankVirtualOutputsSizes[targetRank]]);
 
             }
             // fill the arrays
@@ -1072,7 +1066,7 @@ int main(int argc, char** argv) {
 
         // preliminary asynchronous receive
         // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
-        std::vector<double*> virtualInputsBuffer;
+        std::vector<double*> rankVirtualInputsBuffer;
         std::vector<uint> virtualInputsSizes = std::vector<uint>(numProcesses,0);
         if(virtualNodesGranularity == "type"){
             for(int i = 0; i < numProcesses; i++){
@@ -1082,7 +1076,7 @@ int main(int argc, char** argv) {
                 } else {
                     currentWorkload = workloadPerProcess;
                 }
-                virtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
+                rankVirtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
             }
         } else if (virtualNodesGranularity == "typeAndNode"){
             // TODO allocate the buffer for the virtual outputs for the combination of types and nodes
@@ -1105,7 +1099,7 @@ int main(int argc, char** argv) {
                         }
                     }
                 }
-                virtualInputsBuffer.push_back(new double[virtualInputsSizes[sourceRank]]);
+                rankVirtualInputsBuffer.push_back(new double[virtualInputsSizes[sourceRank]]);
             }
                 
         }
@@ -1121,11 +1115,11 @@ int main(int argc, char** argv) {
             }
             if(virtualNodesGranularity == "typeAndNode"){
                 // TODO receive the subvectors of the virtual outputs for the combination of types and nodes
-                MPI_Irecv(virtualInputsBuffer[i], virtualInputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+                MPI_Irecv(rankVirtualInputsBuffer[i], virtualInputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
 
             } else {
                 // receive only the virtual outputs for the types granularity (v-out for each type)
-                MPI_Irecv(virtualInputsBuffer[i], finalWorkload * sourceWorkload, MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+                MPI_Irecv(rankVirtualInputsBuffer[i], finalWorkload * sourceWorkload, MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
             }
         }
 
@@ -1146,7 +1140,7 @@ int main(int argc, char** argv) {
             //synchronized communication will lead to deadlocks with this type of implementation
             if(virtualNodesGranularity == "typeAndNode"){
                 // TODO send the subvectors of the virtual outputs for the combination of types and nodes
-                MPI_Send(virtualOutputs.at(j), virtualOutputsSizes[j], MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
+                MPI_Send(virtualOutputs.at(j), rankVirtualOutputsSizes[j], MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
                 logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
             } else {
                 // send only the virtual outputs for the types granularity (v-out for each type
@@ -1187,9 +1181,9 @@ int main(int argc, char** argv) {
                             // } 
                             // logger << std::endl;
                             if(localTypePosition==sourceTypePosition){
-                                if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                                if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
                             } else {
-                                typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], virtualInputsBuffer[sourceRank][virtualInputPosition]);
+                                typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
                             }
                         }
                     }
@@ -1208,7 +1202,7 @@ int main(int argc, char** argv) {
                         // if there is at least an interaction between the two types, the size is increased
                         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
                             for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
-                                typeComputations[targetIndexLocal]->setInputVinForType(sourceType, virtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
+                                typeComputations[targetIndexLocal]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
                                 virtualInputPosition++;
                             }
                         }
@@ -1219,7 +1213,7 @@ int main(int argc, char** argv) {
 
         // delete the virtual inputs vector of arrays
         for(int i = 0; i < numProcesses; i++){
-            delete[] virtualInputsBuffer.at(i);
+            delete[] rankVirtualInputsBuffer.at(i);
         }
     }
 
