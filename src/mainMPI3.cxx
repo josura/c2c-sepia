@@ -736,11 +736,28 @@ int main(int argc, char** argv) {
         
         std::vector<std::pair<std::string, std::string>> virtualOutputsVector;
         std::vector<std::pair<std::string, std::string>> virtualInputsVector;
-        std::string virtualOutputNodeName = "v-out:" + endType + "_" + endNodeName;
-        std::string virtualInputNodeName = "v-in:" + startType + "_" + startNodeName;
+        std::string virtualOutputNodeName = "";
+        std::string virtualInputNodeName = "";
+        if(virtualNodesGranularity == "type"){
+            virtualOutputNodeName = "v-out:" + endType;
+            virtualInputNodeName = "v-in:" + startType;
+        } else {
+            virtualOutputNodeName = "v-out:" + endType + "_" + endNodeName;
+            virtualInputNodeName = "v-in:" + startType + "_" + startNodeName;
 
-        mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
-        mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
+        }
+        
+        if(mappedVirtualOutputsVectors.contains(keyTypes)){
+            if(!vectorContains(mappedVirtualOutputsVectors[keyTypes],std::make_pair(startNodeName, virtualOutputNodeName))){
+                mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
+            }
+        }
+        
+        if(mappedVirtualInputsVectors.contains(keyTypes)){
+            if(!vectorContains(mappedVirtualInputsVectors[keyTypes],std::make_pair(virtualInputNodeName, endNodeName))){
+                mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
+            }
+        }
 
         // if(mappedVirtualInputsVectors.contains(keyTypesInverted)){
         //     mappedVirtualInputsVectors[keyTypesInverted].insert(mappedVirtualInputsVectors[keyTypesInverted].end(),virtualInputsVector.begin(),virtualInputsVector.end());
