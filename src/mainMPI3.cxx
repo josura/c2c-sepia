@@ -953,7 +953,8 @@ int main(int argc, char** argv) {
                 } else {
                     currentWorkload = workloadPerProcess;
                 }
-                virtualOutputs.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
+                rankVirtualOutputsSizes[i] = currentWorkload * finalWorkload;
+                virtualOutputs.push_back(new double[rankVirtualOutputsSizes[i]]);   // the array contains all the virtual outputs for the process types
             }
 
             for(int i = 0; i < SizeToInt(types.size()); i++){
@@ -1067,7 +1068,7 @@ int main(int argc, char** argv) {
         // preliminary asynchronous receive
         // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
         std::vector<double*> rankVirtualInputsBuffer;
-        std::vector<uint> virtualInputsSizes = std::vector<uint>(numProcesses,0);
+        std::vector<uint> rankVirtualInputsSizes = std::vector<uint>(numProcesses,0);
         if(virtualNodesGranularity == "type"){
             for(int i = 0; i < numProcesses; i++){
                 int currentWorkload;
@@ -1076,6 +1077,7 @@ int main(int argc, char** argv) {
                 } else {
                     currentWorkload = workloadPerProcess;
                 }
+                rankVirtualInputsSizes[i] = finalWorkload * currentWorkload;
                 rankVirtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
             }
         } else if (virtualNodesGranularity == "typeAndNode"){
@@ -1095,11 +1097,11 @@ int main(int argc, char** argv) {
                         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
                         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            virtualInputsSizes[sourceRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                            rankVirtualInputsSizes[sourceRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
                         }
                     }
                 }
-                rankVirtualInputsBuffer.push_back(new double[virtualInputsSizes[sourceRank]]);
+                rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
             }
                 
         }
@@ -1113,13 +1115,13 @@ int main(int argc, char** argv) {
             } else {
                 sourceWorkload = workloadPerProcess;
             }
-            if(virtualNodesGranularity == "typeAndNode"){
-                // TODO receive the subvectors of the virtual outputs for the combination of types and nodes
-                MPI_Irecv(rankVirtualInputsBuffer[i], virtualInputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+
+            // receive only the virtual outputs for the types granularity (v-out for each type), or the full vectors for each pair of source type and target type
+            if(virtualNodesGranularity == "typeAndNode" || virtualNodesGranularity == "type"){
+                MPI_Irecv(rankVirtualInputsBuffer[i], rankVirtualInputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
 
             } else {
-                // receive only the virtual outputs for the types granularity (v-out for each type)
-                MPI_Irecv(rankVirtualInputsBuffer[i], finalWorkload * sourceWorkload, MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+                // OTHER CASES NOT IMPLEMENTED YET
             }
         }
 
@@ -1138,14 +1140,12 @@ int main(int argc, char** argv) {
                 targetWorkload = workloadPerProcess;
             }
             //synchronized communication will lead to deadlocks with this type of implementation
-            if(virtualNodesGranularity == "typeAndNode"){
-                // TODO send the subvectors of the virtual outputs for the combination of types and nodes
+            if(virtualNodesGranularity == "typeAndNode" || virtualNodesGranularity == "type"){
+                //send the subvectors of the virtual outputs for the combination of types and nodes
                 MPI_Send(virtualOutputs.at(j), rankVirtualOutputsSizes[j], MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
                 logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
             } else {
                 // send only the virtual outputs for the types granularity (v-out for each type
-                MPI_Send(virtualOutputs.at(j), finalWorkload * targetWorkload, MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
-                logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
             }
         }
 
