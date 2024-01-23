@@ -1199,7 +1199,7 @@ int main(int argc, char** argv) {
                     std::string targetType = types[targetIndexLocal + startIdx];
                     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
                         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
-                        // if there is at least an interaction between the two types, the size is increased
+                        // if there is at least an interaction between the two types, it means that the virtual outputs are present
                         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
                             for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
                                 typeComputations[targetIndexLocal]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
