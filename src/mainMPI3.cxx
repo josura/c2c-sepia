@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
     // reading granularity parameters (not used for now)
     if(vm.count("virtualNodesGranularityParameters")){
         std::vector<std::string> virtualNodesGranularityParameters = vm["virtualNodesGranularityParameters"].as<std::vector<std::string>>();
-        logger << "[LOG] virtual nodes granularity parameters set to " << virtualNodesGranularityParameters << std::endl;
+        logger << "[LOG] virtual nodes granularity parameters set "<< std::endl;
         logger << "[WARNING] virtual nodes granularity parameters are not used for now"<<std::endl;
     } else {
         // logger << "[LOG] virtual nodes granularity parameters not set, set to default: empty vector \n";  // not used for now
@@ -992,7 +992,7 @@ int main(int argc, char** argv) {
                     } else {
                         targetWorkload = workloadPerProcess;
                     }
-                    for(int targetIndexLocal = 0; targetIndexLocal < SizeToInt(types.size()); targetIndexLocal++){
+                    for(int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
                         std::string targetType = types[targetIndexLocal + targetStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
                         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
@@ -1143,16 +1143,9 @@ int main(int argc, char** argv) {
         MPI_Request request[numProcesses];
         for(int i = 0; i < numProcesses; i++){
             int sourceRank = i;
-            int sourceWorkload;
-            if(i == (numProcesses-1)){
-                sourceWorkload = types.size() - (i*workloadPerProcess);
-            } else {
-                sourceWorkload = workloadPerProcess;
-            }
-
             // receive only the virtual outputs for the types granularity (v-out for each type), or the full vectors for each pair of source type and target type
             if(virtualNodesGranularity == "typeAndNode" || virtualNodesGranularity == "type"){
-                MPI_Irecv(rankVirtualInputsBuffer[i], rankVirtualInputsSizes[i], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[i]);
+                MPI_Irecv(rankVirtualInputsBuffer[sourceRank], rankVirtualInputsSizes[sourceRank], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[sourceRank]);
 
             } else {
                 // OTHER CASES NOT IMPLEMENTED YET
@@ -1161,23 +1154,17 @@ int main(int argc, char** argv) {
 
 
         // send the virtual outputs to the other processes
-        for(int j = 0; j < numProcesses; j++){
+        for(int targetRank = 0; targetRank < numProcesses; targetRank++){
             //sending virtual outputs to target cell
             // int targetStartIdx = j * workloadPerProcess;
             // int targetEndIdx = (j == numProcesses - 1) ? types.size() : (j + 1) * workloadPerProcess;
             // logger << "[LOG] sending virtual output from type " << types[startIdx] << " to type " << types[endIdx-1] << " from process " << rank << " to process " << j << " from type " << types[targetStartIdx] << " to type " << types[targetEndIdx-1] << std::endl;
-            // target workload
-            int targetWorkload;
-            if(j == (numProcesses-1)){
-                targetWorkload = types.size() - (j*workloadPerProcess);
-            } else {
-                targetWorkload = workloadPerProcess;
-            }
+            
             //synchronized communication will lead to deadlocks with this type of implementation
             if(virtualNodesGranularity == "typeAndNode" || virtualNodesGranularity == "type"){
                 //send the subvectors of the virtual outputs for the combination of types and nodes
-                MPI_Send(virtualOutputs.at(j), rankVirtualOutputsSizes[j], MPI_DOUBLE, j, 0, MPI_COMM_WORLD);
-                logger << "[LOG] sent virtual outputs from process " << rank << " to process " << j  << std::endl;
+                MPI_Send(virtualOutputs.at(targetRank), rankVirtualOutputsSizes[targetRank], MPI_DOUBLE, targetRank, 0, MPI_COMM_WORLD);
+                logger << "[LOG] sent virtual outputs from process " << rank << " to process " << targetRank  << std::endl;
             } else {
                 // send only the virtual outputs for the types granularity (v-out for each type
             }
@@ -1256,7 +1243,7 @@ int main(int argc, char** argv) {
                         for(int targetTypeIndex = startIdx; targetTypeIndex < startIdx + finalWorkload; targetTypeIndex++){
                             std::string targetType = types[targetTypeIndex];
                             std::pair<std::string,std::string> keyTypes = std::make_pair(sourceType, targetType);
-                            for(int localVirtualInputIndex = 0; localVirtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
+                            for(uint localVirtualInputIndex = 0; localVirtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
                                 std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][localVirtualInputIndex];
                                 std::pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][localVirtualInputIndex];
                                 // typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
