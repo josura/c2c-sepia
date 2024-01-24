@@ -960,25 +960,25 @@ int main(int argc, char** argv) {
                 virtualOutputs.push_back(new double[rankVirtualOutputsSizes[i]]);   // the array contains all the virtual outputs for the process types
             }
 
-            for(int i = 0; i < SizeToInt(types.size()); i++){
-                int targetRank = typeToRank[types[i]];
-                int targetWorkload;
-                if(targetRank == (numProcesses-1)){
-                    targetWorkload = types.size() - (targetRank*workloadPerProcess);
-                } else {
-                    targetWorkload = workloadPerProcess;
-                }
-                    int targetPosition = i - targetRank * workloadPerProcess;
-                    for(int j = 0; j < finalWorkload; j++ ){
-                        int virtualOutputPosition = targetPosition + j * targetWorkload;
-                        // // TESTING
-                        // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
-                        // // TESTING
-                        // TODO take into account granularity of the virtual nodes
-                        virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
-                    }
+            // for(int i = 0; i < SizeToInt(types.size()); i++){
+            //     int targetRank = typeToRank[types[i]];
+            //     int targetWorkload;
+            //     if(targetRank == (numProcesses-1)){
+            //         targetWorkload = types.size() - (targetRank*workloadPerProcess);
+            //     } else {
+            //         targetWorkload = workloadPerProcess;
+            //     }
+            //         int targetPosition = i - targetRank * workloadPerProcess;
+            //         for(int j = 0; j < finalWorkload; j++ ){
+            //             int virtualOutputPosition = targetPosition + j * targetWorkload;
+            //             // // TESTING
+            //             // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
+            //             // // TESTING
+            //             // TODO take into account granularity of the virtual nodes
+            //             virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
+            //         }
                 
-            }
+            // }
         } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)
             // TODO take into account granularity of the virtual nodes
             //allocate the virtual outputs arrays
@@ -1006,34 +1006,63 @@ int main(int argc, char** argv) {
 
             }
             // fill the arrays
-            for(int targetRank = 0; targetRank < numProcesses; targetRank++){
-                int targetStartIdx = targetRank * workloadPerProcess;
-                int targetWorkload;
-                if(targetRank == (numProcesses-1)){
-                    targetWorkload = types.size() - (targetRank*workloadPerProcess);
-                } else {
-                    targetWorkload = workloadPerProcess;
-                }
-                int virtualOutputPosition = 0;
-                for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
-                    std::string sourceType = types[sourceIndexLocal + startIdx];
-                    for(int targetIndexLocal = 0; targetIndexLocal < SizeToInt(types.size()); targetIndexLocal++){
-                        std::string targetType = types[targetIndexLocal + targetStartIdx];
-                        // if there is at least an interaction between the two types, the size is increased
-                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
-                                // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
-                                // that is the sequence of the virtual outputs for the target type, for each source type
-                                virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[sourceIndexLocal]->getVirtualOutputForType(virtualOutputPair.first,virtualOutputPair.second);
-                                virtualOutputPosition++;
-                            }
+            // for(int targetRank = 0; targetRank < numProcesses; targetRank++){
+            //     int targetStartIdx = targetRank * workloadPerProcess;
+            //     int targetWorkload;
+            //     if(targetRank == (numProcesses-1)){
+            //         targetWorkload = types.size() - (targetRank*workloadPerProcess);
+            //     } else {
+            //         targetWorkload = workloadPerProcess;
+            //     }
+            //     int virtualOutputPosition = 0;
+            //     for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
+            //         std::string sourceType = types[sourceIndexLocal + startIdx];
+            //         for(int targetIndexLocal = 0; targetIndexLocal < SizeToInt(types.size()); targetIndexLocal++){
+            //             std::string targetType = types[targetIndexLocal + targetStartIdx];
+            //             // if there is at least an interaction between the two types, the size is increased
+            //             if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+            //                 for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+            //                     // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
+            //                     // that is the sequence of the virtual outputs for the target type, for each source type
+            //                     virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[sourceIndexLocal]->getVirtualOutputForType(virtualOutputPair.first,virtualOutputPair.second);
+            //                     virtualOutputPosition++;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+        } else {
+            std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
+            return 1;
+        }
+
+        // fill the arrays
+        for (int targetRank = 0; targetRank < numProcesses; targetRank++){
+            int targetStartIdx = targetRank * workloadPerProcess;
+            int targetWorkload;
+            if(targetRank == (numProcesses-1)){
+                targetWorkload = types.size() - (targetRank*workloadPerProcess);
+            } else {
+                targetWorkload = workloadPerProcess;
+            }
+            // code is generalized for both cases of type granularity and typeAndNode granularity
+            int virtualOutputPosition = 0;
+            for (int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
+                std::string sourceType = types[sourceIndexLocal + startIdx];
+                for (int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
+                    std::string targetType = types[targetIndexLocal + targetStartIdx];
+                    // if there is at least an interaction between the two types, the size is increased
+                    if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                        for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+                            // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
+                            // that is the sequence of the virtual outputs for the target type, for each source type
+                            virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[sourceIndexLocal]->getNodeValue(virtualOutputPair.second);
+                            virtualOutputPosition++;
                         }
                     }
                 }
             }
-        } else {
-            std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
-            return 1;
+                    
         }
 
         // reset virtual outputs if specified
@@ -1228,8 +1257,9 @@ int main(int argc, char** argv) {
                             std::pair<std::string,std::string> keyTypes = std::make_pair(sourceType, targetType);
                             for(int virtualInputIndex = 0; virtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); virtualInputIndex++){
                                 std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][virtualInputIndex];
-                                std:.pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][virtualInputIndex]
-                                typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
+                                std::pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][virtualInputIndex];
+                                // typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
+                                typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][virtualInputIndex]);
                             }
                         }
                     }
