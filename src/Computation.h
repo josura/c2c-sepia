@@ -96,6 +96,8 @@ class Computation{
         arma::Mat<double> getPseudoInverseArma()const{return pseudoInverseArma;}
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
+        double getNodeValue(std::string nodeName)const{return input[nodeToIndex.at(nodeName)];};
+        void setNodeValue(std::string nodeName, double value){input[nodeToIndex.at(nodeName)] = value;};
 
         double getVirtualInputForType(std::string type, std::string sourceNode="")const;
         double getVirtualOutputForType(std::string type, std::string targetNode="")const;
