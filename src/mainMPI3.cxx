@@ -1246,8 +1246,17 @@ int main(int argc, char** argv) {
                             for(uint localVirtualInputIndex = 0; localVirtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
                                 std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][localVirtualInputIndex];
                                 std::pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][localVirtualInputIndex];
+                                std::string sourceNode = virtualOutputPair.first;
+                                std::string targetNode = virtualInputPair.second;
+                                std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNode, targetNode, sourceType, targetType);
                                 // typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
-                                typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                                    if(sourceType == targetType){
+                                        if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                    } else {
+                                        typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                    }
+                                }
                                 currentVirtualInputIndex++;
                             }
                         }
