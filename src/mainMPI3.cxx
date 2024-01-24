@@ -1250,16 +1250,18 @@ int main(int argc, char** argv) {
                     } else {
                         sourceWorkload = workloadPerProcess;
                     }
+                    int currentVirtualInputIndex = 0;
                     for(int sourceTypeIndex = sourceStartIdx; sourceTypeIndex < sourceStartIdx + sourceWorkload; sourceTypeIndex++){
                         std::string sourceType = types[sourceTypeIndex];
                         for(int targetTypeIndex = startIdx; targetTypeIndex < startIdx + finalWorkload; targetTypeIndex++){
                             std::string targetType = types[targetTypeIndex];
                             std::pair<std::string,std::string> keyTypes = std::make_pair(sourceType, targetType);
-                            for(int virtualInputIndex = 0; virtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); virtualInputIndex++){
-                                std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][virtualInputIndex];
-                                std::pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][virtualInputIndex];
+                            for(int localVirtualInputIndex = 0; localVirtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
+                                std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][localVirtualInputIndex];
+                                std::pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][localVirtualInputIndex];
                                 // typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
-                                typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][virtualInputIndex]);
+                                typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                currentVirtualInputIndex++;
                             }
                         }
                     }
