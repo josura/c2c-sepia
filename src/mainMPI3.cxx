@@ -747,12 +747,15 @@ int main(int argc, char** argv) {
 
         }
         
+        // mapped virtualOutputs and mapped virtualInputs are the same in the sizes and logic, but have different names
+        // mapped virtual outputs have the format (sourceNode, v-out:tTarget<_targetNode>)
         if(mappedVirtualOutputsVectors.contains(keyTypes)){
             if(!vectorContains(mappedVirtualOutputsVectors[keyTypes],std::make_pair(startNodeName, virtualOutputNodeName))){
                 mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
             }
         }
         
+        // mapped virtual input have the format (v-in:tSource<_sourceNode>, targetNode)
         if(mappedVirtualInputsVectors.contains(keyTypes)){
             if(!vectorContains(mappedVirtualInputsVectors[keyTypes],std::make_pair(virtualInputNodeName, endNodeName))){
                 mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
@@ -1019,6 +1022,8 @@ int main(int argc, char** argv) {
                         // if there is at least an interaction between the two types, the size is increased
                         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
                             for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+                                // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
+                                // that is the sequence of the virtual outputs for the target type, for each source type
                                 virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[sourceIndexLocal]->getVirtualOutputForType(virtualOutputPair.first,virtualOutputPair.second);
                                 virtualOutputPosition++;
                             }
@@ -1096,8 +1101,8 @@ int main(int argc, char** argv) {
                     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
                         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
-                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            rankVirtualInputsSizes[sourceRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                        if(mappedVirtualInputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            rankVirtualInputsSizes[sourceRank] += mappedVirtualInputsVectors[std::make_pair(sourceType,targetType)].size();
                         }
                     }
                 }
@@ -1220,7 +1225,12 @@ int main(int argc, char** argv) {
                         std::string sourceType = types[sourceTypeIndex];
                         for(int targetTypeIndex = startIdx; targetTypeIndex < startIdx + finalWorkload; targetTypeIndex++){
                             std::string targetType = types[targetTypeIndex];
-                            
+                            std::pair<std::string,std::string> keyTypes = std::make_pair(sourceType, targetType);
+                            for(int virtualInputIndex = 0; virtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); virtualInputIndex++){
+                                std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][virtualInputIndex];
+                                std:.pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][virtualInputIndex]
+                                typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
+                            }
                         }
                     }
                 }
