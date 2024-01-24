@@ -1193,18 +1193,34 @@ int main(int argc, char** argv) {
                 return 1;
             } else if (virtualNodesGranularity == "typeAndNode"){
                 // TODO implement the logic of reading the subvectors of the virtual outputs   
-                int sourceStartIdx = sourceRank * workloadPerProcess;
-                int virtualInputPosition = 0;
-                for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
-                    std::string targetType = types[targetIndexLocal + startIdx];
-                    for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
-                        std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
-                        // if there is at least an interaction between the two types, it means that the virtual outputs are present
-                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
-                                typeComputations[targetIndexLocal]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
-                                virtualInputPosition++;
-                            }
+                // int sourceStartIdx = sourceRank * workloadPerProcess;
+                // int virtualInputPosition = 0;
+                // for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
+                //     std::string targetType = types[targetIndexLocal + startIdx];
+                //     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
+                //         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
+                //         // if there is at least an interaction between the two types, it means that the virtual outputs are present
+                //         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                //             for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+                //                 typeComputations[targetIndexLocal]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
+                //                 virtualInputPosition++;
+                //             }
+                //         }
+                //     }
+                // }
+                for (int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
+                    int sourceStartIdx = sourceRank * workloadPerProcess;
+                    int sourceWorkload;
+                    if(sourceRank == (numProcesses-1)){
+                        sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
+                    } else {
+                        sourceWorkload = workloadPerProcess;
+                    }
+                    for(int sourceTypeIndex = sourceStartIdx; sourceTypeIndex < sourceStartIdx + sourceWorkload; sourceTypeIndex++){
+                        std::string sourceType = types[sourceTypeIndex];
+                        for(int targetTypeIndex = startIdx; targetTypeIndex < startIdx + finalWorkload; targetTypeIndex++){
+                            std::string targetType = types[targetTypeIndex];
+                            
                         }
                     }
                 }
