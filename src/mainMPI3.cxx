@@ -1069,7 +1069,7 @@ int main(int argc, char** argv) {
                         for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
                             // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
                             // that is the sequence of the virtual outputs for the target type, for each source type
-                            virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[sourceIndexLocal]->getNodeValue(virtualOutputPair.second);
+                            virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[sourceIndexLocal]->getOutputNodeValue(virtualOutputPair.second);
                             virtualOutputPosition++;
                         }
                     }
@@ -1079,9 +1079,15 @@ int main(int argc, char** argv) {
         }
 
         // TESTING
-        // print the virtual outputs array for type t0
-        for(int i = 0; i< finalWorkload; i++){
+        // print all the node values for t0
+        for (int i = 0; i < finalWorkload; i++){
             if(types[i+startIdx] == "t0"){
+                logger << "[LOG] node values for type t0 in interIteration "<< iterationInterType <<" before: " << std::endl;
+                std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
+                for (uint j = 0; j < nodeNames.size(); j++){
+                    logger << nodeNames[j] << " = " << typeComputations[i]->getOutputNodeValue(nodeNames[j]) << ", ";
+                }
+                logger << std::endl;
                 logger << "[LOG] virtual outputs for type t0 in interIteration "<< iterationInterType <<" before: " << std::endl;
                 for(int j = 0; j < numProcesses; j++){
                     logger << std::endl << "[LOG] to process "<< j << " : " << std::endl;
@@ -1094,7 +1100,7 @@ int main(int argc, char** argv) {
                     for(int k = 0; k < targetWorkload; k++){
                         int localTypePosition = i + startIdx;
                         int targetTypePosition = k + j*workloadPerProcess;
-                        logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")=" << typeComputations[i]->getVirtualOutputForType(types[targetTypePosition]) << ", ";
+                        logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")= v-out:"<<types[targetTypePosition]<< "= " <<typeComputations[i]->getOutputNodeValue("v-out:" + types[targetTypePosition]) << " = "  << typeComputations[i]->getVirtualOutputForType(types[targetTypePosition]) << ", ";
                     }
                 }
                 logger << std::endl;
@@ -1109,6 +1115,8 @@ int main(int argc, char** argv) {
             }
         }
 
+
+        
 
         // // TESTING
         // // print the virtual outputs arrays
@@ -1289,9 +1297,9 @@ int main(int argc, char** argv) {
                                 // typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
                                 if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
                                     if(sourceType == targetType){
-                                        if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                        if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
                                     } else {
-                                        typeComputations[targetTypeIndex - startIdx]->setNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                        typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
                                     }
                                 }
                                 currentVirtualInputIndex++;
