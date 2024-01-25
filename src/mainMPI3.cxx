@@ -764,6 +764,19 @@ int main(int argc, char** argv) {
     }
     
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
+    // TESTING
+    if(rank == 0){
+        std::cout << "[TESTING] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
+        std::cout << "[TESTING] mapped virtual inputs size: " << mappedVirtualInputsVectors.size() << std::endl;
+        for(auto interaction = mappedVirtualOutputsVectors.cbegin() ; interaction != mappedVirtualOutputsVectors.cend(); interaction++ ){
+            std::cout << interaction->first.first << " " << interaction->first.second << " ";
+            for(auto virtualOutput = interaction->second.cbegin() ; virtualOutput != interaction->second.cend(); virtualOutput++ ){
+                std::cout << virtualOutput->first << " " << virtualOutput->second << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    // TESTING
 
     std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
     if(vm.count("propagationModel")){
@@ -1064,6 +1077,30 @@ int main(int argc, char** argv) {
             }
                     
         }
+
+        // TESTING
+        // print the virtual outputs array for type t0
+        for(int i = 0; i< finalWorkload; i++){
+            if(types[i+startIdx] == "t0"){
+                logger << "[LOG] virtual outputs for type t0 in interIteration "<< iterationInterType <<" before: " << std::endl;
+                for(int j = 0; j < numProcesses; j++){
+                    logger << std::endl << "[LOG] to process "<< j << " : " << std::endl;
+                    int targetWorkload;
+                    if(j == (numProcesses-1)){
+                        targetWorkload = types.size() - (j*workloadPerProcess);
+                    } else {
+                        targetWorkload = workloadPerProcess;
+                    }
+                    for(int k = 0; k < targetWorkload; k++){
+                        int localTypePosition = i + startIdx;
+                        int targetTypePosition = k + j*workloadPerProcess;
+                        logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")=" << typeComputations[i]->getVirtualOutputForType(types[targetTypePosition]) << ", ";
+                    }
+                }
+                logger << std::endl;
+            }
+        }
+        // TESTING
 
         // reset virtual outputs if specified
         if(vm.count("resetVirtualOutputs")){
