@@ -284,8 +284,12 @@ void Computation::addEdgesAndNodes(const std::vector<std::tuple<std::string,std:
         }
     }
     augmentedGraph->addNodes(nodesToAdd);
+
+    //get nodeToIndex map as well
+    nodeToIndex = augmentedGraph->getNodeToIndexMap();
     // add the edges
     this->addEdges(newEdgesList,bothDirections,inverseComputation);
+
 }
 
 

@@ -96,8 +96,16 @@ class Computation{
         arma::Mat<double> getPseudoInverseArma()const{return pseudoInverseArma;}
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
-        double getNodeValue(std::string nodeName)const{return input[nodeToIndex.at(nodeName)];};
-        void setNodeValue(std::string nodeName, double value){input[nodeToIndex.at(nodeName)] = value;};
+        double getNodeValue(std::string nodeName)const{
+            if(nodeToIndex.find(nodeName) == nodeToIndex.end())
+                throw std::out_of_range("Computation::getNodeValue: the node name is not in the graph");
+            else return inputAugmented[nodeToIndex.at(nodeName)];
+            };
+        void setNodeValue(std::string nodeName, double value){
+            if(nodeToIndex.find(nodeName) == nodeToIndex.end())
+                throw std::out_of_range("Computation::setNodeValue: the node name is not in the graph");
+            else inputAugmented[nodeToIndex.at(nodeName)] = value;
+        };
 
         double getVirtualInputForType(std::string type, std::string sourceNode="")const;
         double getVirtualOutputForType(std::string type, std::string targetNode="")const;
