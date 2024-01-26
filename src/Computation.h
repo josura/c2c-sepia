@@ -98,13 +98,19 @@ class Computation{
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
         double getOutputNodeValue(std::string nodeName)const{
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
-                throw std::out_of_range("Computation::getNodeValue: the node name is not in the graph");
+                throw std::out_of_range("Computation::getOutputNodeValue: the node name is not in the graph");
             int index = nodeToIndex.at(nodeName);
             return outputAugmented[index];
             };
+        double getInputNodeValue(std::string nodeName)const{
+            if(nodeToIndex.find(nodeName) == nodeToIndex.end())
+                throw std::out_of_range("Computation::getInputNodeValue: the node name is not in the graph");
+            int index = nodeToIndex.at(nodeName);
+            return inputAugmented[index];
+            };
         void setInputNodeValue(std::string nodeName, double value){
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
-                throw std::out_of_range("Computation::setNodeValue: the node name is not in the graph");
+                throw std::out_of_range("Computation::setInputNodeValue: the node name is not in the graph");
             int index = nodeToIndex.at(nodeName);
             inputAugmented[index] = value;
         };
