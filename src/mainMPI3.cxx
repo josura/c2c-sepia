@@ -476,7 +476,7 @@ int main(int argc, char** argv) {
         subtypes = types;
     }
     
-    //filter types with the subtypes
+    //filter types with the subtypesresetVirtualOutputs
     types = vectorsIntersection(types, subtypes);
     if (types.size() == 0) {
         std::cerr << "[ERROR] no types in common between the types and subtypes: aborting"<<std::endl;
@@ -1051,6 +1051,10 @@ int main(int argc, char** argv) {
         // send virtual outputs to the other processes, the vector contains the virtual outputs for each type as an array
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
+        
+        
+        
+        
         std::vector<double*> virtualOutputs;
         std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
         // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
@@ -1150,7 +1154,7 @@ int main(int argc, char** argv) {
 
 
         // reset virtual outputs if specified
-        if(vm.count("resetVirtualOutputs")){
+        if(resetVirtualOutputs){
             for(int i = 0; i < finalWorkload; i++){
                 typeComputations[i]->resetVirtualOutputs();
             }
