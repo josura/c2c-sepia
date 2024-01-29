@@ -469,10 +469,6 @@ int main(int argc, char** argv) {
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
     
     int finalWorkload = endIdx - startIdx;
-    // // TESTING
-    // std::cout << "rank: " << rank << " startIdx: " << startIdx << " endIdx: " << endIdx << " finalWorkload: " << finalWorkload << std::endl;
-    // // END TESTING
-
 
     //map types to rank
     std::map<std::string, int> typeToRank;
@@ -485,18 +481,6 @@ int main(int argc, char** argv) {
         }
         typeToRank[types[i]] = rankType;
     }
-
-    // // TESTING
-    // std::cout << "rank: " << rank << " typeToRank: " << std::endl;
-    // for (auto const& x : typeToRank)
-    // {
-    //     std::cout << x.first  // string (key)
-    //               << ':'
-    //               << x.second // string's value 
-    //               << std::endl ;
-    // }
-    // // END TESTING
-
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
@@ -813,27 +797,6 @@ int main(int argc, char** argv) {
             }
         }
 
-        // //TESTING
-        // //printing type to rank map
-        // logger << "[LOG] type to rank map: " << std::endl;
-        // for (auto const& x : typeToRank)
-        // {
-        //     logger << x.first  // string (key)
-        //     << ':'
-        //     << x.second // string's value
-        //     << ", " ;
-        // }
-        // logger << std::endl;
-        // //printing start idx and end idx with rank
-        // logger << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
-        // // printing types
-        // logger << "[LOG] types for rank "<< rank <<": " << std::endl;
-        // for (auto const& x : types)
-        // {
-        //     logger << x << ", " ;
-        // }
-        // //TESTING
-
         // send virtual outputs to the other processes
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
@@ -859,39 +822,10 @@ int main(int argc, char** argv) {
             int targetPosition = i - targetRank * workloadPerProcess;
             for(int j = 0; j < finalWorkload; j++ ){
                 int virtualOutputPosition = targetPosition + j * targetWorkload;
-                // // TESTING
-                // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
-                // // TESTING
                 // TODO take into account granularity of the virtual nodes
                 virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
             }
         }
-
-
-        // // TESTING
-        // // print the virtual outputs arrays
-        // logger << "[LOG] virtual outputs for process "<< rank<< "  after: " << std::endl;
-        // for(int i = 0; i < numProcesses; i++){
-        //     logger << std::endl << "[LOG] to process "<< i << " : " << std::endl;
-        //     int targetWorkload;
-        //     if(i == (numProcesses-1)){
-        //         targetWorkload = types.size() - (i*workloadPerProcess);
-        //     } else {
-        //         targetWorkload = workloadPerProcess;
-        //     }
-        //     for(int j = 0; j < finalWorkload; j++){
-        //         for(int k = 0; k < targetWorkload; k++){
-        //             int virtualOutputPosition = j + k * finalWorkload;
-        //             int localTypePosition = j + startIdx;
-        //             int targetTypePosition = k + i*workloadPerProcess;
-        //             logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")=" << virtualOutputs.at(i)[virtualOutputPosition] << ", ";
-        //         }
-        //     }
-        // }
-        // logger << std::endl;
-        // // TESTING
-
-        
 
 
         // preliminary asynchronous receive
