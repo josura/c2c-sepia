@@ -666,7 +666,6 @@ int main(int argc, char** argv) {
             } else if (virtualNodesGranularity == "typeAndNode"){
                 typeComputations[indexComputation]->augmentGraphNoComputeInverse(std::vector<std::string>(), std::vector<std::pair<std::string,std::string>>(), std::vector<double>(), false); //no types are passed since the virtual nodes will be added to the graph in the interaction section of this code
             }
-            typeComputations[indexComputation]->augmentGraphNoComputeInverse(types,std::vector<std::pair<std::string,std::string>>(),std::vector<double>(), true);
         }
         typesIndexes[i] = indexComputation;
         invertedTypesIndexes[indexComputation] = i;
