@@ -287,6 +287,11 @@ void Computation::addEdgesAndNodes(const std::vector<std::tuple<std::string,std:
 
     //get nodeToIndex map as well
     nodeToIndex = augmentedGraph->getNodeToIndexMap();
+    // update inputAugmented and InputAugmentedArma
+    for(uint i = 0; i < nodesToAdd.size(); i++){
+        inputAugmented.push_back(0.0);
+    }
+    InputAugmentedArma = arma::Col<double>(inputAugmented);
     // add the edges
     this->addEdges(newEdgesList,bothDirections,inverseComputation);
 
