@@ -989,18 +989,21 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
         return;
     }
     if(nodesDescriptionFile.length()==0){
-        nodesDescriptionFile = "resources/graphs/metapathwayNew/nodes.tsv";
+        if(useEntrez)
+            nodesDescriptionFile = "resources/graphs/metapathwayNew/nodes.tsv";
+        else  // no nodes description file is used
+            nodesDescriptionFile = "";
     } else {
         if(!file_exists(nodesDescriptionFile)){
             throw std::invalid_argument("utilities::saveNodeValues: file does not exists " + nodesDescriptionFile);
         }
     }
-    auto mapToEverything = getFullNodesDescription(nodesDescriptionFile);
     //auto mapToEnsemble = getEnsembletoEntrezidMap();
     //header
     outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\n";
     //body
     if(useEntrez || nodesDescriptionFile.length()!=0){
+        auto mapToEverything = getFullNodesDescription(nodesDescriptionFile);
         for(uint i = 0; i < nodeValues.size(); i++){
             if(mapToEverything.contains(nodeNames[i]))
                 outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
