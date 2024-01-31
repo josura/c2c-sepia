@@ -168,7 +168,7 @@ bool createFolder(const std::string& folderPath)
 }
 
 
-std::vector<std::string> splitString(std::string toSplit , std::string delimiter){
+std::vector<std::string> splitStringIntoVector(std::string toSplit , std::string delimiter){
 
     vector<string> tokens;
     boost::split(tokens, toSplit, boost::is_any_of(delimiter));
@@ -189,7 +189,7 @@ void printVector(std::vector<double> vec){
     std::cout << std::endl;
 }
 
-boost::tokenizer<boost::char_delimiters_separator<char>> splitStringTokenizer(std::string toSplit , char delimiter){
+boost::tokenizer<boost::char_delimiters_separator<char>> splitStringIntoVectorTokenizer(std::string toSplit , char delimiter){
     boost::char_delimiters_separator<char> sep(delimiter);
     boost::tokenizer<boost::char_delimiters_separator<char> > tokens(toSplit, sep);
     return tokens;
@@ -206,7 +206,7 @@ std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToE
         {
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==3){
                     int node1 = std::stoi( entries[0]);
                     int node2 = std::stoi(entries[1]);
@@ -242,7 +242,7 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            std::vector<std::string> entriesHeader = splitStringIntoVector(line, "\t");
             int indexStart=-1,indexEnd=-1,indexWeight=-1;
             for(uint i = 0; i < entriesHeader.size(); i++){
                 if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("start") != std::string::npos) {
@@ -268,7 +268,7 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
             }
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==entriesHeader.size()){
                     std::string node1 = entries[indexStart];
                     std::string node2 = entries[indexEnd];
@@ -300,9 +300,9 @@ std::pair<std::vector<std::string>,std::vector<std::pair<std::vector<std::string
     std::vector<std::string> files = get_all(filename,".tsv");
     for(auto iter = files.cbegin(); iter!=files.cend();iter++){
         std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesListAndNodesByName = edgesFileToEdgesListAndNodesByName(*iter);
-        std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+        std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
         std::string filename = splitted[splitted.size()-1]; //last element
-        std::vector<std::string> splittedFilename = splitString(filename, "."); //split the extension
+        std::vector<std::string> splittedFilename = splitStringIntoVector(filename, "."); //split the extension
         graphNames.push_back(splittedFilename[0]);
         ret.push_back(edgesListAndNodesByName);
     }
@@ -313,9 +313,9 @@ std::vector<std::string> getTypesFromFolderFileNames(std::string folderPath){
     std::vector<std::string> ret;
     std::vector<std::string> files = get_all(folderPath,".tsv");
     for(auto iter = files.cbegin(); iter!=files.cend();iter++){
-        std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+        std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
         std::string filename = splitted[splitted.size()-1]; //last element
-        std::vector<std::string> splittedFilename = splitString(filename, "."); //split the extension
+        std::vector<std::string> splittedFilename = splitStringIntoVector(filename, "."); //split the extension
         ret.push_back(splittedFilename[0]);
     }
     return ret;
@@ -329,7 +329,7 @@ std::vector<std::string> getTypesFromMatrixFile(std::string matrixFilepath){
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector,
+            std::vector<std::string> splittedHeader = splitStringIntoVector(line, "\t");  //could already be used as the cellnames vector,
             for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
                 typeNames.push_back(splittedHeader[i]);
             }
@@ -361,14 +361,14 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector,
+            std::vector<std::string> splittedHeader = splitStringIntoVector(line, "\t");  //could already be used as the cellnames vector,
             for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
                 cellNames.push_back(splittedHeader[i]);
                 ret.push_back(std::vector<double>(finalNames.size(),0));
             }
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==splittedHeader.size()){
                     if(!useEntrez){
                         geneNames.push_back(entries[0]);
@@ -423,7 +423,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> splittedHeader = splitString(line, "\t");  //could already be used as the cellnames vector,
+            std::vector<std::string> splittedHeader = splitStringIntoVector(line, "\t");  //could already be used as the cellnames vector,
             std::vector<int> subTypeIndexes;
             for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
                 if(vectorContains(subTypes,splittedHeader[i])){
@@ -434,7 +434,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             }
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==splittedHeader.size()){
                     if(!useEntrez){
                         geneNames.push_back(entries[0]);
@@ -492,17 +492,17 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     //default argument for subtype is empty, if empty, use all files in the folder
     if(subType.size()==0){
         for(auto iter = files.cbegin();iter!=files.cend();iter++){
-            std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+            std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
             std::string filename = splitted[splitted.size()-1]; //last element
-            subType.push_back(splitString(filename, ".")[0]);
+            subType.push_back(splitStringIntoVector(filename, ".")[0]);
         }
     }
     //filter files from subtypes (first part of the filename before the extension)
     std::vector<std::string> filteredFiles;
     for(auto iter = files.cbegin();iter!=files.cend();iter++){
-        std::vector<std::string> fileSplitPath = splitString(*iter, "/");
+        std::vector<std::string> fileSplitPath = splitStringIntoVector(*iter, "/");
         std::string filename = fileSplitPath[fileSplitPath.size()-1];
-        std::string type = splitString(filename, ".")[0];
+        std::string type = splitStringIntoVector(filename, ".")[0];
         if(vectorContains(subType,type)){
             filteredFiles.push_back(*iter);
         }
@@ -511,9 +511,9 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
         throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: no files found in the folder that are similar to the subtypes " + folderPath);
     }
     for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++){
-        std::vector<std::string> splitted = splitString(*iter, "/"); //split the path
+        std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
         std::string filenameNoPath = splitted[splitted.size()-1]; //last element
-        std::string cellName = splitString(filenameNoPath, ".")[0];
+        std::string cellName = splitStringIntoVector(filenameNoPath, ".")[0];
         cellNames.push_back(cellName);
         std::string filename = *iter;
         if(file_exists(filename)){
@@ -523,7 +523,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             std::vector<double> cellValues(finalGenesToIndex[cellName].size(),0);
             std::string lineHeader;
             getline (myfile,lineHeader);  // first line is header IMPORTANT
-            std::vector<std::string> splittedHeader = splitString(lineHeader, "\t");
+            std::vector<std::string> splittedHeader = splitStringIntoVector(lineHeader, "\t");
             //check if the header is correct
             if(splittedHeader.size()!=2){
                 throw std::invalid_argument("utilities::logFoldChangeCellVectorsFromFolder: header doesn't have the same amount of columns as the data " + filename);
@@ -534,7 +534,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             //get file contents
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==2){
                     if(!useEntrez){
                         if(finalGenesToIndex[cellName].contains(entries[0])){
@@ -583,7 +583,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            std::vector<std::string> entriesHeader = splitStringIntoVector(line, "\t");
             int indexTypeStart=-1,indexTypeEnd=-1,indexStartNode=-1,indexEndNode=-1,indexWeight=-1;
             //TODO change attributes names to be more general
             for(uint i = 0; i < entriesHeader.size(); i++){
@@ -606,7 +606,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
             }
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==5){
                     std::string startNodeName,endNodeName;
                     if(!useEntrez){
@@ -679,7 +679,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            std::vector<std::string> entriesHeader = splitStringIntoVector(line, "\t");
             int indexTypeStart=-1,indexTypeEnd=-1,indexStartNode=-1,indexEndNode=-1,indexWeight=-1;
             for(uint i = 0; i < entriesHeader.size(); i++){ //TODO change names in the header to be more general
                 if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("starttype") != std::string::npos) {
@@ -701,7 +701,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
             }
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==5){
                     std::string startNodeName,endNodeName;
                     if(!useEntrez){
@@ -790,7 +790,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
         if (myfile.is_open())
         {
             getline (myfile,line);  // first line is header IMPORTANT
-            std::vector<std::string> entriesHeader = splitString(line, "\t");
+            std::vector<std::string> entriesHeader = splitStringIntoVector(line, "\t");
             int indexTypeStart=-1, indexTypeEnd=-1, indexStartNode=-1, indexEndNode=-1, indexWeight=-1, indexContactTimes=-1;
             for(uint i = 0; i < entriesHeader.size(); i++){ //TODO change names in the header to be more general
                 if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("starttype") != std::string::npos) {
@@ -818,7 +818,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
             }
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==5 || entries.size()==6){
                     std::string startNodeName,endNodeName;
                     if(!useEntrez){
@@ -854,7 +854,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                         }
                     } else {
                         std::string contactTimesString = entries[indexContactTimes];
-                        std::vector<std::string> splittedContactTimes = splitString(contactTimesString, ",");
+                        std::vector<std::string> splittedContactTimes = splitStringIntoVector(contactTimesString, ",");
                         for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend(); iter++){
                             int contactTime = std::stoi(*iter);
                             if(contactTime <= maximumIntertypeTime){
@@ -921,7 +921,7 @@ std::map<std::string, std::string> getEnsembletoEntrezidMap(){
             getline (myfile,line);  // first line is header IMPORTANT
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==4){
                     std::string Id = entries[0];
                     std::string Name = entries[1];
@@ -950,7 +950,7 @@ std::map<std::string, std::vector<std::string>> getFullNodesDescription(std::str
             getline (myfile,line);  // first line is header IMPORTANT
             while ( getline (myfile,line) )
             {
-                std::vector<std::string> entries = splitString(line, "\t");
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
                 if(entries.size()==4){
                     std::string Id = entries[0];
                     std::string Name = entries[1];
@@ -1008,7 +1008,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
             if(mapToEverything.contains(nodeNames[i]))
                 outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
             else {
-                auto splittedVirtual = splitString(nodeNames[i], ":");
+                auto splittedVirtual = splitStringIntoVector(nodeNames[i], ":");
                 if(splittedVirtual[0]=="v-in"){
                     outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
                 } else if(splittedVirtual[0]=="v-out"){
@@ -1022,7 +1022,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     }  
     else{
         for(uint i = 0; i < nodeValues.size(); i++){
-            auto splittedVirtual = splitString(nodeNames[i], ":");
+            auto splittedVirtual = splitStringIntoVector(nodeNames[i], ":");
             if(splittedVirtual[0]=="v-in"){
                 outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
             } else if(splittedVirtual[0]=="v-out"){
@@ -1042,6 +1042,47 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     // }
 
     outfile.close();
+}
+
+void saveNodeValues(std::string folderName, int iterationOuter, int intraIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile){
+    std::string outputFilename = folderName + "/" + cellName + "--"+std::to_string(iterationOuter + intraIteration) + ".tsv";
+    std::ofstream outfile(outputFilename,ios::out|ios::trunc);
+
+    if (!outfile.is_open()) {
+        std::cout << "Unable to open file " << outputFilename << std::endl;
+        throw std::invalid_argument("utilities::saveNodeValues: unable to open output file " + outputFilename);
+    }
+
+    if(nodesDescriptionFile.length()==0 && useEntrez){
+            nodesDescriptionFile = "resources/graphs/metapathwayNew/nodes.tsv";
+    } else if(nodesDescriptionFile.length()!=0 && !file_exists(nodesDescriptionFile)){
+        throw std::invalid_argument("utilities::saveNodeValues: file does not exists " + nodesDescriptionFile);
+    }
+
+    std::map<std::string, std::vector<std::string>> mapToEverything;
+    if(useEntrez || nodesDescriptionFile.length()!=0){
+        mapToEverything = getFullNodesDescription(nodesDescriptionFile);
+    } else {
+        mapToEverything = std::map<std::string, std::vector<std::string>>();
+    }
+
+    //header
+    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\n";
+    //body
+    for(uint i = 0; i < nodeValues.size(); i++){
+        if(mapToEverything.size() !=0 && mapToEverything.contains(nodeNames[i]))
+            outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]);
+        else {
+            auto splittedVirtual = splitStringIntoVector(nodeNames[i], ":");
+            if(splittedVirtual[0]=="v-in"){
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+            } else if(splittedVirtual[0]=="v-out"){
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-output\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+            } else{ //when the node names are not genes but something else
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the graph\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i]);
+            }
+        }
+    }
 }
 
 double vectorNorm(std::vector<double> vec){

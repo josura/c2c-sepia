@@ -184,7 +184,7 @@ bool createFolder(const std::string& folderPath);
  * \brief  Split a string into a vector of strings using the specified delimiter
  * \return  the vector of strings
 */
-std::vector<std::string> splitString(std::string toSplit , std::string delimiter);
+std::vector<std::string> splitStringIntoVector(std::string toSplit , std::string delimiter);
 
 std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToEdgesListByIndex(std::string filename);
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesFileToEdgesListAndNodesByName(std::string filename);
@@ -333,6 +333,12 @@ std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, 
 }
 
 void saveNodeValues(std::string folderName,int iteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false, std::string nodesDescriptionFile="");
+
+/**
+ * \brief   Return the vector of the values of the specified nodes
+ *         better version of the above function
+*/
+void saveNodeValues(std::string folderName,int intraIteration, int interIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false, std::string nodesDescriptionFile="");
 
 template<typename T>
 std::vector<T> vectorSubtraction(std::vector<T> vec1, std::vector<T> vec2){
