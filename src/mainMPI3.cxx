@@ -673,12 +673,6 @@ int main(int argc, char** argv) {
 
     }
 
-    // read the type interactions
-    std::vector<std::vector<std::string>> typeToNodeNames = std::vector<std::vector<std::string>>(finalWorkload,std::vector<std::string>());
-    
-    for(int i = 0; i < finalWorkload;i++ ){
-        typeToNodeNames[i] = typeComputations[i]->getAugmentedGraph()->getNodeNames();    
-    }
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
     // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
     // TODO substitute with another class that represents granularity and returns the interactions between the types or the pairs of types+node, along the lists of contact times and virtual nodes (just a superclass that is extended by the two classes for different granularity)
@@ -943,7 +937,6 @@ int main(int argc, char** argv) {
             // computation of perturbation
             #pragma omp parallel for
             for(int i = 0; i < finalWorkload; i++){
-                std::vector<std::string> nodeNames = typeToNodeNames[i];
                 logger << "[LOG] computation of perturbation for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx]<<std::endl; 
                 // TODO use stateful scaling function to consider previous times
                 if (saturation) {
@@ -1000,10 +993,10 @@ int main(int argc, char** argv) {
 
             //save output values
             for(int i = 0; i < finalWorkload; i++){
-                std::vector<std::string> nodeNames = typeToNodeNames[i];
+                std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
                 //TODO change how to save files to get more information about intratype and intertype iterations
                 //logger << "saving output values for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx] << ") in process " << rank <<std::endl;
-                saveNodeValues(outputFoldername, iterationInterType*intratypeIterations + iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename);
+                saveNodeValues(outputFoldername, iterationInterType*intratypeIterations, iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename);
             }
 
             //update input
@@ -1337,7 +1330,9 @@ int main(int argc, char** argv) {
                                 std::string sourceNode = virtualOutputPair.first;
                                 std::string targetNode = virtualInputPair.second;
                                 std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNode, targetNode, sourceType, targetType);
-                                // typeComputations[targetTypeIndex - startIdx]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputIndex], virtualInputPair.first);
+                                // TESTING
+                                
+                                // TESTING
                                 if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
                                     if(sourceType == targetType){
                                         if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
