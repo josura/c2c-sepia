@@ -78,6 +78,9 @@ std::vector<int> randomVector(int min, int max , int size);
 */
 NodeBitArray randomBooleanArray(int size);
 
+
+long int szudzik(int x, int y);
+
 void printUsage(std::string execName);
 
 std::string nodeBitArrayToString(NodeBitArray nodeArray,int size);
@@ -212,6 +215,19 @@ struct hash_pair_strings {
         tmp = p.first + p.second;
 
         auto hashStrings = std::hash<std::string>();
+         
+        // If hash1 == hash2, their XOR is zero.
+        return hashStrings(tmp);
+    }
+};
+
+struct hash_pair_ints {
+    size_t operator()(const std::pair<int, int>& p) const
+    {
+        long int tmp;
+        tmp = szudzik(p.first,p.second);
+
+        auto hashStrings = std::hash<long int>();
          
         // If hash1 == hash2, their XOR is zero.
         return hashStrings(tmp);

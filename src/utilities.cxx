@@ -77,6 +77,11 @@ int SizeToInt(size_t u)
     return static_cast<int>(u);
 }
 
+long int szudzik(int x, int y)
+{
+    return x >= y ? x * x + x + y : x + y * y;
+}
+
 bool approximatelyEqual(float a, float b, float epsilon)
 {
     return fabs(a - b) <= ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
@@ -1082,6 +1087,7 @@ void saveNodeValues(std::string folderName, int iterationOuter, int intraIterati
                 outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the graph\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i]);
             }
         }
+        outfile << std::endl;
     }
 }
 
