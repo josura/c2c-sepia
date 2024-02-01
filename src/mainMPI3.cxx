@@ -790,6 +790,41 @@ int main(int argc, char** argv) {
             }
         }
     }
+
+    // populate the ranks map
+    for(int rankTarget = 0; rankTarget < numProcesses; rankTarget++){
+        int targetWorkload;
+        if(rankTarget == numProcesses - 1){
+            targetWorkload = types.size() - (numProcesses - 1)*workloadPerProcess;
+        } else {
+            targetWorkload = workloadPerProcess;
+        }
+        for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
+            int sourceIndexGlobal = sourceIndexLocal + startIdx;
+            std::string sourceType = types[sourceIndexGlobal];
+            for(int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
+                int targetIndexGlobal = targetIndexLocal + rankTarget*workloadPerProcess;
+                std::string targetType = types[targetIndexGlobal];
+                std::pair<std::string, std::string> keyTypes = std::make_pair(sourceType, targetType);
+                std::pair<int, int> keyRanks = std::make_pair(rank, rankTarget);
+                if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
+                    if(ranksPairMappedVirtualOutputsVectors.contains(keyRanks)){
+                        ranksPairMappedVirtualOutputsVectors[keyRanks].insert(ranksPairMappedVirtualOutputsVectors[keyRanks].end(),typesPairMappedVirtualOutputsVectors[keyTypes].begin(),typesPairMappedVirtualOutputsVectors[keyTypes].end());
+                    } else {
+                        ranksPairMappedVirtualOutputsVectors[keyRanks] = typesPairMappedVirtualOutputsVectors[keyTypes];
+                    }
+                }
+                if(typesPairMappedVirtualInputsVectors.contains(keyTypes)){
+                    if(ranksPairMappedVirtualInputsVectors.contains(keyRanks)){
+                        ranksPairMappedVirtualInputsVectors[keyRanks].insert(ranksPairMappedVirtualInputsVectors[keyRanks].end(),typesPairMappedVirtualInputsVectors[keyTypes].begin(),typesPairMappedVirtualInputsVectors[keyTypes].end());
+                    } else {
+                        ranksPairMappedVirtualInputsVectors[keyRanks] = typesPairMappedVirtualInputsVectors[keyTypes];
+                    }
+                }
+            }
+        }
+            
+    }
     
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
     // TESTING
