@@ -722,7 +722,8 @@ int main(int argc, char** argv) {
     std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualOutputsVectors;
     // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings, representing how the virtual inputs are mapped in the array passed to MPI send
     std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualInputsVectors;
-    // TODO 
+    // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings(virtual output name, virtual input name), representing how the virtual nodes are mapped in the array passed to MPI send
+    std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualNodesVectors;
 
     
     // populate the maps
@@ -807,6 +808,7 @@ int main(int argc, char** argv) {
                 std::string targetType = types[targetIndexGlobal];
                 std::pair<std::string, std::string> keyTypes = std::make_pair(sourceType, targetType);
                 std::pair<int, int> keyRanks = std::make_pair(rank, rankTarget);
+                // mapped virtual outputt have the format (sourceNode, v-out:tTarget<_targetNode>)
                 if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
                     if(ranksPairMappedVirtualOutputsVectors.contains(keyRanks)){
                         ranksPairMappedVirtualOutputsVectors[keyRanks].insert(ranksPairMappedVirtualOutputsVectors[keyRanks].end(),typesPairMappedVirtualOutputsVectors[keyTypes].begin(),typesPairMappedVirtualOutputsVectors[keyTypes].end());
@@ -814,6 +816,7 @@ int main(int argc, char** argv) {
                         ranksPairMappedVirtualOutputsVectors[keyRanks] = typesPairMappedVirtualOutputsVectors[keyTypes];
                     }
                 }
+                // mapped virtual input have the format (v-in:tSource<_sourceNode>, targetNode)
                 if(typesPairMappedVirtualInputsVectors.contains(keyTypes)){
                     if(ranksPairMappedVirtualInputsVectors.contains(keyRanks)){
                         ranksPairMappedVirtualInputsVectors[keyRanks].insert(ranksPairMappedVirtualInputsVectors[keyRanks].end(),typesPairMappedVirtualInputsVectors[keyTypes].begin(),typesPairMappedVirtualInputsVectors[keyTypes].end());
@@ -821,6 +824,19 @@ int main(int argc, char** argv) {
                         ranksPairMappedVirtualInputsVectors[keyRanks] = typesPairMappedVirtualInputsVectors[keyTypes];
                     }
                 }
+                // mapped virtual nodes have the format (v-out:tTarget<_targetNode> , v-in:tSource<_sourceNode>)
+                if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
+                    for(uint index = 0; index < typesPairMappedVirtualOutputsVectors[keyTypes].size(); index++){
+                        std::pair<std::string, std::string> virtualOutput = typesPairMappedVirtualOutputsVectors[keyTypes][index];
+                        std::pair<std::string, std::string> virtualInput = typesPairMappedVirtualInputsVectors[keyTypes][index];
+                        std::pair<std::string, std::string> virtualNode = std::make_pair(virtualOutput.second, virtualInput.first);
+                        
+                        ranksPairMappedVirtualNodesVectors[keyRanks].push_back(virtualNode);
+                        
+                    
+                    }
+                }
+                
             }
         }
             
