@@ -826,12 +826,21 @@ int main(int argc, char** argv) {
             
     }
     
-    // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
     // TESTING
     if(rank == 0){
-        std::cout << "[TESTING] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
-        std::cout << "[TESTING] mapped virtual inputs size: " << typesPairMappedVirtualInputsVectors.size() << std::endl;
-        for(auto interaction = typesPairMappedVirtualOutputsVectors.cbegin() ; interaction != typesPairMappedVirtualOutputsVectors.cend(); interaction++ ){
+        std::cout << "[DEBUG] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
+        std::cout << "[DEBUG] mapped virtual inputs size for all ranks: " << ranksPairMappedVirtualInputsVectors.size() << std::endl;
+        // print keys in the mapped virtual inputs
+        for(auto interaction = ranksPairMappedVirtualInputsVectors.cbegin() ; interaction != ranksPairMappedVirtualInputsVectors.cend(); interaction++ ){
+            std::cout << interaction->first.first << " " << interaction->first.second << " ";
+            for(auto virtualInput = interaction->second.cbegin() ; virtualInput != interaction->second.cend(); virtualInput++ ){
+                std::cout << virtualInput->first << " " << virtualInput->second << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "[DEBUG] mapped virtual outputs size for all ranks: " << ranksPairMappedVirtualOutputsVectors.size() << std::endl;
+        // print keys in the mapped virtual outputs
+        for(auto interaction = ranksPairMappedVirtualOutputsVectors.cbegin() ; interaction != ranksPairMappedVirtualOutputsVectors.cend(); interaction++ ){
             std::cout << interaction->first.first << " " << interaction->first.second << " ";
             for(auto virtualOutput = interaction->second.cbegin() ; virtualOutput != interaction->second.cend(); virtualOutput++ ){
                 std::cout << virtualOutput->first << " " << virtualOutput->second << " ";
@@ -841,6 +850,7 @@ int main(int argc, char** argv) {
     }
     // TESTING
 
+    // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
     std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
     if(vm.count("propagationModel")){
         logger << "[LOG] propagation model was set to "
