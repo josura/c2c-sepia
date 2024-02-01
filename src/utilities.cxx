@@ -203,6 +203,7 @@ std::vector<std::string> splitVirtualNodeStringIntoVector(std::string toSplit){
     if(splitted.size()==2){
         // first element is the virtual node type (v-in or v-out)
         // second element is the virtual node name (the type of the node, and additionally the name of the node)
+        // TODO check if it is a virtual input or a virtual output
         ret.push_back(splitted[0]);
         std::vector<std::string> splittedSecond = splitStringIntoVectorTwoParts(splitted[1], "_");
         if(splittedSecond.size()==2){
