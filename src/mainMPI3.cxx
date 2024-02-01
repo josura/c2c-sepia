@@ -863,6 +863,15 @@ int main(int argc, char** argv) {
             }
             std::cout << std::endl;
         }
+        // print keys in the mapped virtual nodes
+        std::cout << "[DEBUG] mapped virtual nodes size for all ranks: " << ranksPairMappedVirtualNodesVectors.size() << std::endl;
+        for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
+            std::cout << interaction->first.first << " " << interaction->first.second << " ";
+            for(auto virtualNode = interaction->second.cbegin() ; virtualNode != interaction->second.cend(); virtualNode++ ){
+                std::cout <<"("<< virtualNode->first << ", " << virtualNode->second << ") ";
+            }
+            std::cout << std::endl;
+        }
     }
     // TESTING
 
