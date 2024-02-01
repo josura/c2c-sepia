@@ -189,6 +189,19 @@ bool createFolder(const std::string& folderPath);
 */
 std::vector<std::string> splitStringIntoVector(std::string toSplit , std::string delimiter);
 
+/**
+ * \brief  Split a string into a vector of strings using the specified delimiter into two part, the first part is the string before the delimiter and the second part is the string after the delimiter
+ * the first delimiter found is used
+ * \return  the vector of strings
+*/
+std::vector<std::string> splitStringIntoVectorTwoParts(std::string toSplit , std::string delimiter);
+
+/**
+ * \brief  Split a string representing a virtual node (v-in or v-out) into a vector of strings, where the first element is the type and the second element is the name of the node if present
+ * \return  the vector of strings
+*/
+std::vector<std::string> splitVirtualNodeStringIntoVector(std::string toSplit);
+
 std::pair<std::vector<int>,std::vector<std::tuple<int,int,double>>> edgesFileToEdgesListByIndex(std::string filename);
 std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>> edgesFileToEdgesListAndNodesByName(std::string filename);
 std::pair<std::vector<std::string>,std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>>> edgesFileToEdgesListAndNodesByNameFromFolder(std::string filename);
