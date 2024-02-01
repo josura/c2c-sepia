@@ -713,11 +713,18 @@ int main(int argc, char** argv) {
         }
     }
 
-    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual outputs are mapped in the array passed to MPI send 
-    std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> mappedVirtualOutputsVectors;
-    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual inputs are mapped in the array passed to MPI send
-    std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> mappedVirtualInputsVectors;
+    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual outputs are mapped in the subarray passed to MPI send 
+    std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> typesPairMappedVirtualOutputsVectors;
+    // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual inputs are mapped in the subarray passed to MPI send
+    std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> typesPairMappedVirtualInputsVectors;
 
+    // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings, representing how the virtual outputs are mapped in the array passed to MPI send
+    std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualOutputsVectors;
+    // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings, representing how the virtual inputs are mapped in the array passed to MPI send
+    std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualInputsVectors;
+    // TODO 
+
+    
     // populate the maps
     for(auto interaction = interactionBetweenTypesFinerMap.cbegin() ; interaction != interactionBetweenTypesFinerMap.cend(); interaction++ ){
         std::string startNodeName = std::get<0> (interaction->first);
@@ -744,42 +751,42 @@ int main(int argc, char** argv) {
         // mapped virtualOutputs and mapped virtualInputs are the same in the sizes and logic, but have different names
         // mapped virtual outputs have the format (sourceNode, v-out:tTarget<_targetNode>)
         if(virtualNodesGranularity == "typeAndNode"){
-            if(mappedVirtualOutputsVectors.contains(keyTypes)){
-                if(!vectorContains(mappedVirtualOutputsVectors[keyTypes],std::make_pair(startNodeName, virtualOutputNodeName))){
-                    mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
+            if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
+                if(!vectorContains(typesPairMappedVirtualOutputsVectors[keyTypes],std::make_pair(startNodeName, virtualOutputNodeName))){
+                    typesPairMappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
                 }
             } else {
-                mappedVirtualOutputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
-                mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
+                typesPairMappedVirtualOutputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
+                typesPairMappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(startNodeName, virtualOutputNodeName));
             }
             
             // mapped virtual input have the format (v-in:tSource<_sourceNode>, targetNode)
-            if(mappedVirtualInputsVectors.contains(keyTypes)){
-                if(!vectorContains(mappedVirtualInputsVectors[keyTypes],std::make_pair(virtualInputNodeName, endNodeName))){
-                    mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
+            if(typesPairMappedVirtualInputsVectors.contains(keyTypes)){
+                if(!vectorContains(typesPairMappedVirtualInputsVectors[keyTypes],std::make_pair(virtualInputNodeName, endNodeName))){
+                    typesPairMappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
                 }
             } else {
-                mappedVirtualInputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
-                mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
+                typesPairMappedVirtualInputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
+                typesPairMappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, endNodeName));
             }
         } else if (virtualNodesGranularity == "type"){
-            if(mappedVirtualOutputsVectors.contains(keyTypes)){
-                if(!vectorContains(mappedVirtualOutputsVectors[keyTypes],std::make_pair(virtualInputNodeName, virtualOutputNodeName))){
-                    mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
+            if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
+                if(!vectorContains(typesPairMappedVirtualOutputsVectors[keyTypes],std::make_pair(virtualInputNodeName, virtualOutputNodeName))){
+                    typesPairMappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
                 }
             } else {
-                mappedVirtualOutputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
-                mappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
+                typesPairMappedVirtualOutputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
+                typesPairMappedVirtualOutputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
             }
             
             // mapped virtual input have the format (v-in:tSource<_sourceNode>, targetNode)
-            if(mappedVirtualInputsVectors.contains(keyTypes)){
-                if(!vectorContains(mappedVirtualInputsVectors[keyTypes],std::make_pair(virtualInputNodeName, virtualOutputNodeName))){
-                    mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
+            if(typesPairMappedVirtualInputsVectors.contains(keyTypes)){
+                if(!vectorContains(typesPairMappedVirtualInputsVectors[keyTypes],std::make_pair(virtualInputNodeName, virtualOutputNodeName))){
+                    typesPairMappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
                 }
             } else {
-                mappedVirtualInputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
-                mappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
+                typesPairMappedVirtualInputsVectors[keyTypes] = std::vector<std::pair<std::string, std::string>>();
+                typesPairMappedVirtualInputsVectors[keyTypes].push_back(std::make_pair(virtualInputNodeName, virtualOutputNodeName));
             }
         }
     }
@@ -788,8 +795,8 @@ int main(int argc, char** argv) {
     // TESTING
     if(rank == 0){
         std::cout << "[TESTING] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
-        std::cout << "[TESTING] mapped virtual inputs size: " << mappedVirtualInputsVectors.size() << std::endl;
-        for(auto interaction = mappedVirtualOutputsVectors.cbegin() ; interaction != mappedVirtualOutputsVectors.cend(); interaction++ ){
+        std::cout << "[TESTING] mapped virtual inputs size: " << typesPairMappedVirtualInputsVectors.size() << std::endl;
+        for(auto interaction = typesPairMappedVirtualOutputsVectors.cbegin() ; interaction != typesPairMappedVirtualOutputsVectors.cend(); interaction++ ){
             std::cout << interaction->first.first << " " << interaction->first.second << " ";
             for(auto virtualOutput = interaction->second.cbegin() ; virtualOutput != interaction->second.cend(); virtualOutput++ ){
                 std::cout << virtualOutput->first << " " << virtualOutput->second << " ";
@@ -1097,8 +1104,8 @@ int main(int argc, char** argv) {
                     for(int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
                         std::string targetType = types[targetIndexLocal + targetStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
-                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            rankVirtualOutputsSizes[targetRank] += mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
+                        if(typesPairMappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            rankVirtualOutputsSizes[targetRank] += typesPairMappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
                         }
                     }
                 }
@@ -1124,8 +1131,8 @@ int main(int argc, char** argv) {
                     for (int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
                         std::string targetType = types[targetIndexLocal + targetStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
-                        if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+                        if(typesPairMappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            for(auto virtualOutputPair : typesPairMappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
                                 // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
                                 // that is the sequence of the virtual outputs for the target type, for each source type
                                 double virtualOutputValue = typeComputations[sourceIndexLocal]->getOutputNodeValue(virtualOutputPair.second);
@@ -1212,8 +1219,8 @@ int main(int argc, char** argv) {
                     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
                         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
                         // if there is at least an interaction between the two types, the size is increased
-                        if(mappedVirtualInputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            rankVirtualInputsSizes[sourceRank] += mappedVirtualInputsVectors[std::make_pair(sourceType,targetType)].size();
+                        if(typesPairMappedVirtualInputsVectors.contains(std::make_pair(sourceType,targetType))){
+                            rankVirtualInputsSizes[sourceRank] += typesPairMappedVirtualInputsVectors[std::make_pair(sourceType,targetType)].size();
                         }
                     }
                 }
@@ -1302,8 +1309,8 @@ int main(int argc, char** argv) {
                 //     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
                 //         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
                 //         // if there is at least an interaction between the two types, it means that the virtual outputs are present
-                //         if(mappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                //             for(auto virtualOutputPair : mappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
+                //         if(typesPairMappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
+                //             for(auto virtualOutputPair : typesPairMappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
                 //                 typeComputations[targetIndexLocal]->setInputVinForType(sourceType, rankVirtualInputsBuffer[sourceRank][virtualInputPosition], virtualOutputPair.first);
                 //                 virtualInputPosition++;
                 //             }
@@ -1318,27 +1325,61 @@ int main(int argc, char** argv) {
                     } else {
                         sourceWorkload = workloadPerProcess;
                     }
+
+                    // TESTING
+                    // std::cout << "[DEBUG] the virtual input values for the sourceRank " <<sourceRank<< " and iteration number "<< iterationInterType  << " are : ";
+                    // for(int i = 0; i < rankVirtualInputsSizes[sourceRank]; i++){
+                    //     std::cout << rankVirtualInputsBuffer[sourceRank][i] << ", ";
+                    // }
+                    // TESTING
+
                     int currentVirtualInputIndex = 0;
                     for(int sourceTypeIndex = sourceStartIdx; sourceTypeIndex < sourceStartIdx + sourceWorkload; sourceTypeIndex++){
                         std::string sourceType = types[sourceTypeIndex];
                         for(int targetTypeIndex = startIdx; targetTypeIndex < startIdx + finalWorkload; targetTypeIndex++){
                             std::string targetType = types[targetTypeIndex];
                             std::pair<std::string,std::string> keyTypes = std::make_pair(sourceType, targetType);
-                            for(uint localVirtualInputIndex = 0; localVirtualInputIndex < mappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
-                                std::pair<std::string, std::string> virtualInputPair = mappedVirtualInputsVectors[keyTypes][localVirtualInputIndex];
-                                std::pair<std::string, std::string> virtualOutputPair = mappedVirtualOutputsVectors[keyTypes][localVirtualInputIndex];
+                            for(uint localVirtualInputIndex = 0; localVirtualInputIndex < typesPairMappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
+                                std::pair<std::string, std::string> virtualInputPair = typesPairMappedVirtualInputsVectors[keyTypes][localVirtualInputIndex];
+                                std::pair<std::string, std::string> virtualOutputPair = typesPairMappedVirtualOutputsVectors[keyTypes][localVirtualInputIndex];
                                 std::string sourceNode = virtualOutputPair.first;
                                 std::string targetNode = virtualInputPair.second;
                                 std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNode, targetNode, sourceType, targetType);
-                                // TESTING
-                                
-                                // TESTING
                                 if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                                    // TESTING
+                                    if(targetType == "t0"){
+                                        std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
+                                        std::cout << "[DEBUG] interaction key: " << std::get<0>(interactionKey) << ", " << std::get<1>(interactionKey) << ", " << std::get<2>(interactionKey) << ", " << std::get<3>(interactionKey) << std::endl;
+                                        std::cout << "[DEBUG] the current interIteration number is: " << iterationInterType << std::endl;
+                                        std::cout << "[DEBUG] the contact times for the interaction key are: ";
+                                        for(auto time: interactionBetweenTypesFinerMap[interactionKey]){
+                                            std::cout << time << ", ";
+                                        }
+                                        std::cout << std::endl;
+                                        std::cout << "[DEBUG] the input values for t0 before updating them are: ";
+                                        int i = 0;
+                                        for(auto input: typeComputations[targetTypeIndex]->getInputAugmented()){
+                                            std::cout << nodeNames[i++] << " = " << input << ", "; 
+                                        }
+                                        std::cout << std::endl;
+                                    }
+                                    // TESTING
                                     if(sourceType == targetType){
                                         if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
                                     } else {
                                         typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
                                     }
+                                    // TESTING
+                                    if(targetType == "t0"){
+                                        std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
+                                        std::cout << "[DEBUG] the input values for t0 after updating them are: ";
+                                        int i = 0;
+                                        for(auto input: typeComputations[targetTypeIndex]->getInputAugmented()){
+                                            std::cout << nodeNames[i++] << " = " << input << ", ";
+                                        }
+                                        std::cout << std::endl;
+                                    }
+                                    // TESTING
                                 }
                                 currentVirtualInputIndex++;
                             }
