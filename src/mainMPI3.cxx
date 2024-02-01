@@ -718,10 +718,6 @@ int main(int argc, char** argv) {
     // create a map that maps couples of strings (source type and target type) to a vector of pairs of strings, representing how the virtual inputs are mapped in the subarray passed to MPI send
     std::unordered_map<std::pair<std::string, std::string>, std::vector<std::pair<std::string, std::string>>,hash_pair_strings> typesPairMappedVirtualInputsVectors;
 
-    // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings, representing how the virtual outputs are mapped in the array passed to MPI send
-    std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualOutputsVectors;
-    // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings, representing how the virtual inputs are mapped in the array passed to MPI send
-    std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualInputsVectors;
     // create a map that maps couples of integers (source rank and target rank) to a vector of pairs of strings(virtual output name, virtual input name), representing how the virtual nodes are mapped in the array passed to MPI send
     std::unordered_map<std::pair<int, int>, std::vector<std::pair<std::string, std::string>>,hash_pair_ints> ranksPairMappedVirtualNodesVectors;
 
@@ -808,22 +804,6 @@ int main(int argc, char** argv) {
                 std::string targetType = types[targetIndexGlobal];
                 std::pair<std::string, std::string> keyTypes = std::make_pair(sourceType, targetType);
                 std::pair<int, int> keyRanks = std::make_pair(rank, rankTarget);
-                // mapped virtual outputt have the format (sourceNode, v-out:tTarget<_targetNode>)
-                if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
-                    if(ranksPairMappedVirtualOutputsVectors.contains(keyRanks)){
-                        ranksPairMappedVirtualOutputsVectors[keyRanks].insert(ranksPairMappedVirtualOutputsVectors[keyRanks].end(),typesPairMappedVirtualOutputsVectors[keyTypes].begin(),typesPairMappedVirtualOutputsVectors[keyTypes].end());
-                    } else {
-                        ranksPairMappedVirtualOutputsVectors[keyRanks] = typesPairMappedVirtualOutputsVectors[keyTypes];
-                    }
-                }
-                // mapped virtual input have the format (v-in:tSource<_sourceNode>, targetNode)
-                if(typesPairMappedVirtualInputsVectors.contains(keyTypes)){
-                    if(ranksPairMappedVirtualInputsVectors.contains(keyRanks)){
-                        ranksPairMappedVirtualInputsVectors[keyRanks].insert(ranksPairMappedVirtualInputsVectors[keyRanks].end(),typesPairMappedVirtualInputsVectors[keyTypes].begin(),typesPairMappedVirtualInputsVectors[keyTypes].end());
-                    } else {
-                        ranksPairMappedVirtualInputsVectors[keyRanks] = typesPairMappedVirtualInputsVectors[keyTypes];
-                    }
-                }
                 // mapped virtual nodes have the format (v-out:tTarget<_targetNode> , v-in:tSource<_sourceNode>)
                 if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
                     for(uint index = 0; index < typesPairMappedVirtualOutputsVectors[keyTypes].size(); index++){
@@ -832,8 +812,6 @@ int main(int argc, char** argv) {
                         std::pair<std::string, std::string> virtualNode = std::make_pair(virtualOutput.second, virtualInput.first);
                         
                         ranksPairMappedVirtualNodesVectors[keyRanks].push_back(virtualNode);
-                        
-                    
                     }
                 }
                 
@@ -845,24 +823,6 @@ int main(int argc, char** argv) {
     // TESTING
     if(rank == 0){
         std::cout << "[DEBUG] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
-        std::cout << "[DEBUG] mapped virtual inputs size for all ranks: " << ranksPairMappedVirtualInputsVectors.size() << std::endl;
-        // print keys in the mapped virtual inputs
-        for(auto interaction = ranksPairMappedVirtualInputsVectors.cbegin() ; interaction != ranksPairMappedVirtualInputsVectors.cend(); interaction++ ){
-            std::cout << interaction->first.first << " " << interaction->first.second << " ";
-            for(auto virtualInput = interaction->second.cbegin() ; virtualInput != interaction->second.cend(); virtualInput++ ){
-                std::cout << virtualInput->first << " " << virtualInput->second << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << "[DEBUG] mapped virtual outputs size for all ranks: " << ranksPairMappedVirtualOutputsVectors.size() << std::endl;
-        // print keys in the mapped virtual outputs
-        for(auto interaction = ranksPairMappedVirtualOutputsVectors.cbegin() ; interaction != ranksPairMappedVirtualOutputsVectors.cend(); interaction++ ){
-            std::cout << interaction->first.first << " " << interaction->first.second << " ";
-            for(auto virtualOutput = interaction->second.cbegin() ; virtualOutput != interaction->second.cend(); virtualOutput++ ){
-                std::cout << virtualOutput->first << " " << virtualOutput->second << " ";
-            }
-            std::cout << std::endl;
-        }
         // print keys in the mapped virtual nodes
         std::cout << "[DEBUG] mapped virtual nodes size for all ranks: " << ranksPairMappedVirtualNodesVectors.size() << std::endl;
         for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
