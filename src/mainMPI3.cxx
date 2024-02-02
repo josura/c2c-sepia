@@ -1426,9 +1426,10 @@ int main(int argc, char** argv) {
                                 break;
                             }
                         }
+                        if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
 
                         if(sourceType == targetType){
-                            if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
+                            if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
                         } else {
                             typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
                         }
