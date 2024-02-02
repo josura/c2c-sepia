@@ -1182,8 +1182,23 @@ int main(int argc, char** argv) {
                 if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[keyRanks].size(); i++){
                         std::pair<std::string, std::string> virtualNode = ranksPairMappedVirtualNodesVectors[keyRanks][i];
-                        double virtualOutputValue = typeComputations[indexMapGraphTypesToValuesTypes[startIdx + i]]->getOutputNodeValue(virtualNode.first);
-                        virtualOutputs[targetRank][i] = virtualOutputValue;
+                        std::vector<std::string> virtualNodeSplit = splitVirtualNodeStringIntoVector(virtualNode.first);
+                        if(virtualNodeSplit.size()==2){
+                            std::string sourceType = virtualNodeSplit[0];
+                            std::string sourceNode = virtualNodeSplit[1];
+                            int sourceTypePosition = -1;
+                            for(int j = 0; j < finalWorkload; j++){
+                                if(types[j+startIdx] == sourceType){
+                                    sourceTypePosition = j;
+                                    break;
+                                }
+                            }
+                            double virtualOutputValue = typeComputations[sourceTypePosition]->getOutputNodeValue(virtualNode.first);
+                            virtualOutputs[targetRank][i] = virtualOutputValue;
+                        } else {
+                            std::cerr << "[ERROR] virtual node string is not in the correct format: aborting" << std::endl;
+                            return 1;
+                        }
                     }
                 }
                         
