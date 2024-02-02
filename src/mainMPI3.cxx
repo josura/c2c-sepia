@@ -1254,7 +1254,16 @@ int main(int argc, char** argv) {
                 //         }
                 //     }
                 // }
-                rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
+                std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
+                if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+                    rankVirtualInputsSizes[sourceRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
+                }
+                // allocate the array for the virtual inputs directed to the local rank types
+                if(rankVirtualInputsSizes[sourceRank] > 0){
+                    rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
+                } else {
+                    rankVirtualInputsBuffer.push_back(nullptr);
+                }
             }
                 
         }
