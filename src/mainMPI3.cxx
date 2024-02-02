@@ -1182,10 +1182,10 @@ int main(int argc, char** argv) {
                 if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[keyRanks].size(); i++){
                         std::pair<std::string, std::string> virtualNode = ranksPairMappedVirtualNodesVectors[keyRanks][i];
-                        std::vector<std::string> virtualNodeSplit = splitVirtualNodeStringIntoVector(virtualNode.first);
-                        if(virtualNodeSplit.size()==3){
-                            std::string sourceType = virtualNodeSplit[1];
-                            std::string sourceNode = virtualNodeSplit[2];
+                        std::vector<std::string> virtualInputNodeSplit = splitVirtualNodeStringIntoVector(virtualNode.second);
+                        if(virtualInputNodeSplit.size()==3){
+                            std::string sourceType = virtualInputNodeSplit[1];
+                            std::string sourceNode = virtualInputNodeSplit[2];
                             int sourceTypePosition = -1;
                             for(int j = 0; j < finalWorkload; j++){
                                 if(types[j+startIdx] == sourceType){
