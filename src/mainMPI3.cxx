@@ -1193,6 +1193,10 @@ int main(int argc, char** argv) {
                                     break;
                                 }
                             }
+                            if(sourceTypePosition == -1){
+                                std::cerr << "[ERROR] source type not found in the types vector: aborting" << std::endl;
+                                return 1;
+                            }
                             double virtualOutputValue = typeComputations[sourceTypePosition]->getOutputNodeValue(virtualNode.first);
                             virtualOutputs[targetRank][i] = virtualOutputValue;
                         } else {
@@ -1444,13 +1448,13 @@ int main(int argc, char** argv) {
                         std::string virtualInputNodeName = virtualNodes.second;
                         std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
                         if(virtualOutputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
-                        std::string targetType = virtualOutputNodeNameSplitted[0];
-                        std::string targetNodeName = virtualOutputNodeNameSplitted[1];
+                        std::string targetType = virtualOutputNodeNameSplitted[1];
+                        std::string targetNodeName = virtualOutputNodeNameSplitted[2];
 
                         std::vector<std::string> virtualInputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualInputNodeName);
                         if(virtualInputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
-                        std::string sourceType = virtualInputNodeNameSplitted[0];
-                        std::string sourceNodeName = virtualInputNodeNameSplitted[1];
+                        std::string sourceType = virtualInputNodeNameSplitted[1];
+                        std::string sourceNodeName = virtualInputNodeNameSplitted[2];
 
                         // get local target index for typeComputation
                         int targetTypeIndex = -1;
