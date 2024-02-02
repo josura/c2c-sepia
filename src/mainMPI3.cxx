@@ -1237,23 +1237,23 @@ int main(int argc, char** argv) {
             // TODO allocate the buffer for the virtual outputs for the combination of types and nodes
             for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
                 // compute the virtual inputs sizes for the source rank types to the local rank types
-                int sourceStartIdx = sourceRank * workloadPerProcess;
-                int sourceWorkload;
-                if(sourceRank == (numProcesses-1)){
-                    sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
-                } else {
-                    sourceWorkload = workloadPerProcess;
-                }
-                for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
-                    std::string targetType = types[targetIndexLocal + startIdx];
-                    for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
-                        std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
-                        // if there is at least an interaction between the two types, the size is increased
-                        if(typesPairMappedVirtualInputsVectors.contains(std::make_pair(sourceType,targetType))){
-                            rankVirtualInputsSizes[sourceRank] += typesPairMappedVirtualInputsVectors[std::make_pair(sourceType,targetType)].size();
-                        }
-                    }
-                }
+                // int sourceStartIdx = sourceRank * workloadPerProcess;
+                // int sourceWorkload;
+                // if(sourceRank == (numProcesses-1)){
+                //     sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
+                // } else {
+                //     sourceWorkload = workloadPerProcess;
+                // }
+                // for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
+                //     std::string targetType = types[targetIndexLocal + startIdx];
+                //     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
+                //         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
+                //         // if there is at least an interaction between the two types, the size is increased
+                //         if(typesPairMappedVirtualInputsVectors.contains(std::make_pair(sourceType,targetType))){
+                //             rankVirtualInputsSizes[sourceRank] += typesPairMappedVirtualInputsVectors[std::make_pair(sourceType,targetType)].size();
+                //         }
+                //     }
+                // }
                 rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
             }
                 
