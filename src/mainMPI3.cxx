@@ -1205,6 +1205,16 @@ int main(int argc, char** argv) {
                         }
                     }
                 }
+
+                // TESTING
+                if(rank == 0){
+                    logger << "[LOG] virtual outputs for process "<< targetRank<< "  before: " << std::endl;
+                    for(uint i = 0; i < rankVirtualOutputsSizes[targetRank]; i++){
+                        logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<virtualOutputs[targetRank][i] << ", ";
+                    }
+                    logger << std::endl;
+                }
+                // TESTING
                         
             }
         } else {
@@ -1337,6 +1347,17 @@ int main(int argc, char** argv) {
             MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
             logger << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
             // source workload and virtual outputs decomposition on the target
+
+            // TESTING
+            if(rank == 0){
+                std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
+                logger << "[LOG] virtual inputs from process "<< sourceRank<< "  before: " << std::endl;
+                for(uint i = 0; i < rankVirtualInputsSizes[sourceRank]; i++){
+                    logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
+                }
+                logger << std::endl;
+            }
+            // TESTING
             int sourceWorkload;
             if(sourceRank == (numProcesses-1)){
                 sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
@@ -1443,35 +1464,37 @@ int main(int argc, char** argv) {
                     int targetRank = rank;
                     int currentVirtualInputIndex = 0;
                     std::pair<int,int> ranksPair = std::make_pair(sourceRank,targetRank);
-                    for(auto virtualNodes:ranksPairMappedVirtualNodesVectors[ranksPair]){
-                        std::string virtualOutputNodeName = virtualNodes.first;
-                        std::string virtualInputNodeName = virtualNodes.second;
-                        std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
-                        if(virtualOutputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
-                        std::string targetType = virtualOutputNodeNameSplitted[1];
-                        std::string targetNodeName = virtualOutputNodeNameSplitted[2];
+                    if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
+                        for(auto virtualNodes:ranksPairMappedVirtualNodesVectors[ranksPair]){
+                            std::string virtualOutputNodeName = virtualNodes.first;
+                            std::string virtualInputNodeName = virtualNodes.second;
+                            std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
+                            if(virtualOutputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
+                            std::string targetType = virtualOutputNodeNameSplitted[1];
+                            std::string targetNodeName = virtualOutputNodeNameSplitted[2];
 
-                        std::vector<std::string> virtualInputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualInputNodeName);
-                        if(virtualInputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
-                        std::string sourceType = virtualInputNodeNameSplitted[1];
-                        std::string sourceNodeName = virtualInputNodeNameSplitted[2];
+                            std::vector<std::string> virtualInputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualInputNodeName);
+                            if(virtualInputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
+                            std::string sourceType = virtualInputNodeNameSplitted[1];
+                            std::string sourceNodeName = virtualInputNodeNameSplitted[2];
 
-                        // get local target index for typeComputation
-                        int targetTypeIndex = -1;
-                        for(int i = 0; i < finalWorkload; i++){
-                            if(types[i+startIdx] == targetType){
-                                targetTypeIndex = i;
-                                break;
+                            // get local target index for typeComputation
+                            int targetTypeIndex = -1;
+                            for(int i = 0; i < finalWorkload; i++){
+                                if(types[i+startIdx] == targetType){
+                                    targetTypeIndex = i;
+                                    break;
+                                }
                             }
-                        }
-                        if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
+                            if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
 
-                        if(sourceType == targetType){
-                            if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
-                        } else {
-                            typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
+                            if(sourceType == targetType){
+                                if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
+                            } else {
+                                typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
+                            }
+                            
                         }
-                        
                     }
                 }
             }
