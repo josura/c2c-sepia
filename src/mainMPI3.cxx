@@ -1183,9 +1183,9 @@ int main(int argc, char** argv) {
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[keyRanks].size(); i++){
                         std::pair<std::string, std::string> virtualNode = ranksPairMappedVirtualNodesVectors[keyRanks][i];
                         std::vector<std::string> virtualNodeSplit = splitVirtualNodeStringIntoVector(virtualNode.first);
-                        if(virtualNodeSplit.size()==2){
-                            std::string sourceType = virtualNodeSplit[0];
-                            std::string sourceNode = virtualNodeSplit[1];
+                        if(virtualNodeSplit.size()==3){
+                            std::string sourceType = virtualNodeSplit[1];
+                            std::string sourceNode = virtualNodeSplit[2];
                             int sourceTypePosition = -1;
                             for(int j = 0; j < finalWorkload; j++){
                                 if(types[j+startIdx] == sourceType){
@@ -1443,12 +1443,12 @@ int main(int argc, char** argv) {
                         std::string virtualOutputNodeName = virtualNodes.first;
                         std::string virtualInputNodeName = virtualNodes.second;
                         std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
-                        if(virtualOutputNodeNameSplitted.size()!=2) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
+                        if(virtualOutputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
                         std::string targetType = virtualOutputNodeNameSplitted[0];
                         std::string targetNodeName = virtualOutputNodeNameSplitted[1];
 
                         std::vector<std::string> virtualInputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualInputNodeName);
-                        if(virtualInputNodeNameSplitted.size()!=2) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
+                        if(virtualInputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
                         std::string sourceType = virtualInputNodeNameSplitted[0];
                         std::string sourceNodeName = virtualInputNodeNameSplitted[1];
 
