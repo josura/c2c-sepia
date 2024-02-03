@@ -113,6 +113,7 @@ class Computation{
                 throw std::out_of_range("Computation::setInputNodeValue: the node name is not in the graph");
             int index = nodeToIndex.at(nodeName);
             inputAugmented[index] = value;
+            InputAugmentedArma[index] = value;
         };
 
         double getVirtualInputForType(std::string type, std::string sourceNode="")const;
