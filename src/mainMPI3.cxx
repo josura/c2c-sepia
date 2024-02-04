@@ -1122,23 +1122,6 @@ int main(int argc, char** argv) {
             
             //allocate the virtual outputs arrays
             for(int targetRank = 0; targetRank < numProcesses; targetRank++){
-                // for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
-                //     std::string sourceType = types[sourceIndexLocal + startIdx];
-                //     int targetWorkload;
-                //     int targetStartIdx = targetRank * workloadPerProcess;
-                //     if(targetRank == (numProcesses-1)){
-                //         targetWorkload = types.size() - (targetRank*workloadPerProcess);
-                //     } else {
-                //         targetWorkload = workloadPerProcess;
-                //     }
-                //     for(int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
-                //         std::string targetType = types[targetIndexLocal + targetStartIdx];
-                //         // if there is at least an interaction between the two types, the size is increased
-                //         if(typesPairMappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                //             rankVirtualOutputsSizes[targetRank] += typesPairMappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)].size();
-                //         }
-                //     }
-                // }
                 std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
                 if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
                     rankVirtualOutputsSizes[targetRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
@@ -1153,31 +1136,6 @@ int main(int argc, char** argv) {
 
             // fill the arrays
             for (int targetRank = 0; targetRank < numProcesses; targetRank++){
-                // int targetStartIdx = targetRank * workloadPerProcess;
-                // int targetWorkload;
-                // if(targetRank == (numProcesses-1)){
-                //     targetWorkload = types.size() - (targetRank*workloadPerProcess);
-                // } else {
-                //     targetWorkload = workloadPerProcess;
-                // }
-                // // code is generalized for both cases of type granularity and typeAndNode granularity
-                // int virtualOutputPosition = 0;
-                // for (int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
-                //     std::string sourceType = types[sourceIndexLocal + startIdx];
-                //     for (int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
-                //         std::string targetType = types[targetIndexLocal + targetStartIdx];
-                //         // if there is at least an interaction between the two types, the size is increased
-                //         if(typesPairMappedVirtualOutputsVectors.contains(std::make_pair(sourceType,targetType))){
-                //             for(auto virtualOutputPair : typesPairMappedVirtualOutputsVectors[std::make_pair(sourceType,targetType)]){
-                //                 // the virtual output is ordered by the sequence (t_i,t_j)(t_i,t_j+1)...(t_i,t_n)(t_i+1,t_j)(t_i+1,t_j+1)...(t_i+1,t_n)...(t_n,t_n)
-                //                 // that is the sequence of the virtual outputs for the target type, for each source type
-                //                 double virtualOutputValue = typeComputations[sourceIndexLocal]->getOutputNodeValue(virtualOutputPair.second);
-                //                 virtualOutputs[targetRank][virtualOutputPosition] = virtualOutputValue;
-                //                 virtualOutputPosition++;
-                //             }
-                //         }
-                //     }
-                // }
                 std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
                 if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[keyRanks].size(); i++){
@@ -1390,75 +1348,8 @@ int main(int argc, char** argv) {
                 logger << "[ERROR] virtual nodes granularity is not supported yet: aborting"<<std::endl;
                 return 1;
             } else if (virtualNodesGranularity == "typeAndNode"){
-                // TODO implement the logic of reading the subvectors of the virtual inputs   
+                // logic of reading the subvectors of the virtual inputs   
                 for (int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-                    // int sourceStartIdx = sourceRank * workloadPerProcess;
-                    // int sourceWorkload;
-                    // if(sourceRank == (numProcesses-1)){
-                    //     sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
-                    // } else {
-                    //     sourceWorkload = workloadPerProcess;
-                    // }
-
-                    // // TESTING
-                    // // std::cout << "[DEBUG] the virtual input values for the sourceRank " <<sourceRank<< " and iteration number "<< iterationInterType  << " are : ";
-                    // // for(int i = 0; i < rankVirtualInputsSizes[sourceRank]; i++){
-                    // //     std::cout << rankVirtualInputsBuffer[sourceRank][i] << ", ";
-                    // // }
-                    // // TESTING
-
-                    // int currentVirtualInputIndex = 0;
-                    // for(int sourceTypeIndex = sourceStartIdx; sourceTypeIndex < sourceStartIdx + sourceWorkload; sourceTypeIndex++){
-                    //     std::string sourceType = types[sourceTypeIndex];
-                    //     for(int targetTypeIndex = startIdx; targetTypeIndex < startIdx + finalWorkload; targetTypeIndex++){
-                    //         std::string targetType = types[targetTypeIndex];
-                    //         std::pair<std::string,std::string> keyTypes = std::make_pair(sourceType, targetType);
-                    //         for(uint localVirtualInputIndex = 0; localVirtualInputIndex < typesPairMappedVirtualInputsVectors[keyTypes].size(); localVirtualInputIndex++){
-                    //             std::pair<std::string, std::string> virtualInputPair = typesPairMappedVirtualInputsVectors[keyTypes][localVirtualInputIndex];
-                    //             std::pair<std::string, std::string> virtualOutputPair = typesPairMappedVirtualOutputsVectors[keyTypes][localVirtualInputIndex];
-                    //             std::string sourceNode = virtualOutputPair.first;
-                    //             std::string targetNode = virtualInputPair.second;
-                    //             std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNode, targetNode, sourceType, targetType);
-                    //             if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
-                    //                 // TESTING
-                    //                 if(targetType == "t0"){
-                    //                     std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
-                    //                     std::cout << "[DEBUG] interaction key: " << std::get<0>(interactionKey) << ", " << std::get<1>(interactionKey) << ", " << std::get<2>(interactionKey) << ", " << std::get<3>(interactionKey) << std::endl;
-                    //                     std::cout << "[DEBUG] the current interIteration number is: " << iterationInterType << std::endl;
-                    //                     std::cout << "[DEBUG] the contact times for the interaction key are: ";
-                    //                     for(auto time: interactionBetweenTypesFinerMap[interactionKey]){
-                    //                         std::cout << time << ", ";
-                    //                     }
-                    //                     std::cout << std::endl;
-                    //                     std::cout << "[DEBUG] the input values for t0 before updating them are: ";
-                    //                     int i = 0;
-                    //                     for(auto input: typeComputations[targetTypeIndex]->getInputAugmented()){
-                    //                         std::cout << nodeNames[i++] << " = " << input << ", "; 
-                    //                     }
-                    //                     std::cout << std::endl;
-                    //                 }
-                    //                 // TESTING
-                    //                 if(sourceType == targetType){
-                    //                     if(sameTypeCommunication) typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
-                    //                 } else {
-                    //                     typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputPair.first, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
-                    //                 }
-                    //                 // TESTING
-                    //                 if(targetType == "t0"){
-                    //                     std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
-                    //                     std::cout << "[DEBUG] the input values for t0 after updating them are: ";
-                    //                     int i = 0;
-                    //                     for(auto input: typeComputations[targetTypeIndex]->getInputAugmented()){
-                    //                         std::cout << nodeNames[i++] << " = " << input << ", ";
-                    //                     }
-                    //                     std::cout << std::endl;
-                    //                 }
-                    //                 // TESTING
-                    //             }
-                    //             currentVirtualInputIndex++;
-                    //         }
-                    //     }
-                    // }
 
                     // use ranksPairMappedVirtualNodesVectors to get all the information needed to update the input
                     int targetRank = rank;
@@ -1487,12 +1378,15 @@ int main(int argc, char** argv) {
                                 }
                             }
                             if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
-
-                            if(sourceType == targetType){
-                                if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
-                            } else {
-                                typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex++]);
-                            }
+                            std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
+                            // if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                                if(sourceType == targetType){
+                                    if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                } else {
+                                    typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                }
+                            // }
+                            currentVirtualInputIndex++;
                             
                         }
                     }
