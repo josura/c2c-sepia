@@ -25,9 +25,7 @@
 
 
 
-int main(int argc, char** argv) {
-    // starting data for each process
-    
+int main(int argc, char** argv) {    
     //program options
     bool ensembleGeneNames=false;
     bool sameTypeCommunication=false;
@@ -507,10 +505,6 @@ int main(int argc, char** argv) {
     int endIdx = (rank == numProcesses - 1) ? types.size() : (rank + 1) * workloadPerProcess;
     
     int finalWorkload = endIdx - startIdx;
-    // // TESTING
-    // std::cout << "rank: " << rank << " startIdx: " << startIdx << " endIdx: " << endIdx << " finalWorkload: " << finalWorkload << std::endl;
-    // // END TESTING
-
 
     //map types to rank
     std::map<std::string, int> typeToRank;
@@ -523,18 +517,6 @@ int main(int argc, char** argv) {
         }
         typeToRank[types[i]] = rankType;
     }
-
-    // // TESTING
-    // std::cout << "rank: " << rank << " typeToRank: " << std::endl;
-    // for (auto const& x : typeToRank)
-    // {
-    //     std::cout << x.first  // string (key)
-    //               << ':'
-    //               << x.second // string's value 
-    //               << std::endl ;
-    // }
-    // // END TESTING
-
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
@@ -951,22 +933,6 @@ int main(int argc, char** argv) {
                         logger << nodeNames[j] << " = " << typeComputations[i]->getInputNodeValue(nodeNames[j]) << ", ";
                     }
                     logger << std::endl;
-                    // logger << "[DEBUG] virtual outputs for type t0 in interIteration "<< iterationInterType <<" before: " << std::endl;
-                    // for(int j = 0; j < numProcesses; j++){
-                    //     logger << std::endl << "[DEBUG] to process "<< j << " : " << std::endl;
-                    //     int targetWorkload;
-                    //     if(j == (numProcesses-1)){
-                    //         targetWorkload = types.size() - (j*workloadPerProcess);
-                    //     } else {
-                    //         targetWorkload = workloadPerProcess;
-                    //     }
-                    //     for(int k = 0; k < targetWorkload; k++){
-                    //         int localTypePosition = i + startIdx;
-                    //         int targetTypePosition = k + j*workloadPerProcess;
-                    //         logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")= v-out:"<<types[targetTypePosition]<< "= " <<typeComputations[i]->getOutputNodeValue("v-out:" + types[targetTypePosition]) << " = "  << typeComputations[i]->getVirtualOutputForType(types[targetTypePosition]) << ", ";
-                    //     }
-                    // }
-                    // logger << std::endl;
                 }
             }
             // TESTING
@@ -1056,34 +1022,10 @@ int main(int argc, char** argv) {
             }
         }
 
-        // //TESTING
-        // //printing type to rank map
-        // logger << "[LOG] type to rank map: " << std::endl;
-        // for (auto const& x : typeToRank)
-        // {
-        //     logger << x.first  // string (key)
-        //     << ':'
-        //     << x.second // string's value
-        //     << ", " ;
-        // }
-        // logger << std::endl;
-        // //printing start idx and end idx with rank
-        // logger << "[LOG] start idx: " << startIdx << " end idx: " << endIdx << " rank: " << rank << std::endl;
-        // // printing types
-        // logger << "[LOG] types for rank "<< rank <<": " << std::endl;
-        // for (auto const& x : types)
-        // {
-        //     logger << x << ", " ;
-        // }
-        // //TESTING
-
         // send virtual outputs to the other processes, the vector contains the virtual outputs for each type as an array
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
-        
-        
-        
-        
+                
         std::vector<double*> virtualOutputs;
         std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
         // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
