@@ -1258,12 +1258,16 @@ int main(int argc, char** argv) {
 
         // delete the virtual outputs vector of arrays
         for(int i = 0; i < numProcesses; i++){
-            delete[] virtualOutputs.at(i);
+            if (virtualOutputs.at(i) != nullptr) delete[] virtualOutputs.at(i);
         }
+
+        // TESTING
+        std::cout << "[DEBUG] rank: " << rank << " arrived at sixth checkpoint at inter iteration "<< iterationInterType  << std::endl;
+        // TESTING
 
         // receive outputs from the other processes and update the input
         for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-            //logger << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
+            logger << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
             MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
             logger << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
             // source workload and virtual outputs decomposition on the target
