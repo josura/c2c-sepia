@@ -221,20 +221,6 @@ std::vector<std::string> splitVirtualNodeStringIntoVector(std::string toSplit){
 
 }
 
-void printVector(std::vector<int> vec){
-    for(int i : vec){
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-}
-
-void printVector(std::vector<double> vec){
-    for(double i : vec){
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-}
-
 boost::tokenizer<boost::char_delimiters_separator<char>> splitStringIntoVectorTokenizer(std::string toSplit , char delimiter){
     boost::char_delimiters_separator<char> sep(delimiter);
     boost::tokenizer<boost::char_delimiters_separator<char> > tokens(toSplit, sep);

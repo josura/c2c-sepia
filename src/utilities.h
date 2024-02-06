@@ -47,8 +47,13 @@ NodeSet* nodeBitArrayToSet(NodeBitArray const& nodeArray,int arraySize);
 
 void printNodeBitArray(NodeBitArray nodeArray,int size);
 
-void printVector(std::vector<int> vec);
-void printVector(std::vector<double> vec);
+template<typename T>
+void printVector(std::vector<T> vec){
+    for (uint i = 0; i < vec.size(); ++i) {
+        std::cout << vec[i] << " , ";
+    }
+    std::cout << std::endl;
+}
 
 /**
  * \brief   Generate a random integer number between min and max
@@ -339,6 +344,7 @@ std::vector<int> get_indexmap_vector_values(std::vector<T> const & origin, std::
 template<typename T>
 std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, std::vector<T> const & toMap){
     std::vector<int> retVec;
+    std::vector<T> notFoundValuesVector;
     uint notFoundValues = 0;
     for (uint i = 0; i < origin.size(); ++i) {
         auto itorigin = std::find(toMap.begin(), toMap.end(), origin[i]);
@@ -347,6 +353,7 @@ std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, 
         }
         else {
             retVec.push_back(-1);
+            notFoundValuesVector.push_back(origin[i]);
             notFoundValues++;
         }
         
@@ -357,6 +364,8 @@ std::vector<int> get_indexmap_vector_values_full(std::vector<T> const & origin, 
     }
     if(notFoundValues>0){
         std::cout << "[WARNING] utilities::get_indexmap_vector_values_full : " << notFoundValues << " values not found in the origin vector" << std::endl;
+        std::cout << "[WARNING] utilities::get_indexmap_vector_values_full : " << "values not found in the origin vector: ";
+        printVector(notFoundValuesVector);
     }
     return retVec;
 }
