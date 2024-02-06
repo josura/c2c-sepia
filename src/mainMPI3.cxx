@@ -1025,6 +1025,10 @@ int main(int argc, char** argv) {
         // send virtual outputs to the other processes, the vector contains the virtual outputs for each type as an array
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
+
+        // TESTING
+        std::cout << "[DEBUG] rank: " << rank << " arrived at first checkpoint" << std::endl;
+        // TESTING
                 
         std::vector<double*> virtualOutputs;
         std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
@@ -1122,6 +1126,10 @@ int main(int argc, char** argv) {
             return 1;
         }
 
+        // TESTING
+        std::cout << "[DEBUG] rank: " << rank << " arrived at second checkpoint at inter iteration "<< iterationInterType  << std::endl;
+        // TESTING
+
         
 
 
@@ -1131,6 +1139,10 @@ int main(int argc, char** argv) {
                 typeComputations[i]->resetVirtualOutputs();
             }
         }
+
+        // TESTING
+        std::cout << "[DEBUG] rank: " << rank << " arrived at third checkpoint at inter iteration "<< iterationInterType  << std::endl;
+        // TESTING
 
 
         
@@ -1218,6 +1230,10 @@ int main(int argc, char** argv) {
             }
         }
 
+        // TESTING
+        std::cout << "[DEBUG] rank: " << rank << " arrived at fourth checkpoint at inter iteration "<< iterationInterType  << std::endl;
+        // TESTING
+
 
         // send the virtual outputs to the other processes
         for(int targetRank = 0; targetRank < numProcesses; targetRank++){
@@ -1235,6 +1251,10 @@ int main(int argc, char** argv) {
                 // send only the virtual outputs for the types granularity (v-out for each type
             }
         }
+
+        // TESTING
+        std::cout << "[DEBUG] rank: " << rank << " arrived at fifth checkpoint at inter iteration "<< iterationInterType  << std::endl;
+        // TESTING
 
         // delete the virtual outputs vector of arrays
         for(int i = 0; i < numProcesses; i++){
