@@ -803,17 +803,15 @@ int main(int argc, char** argv) {
     }
     
     // TESTING
-    if(rank == 0){
-        std::cout << "[DEBUG] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
-        // print keys in the mapped virtual nodes
-        std::cout << "[DEBUG] mapped virtual nodes size for all ranks: " << ranksPairMappedVirtualNodesVectors.size() << std::endl;
-        for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
-            std::cout << interaction->first.first << " " << interaction->first.second << " ";
-            for(auto virtualNode = interaction->second.cbegin() ; virtualNode != interaction->second.cend(); virtualNode++ ){
-                std::cout <<"("<< virtualNode->first << ", " << virtualNode->second << ") ";
-            }
-            std::cout << std::endl;
+    std::cout << "[DEBUG] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
+    // print keys in the mapped virtual nodes
+    std::cout << "[DEBUG] mapped virtual nodes size for all ranks: " << ranksPairMappedVirtualNodesVectors.size() << std::endl;
+    for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
+        std::cout << "[DEBUG]" << interaction->first.first << " " << interaction->first.second << " ";
+        for(auto virtualNode = interaction->second.cbegin() ; virtualNode != interaction->second.cend(); virtualNode++ ){
+            std::cout <<"("<< virtualNode->first << ", " << virtualNode->second << ") ";
         }
+        std::cout << std::endl;
     }
     // TESTING
 
@@ -1212,6 +1210,8 @@ int main(int argc, char** argv) {
                 std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
                 if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
                     rankVirtualInputsSizes[sourceRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
+                } else {
+                    rankVirtualInputsSizes[sourceRank] = 0;
                 }
                 // allocate the array for the virtual inputs directed to the local rank types
                 rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
@@ -1224,7 +1224,10 @@ int main(int argc, char** argv) {
             int sourceRank = i;
             // receive only the virtual outputs for the types granularity (v-out for each type), or the full vectors for each pair of source type and target type
             if(virtualNodesGranularity == "typeAndNode" || virtualNodesGranularity == "type"){
-                MPI_Irecv(rankVirtualInputsBuffer[sourceRank], rankVirtualInputsSizes[sourceRank], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[sourceRank]);
+                std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
+                if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+                    MPI_Irecv(rankVirtualInputsBuffer[sourceRank], rankVirtualInputsSizes[sourceRank], MPI_DOUBLE, sourceRank, 0, MPI_COMM_WORLD, &request[sourceRank]);
+                }
             } else {
                 // OTHER CASES NOT IMPLEMENTED YET
             }
@@ -1245,8 +1248,11 @@ int main(int argc, char** argv) {
             //synchronized communication will lead to deadlocks with this type of implementation
             if(virtualNodesGranularity == "typeAndNode" || virtualNodesGranularity == "type"){
                 //send the subvectors of the virtual outputs for the combination of types and nodes
-                MPI_Send(virtualOutputs.at(targetRank), rankVirtualOutputsSizes[targetRank], MPI_DOUBLE, targetRank, 0, MPI_COMM_WORLD);
-                logger << "[LOG] sent virtual outputs from process " << rank << " to process " << targetRank  << std::endl;
+                std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
+                if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+                    MPI_Send(virtualOutputs.at(targetRank), rankVirtualOutputsSizes[targetRank], MPI_DOUBLE, targetRank, 0, MPI_COMM_WORLD);
+                    logger << "[LOG] sent virtual outputs from process " << rank << " to process " << targetRank  << std::endl;
+                }
             } else {
                 // send only the virtual outputs for the types granularity (v-out for each type
             }
@@ -1267,9 +1273,12 @@ int main(int argc, char** argv) {
 
         // receive outputs from the other processes and update the input
         for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-            logger << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
-            MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
-            logger << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
+            std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
+            if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+                logger << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
+                MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
+                logger << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
+            }
             // source workload and virtual outputs decomposition on the target
 
             // TESTING
