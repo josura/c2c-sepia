@@ -1109,13 +1109,11 @@ int main(int argc, char** argv) {
                 }
 
                 // TESTING
-                if(rank == 0){
-                    logger << "[LOG] virtual outputs for process "<< targetRank<< "  before: " << std::endl;
-                    for(uint i = 0; i < rankVirtualOutputsSizes[targetRank]; i++){
-                        logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<virtualOutputs[targetRank][i] << ", ";
-                    }
-                    logger << std::endl;
+                logger << "[DEBUG] virtual outputs from process "<< rank << " to process "<< targetRank << " are:";
+                for(uint i = 0; i < rankVirtualOutputsSizes[targetRank]; i++){
+                    logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<virtualOutputs[targetRank][i] << ", ";
                 }
+                logger << std::endl;
                 // TESTING
                         
             }
@@ -1259,21 +1257,6 @@ int main(int argc, char** argv) {
         }
 
         // TESTING
-        // printing virtual outputs values for the 0 rank to rank 1
-        if(rank == 0){
-            logger << "[LOG] virtual outputs for process "<< rank<< "  after: " << std::endl;
-            std::pair<int, int> keyRanks = std::make_pair(rank, 1);
-            for(int i = 0; i < numProcesses; i++){
-                logger << std::endl << "[LOG] to process "<< i << " : " << std::endl;
-                for(uint j = 0; j < rankVirtualOutputsSizes[i]; j++){
-                    logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][j].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][j].second <<")" <<" = " <<virtualOutputs[i][j] << ", ";
-                }
-            }
-            logger << std::endl;
-        }
-        // TESTING
-
-        // TESTING
         std::cout << "[DEBUG] rank: " << rank << " arrived at fifth checkpoint at inter iteration "<< iterationInterType  << std::endl;
         // TESTING
 
@@ -1299,7 +1282,7 @@ int main(int argc, char** argv) {
             // TESTING
             if(rank == 0){
                 std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
-                logger << "[LOG] virtual inputs from process "<< sourceRank<< "  before: " << std::endl;
+                logger << "[DEBUG] virtual inputs from process "<< sourceRank<< "  before: " << std::endl;
                 for(uint i = 0; i < rankVirtualInputsSizes[sourceRank]; i++){
                     logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
                 }
