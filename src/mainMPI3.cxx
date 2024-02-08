@@ -925,7 +925,7 @@ int main(int argc, char** argv) {
             // print all the node values for t0
             for (int i = 0; i < finalWorkload; i++){
                 if(types[i+startIdx] == "t0"){
-                    logger << "[DEBUG] node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" before: " << std::endl;
+                    logger << "[DEBUG] node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" before: ";
                     std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
                     for (uint j = 0; j < nodeNames.size(); j++){
                         logger << nodeNames[j] << " = " << typeComputations[i]->getInputNodeValue(nodeNames[j]) << ", ";
@@ -964,7 +964,7 @@ int main(int argc, char** argv) {
             // print all the node values for t0
             for (int i = 0; i < finalWorkload; i++){
                 if(types[i+startIdx] == "t0"){
-                    logger << "[DEGUB] node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" after: " << std::endl;
+                    logger << "[DEGUB] node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" after: ";
                     std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
                     for (uint j = 0; j < nodeNames.size(); j++){
                         logger << nodeNames[j] << " = " << typeComputations[i]->getOutputNodeValue(nodeNames[j]) << ", ";
@@ -1271,8 +1271,8 @@ int main(int argc, char** argv) {
 
         // receive outputs from the other processes and update the input
         for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-            std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
-            if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+            std::pair<int, int> ranksPair = std::make_pair(sourceRank, rank);
+            if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
                 logger << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
                 MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
                 logger << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
@@ -1281,10 +1281,9 @@ int main(int argc, char** argv) {
 
             // TESTING
             if(rank == 0){
-                std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
-                logger << "[DEBUG] virtual inputs from process "<< sourceRank<< "  before: " << std::endl;
+                logger << "[DEBUG] virtual inputs from process "<< sourceRank<< " to process 0  are: ";
                 for(uint i = 0; i < rankVirtualInputsSizes[sourceRank]; i++){
-                    logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
+                    logger << "(" << ranksPairMappedVirtualNodesVectors[ranksPair][i].first<< "," << ranksPairMappedVirtualNodesVectors[ranksPair][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
                 }
                 logger << std::endl;
             }
@@ -1321,47 +1320,45 @@ int main(int argc, char** argv) {
                 logger << "[ERROR] virtual nodes granularity is not supported yet: aborting"<<std::endl;
                 return 1;
             } else if (virtualNodesGranularity == "typeAndNode"){
-                // logic of reading the subvectors of the virtual inputs   
-                for (int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
+                // logic of reading the subvectors of the virtual inputs
 
-                    // use ranksPairMappedVirtualNodesVectors to get all the information needed to update the input
-                    int targetRank = rank;
-                    int currentVirtualInputIndex = 0;
-                    std::pair<int,int> ranksPair = std::make_pair(sourceRank,targetRank);
-                    if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
-                        for(auto virtualNodes:ranksPairMappedVirtualNodesVectors[ranksPair]){
-                            std::string virtualOutputNodeName = virtualNodes.first;
-                            std::string virtualInputNodeName = virtualNodes.second;
-                            std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
-                            if(virtualOutputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
-                            std::string targetType = virtualOutputNodeNameSplitted[1];
-                            std::string targetNodeName = virtualOutputNodeNameSplitted[2];
+                // use ranksPairMappedVirtualNodesVectors to get all the information needed to update the input
+                int targetRank = rank;
+                int currentVirtualInputIndex = 0;
+                std::pair<int,int> ranksPair = std::make_pair(sourceRank,targetRank);
+                if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
+                    for(auto virtualNodes:ranksPairMappedVirtualNodesVectors[ranksPair]){
+                        std::string virtualOutputNodeName = virtualNodes.first;
+                        std::string virtualInputNodeName = virtualNodes.second;
+                        std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
+                        if(virtualOutputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual output node name is not in the correct format: " + virtualOutputNodeName);
+                        std::string targetType = virtualOutputNodeNameSplitted[1];
+                        std::string targetNodeName = virtualOutputNodeNameSplitted[2];
 
-                            std::vector<std::string> virtualInputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualInputNodeName);
-                            if(virtualInputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
-                            std::string sourceType = virtualInputNodeNameSplitted[1];
-                            std::string sourceNodeName = virtualInputNodeNameSplitted[2];
+                        std::vector<std::string> virtualInputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualInputNodeName);
+                        if(virtualInputNodeNameSplitted.size()!=3) throw std::runtime_error("main:: virtual input node name is not in the correct format: " + virtualInputNodeName);
+                        std::string sourceType = virtualInputNodeNameSplitted[1];
+                        std::string sourceNodeName = virtualInputNodeNameSplitted[2];
 
-                            // get local target index for typeComputation
-                            int targetTypeIndex = -1;
-                            for(int i = 0; i < finalWorkload; i++){
-                                if(types[i+startIdx] == targetType){
-                                    targetTypeIndex = i;
-                                    break;
-                                }
+                        // get local target index for typeComputation
+                        int targetTypeIndex = -1;
+                        for(int i = 0; i < finalWorkload; i++){
+                            if(types[i+startIdx] == targetType){
+                                targetTypeIndex = i;
+                                break;
                             }
-                            if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
-                            std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
-                            // if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
-                                if(sourceType == targetType){
-                                    if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
-                                } else {
-                                    typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
-                                }
-                            // }
-                            currentVirtualInputIndex++;
-                            
                         }
+                        if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
+                        std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
+                        // if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                            if(sourceType == targetType){
+                                if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                            } else {
+                                typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                            }
+                        // }
+                        currentVirtualInputIndex++;
+                        
                     }
                 }
             }
