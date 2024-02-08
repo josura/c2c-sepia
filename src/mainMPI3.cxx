@@ -1259,6 +1259,21 @@ int main(int argc, char** argv) {
         }
 
         // TESTING
+        // printing virtual outputs values for the 0 rank to rank 1
+        if(rank == 0){
+            logger << "[LOG] virtual outputs for process "<< rank<< "  after: " << std::endl;
+            std::pair<int, int> keyRanks = std::make_pair(rank, 1);
+            for(int i = 0; i < numProcesses; i++){
+                logger << std::endl << "[LOG] to process "<< i << " : " << std::endl;
+                for(uint j = 0; j < rankVirtualOutputsSizes[i]; j++){
+                    logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][j].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][j].second <<")" <<" = " <<virtualOutputs[i][j] << ", ";
+                }
+            }
+            logger << std::endl;
+        }
+        // TESTING
+
+        // TESTING
         std::cout << "[DEBUG] rank: " << rank << " arrived at fifth checkpoint at inter iteration "<< iterationInterType  << std::endl;
         // TESTING
 
