@@ -778,40 +778,47 @@ int main(int argc, char** argv) {
         } else {
             targetWorkload = workloadPerProcess;
         }
-        for(int sourceIndexLocal = 0; sourceIndexLocal < finalWorkload; sourceIndexLocal++){
-            int sourceIndexGlobal = sourceIndexLocal + startIdx;
-            std::string sourceType = types[sourceIndexGlobal];
-            for(int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
-                int targetIndexGlobal = targetIndexLocal + rankTarget*workloadPerProcess;
-                std::string targetType = types[targetIndexGlobal];
-                std::pair<std::string, std::string> keyTypes = std::make_pair(sourceType, targetType);
-                std::pair<int, int> keyRanks = std::make_pair(rank, rankTarget);
-                // mapped virtual nodes have the format (v-out:tTarget<_targetNode> , v-in:tSource<_sourceNode>)
-                if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
-                    for(uint index = 0; index < typesPairMappedVirtualOutputsVectors[keyTypes].size(); index++){
-                        std::pair<std::string, std::string> virtualOutput = typesPairMappedVirtualOutputsVectors[keyTypes][index];
-                        std::pair<std::string, std::string> virtualInput = typesPairMappedVirtualInputsVectors[keyTypes][index];
-                        std::pair<std::string, std::string> virtualNode = std::make_pair(virtualOutput.second, virtualInput.first);
-                        
-                        ranksPairMappedVirtualNodesVectors[keyRanks].push_back(virtualNode);
+        for(int sourceTarget = 0; sourceTarget < numProcesses; sourceTarget++){
+            int sourceWorkload;
+            if(sourceTarget == numProcesses - 1){
+                sourceWorkload = types.size() - (numProcesses - 1)*workloadPerProcess;
+            } else {
+                sourceWorkload = workloadPerProcess;
+            }
+            for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
+                int sourceIndexGlobal = sourceIndexLocal + sourceTarget*workloadPerProcess;
+                std::string sourceType = types[sourceIndexGlobal];
+                for(int targetIndexLocal = 0; targetIndexLocal < targetWorkload; targetIndexLocal++){
+                    int targetIndexGlobal = targetIndexLocal + rankTarget*workloadPerProcess;
+                    std::string targetType = types[targetIndexGlobal];
+                    std::pair<std::string, std::string> keyTypes = std::make_pair(sourceType, targetType);
+                    std::pair<int, int> keyRanks = std::make_pair(sourceTarget, rankTarget);
+                    // mapped virtual nodes have the format (v-out:tTarget<_targetNode> , v-in:tSource<_sourceNode>)
+                    if(typesPairMappedVirtualOutputsVectors.contains(keyTypes)){
+                        for(uint index = 0; index < typesPairMappedVirtualOutputsVectors[keyTypes].size(); index++){
+                            std::pair<std::string, std::string> virtualOutput = typesPairMappedVirtualOutputsVectors[keyTypes][index];
+                            std::pair<std::string, std::string> virtualInput = typesPairMappedVirtualInputsVectors[keyTypes][index];
+                            std::pair<std::string, std::string> virtualNode = std::make_pair(virtualOutput.second, virtualInput.first);
+                            
+                            ranksPairMappedVirtualNodesVectors[keyRanks].push_back(virtualNode);
+                        }
                     }
+                    
                 }
-                
             }
         }
-            
+        
     }
     
     // TESTING
-    std::cout << "[DEBUG] rank: " << rank << " mapped virtual inputs and outputs" << std::endl;
-    // print keys in the mapped virtual nodes
-    std::cout << "[DEBUG] mapped virtual nodes size for all ranks: " << ranksPairMappedVirtualNodesVectors.size() << std::endl;
-    for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
-        std::cout << "[DEBUG]" << interaction->first.first << " " << interaction->first.second << " ";
-        for(auto virtualNode = interaction->second.cbegin() ; virtualNode != interaction->second.cend(); virtualNode++ ){
-            std::cout <<"("<< virtualNode->first << ", " << virtualNode->second << ") ";
+    if(rank==0){
+        for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
+            std::cout << "[DEBUG] rank:" <<interaction->first.first << "->rank:" << interaction->first.second << " mapped virtual inputs and outputs have size "<< interaction->second.size()<<" and are:";
+            for(auto virtualNode = interaction->second.cbegin() ; virtualNode != interaction->second.cend(); virtualNode++ ){
+                std::cout <<"("<< virtualNode->first << ", " << virtualNode->second << ") ";
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
     }
     // TESTING
 
@@ -1248,7 +1255,16 @@ int main(int argc, char** argv) {
                 //send the subvectors of the virtual outputs for the combination of types and nodes
                 std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
                 if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
-                    MPI_Send(virtualOutputs.at(targetRank), rankVirtualOutputsSizes[targetRank], MPI_DOUBLE, targetRank, 0, MPI_COMM_WORLD);
+                    try
+                    {
+                        MPI_Send(virtualOutputs.at(targetRank), rankVirtualOutputsSizes[targetRank], MPI_DOUBLE, targetRank, 0, MPI_COMM_WORLD);
+                    }
+                    catch(const std::exception& e)
+                    {
+                        std::cerr << e.what() << std::endl;
+                        std::cerr << "[ERROR] error in sending virtual outputs from process " << rank << " to process " << targetRank << std::endl;
+                        return 1;
+                    }
                     logger << "[LOG] sent virtual outputs from process " << rank << " to process " << targetRank  << std::endl;
                 }
             } else {
@@ -1274,20 +1290,17 @@ int main(int argc, char** argv) {
             std::pair<int, int> ranksPair = std::make_pair(sourceRank, rank);
             if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
                 logger << "[LOG] receiving virtuals outputs from process " << sourceRank << " to process " << rank << std::endl;
-                MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
+                try{
+                    MPI_Wait(&request[sourceRank], MPI_STATUS_IGNORE);
+                } catch(const std::exception& e){
+                    std::cerr << e.what() << std::endl;
+                    std::cerr << "[ERROR] error in waiting for virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
+                    return 1;
+                }
                 logger << "[LOG] received virtual outputs from process " << sourceRank << " to process " << rank << std::endl;
             }
             // source workload and virtual outputs decomposition on the target
 
-            // TESTING
-            if(rank == 0){
-                logger << "[DEBUG] virtual inputs from process "<< sourceRank<< " to process 0  are: ";
-                for(uint i = 0; i < rankVirtualInputsSizes[sourceRank]; i++){
-                    logger << "(" << ranksPairMappedVirtualNodesVectors[ranksPair][i].first<< "," << ranksPairMappedVirtualNodesVectors[ranksPair][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
-                }
-                logger << std::endl;
-            }
-            // TESTING
             int sourceWorkload;
             if(sourceRank == (numProcesses-1)){
                 sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
@@ -1324,10 +1337,34 @@ int main(int argc, char** argv) {
 
                 // use ranksPairMappedVirtualNodesVectors to get all the information needed to update the input
                 int targetRank = rank;
-                int currentVirtualInputIndex = 0;
                 std::pair<int,int> ranksPair = std::make_pair(sourceRank,targetRank);
+
+                // TESTING
+                logger << "[DEBUG] rank: " << rank << " arrived at seventh checkpoint at inter iteration "<< iterationInterType  << std::endl;
+                logger << "[DEBUG] controlling the virtual inputs sizes for process "<< sourceRank<< " to process "<< targetRank;
                 if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
-                    for(auto virtualNodes:ranksPairMappedVirtualNodesVectors[ranksPair]){
+                    logger << " is: " << ranksPairMappedVirtualNodesVectors[ranksPair].size() << std::endl;
+                } else {
+                    logger << " is: 0" << std::endl;
+                }
+                // TESTING
+                if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
+
+                    // TESTING
+                    logger << "[DEBUG] virtual inputs from process "<< sourceRank<< " to process "<< targetRank << " are: ";
+                    for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
+                        logger << "(" << ranksPairMappedVirtualNodesVectors[ranksPair][i].first<< "," << ranksPairMappedVirtualNodesVectors[ranksPair][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
+                    }
+                    logger << std::endl;
+                    // TESTING
+
+
+                    // TESTING
+                    std::cout << "[DEBUG] rank: " << rank << " arrived at eighth checkpoint at inter iteration "<< iterationInterType  << std::endl;
+                    // TESTING
+
+                    for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
+                        std::pair<std::string, std::string> virtualNodes = ranksPairMappedVirtualNodesVectors[ranksPair][i];
                         std::string virtualOutputNodeName = virtualNodes.first;
                         std::string virtualInputNodeName = virtualNodes.second;
                         std::vector<std::string> virtualOutputNodeNameSplitted = splitVirtualNodeStringIntoVector(virtualOutputNodeName);
@@ -1350,14 +1387,13 @@ int main(int argc, char** argv) {
                         }
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
-                        // if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                        if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
                             if(sourceType == targetType){
-                                if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
                             } else {
-                                typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][currentVirtualInputIndex]);
+                                typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
                             }
-                        // }
-                        currentVirtualInputIndex++;
+                        }
                         
                     }
                 }
