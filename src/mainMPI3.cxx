@@ -924,6 +924,71 @@ int main(int argc, char** argv) {
         }
     }
 
+    // virtual inputs and virtual outputs buffers for the MPI communication
+    // buffer for the virtual outputs from the other processes(virtual inputs), the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
+    std::vector<double*> rankVirtualInputsBuffer;
+    std::vector<uint> rankVirtualInputsSizes = std::vector<uint>(numProcesses,0);
+    if(virtualNodesGranularity == "type"){
+        for(int i = 0; i < numProcesses; i++){
+            int currentWorkload;
+            if(i == (numProcesses-1)){
+                currentWorkload = types.size() - (i*workloadPerProcess);
+            } else {
+                currentWorkload = workloadPerProcess;
+            }
+            rankVirtualInputsSizes[i] = finalWorkload * currentWorkload;
+            rankVirtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
+        }
+    } else if (virtualNodesGranularity == "typeAndNode"){
+        // allocate the buffer for the virtual outputs for the combination of types and nodes
+        for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
+            std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
+            if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+                rankVirtualInputsSizes[sourceRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
+            } else {
+                rankVirtualInputsSizes[sourceRank] = 0;
+            }
+            // allocate the array for the virtual inputs directed to the local rank types
+            rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
+        }
+            
+    }
+
+    // buffer for virtual inputs to other processes(virtual outputs)
+    std::vector<double*> virtualOutputs;
+        std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
+        // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
+        // TODO generalize, difficult though since the "type" granularity has a fixed number of spots for each type, while the "typeAndNode" granularity has a variable number of spots for each type
+        if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
+            for(int i = 0; i < numProcesses; i++){
+                int currentWorkload;
+                if(i == (numProcesses-1)){
+                    currentWorkload = types.size() - (i*workloadPerProcess);
+                } else {
+                    currentWorkload = workloadPerProcess;
+                }
+                rankVirtualOutputsSizes[i] = currentWorkload * finalWorkload;
+                virtualOutputs.push_back(new double[rankVirtualOutputsSizes[i]]);   // the array contains all the virtual outputs for the process types
+            }
+        } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)
+            
+            //allocate the virtual outputs arrays
+            for(int targetRank = 0; targetRank < numProcesses; targetRank++){
+                std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
+                if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
+                    rankVirtualOutputsSizes[targetRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
+                } else {
+                    rankVirtualOutputsSizes[targetRank] = 0;
+                }
+
+                // allocate the array for the virtual outputs directed to the target rank types
+                virtualOutputs.push_back(new double[rankVirtualOutputsSizes[targetRank]]);                        
+            }
+        } else {
+            std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
+            return 1;
+        } 
+
     for(int iterationInterType = 0; iterationInterType < intertypeIterations; iterationInterType++){
         for(int iterationIntraType = 0; iterationIntraType < intratypeIterations; iterationIntraType++){
             
@@ -1034,22 +1099,7 @@ int main(int argc, char** argv) {
         // TESTING
         std::cout << "[DEBUG] rank: " << rank << " arrived at first checkpoint" << std::endl;
         // TESTING
-                
-        std::vector<double*> virtualOutputs;
-        std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
-        // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
-        // TODO generalize, difficult though since the "type" granularity has a fixed number of spots for each type, while the "typeAndNode" granularity has a variable number of spots for each type
         if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
-            for(int i = 0; i < numProcesses; i++){
-                int currentWorkload;
-                if(i == (numProcesses-1)){
-                    currentWorkload = types.size() - (i*workloadPerProcess);
-                } else {
-                    currentWorkload = workloadPerProcess;
-                }
-                rankVirtualOutputsSizes[i] = currentWorkload * finalWorkload;
-                virtualOutputs.push_back(new double[rankVirtualOutputsSizes[i]]);   // the array contains all the virtual outputs for the process types
-            }
             // fill the arrays
             for(int i = 0; i < SizeToInt(types.size()); i++){
                 int targetRank = typeToRank[types[i]];
@@ -1069,22 +1119,7 @@ int main(int argc, char** argv) {
                     }
                 
             }
-        } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)
-            
-            //allocate the virtual outputs arrays
-            for(int targetRank = 0; targetRank < numProcesses; targetRank++){
-                std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
-                if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
-                    rankVirtualOutputsSizes[targetRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
-                } else {
-                    rankVirtualOutputsSizes[targetRank] = 0;
-                }
-
-                // allocate the array for the virtual outputs directed to the target rank types
-                virtualOutputs.push_back(new double[rankVirtualOutputsSizes[targetRank]]);
-
-            }
-
+        } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)    
             // fill the arrays
             for (int targetRank = 0; targetRank < numProcesses; targetRank++){
                 std::pair<int, int> keyRanks = std::make_pair(rank, targetRank);
@@ -1177,52 +1212,7 @@ int main(int argc, char** argv) {
 
 
         // preliminary asynchronous receive
-        // buffer for the virtual outputs from the other processes, the maximum size is the power of 2 of the workload per process(since every type will send values to every other type)
-        std::vector<double*> rankVirtualInputsBuffer;
-        std::vector<uint> rankVirtualInputsSizes = std::vector<uint>(numProcesses,0);
-        if(virtualNodesGranularity == "type"){
-            for(int i = 0; i < numProcesses; i++){
-                int currentWorkload;
-                if(i == (numProcesses-1)){
-                    currentWorkload = types.size() - (i*workloadPerProcess);
-                } else {
-                    currentWorkload = workloadPerProcess;
-                }
-                rankVirtualInputsSizes[i] = finalWorkload * currentWorkload;
-                rankVirtualInputsBuffer.push_back(new double[finalWorkload * currentWorkload]);   // the array contains all the virtual outputs for the process types
-            }
-        } else if (virtualNodesGranularity == "typeAndNode"){
-            // TODO allocate the buffer for the virtual outputs for the combination of types and nodes
-            for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
-                // compute the virtual inputs sizes for the source rank types to the local rank types
-                // int sourceStartIdx = sourceRank * workloadPerProcess;
-                // int sourceWorkload;
-                // if(sourceRank == (numProcesses-1)){
-                //     sourceWorkload = types.size() - (sourceRank*workloadPerProcess);
-                // } else {
-                //     sourceWorkload = workloadPerProcess;
-                // }
-                // for(int targetIndexLocal = 0; targetIndexLocal < finalWorkload; targetIndexLocal++){
-                //     std::string targetType = types[targetIndexLocal + startIdx];
-                //     for(int sourceIndexLocal = 0; sourceIndexLocal < sourceWorkload; sourceIndexLocal++){
-                //         std::string sourceType = types[sourceIndexLocal + sourceStartIdx];
-                //         // if there is at least an interaction between the two types, the size is increased
-                //         if(typesPairMappedVirtualInputsVectors.contains(std::make_pair(sourceType,targetType))){
-                //             rankVirtualInputsSizes[sourceRank] += typesPairMappedVirtualInputsVectors[std::make_pair(sourceType,targetType)].size();
-                //         }
-                //     }
-                // }
-                std::pair<int, int> keyRanks = std::make_pair(sourceRank, rank);
-                if(ranksPairMappedVirtualNodesVectors.contains(keyRanks)){
-                    rankVirtualInputsSizes[sourceRank] = ranksPairMappedVirtualNodesVectors[keyRanks].size();
-                } else {
-                    rankVirtualInputsSizes[sourceRank] = 0;
-                }
-                // allocate the array for the virtual inputs directed to the local rank types
-                rankVirtualInputsBuffer.push_back(new double[rankVirtualInputsSizes[sourceRank]]);
-            }
-                
-        }
+        
         // receive the virtual outputs from the other processes
         MPI_Request request[numProcesses];
         for(int i = 0; i < numProcesses; i++){
@@ -1275,11 +1265,6 @@ int main(int argc, char** argv) {
         // TESTING
         std::cout << "[DEBUG] rank: " << rank << " arrived at fifth checkpoint at inter iteration "<< iterationInterType  << std::endl;
         // TESTING
-
-        // delete the virtual outputs vector of arrays
-        for(int i = 0; i < numProcesses; i++){
-            if (virtualOutputs.at(i) != nullptr) delete[] virtualOutputs.at(i);
-        }
 
         // TESTING
         std::cout << "[DEBUG] rank: " << rank << " arrived at sixth checkpoint at inter iteration "<< iterationInterType  << std::endl;
@@ -1358,12 +1343,10 @@ int main(int argc, char** argv) {
                     logger << std::endl;
                     // TESTING
 
-
-                    // TESTING
-                    std::cout << "[DEBUG] rank: " << rank << " arrived at eighth checkpoint at inter iteration "<< iterationInterType  << std::endl;
-                    // TESTING
-
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
+                        // TESTING
+                        logger << "[DEBUG] updating input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << ranksPairMappedVirtualNodesVectors[ranksPair][i].first << " and " << ranksPairMappedVirtualNodesVectors[ranksPair][i].second << std::endl;
+                        // TESTING
                         std::pair<std::string, std::string> virtualNodes = ranksPairMappedVirtualNodesVectors[ranksPair][i];
                         std::string virtualOutputNodeName = virtualNodes.first;
                         std::string virtualInputNodeName = virtualNodes.second;
@@ -1385,6 +1368,10 @@ int main(int argc, char** argv) {
                                 break;
                             }
                         }
+
+                        // TESTING
+                        std::cout << "[DEBUG] rank: " << rank << " arrived at eighth checkpoint at inter iteration "<< iterationInterType << "and for virtual input index "<< i  << std::endl;
+                        // TESTING
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
@@ -1399,11 +1386,14 @@ int main(int argc, char** argv) {
                 }
             }
         }
-
-        // delete the virtual inputs vector of arrays
-        for(int i = 0; i < numProcesses; i++){
-            delete[] rankVirtualInputsBuffer.at(i);
-        }
+    }
+    // delete the virtual outputs vector of arrays
+    for(uint i = 0; i < virtualOutputs.size(); i++){
+        if (virtualOutputs.at(i) != nullptr) delete[] virtualOutputs.at(i);
+    }
+    // delete the virtual inputs vector of arrays
+    for(uint i = 0; i < rankVirtualInputsBuffer.size(); i++){
+        if (rankVirtualInputsBuffer.at(i) != nullptr) delete[] rankVirtualInputsBuffer.at(i);
     }
 
     MPI_Finalize();
