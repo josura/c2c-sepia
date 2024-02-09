@@ -1374,15 +1374,41 @@ int main(int argc, char** argv) {
                         // TESTING
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
-                        if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
-                            if(sourceType == targetType){
-                                if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                        if(interactionBetweenTypesFinerMap.contains(interactionKey)){
+                            // TESTING
+                            std::cout << "[DEBUG] rank: " << rank << " setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
+                            // TESTING   
+                            if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                                try{
+                                    if(sourceType == targetType){
+                                        if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                                    } else {
+                                        typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                                    }
+                                } catch(const std::exception& e){
+                                    std::cerr << e.what() << std::endl;
+                                    std::cerr << "[ERROR] error in setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
+                                    return 1;
+                                }
                             } else {
-                                typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                                // TESTING
+                                std::cout << "[DEBUG] rank: " << rank << " interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " have no contact time for inter iteration "<< iterationInterType << std::endl;
+                                // TESTING
                             }
+                        } else {
+                            std::cerr << "[ERROR] interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " is not present in the interactionBetweenTypesFinerMap" << std::endl;
+                            std::cerr << "[ERROR] aborting" << std::endl;
+                            return 1;
                         }
+
+                        // TESTING
+                        std::cout << "[DEBUG] rank: " << rank << " arrived at ninth checkpoint at inter iteration "<< iterationInterType << "and for virtual input index "<< i  << std::endl;
+                        // TESTING
                         
                     }
+                    // TESTING
+                    logger << "[DEBUG] rank: " << rank << " arrived at tenth checkpoint at inter iteration "<< iterationInterType  << std::endl;
+                    // TESTING
                 }
             }
         }
