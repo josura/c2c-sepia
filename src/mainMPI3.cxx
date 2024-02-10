@@ -1371,29 +1371,31 @@ int main(int argc, char** argv) {
 
                         // TESTING
                         std::cout << "[DEBUG] rank: " << rank << " arrived at eighth checkpoint at inter iteration "<< iterationInterType << "and for virtual input index "<< i  << std::endl;
+                        std::cout << "[DEBUG] rank: " << rank<< " target type index for type " << targetType << " is: " << targetTypeIndex << std::endl;
+                        std::cout << "[DEBUG] rank: " << rank<< " final workload is: " << finalWorkload << std::endl;
                         // TESTING
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
                             if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
-                                // TESTING
-                                std::cout << "[DEBUG] rank: " << rank << " setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
-                                // print inputAugmented for the target type
-                                std::cout << "[DEBUG] rank: " << rank << " inputAugmented for target type " << targetType << " is: ";
-                                std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
-                                for (uint j = 0; j < nodeNames.size(); j++){
-                                    std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValue(nodeNames[j]) << ", ";
-                                }
-                                std::cout << "[DEBUG] rank: " << rank << " inputAugmentedArma for target type " << targetType << " is: ";
-                                for (uint j = 0; j < nodeNames.size(); j++){
-                                    std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValueArma(nodeNames[j]) << ", ";
-                                }
-                                // TESTING   
+                                // // TESTING
+                                // std::cout << "[DEBUG] rank: " << rank << " setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
+                                // // print inputAugmented for the target type
+                                // std::cout << "[DEBUG] rank: " << rank << " inputAugmented for target type " << targetType << " is: ";
+                                // std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
+                                // for (uint j = 0; j < nodeNames.size(); j++){
+                                //     std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValue(nodeNames[j]) << ", ";
+                                // }
+                                // std::cout << "[DEBUG] rank: " << rank << " inputAugmentedArma for target type " << targetType << " is: ";
+                                // for (uint j = 0; j < nodeNames.size(); j++){
+                                //     std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValueArma(nodeNames[j]) << ", ";
+                                // }
+                                // // TESTING   
                                 try{
                                     if(sourceType == targetType){
                                         if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
                                     } else {
-                                        typeComputations[targetTypeIndex - startIdx]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                                        typeComputations[targetTypeIndex]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
                                     }
                                 } catch(const std::exception& e){
                                     std::cerr << e.what() << std::endl;
