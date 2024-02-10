@@ -1036,7 +1036,7 @@ int main(int argc, char** argv) {
             // print all the node values for t0
             for (int i = 0; i < finalWorkload; i++){
                 if(types[i+startIdx] == "t0"){
-                    logger << "[DEGUB] node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" after: ";
+                    logger << "[DEBUG] rank: " << rank<< " node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" after: ";
                     std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
                     for (uint j = 0; j < nodeNames.size(); j++){
                         logger << nodeNames[j] << " = " << typeComputations[i]->getOutputNodeValue(nodeNames[j]) << ", ";
@@ -1151,7 +1151,7 @@ int main(int argc, char** argv) {
                 }
 
                 // TESTING
-                logger << "[DEBUG] virtual outputs from process "<< rank << " to process "<< targetRank << " are:";
+                logger << "[DEBUG] rank: " << rank<< " virtual outputs from process "<< rank << " to process "<< targetRank << " are:";
                 for(uint i = 0; i < rankVirtualOutputsSizes[targetRank]; i++){
                     logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<virtualOutputs[targetRank][i] << ", ";
                 }
@@ -1326,7 +1326,7 @@ int main(int argc, char** argv) {
 
                 // TESTING
                 logger << "[DEBUG] rank: " << rank << " arrived at seventh checkpoint at inter iteration "<< iterationInterType  << std::endl;
-                logger << "[DEBUG] controlling the virtual inputs sizes for process "<< sourceRank<< " to process "<< targetRank;
+                logger << "[DEBUG] rank: " << rank<< " controlling the virtual inputs sizes for process "<< sourceRank<< " to process "<< targetRank;
                 if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
                     logger << " is: " << ranksPairMappedVirtualNodesVectors[ranksPair].size() << std::endl;
                 } else {
@@ -1336,7 +1336,7 @@ int main(int argc, char** argv) {
                 if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
 
                     // TESTING
-                    logger << "[DEBUG] virtual inputs from process "<< sourceRank<< " to process "<< targetRank << " are: ";
+                    logger << "[DEBUG] rank: " << rank<< " virtual inputs from process "<< sourceRank<< " to process "<< targetRank << " are: ";
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
                         logger << "(" << ranksPairMappedVirtualNodesVectors[ranksPair][i].first<< "," << ranksPairMappedVirtualNodesVectors[ranksPair][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
                     }
@@ -1345,7 +1345,7 @@ int main(int argc, char** argv) {
 
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
                         // TESTING
-                        logger << "[DEBUG] updating input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << ranksPairMappedVirtualNodesVectors[ranksPair][i].first << " and " << ranksPairMappedVirtualNodesVectors[ranksPair][i].second << std::endl;
+                        logger << "[DEBUG] rank: " << rank<< " updating input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << ranksPairMappedVirtualNodesVectors[ranksPair][i].first << " and " << ranksPairMappedVirtualNodesVectors[ranksPair][i].second << std::endl;
                         // TESTING
                         std::pair<std::string, std::string> virtualNodes = ranksPairMappedVirtualNodesVectors[ranksPair][i];
                         std::string virtualOutputNodeName = virtualNodes.first;
@@ -1375,10 +1375,20 @@ int main(int argc, char** argv) {
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
-                            // TESTING
-                            std::cout << "[DEBUG] rank: " << rank << " setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
-                            // TESTING   
                             if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                                // TESTING
+                                std::cout << "[DEBUG] rank: " << rank << " setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
+                                // print inputAugmented for the target type
+                                std::cout << "[DEBUG] rank: " << rank << " inputAugmented for target type " << targetType << " is: ";
+                                std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
+                                for (uint j = 0; j < nodeNames.size(); j++){
+                                    std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValue(nodeNames[j]) << ", ";
+                                }
+                                std::cout << "[DEBUG] rank: " << rank << " inputAugmentedArma for target type " << targetType << " is: ";
+                                for (uint j = 0; j < nodeNames.size(); j++){
+                                    std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValueArma(nodeNames[j]) << ", ";
+                                }
+                                // TESTING   
                                 try{
                                     if(sourceType == targetType){
                                         if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
