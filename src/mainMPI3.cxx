@@ -810,17 +810,6 @@ int main(int argc, char** argv) {
         
     }
     
-    // TESTING
-    if(rank==0){
-        for(auto interaction = ranksPairMappedVirtualNodesVectors.cbegin() ; interaction != ranksPairMappedVirtualNodesVectors.cend(); interaction++ ){
-            std::cout << "[DEBUG] rank:" <<interaction->first.first << "->rank:" << interaction->first.second << " mapped virtual inputs and outputs have size "<< interaction->second.size()<<" and are:";
-            for(auto virtualNode = interaction->second.cbegin() ; virtualNode != interaction->second.cend(); virtualNode++ ){
-                std::cout <<"("<< virtualNode->first << ", " << virtualNode->second << ") ";
-            }
-            std::cout << std::endl;
-        }
-    }
-    // TESTING
 
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
     std::function<double(double)> propagationScalingFunction = [](double time)->double{return 1;};
@@ -993,19 +982,6 @@ int main(int argc, char** argv) {
         for(int iterationIntraType = 0; iterationIntraType < intratypeIterations; iterationIntraType++){
             
             
-            // TESTING
-            // print all the node values for t0
-            for (int i = 0; i < finalWorkload; i++){
-                if(types[i+startIdx] == "t0"){
-                    logger << "[DEBUG] node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" before: ";
-                    std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
-                    for (uint j = 0; j < nodeNames.size(); j++){
-                        logger << nodeNames[j] << " = " << typeComputations[i]->getInputNodeValue(nodeNames[j]) << ", ";
-                    }
-                    logger << std::endl;
-                }
-            }
-            // TESTING
             
             // computation of perturbation
             #pragma omp parallel for
@@ -1030,37 +1006,6 @@ int main(int argc, char** argv) {
                     std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = false);
                 }
             }
-
-
-            // TESTING
-            // print all the node values for t0
-            for (int i = 0; i < finalWorkload; i++){
-                if(types[i+startIdx] == "t0"){
-                    logger << "[DEBUG] rank: " << rank<< " node values for type t0 in interIteration "<< iterationInterType << " and intra type iteration "<< iterationIntraType <<" after: ";
-                    std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
-                    for (uint j = 0; j < nodeNames.size(); j++){
-                        logger << nodeNames[j] << " = " << typeComputations[i]->getOutputNodeValue(nodeNames[j]) << ", ";
-                    }
-                    logger << std::endl;
-                    // logger << "[DEBUG] virtual outputs for type t0 in interIteration "<< iterationInterType <<" before: " << std::endl;
-                    // for(int j = 0; j < numProcesses; j++){
-                    //     logger << std::endl << "[DEBUG] to process "<< j << " : " << std::endl;
-                    //     int targetWorkload;
-                    //     if(j == (numProcesses-1)){
-                    //         targetWorkload = types.size() - (j*workloadPerProcess);
-                    //     } else {
-                    //         targetWorkload = workloadPerProcess;
-                    //     }
-                    //     for(int k = 0; k < targetWorkload; k++){
-                    //         int localTypePosition = i + startIdx;
-                    //         int targetTypePosition = k + j*workloadPerProcess;
-                    //         logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")= v-out:"<<types[targetTypePosition]<< "= " <<typeComputations[i]->getOutputNodeValue("v-out:" + types[targetTypePosition]) << " = "  << typeComputations[i]->getVirtualOutputForType(types[targetTypePosition]) << ", ";
-                    //     }
-                    // }
-                    // logger << std::endl;
-                }
-            }
-            // TESTING
 
 
 
@@ -1096,9 +1041,7 @@ int main(int argc, char** argv) {
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
         // build the array
 
-        // TESTING
-        std::cout << "[DEBUG] rank: " << rank << " arrived at first checkpoint" << std::endl;
-        // TESTING
+
         if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
             // fill the arrays
             for(int i = 0; i < SizeToInt(types.size()); i++){
@@ -1112,9 +1055,7 @@ int main(int argc, char** argv) {
                     int targetPosition = i - targetRank * workloadPerProcess;
                     for(int j = 0; j < finalWorkload; j++ ){
                         int virtualOutputPosition = targetPosition + j * targetWorkload;
-                        // // TESTING
-                        // logger << "[LOG] virtual output position: " << virtualOutputPosition << " for v(" << types[j + startIdx]<< "->" << types[i] << ")" << std::endl;
-                        // // TESTING
+                        
                         virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
                     }
                 
@@ -1149,14 +1090,6 @@ int main(int argc, char** argv) {
                         }
                     }
                 }
-
-                // TESTING
-                logger << "[DEBUG] rank: " << rank<< " virtual outputs from process "<< rank << " to process "<< targetRank << " are:";
-                for(uint i = 0; i < rankVirtualOutputsSizes[targetRank]; i++){
-                    logger << "(" << ranksPairMappedVirtualNodesVectors[keyRanks][i].first<< "," << ranksPairMappedVirtualNodesVectors[keyRanks][i].second <<")" <<" = " <<virtualOutputs[targetRank][i] << ", ";
-                }
-                logger << std::endl;
-                // TESTING
                         
             }
         } else {
@@ -1164,9 +1097,6 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        // TESTING
-        std::cout << "[DEBUG] rank: " << rank << " arrived at second checkpoint at inter iteration "<< iterationInterType  << std::endl;
-        // TESTING
 
         
 
@@ -1178,37 +1108,6 @@ int main(int argc, char** argv) {
             }
         }
 
-        // TESTING
-        std::cout << "[DEBUG] rank: " << rank << " arrived at third checkpoint at inter iteration "<< iterationInterType  << std::endl;
-        // TESTING
-
-
-        
-
-        // // TESTING
-        // // print the virtual outputs arrays
-        // logger << "[LOG] virtual outputs for process "<< rank<< "  after: " << std::endl;
-        // for(int i = 0; i < numProcesses; i++){
-        //     logger << std::endl << "[LOG] to process "<< i << " : " << std::endl;
-        //     int targetWorkload;
-        //     if(i == (numProcesses-1)){
-        //         targetWorkload = types.size() - (i*workloadPerProcess);
-        //     } else {
-        //         targetWorkload = workloadPerProcess;
-        //     }
-        //     for(int j = 0; j < finalWorkload; j++){
-        //         for(int k = 0; k < targetWorkload; k++){
-        //             int virtualOutputPosition = j + k * finalWorkload;
-        //             int localTypePosition = j + startIdx;
-        //             int targetTypePosition = k + i*workloadPerProcess;
-        //             logger << "v(" << types[localTypePosition]<< "->" << types[targetTypePosition] << ")=" << virtualOutputs.at(i)[virtualOutputPosition] << ", ";
-        //         }
-        //     }
-        // }
-        // logger << std::endl;
-        // // TESTING
-
-        
 
 
         // preliminary asynchronous receive
@@ -1228,10 +1127,7 @@ int main(int argc, char** argv) {
             }
         }
 
-        // TESTING
-        std::cout << "[DEBUG] rank: " << rank << " arrived at fourth checkpoint at inter iteration "<< iterationInterType  << std::endl;
-        // TESTING
-
+    
 
         // send the virtual outputs to the other processes
         for(int targetRank = 0; targetRank < numProcesses; targetRank++){
@@ -1261,14 +1157,6 @@ int main(int argc, char** argv) {
                 // send only the virtual outputs for the types granularity (v-out for each type
             }
         }
-
-        // TESTING
-        std::cout << "[DEBUG] rank: " << rank << " arrived at fifth checkpoint at inter iteration "<< iterationInterType  << std::endl;
-        // TESTING
-
-        // TESTING
-        std::cout << "[DEBUG] rank: " << rank << " arrived at sixth checkpoint at inter iteration "<< iterationInterType  << std::endl;
-        // TESTING
 
         // receive outputs from the other processes and update the input
         for(int sourceRank = 0; sourceRank < numProcesses; sourceRank++){
@@ -1324,29 +1212,10 @@ int main(int argc, char** argv) {
                 int targetRank = rank;
                 std::pair<int,int> ranksPair = std::make_pair(sourceRank,targetRank);
 
-                // TESTING
-                logger << "[DEBUG] rank: " << rank << " arrived at seventh checkpoint at inter iteration "<< iterationInterType  << std::endl;
-                logger << "[DEBUG] rank: " << rank<< " controlling the virtual inputs sizes for process "<< sourceRank<< " to process "<< targetRank;
-                if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
-                    logger << " is: " << ranksPairMappedVirtualNodesVectors[ranksPair].size() << std::endl;
-                } else {
-                    logger << " is: 0" << std::endl;
-                }
-                // TESTING
                 if(ranksPairMappedVirtualNodesVectors.contains(ranksPair)){
 
-                    // TESTING
-                    logger << "[DEBUG] rank: " << rank<< " virtual inputs from process "<< sourceRank<< " to process "<< targetRank << " are: ";
                     for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
-                        logger << "(" << ranksPairMappedVirtualNodesVectors[ranksPair][i].first<< "," << ranksPairMappedVirtualNodesVectors[ranksPair][i].second <<")" <<" = " <<rankVirtualInputsBuffer[sourceRank][i] << ", ";
-                    }
-                    logger << std::endl;
-                    // TESTING
-
-                    for(uint i = 0; i < ranksPairMappedVirtualNodesVectors[ranksPair].size(); i++){
-                        // TESTING
-                        logger << "[DEBUG] rank: " << rank<< " updating input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << ranksPairMappedVirtualNodesVectors[ranksPair][i].first << " and " << ranksPairMappedVirtualNodesVectors[ranksPair][i].second << std::endl;
-                        // TESTING
+                        
                         std::pair<std::string, std::string> virtualNodes = ranksPairMappedVirtualNodesVectors[ranksPair][i];
                         std::string virtualOutputNodeName = virtualNodes.first;
                         std::string virtualInputNodeName = virtualNodes.second;
@@ -1368,24 +1237,11 @@ int main(int argc, char** argv) {
                                 break;
                             }
                         }
-                        
+
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
                             if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
-                                // // TESTING
-                                // std::cout << "[DEBUG] rank: " << rank << " setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
-                                // // print inputAugmented for the target type
-                                // std::cout << "[DEBUG] rank: " << rank << " inputAugmented for target type " << targetType << " is: ";
-                                // std::vector<std::string> nodeNames = typeComputations[targetTypeIndex]->getAugmentedGraph()->getNodeNames();
-                                // for (uint j = 0; j < nodeNames.size(); j++){
-                                //     std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValue(nodeNames[j]) << ", ";
-                                // }
-                                // std::cout << "[DEBUG] rank: " << rank << " inputAugmentedArma for target type " << targetType << " is: ";
-                                // for (uint j = 0; j < nodeNames.size(); j++){
-                                //     std::cout << nodeNames[j] << " = "<< typeComputations[targetTypeIndex]->getInputNodeValueArma(nodeNames[j]) << ", ";
-                                // }
-                                // // TESTING   
                                 try{
                                     if(sourceType == targetType){
                                         if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
@@ -1398,9 +1254,9 @@ int main(int argc, char** argv) {
                                     return 1;
                                 }
                             } else {
-                                // TESTING
-                                std::cout << "[DEBUG] rank: " << rank << " interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " have no contact time for inter iteration "<< iterationInterType << std::endl;
-                                // TESTING
+                                // // TESTING
+                                // std::cout << "[DEBUG] rank: " << rank << " interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " have no contact time for inter iteration "<< iterationInterType << std::endl;
+                                // // TESTING
                             }
                         } else {
                             std::cerr << "[ERROR] interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " is not present in the interactionBetweenTypesFinerMap" << std::endl;
@@ -1408,14 +1264,8 @@ int main(int argc, char** argv) {
                             return 1;
                         }
 
-                        // TESTING
-                        std::cout << "[DEBUG] rank: " << rank << " arrived at ninth checkpoint at inter iteration "<< iterationInterType << "and for virtual input index "<< i  << std::endl;
-                        // TESTING
                         
                     }
-                    // TESTING
-                    logger << "[DEBUG] rank: " << rank << " arrived at tenth checkpoint at inter iteration "<< iterationInterType  << std::endl;
-                    // TESTING
                 }
             }
         }
