@@ -1368,12 +1368,7 @@ int main(int argc, char** argv) {
                                 break;
                             }
                         }
-
-                        // TESTING
-                        std::cout << "[DEBUG] rank: " << rank << " arrived at eighth checkpoint at inter iteration "<< iterationInterType << "and for virtual input index "<< i  << std::endl;
-                        std::cout << "[DEBUG] rank: " << rank<< " target type index for type " << targetType << " is: " << targetTypeIndex << std::endl;
-                        std::cout << "[DEBUG] rank: " << rank<< " final workload is: " << finalWorkload << std::endl;
-                        // TESTING
+                        
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
