@@ -522,7 +522,7 @@ int main(int argc, char** argv) {
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
     std::vector<std::vector<std::string>> graphsNodes;
     std::vector<std::vector<std::string>> graphsNodesAll; // used only initially to read the values, contains all types
-    std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload
+    std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload, no virtual nodes
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     // a single graph is used for all the types
     if(vm.count("fUniqueGraph")){
@@ -657,7 +657,6 @@ int main(int argc, char** argv) {
 
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
     // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
-    // TODO substitute with another class that represents granularity and returns the interactions between the types or the pairs of types+node, along the lists of contact times and virtual nodes (just a superclass that is extended by the two classes for different granularity)
     std::unordered_map<std::pair<std::string, std::string>, std::unordered_set<int>, hash_pair_strings> interactionBetweenTypesMap;
     std::unordered_map<std::tuple<std::string, std::string, std::string, std::string>, std::unordered_set<int>, hash_quadruple_strings> interactionBetweenTypesFinerMap;
     for(auto typeInteractionFilename = allFilesInteraction.cbegin() ; typeInteractionFilename != allFilesInteraction.cend() ; typeInteractionFilename++){
@@ -1187,7 +1186,6 @@ int main(int argc, char** argv) {
                         int localTypePosition = ilocal + startIdx;
                         int sourceTypePosition = isource + sourceRank*workloadPerProcess;
                         std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
-                        // TODO take into account granularity of virtual nodes in the future
                         if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
                             // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
                             // for(auto time: interactionBetweenTypesMap[keyTypes]){
