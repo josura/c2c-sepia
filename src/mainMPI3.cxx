@@ -1100,7 +1100,7 @@ int main(int argc, char** argv) {
         
 
 
-        // reset virtual outputs if specified
+        // reset virtual outputs if specified, should work since virtual outputs are assigned before
         if(resetVirtualOutputs){
             for(int i = 0; i < finalWorkload; i++){
                 typeComputations[i]->resetVirtualOutputs();
