@@ -108,6 +108,12 @@ class Computation{
             int index = nodeToIndex.at(nodeName);
             return inputAugmented[index];
             };
+        double getInputNodeValueArma(std::string nodeName)const{
+            if(nodeToIndex.find(nodeName) == nodeToIndex.end())
+                throw std::out_of_range("Computation::getInputNodeValueArma: the node name is not in the graph");
+            int index = nodeToIndex.at(nodeName);
+            return InputAugmentedArma[index];
+            };
         void setInputNodeValue(std::string nodeName, double value){
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
                 throw std::out_of_range("Computation::setInputNodeValue: the node name is not in the graph");
