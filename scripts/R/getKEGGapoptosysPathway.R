@@ -34,17 +34,31 @@ nodes.ensemble <- lapply(nodes, function(x) {
     return(x)
 })
 
+# extract the entrez names from the nodes.ensemble
+nodes.names.entrez <- list()
+for (i in 1:length(nodes.ensemble)) {
+    nodes.names.entrez <- c(nodes.names.entrez, names(nodes.ensemble[[i]]))
+}
+# extract the values from the nodes.ensemble
+nodes.names.ensemble <- list()
+for (i in 1:length(nodes.ensemble)) {
+  nodes.names.ensemble <- c(nodes.names.ensemble, unname(nodes.ensemble[[i]]))
+}
+
 # convert edges list names from KEGG to ensemble gene names
 edgesList.ensemble <- lapply(edgesList, function(x) {
     x <- lapply(x, function(y) {
         if (startsWith(y, "hsa:")) {
             y <- sub("hsa:", "", y)
-            y <- unlist(mapIds(org.Hs.eg.db, keys=y, column="SYMBOL", keytype="ENTREZID"))
+            y <- nodes.names.ensemble[nodes.names.entrez == y][[1]]
         }
         return(y)
     })
     return(x)
 })
+names(edgesList.ensemble) <- nodes.names.ensemble
 
-# Plot the graph
-plot(mapkGembed)
+
+create_apoptosys_graph_inputs <- function(){
+    
+}
