@@ -61,6 +61,39 @@ edgesList.ensemble <- lapply(edgesList, function(x) {
 })
 names(edgesList.ensemble) <- nodes.names.ensemble
 
+subtypes <- lapply(mapkpathway.expanded@edges, function(x) {
+    return(x@subtype[[1]]@name)
+})
+
+subtypes <- unique(unlist(subtypes))
+
+edges.dataframe <- data.frame(start=character(), end=character(), type=character(), subtype=character(), weight=numeric(), stringsAsFactors=FALSE)
+
+for(i in 1:length(mapkpathway.expanded@edges)){
+    edge <- mapkpathway.expanded@edges[[i]]
+    start <- edge@entry1ID
+    end <- edge@entry2ID
+    subtype <- edge@subtype[[1]]@name
+    type <- ""
+    weight <- 0.0
+    if (subtype == "activation") {
+        type <- "PPREL"
+        weight <- 1.0
+    } else if (subtype == "inhibition") {
+        type <- "PPREL"
+        weight <- -1.0
+    } else if (subtype == "expression"){
+        type <- "GEREL"
+        weight <- 1.0
+    } else if (subtype == "binding/association"){
+        type <- "PPREL"
+        weight <- 0.0
+    } else if (subtype == "dissociation"){
+        type <- "PPREL"
+        weight <- 0.0
+    }
+    edges.dataframe <- rbind(edges.dataframe, data.frame(start=start, end=end, type=type, subtype=subtype, weight=weight))
+}
 
 create_apoptosys_graph_inputs <- function(nodes, edgesList){
     # Create the graph
