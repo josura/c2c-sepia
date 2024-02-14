@@ -15,6 +15,9 @@ library(org.Hs.eg.db)
 tmp <- tempfile()
 retrieveKGML("04210", organism="hsa", destfile=tmp, method="auto", quiet=TRUE)
 
+mapkpathway <- parseKGML(tmp)
+mapkpathway.expanded <- expandKEGGPathway(mapkpathway)
+
 # Read the pathways data from the file into a KGML file 
 pathways <- parseKGML2Graph(tmp)
 
