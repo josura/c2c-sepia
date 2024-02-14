@@ -16,7 +16,7 @@ tmp <- tempfile()
 retrieveKGML("04210", organism="hsa", destfile=tmp, method="auto", quiet=TRUE)
 
 # Read the pathways data from the file into a KGML file 
-# pathways <- parseKGML2Graph(tmp)
+pathways <- parseKGML2Graph(tmp)
 
 # Expand the embedded pathways data to a single graph object
 mapkGembed <- parseKGMLexpandMaps(tmp)
@@ -59,6 +59,10 @@ edgesList.ensemble <- lapply(edgesList, function(x) {
 names(edgesList.ensemble) <- nodes.names.ensemble
 
 
-create_apoptosys_graph_inputs <- function(){
-    
+create_apoptosys_graph_inputs <- function(nodes, edgesList){
+    # Create the graph
+    g <- graph_from_edgelist(edgesList, directed=TRUE)
+    # Add the nodes
+    V(g)$label <- nodes
+    return(g)
 }
