@@ -71,8 +71,8 @@ edges.dataframe <- data.frame(start=character(), end=character(), type=character
 
 for(i in 1:length(mapkpathway.expanded@edges)){
     edge <- mapkpathway.expanded@edges[[i]]
-    start <- edge@entry1ID
-    end <- edge@entry2ID
+    start <- sub("hsa:", "", edge@entry1ID)
+    end <- sub("hsa:", "", edge@entry2ID)
     subtype <- edge@subtype[[1]]@name
     type <- ""
     weight <- 0.0
