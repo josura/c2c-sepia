@@ -1,17 +1,44 @@
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("KEGGgraph")
+BiocManager::install("AnnotationDbi")
+BiocManager::install("org.Hs.eg.db")
+
+library(KEGGgraph)
+
+# libraries to convert entrez to ensemble
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+# Get the KEGG pathway data
+tmp <- tempfile()
+retrieveKGML("04210", organism="hsa", destfile=tmp, method="auto", quiet=TRUE)
+
+# Read the pathways data from the file into a KGML file 
+pathways <- parseKGML2Graph(tmp)
+
+# Expand the embedded pathways data to a single graph object
+mapkGembed <- parseKGMLexpandMaps(tmp)
+
+# Get the nodes and edges of the graph
+nodes.apoptosys <- nodes(mapkGembed)
+edgesList.apoptosys <- edges(mapkGembed)
+
+#remove the hsa prefix from the nodes
+nodes.apoptosys.noorg <- gsub("hsa:", "", nodes.apoptosys)
+
 # Read edges.tsv file
-edges <- read.table("../../data/testdata/edges.tsv", header = TRUE, sep = "\t")
+edges <- read.table("../../resources/graphs/metapathwayNew/edges.tsv", header = TRUE, sep = "\t")
 
-# Read nodes.tsv file
-nodes <- read.table("../../data/testdata/nodes.tsv", header = TRUE, sep = "\t")
+library(readr)
 
-# Define the string to match in the Aliases feature
-search_string <- "your_search_string"
+nodes <- read_tsv("../../resources/graphs/metapathwayNew/nodes.tsv")
 
-# Get the subset of nodes that contain the search string in the Aliases feature
-subgraph_nodes <- subset(nodes, grepl(search_string, Aliases))
+library(dplyr)
 
-# Get the subset of edges that connect the subgraph nodes
-subgraph_edges <- subset(edges, from %in% subgraph_nodes$ID | to %in% subgraph_nodes$ID)
+apoptosys.nodes.filtered <- nodes %>% filter(Id %in% nodes.apoptosys.noorg)
+
 
 # Print the subgraph nodes
 print(subgraph_nodes)
