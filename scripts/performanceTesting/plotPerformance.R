@@ -6,6 +6,8 @@ library(dplyr)
 data.differentNodes <- read.table("timesDifferentNodes.tsv", header=TRUE, sep="\t")
 data.differentCommunities <- read.table("timesDifferentCommunities.tsv", header=TRUE, sep="\t")
 data.differentProcessors <- read.table("timesDifferentProcessors.tsv", header=TRUE, sep="\t")
+data.spaceOccupied <- read.table("spaceOccupied.tsv", header=TRUE, sep="\t")
+data.spaceOccupied.finer <- read.table("spaceOccupiedFiner.tsv", header=TRUE, sep="\t")
 
 # Plot the data
 # the data have the following format:
@@ -112,3 +114,29 @@ plotSpeedup <- function(data, title){
 }
 
 plotSpeedup(data.differentProcessors, "strong-scaling: average speedup for different number of processors for the same graph")
+
+# plot space occupied
+# the data have the following format:
+# nodes max_memory max_order	number_of_communities	interactions_inter_community
+
+plotSpaceOccupied <- function(data, title){
+  # plot the data
+  p <- ggplot(data, aes(x=nodes, y=max_memory)) + 
+    geom_line() +
+    ggtitle(title) +
+    xlab("number of nodes") +
+    ylab("space occupied (kB)") +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  # fit the data to a sublinear function, because the space occupied should not grow linearly with the number of nodes
+  p <- p + geom_smooth(method="lm", formula=y~x*log(x), se=FALSE)
+  # p <- p + geom_smooth(method="lm", formula=y~(x*x)*log(x), color = "red")
+
+  # add another line based on the formula (max_order + interactions_inter_community/number_of_communities)^2 *number_of_communities
+  # p <- p + geom_line(aes(x=nodes, y=(nodes*nodes) *log(nodes)), color="yellow")
+
+  
+  return(p)
+}
+
+plotSpaceOccupied(data.spaceOccupied.finer, "space occupied by the graph representation")
