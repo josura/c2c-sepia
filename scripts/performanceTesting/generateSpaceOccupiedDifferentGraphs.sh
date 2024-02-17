@@ -39,8 +39,8 @@ for graphFolder in $(ls $inputsFolder | grep "Nodes"); do
     # get the number of nodes from the file name
     numNodes=$(echo $graphFolder | cut -d'N' -f 1)
     echo "Number of nodes: $numNodes" >> spaceOccupied.tsv
-    # run the simulation
-    valgrind --tool=massif --pages-as-heap=yes --massif-out-file=massif.out mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
+    # run the simulation and save the memory used in the file spaceOccupied.tsv
+    {/usr/bin/time -f "%M" mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
                 --initialPerturbationPerTypeFolder $initialPerturbationFolder \
                 --typeInteractionFolder $typeInteractionsFolder \
                 --dissipationModel scaled \
@@ -51,10 +51,11 @@ for graphFolder in $(ls $inputsFolder | grep "Nodes"); do
                 --propagationModelParameters 0.2 \
                 --intertypeIterations 3 \
                 --intratypeIterations 3 \
+                --virtualNodesGranularity typeAndNode \
                 --saturation \
                 --undirectedEdges \
                 --undirectedTypeEdges \
                 --outputFolder $outputsFolder/$graphFolder \
-                --savePerformance scripts/performanceTesting/times.tsv; grep mem_heap_B massif.out | sed -e 's/mem_heap_B=\(.*\)/\1/' | sort -g | tail -n 1 >> spaceOccupied.tsv
+                --savePerformance scripts/performanceTesting/times.tsv;} 2>> spaceOccupied.tsv
 
 done
