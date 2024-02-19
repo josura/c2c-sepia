@@ -664,15 +664,15 @@ int main(int argc, char** argv) {
         if (subtypes.size() == 0) {
             // TODO add different contact times inside the network (quite difficult since the structure of the graphs is static)
             // SOLUTION: granularity
-            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap);
+            typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
         } else {
-            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap);
+            typeInteractionsEdges = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
         }
         #pragma omp parallel for
         for (int i = 0; i < finalWorkload;i++) {
             if(typeInteractionsEdges.first.contains(types[i+startIdx]) && typesIndexes[i] != -1){
                 // granularity is already considered in the function that reads from the file previously called
-                typeComputations[typesIndexes[i]]->addEdgesAndNodes(typeInteractionsEdges.first[types[i+startIdx]], undirectedTypeEdges, false); // no inverse computation since it is done in the propagation model
+                typeComputations[typesIndexes[i]]->addEdgesAndNodes(typeInteractionsEdges.first[types[i+startIdx]], false, false); // no inverse computation since it is done in the propagation model
             }
         }
         for(auto edge = typeInteractionsEdges.second.cbegin() ; edge != typeInteractionsEdges.second.cend(); edge++ ){

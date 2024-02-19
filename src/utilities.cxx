@@ -806,7 +806,7 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
     return ret;
 }
 
-std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez, std::string granularity,std::unordered_map<std::string,std::vector<std::string>> typeToNodeNames){
+std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>>> interactionContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez, std::string granularity,std::unordered_map<std::string,std::vector<std::string>> typeToNodeNames, bool undirectedTypeEdges){
     string line;
     std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>>> ret;
     // control if the granularity is valid
