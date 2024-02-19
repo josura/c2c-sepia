@@ -918,25 +918,34 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                             virtualOutputEndType = "v-out:" + startNodeName;
                         }
                         std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputStartType,weight);
+                        std::tuple<std::string,std::string,double> undirectedEdgestartType(virtualOutputStartType, startNodeName,weight);
                         std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
-                        if(ret.first.contains(startType)){
-                            ret.first[startType].push_back(edgestartType);
-                        }else{
+                        std::tuple<std::string,std::string,double> undirectedEdgeEndType(endNodeName, virtualInputEndType,weight);
+                        // add the edge to the startType
+                        if(!ret.first.contains(startType)){
                             ret.first[startType] = std::vector<std::tuple<std::string,std::string,double>>();
-                            ret.first[startType].push_back(edgestartType);
+                        }
+                        ret.first[startType].push_back(edgestartType);
+                        if(undirectedTypeEdges){
+                            ret.first[startType].push_back(undirectedEdgestartType);
                         }
 
-                        if(ret.first.contains(endType)){
-                            ret.first[endType].push_back(edgeEndType);
-                        }else{
+                        // add the edge to the endType
+                        if(!ret.first.contains(endType)){
                             ret.first[endType] = std::vector<std::tuple<std::string,std::string,double>>();
-                            ret.first[endType].push_back(edgeEndType);
+                        }
+                        ret.first[endType].push_back(edgeEndType);
+                        if(undirectedTypeEdges){
+                            ret.first[endType].push_back(undirectedEdgeEndType);
                         }
                     } else {
                         //ignored because not in the subtypes
                     }
                     // add the edge with the contact times to the second vector in ret
                     ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>(startNodeName, endNodeName, startType, endType, contactTimes, weight));
+                    if(undirectedTypeEdges){
+                        ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>, double>(endNodeName, startNodeName, endType, startType, contactTimes, weight));
+                    }
                 } else {
                     std::cout << "[ERROR] columns detected: " << entries.size() << " columns " <<std::endl;
                     throw std::invalid_argument("utilities::interactionFileToEdgesListAndNodesByName: header doesn't have the right amount of columns(5 or 6 when considering interaction times) ");
