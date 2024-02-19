@@ -897,18 +897,27 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     // add the edge to the augmented graph, only if the startType and the endType are in the subtypes
                     if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                         std::string virtualInputEndType = "";
-                        std::string virtualOutputstartType = "";
+                        std::string virtualOutputStartType = "";
+                        // when undirectedTypeEdges is true, virtual input for the startType and virtual output for the endType are added to the respective graphs 
+                        std::string virtualInputStartType = "";
+                        std::string virtualOutputEndType = "";
                         if(granularity == "typeAndNode"){
                             virtualInputEndType = "v-in:" + startType + "_" + startNodeName;
-                            virtualOutputstartType = "v-out:" + endType + "_" + endNodeName;
+                            virtualOutputStartType = "v-out:" + endType + "_" + endNodeName;
+                            virtualInputStartType = "v-in:" + endType + "_" + endNodeName;
+                            virtualOutputEndType = "v-out:" + startType + "_" + startNodeName;
                         } else if (granularity == "type"){
                             virtualInputEndType = "v-in:" + startType;
-                            virtualOutputstartType = "v-out:" + endType;
+                            virtualOutputStartType = "v-out:" + endType;
+                            virtualInputStartType = "v-in:" + endType;
+                            virtualOutputEndType = "v-out:" + startType;
                         } else {
                             virtualInputEndType = "v-in:" + startNodeName;
-                            virtualOutputstartType = "v-out:" + endNodeName;
+                            virtualOutputStartType = "v-out:" + endNodeName;
+                            virtualInputStartType = "v-in:" + endNodeName;
+                            virtualOutputEndType = "v-out:" + startNodeName;
                         }
-                        std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputstartType,weight);
+                        std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputStartType,weight);
                         std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
                         if(ret.first.contains(startType)){
                             ret.first[startType].push_back(edgestartType);
