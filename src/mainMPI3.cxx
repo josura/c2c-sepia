@@ -680,16 +680,34 @@ int main(int argc, char** argv) {
             // startNodeName, endNodeName, startType, endType, contactTimes, weight
             std::pair<std::string,std::string> keyTypes = std::make_pair(std::get<2> (*edge), std::get<3> (*edge));
             std::tuple<std::string,std::string,std::string,std::string> keyTypesFiner = std::make_tuple(std::get<0> (*edge), std::get<1> (*edge), std::get<2> (*edge), std::get<3> (*edge));
+            // inverted interaction only used when specified by the command line argument (undirectedTypeEdges)
+            std::pair<std::string,std::string> keyTypesInverted = std::make_pair(std::get<3> (*edge), std::get<2> (*edge));
+            std::tuple<std::string,std::string,std::string,std::string> keyTypesFinerInverted = std::make_tuple(std::get<1> (*edge), std::get<0> (*edge), std::get<3> (*edge), std::get<2> (*edge));
+            
             if(interactionBetweenTypesMap.contains(keyTypes)){
                 interactionBetweenTypesMap[keyTypes].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
             } else {
                 interactionBetweenTypesMap[keyTypes] = std::get<4>(*edge);
+            }
+            if(undirectedTypeEdges){
+                if(interactionBetweenTypesMap.contains(keyTypesInverted)){
+                    interactionBetweenTypesMap[keyTypesInverted].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
+                } else {
+                    interactionBetweenTypesMap[keyTypesInverted] = std::get<4>(*edge);
+                }
             }
 
             if(interactionBetweenTypesFinerMap.contains(keyTypesFiner)){
                 interactionBetweenTypesFinerMap[keyTypesFiner].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
             } else {
                 interactionBetweenTypesFinerMap[keyTypesFiner] = std::get<4>(*edge);
+            }
+            if(undirectedTypeEdges){
+                if(interactionBetweenTypesFinerMap.contains(keyTypesFinerInverted)){
+                    interactionBetweenTypesFinerMap[keyTypesFinerInverted].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
+                } else {
+                    interactionBetweenTypesFinerMap[keyTypesFinerInverted] = std::get<4>(*edge);
+                }
             }
         }
     }
