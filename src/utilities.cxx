@@ -918,9 +918,9 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                             virtualOutputEndType = "v-out:" + startNodeName;
                         }
                         std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputStartType,weight);
-                        std::tuple<std::string,std::string,double> undirectedEdgestartType(virtualOutputStartType, startNodeName,weight);
+                        std::tuple<std::string,std::string,double> undirectedEdgestartType(virtualInputStartType, startNodeName,weight);
                         std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
-                        std::tuple<std::string,std::string,double> undirectedEdgeEndType(endNodeName, virtualInputEndType,weight);
+                        std::tuple<std::string,std::string,double> undirectedEdgeEndType(endNodeName, virtualOutputEndType,weight);
                         // add the edge to the startType
                         if(!ret.first.contains(startType)){
                             ret.first[startType] = std::vector<std::tuple<std::string,std::string,double>>();
