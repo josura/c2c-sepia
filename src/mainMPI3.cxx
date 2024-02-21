@@ -680,35 +680,24 @@ int main(int argc, char** argv) {
             // startNodeName, endNodeName, startType, endType, contactTimes, weight
             std::pair<std::string,std::string> keyTypes = std::make_pair(std::get<2> (*edge), std::get<3> (*edge));
             std::tuple<std::string,std::string,std::string,std::string> keyTypesFiner = std::make_tuple(std::get<0> (*edge), std::get<1> (*edge), std::get<2> (*edge), std::get<3> (*edge));
-            // inverted interaction only used when specified by the command line argument (undirectedTypeEdges)
-            std::pair<std::string,std::string> keyTypesInverted = std::make_pair(std::get<3> (*edge), std::get<2> (*edge));
-            std::tuple<std::string,std::string,std::string,std::string> keyTypesFinerInverted = std::make_tuple(std::get<1> (*edge), std::get<0> (*edge), std::get<3> (*edge), std::get<2> (*edge));
             
+            // TESTING
+            // printing keytypesFiner
+            // std::cout << "keyTypesFiner: (" << std::get<0> (keyTypesFiner) << " " << std::get<1> (keyTypesFiner) << " " << std::get<2> (keyTypesFiner) << " " << std::get<3> (keyTypesFiner)<< ")" << std::endl;
+            // TESTING
+
             if(interactionBetweenTypesMap.contains(keyTypes)){
                 interactionBetweenTypesMap[keyTypes].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
             } else {
                 interactionBetweenTypesMap[keyTypes] = std::get<4>(*edge);
             }
-            if(undirectedTypeEdges){
-                if(interactionBetweenTypesMap.contains(keyTypesInverted)){
-                    interactionBetweenTypesMap[keyTypesInverted].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
-                } else {
-                    interactionBetweenTypesMap[keyTypesInverted] = std::get<4>(*edge);
-                }
-            }
-
+            
             if(interactionBetweenTypesFinerMap.contains(keyTypesFiner)){
                 interactionBetweenTypesFinerMap[keyTypesFiner].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
             } else {
                 interactionBetweenTypesFinerMap[keyTypesFiner] = std::get<4>(*edge);
             }
-            if(undirectedTypeEdges){
-                if(interactionBetweenTypesFinerMap.contains(keyTypesFinerInverted)){
-                    interactionBetweenTypesFinerMap[keyTypesFinerInverted].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
-                } else {
-                    interactionBetweenTypesFinerMap[keyTypesFinerInverted] = std::get<4>(*edge);
-                }
-            }
+            
         }
     }
 
@@ -998,8 +987,6 @@ int main(int argc, char** argv) {
     for(int iterationInterType = 0; iterationInterType < intertypeIterations; iterationInterType++){
         for(int iterationIntraType = 0; iterationIntraType < intratypeIterations; iterationIntraType++){
             
-            
-            
             // computation of perturbation
             #pragma omp parallel for
             for(int i = 0; i < finalWorkload; i++){
@@ -1258,11 +1245,12 @@ int main(int argc, char** argv) {
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
                             if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
+                                double newValue = rankVirtualInputsBuffer[sourceRank][i];
                                 try{
                                     if(sourceType == targetType){
-                                        if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                                        if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, newValue);
                                     } else {
-                                        typeComputations[targetTypeIndex]->setInputNodeValue(virtualInputNodeName, rankVirtualInputsBuffer[sourceRank][i]);
+                                        typeComputations[targetTypeIndex]->setInputNodeValue(virtualInputNodeName, newValue);
                                     }
                                 } catch(const std::exception& e){
                                     std::cerr << e.what() << std::endl;
@@ -1285,6 +1273,20 @@ int main(int argc, char** argv) {
                 }
             }
         }
+
+        // // TESTING
+        // // printing nodes values(inputAugmented) for augmented graph 1
+        // for(int i = 0; i< finalWorkload; i++){
+        //     if(types[startIdx + i] == "1"){
+        //         std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
+        //         std::cout << "printing values for type 1 after receiving them via MPI"<<std::endl;
+        //         for(uint nodeIndex = 0; nodeIndex < nodeNames.size(); nodeIndex++){
+        //             std::cout << "(" << nodeNames[nodeIndex] << " = " << typeComputations[i]->getInputAugmented()[nodeIndex] << "), ";
+        //         }
+        //     }
+        // } 
+        // std::cout << std::endl;
+        // // TESTING
     }
     // delete the virtual outputs vector of arrays
     for(uint i = 0; i < virtualOutputs.size(); i++){

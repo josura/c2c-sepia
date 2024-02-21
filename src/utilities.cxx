@@ -589,11 +589,11 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
                 }
             }
             myfile.close();
-            std::cout << "[LOG] No nodes in the graph for type: "<< cellName << std::endl;
+            std::cout << "[LOG] discarding values for the nodes not in the graph for type "<< cellName << ", the nodes discarded are:" << std::endl;
             for(auto iter = discardedGenes.cbegin();iter!=discardedGenes.cend();iter++){
                 std::cout << "," << *iter;
             }
-            std::cout << std::endl <<"[LOG] discarding values for the nodes not in the graph for type "<< *iter << std::endl;
+            std::cout << std::endl;
             ret.push_back(cellValues);
 
         
