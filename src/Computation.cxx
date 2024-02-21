@@ -276,10 +276,10 @@ void Computation::addEdgesAndNodes(const std::vector<std::tuple<std::string,std:
         std::string node1Name = std::get<0>(*it); 
         std::string node2Name = std::get<1>(*it);        
 
-        if(!augmentedGraph->containsNode(node1Name)){
+        if(!augmentedGraph->containsNode(node1Name) && !vectorContains(nodesToAdd,node1Name)){
             nodesToAdd.push_back(node1Name);
         }
-        if(!augmentedGraph->containsNode(node2Name)){
+        if(!augmentedGraph->containsNode(node2Name) && !vectorContains(nodesToAdd,node2Name)){
             nodesToAdd.push_back(node2Name);
         }
     }
