@@ -140,3 +140,43 @@ plotSpaceOccupied <- function(data, title){
 }
 
 plotSpaceOccupied(data.spaceOccupied.finer, "space occupied by the graph representation")
+
+# estimate the non linear regression function that estimates the space occupied by the finer data
+
+# fit the data to a sublinear function, because the space occupied should not grow linearly with the number of nodes
+fit <- lm(max_memory ~ nodes*log(nodes), data=data.spaceOccupied.finer)
+summary(fit)
+
+fit.2 <- lm(max_memory ~ (max_order + interactions_inter_community/number_of_communities)^2 *number_of_communities, data = data.spaceOccupied.finer)
+summary(fit.2)
+
+# plot the function estimated, add a legend for every line
+funcEstimate <- function(x){
+  return(100000+0.00005*(x^2)*log(25*x))
+}
+
+funcEstimate.2 <- function(x){
+  return(100000+0.00000005*(x^3))
+}
+
+spaceEstimate <- function(max_order, interactions_inter_community,number_of_communities){
+  return(83000 + 0.011*(max_order + interactions_inter_community/number_of_communities)^2 *number_of_communities)
+}
+
+x <- seq(1000, 30000, 1000)
+y <- funcEstimate(x)
+
+y.spaceEstimate <- spaceEstimate(data.spaceOccupied.finer$max_order, data.spaceOccupied.finer$interactions_inter_community, data.spaceOccupied.finer$number_of_communities)
+
+p <- ggplot(data.spaceOccupied.finer, aes(x=nodes, y=max_memory)) + 
+  geom_line(aes(color = "Actual Memory")) + # Assigning a color aesthetic for the legend
+  ggtitle("space occupied by the graph representation") +
+  xlab("number of nodes in the network of networks") +
+  ylab("space occupied (kB)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_line(aes(x=x, y=y, color = "nodes^2*log(nodes)")) + # Assigning a color aesthetic for the legend
+  geom_line(aes(x=nodes, y=y.spaceEstimate, color = "Estimated Memory")) + # Assigning a color aesthetic for the legend
+  scale_color_manual(name = "Legend", values = c("Actual Memory" = "black", "nodes^2*log(nodes)" = "red", "Estimated Memory" = "yellow")) # Manual color and label assignment for the legend
+
+p
+
