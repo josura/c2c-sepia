@@ -46,6 +46,10 @@ The options are the following:
 - **--conservateInitialNorm** => conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false
 - **undirectedEdges** => edges in the graphs are undirected
 - **undirectedTypeEdges** => edges between types are undirected
+- **resetVirtualOutputs** => reset the virtual outputs to 0 at each iteration, default to false
+- **virtualNodesGranularity** => (string) granularity of the virtual nodes, available options are: 'type', 'node'(unstable), 'typeAndNode', default to type
+- **virtualNodesGranularityParameters** => vector<string> parameters for the virtual nodes granularity, NOT USED for now
+- **savePerformance** => (string) output performance (running time, number of total nodes, number of communities, number of total edges) to the defined file, if nothing is specified the performance are not saved
 - **loggingOptions** => (string) logging options, available options are: 'all','none', default to all
     
 
