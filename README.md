@@ -110,7 +110,7 @@ The mapping file is only available to use entrez ids for the metapathway used an
 If the custom  functions and scaling functions are used, the project need to be rebuilt with make
 
 
-Under development
+Under development, if any problems arises open an issue in the [repository](https://github.com/josura/c2c-sepia/issues)
 
 Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
 
