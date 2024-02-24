@@ -1,5 +1,5 @@
 
-#example usage: sh scripts/bash/experiments/100NodesEpidemicsExperiments.sh scripts/R/epidemics/syntheticGraphs/100Nodes/ outputs/100NodesEpidemics/ 
+#example usage: sh scripts/bash/experiments/epidemicsExperiments.sh scripts/R/epidemics/syntheticGraphs/ outputs/epidemics/ 
 # get the directory of the inputs from the first argument
 inputsFolder=$1
 outputsFolder=$2
