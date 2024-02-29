@@ -149,3 +149,46 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
   # write the file
   write_tsv(edges_between_communities, paste0(output_dir,"interactions/interactions.tsv"), quote = "none",append = FALSE)
 }
+
+#create the directory to contain the significance analysis input data
+dir.create("significanceAnalysys", showWarnings = FALSE)
+
+# create the directory for the graphs generated with preferential attachment
+dir.create("significanceAnalysys/preferentialAttachment", showWarnings = FALSE)
+
+nodes.list <- c(100, 1000, 10000, 30000)
+
+for(numNodes in nodes.list){
+  # create the directory for the 100 nodes graph, generate 30 graphs
+  dir.create(paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes"), showWarnings = FALSE)
+  for (i in 1:30){
+    current_dir <- paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/",i)
+    dir.create(current_dir, showWarnings = FALSE)
+    # Generate a graph with preferential attachment (100 nodes, m=2 for preferential attachment)
+    graph <- generate_graph(numNodes, m = 2)
+    
+    
+    # Assign node conditions to the graph
+    node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
+    
+    
+    # Create communities based on the graph
+    community_data <- create_communities(graph)
+    
+    
+    # Generate edge data with edge weights
+    edge_data <- generate_edge_data(graph)
+    
+    
+    # Plot the graph with node colors and edge widths
+    plot_graph(graph, node_conditions)
+    
+    
+    create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/"))
+    # Write data to tsv files
+    write_tsv(edge_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/edge_data.tsv"))
+    write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/node_conditions.tsv"))
+    write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/communities.tsv"))
+    
+  }
+}
