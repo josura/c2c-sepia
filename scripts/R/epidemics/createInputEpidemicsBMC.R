@@ -5,7 +5,7 @@ library(readr)
 max_number_of_iteration <- 10
 
 # Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
-generate_graph <- function(num_nodes, m) {
+generate_graph_barabasi <- function(num_nodes, m) {
   g <- barabasi.game(num_nodes, m = m, directed = FALSE)
   E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   #assign names to nodes since they are not assigned by default and the ids are used as names
@@ -165,7 +165,7 @@ for(numNodes in nodes.list){
     current_dir <- paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/",i)
     dir.create(current_dir, showWarnings = FALSE)
     # Generate a graph with preferential attachment (100 nodes, m=2 for preferential attachment)
-    graph <- generate_graph(numNodes, m = 2)
+    graph <- generate_graph_barabasi(numNodes, m = 2)
     
     
     # Assign node conditions to the graph
