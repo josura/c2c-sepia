@@ -13,6 +13,16 @@ generate_graph_barabasi <- function(num_nodes, m) {
   return(g)
 }
 
+# Function to generate a random graph with erdos renyi model, and random edge weights from 0 to 1
+generate_graph_erdos <- function(num_nodes, prob) {
+  g <- erdos.renyi.game(num_nodes, prob, directed = FALSE)
+  E(g)$weight <- runif(ecount(g), min = 0, max = 1)
+  #assign names to nodes since they are not assigned by default and the ids are used as names
+  V(g)$name <- V(g)
+  return(g)
+}
+
+
 # Function to assign node conditions (Susceptible or Infectious)
 assign_node_conditions <- function(graph, prob_infectious = 0.1) {
   nodes <- V(graph)
