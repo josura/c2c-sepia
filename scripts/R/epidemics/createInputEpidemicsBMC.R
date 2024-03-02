@@ -185,22 +185,17 @@ for(numNodes in nodes.list){
     # Generate a graph with preferential attachment (100 nodes, m=2 for preferential attachment)
     graph <- generate_graph_barabasi(numNodes, m = 2)
     
-    
     # Assign node conditions to the graph
     node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
-    
     
     # Create communities based on the graph
     community_data <- create_communities(graph)
     
-    
     # Generate edge data with edge weights
     edge_data <- generate_edge_data(graph)
     
-    
     # Plot the graph with node colors and edge widths
     plot_graph(graph, node_conditions)
-    
     
     create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/"))
     # Write data to tsv files
