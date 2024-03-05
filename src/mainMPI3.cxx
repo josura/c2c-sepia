@@ -663,6 +663,8 @@ int main(int argc, char** argv) {
         std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<int>,double>>> typeInteractionsEdges;
         if (subtypes.size() == 0) {
             // TODO add different contact times inside the network (quite difficult since the structure of the graphs is static)
+            // the above can be implemented with the use of different matrices for every single type(from 1 to max(contactTimes)), where the matrix represent the current state of the network
+            // another possibility is to use two matrices for every type-agent, one for the whole network without contact times and one is used to store the current network state at iteration i 
             // SOLUTION: granularity
             typeInteractionsEdges  = interactionContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
         } else {
