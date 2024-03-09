@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-03-09T11:20:23.934Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="jzhQ2moiTU3d_BiV4Yj_" version="24.0.2" type="github">
+<mxfile host="app.diagrams.net" modified="2024-03-09T11:21:02.886Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="5bLVy-p9p9-BMIbNTYgL" version="24.0.2" type="github">
   <diagram name="Page-1" id="404_kxYsZ5X8p2S8uvQf">
     <mxGraphModel dx="1647" dy="-85" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -178,7 +178,7 @@
             <mxPoint x="878" y="1282" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="3WU5Y8xsvsnA2mtap3Ex-2" value="Virtual(type3 -&amp;gt; type2)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="3WU5Y8xsvsnA2mtap3Ex-2" value="Virtual((type3,Bob) -&amp;gt; (type2, Alice)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1050" y="1660" width="129.24" height="60" as="geometry" />
         </mxCell>
         <mxCell id="3WU5Y8xsvsnA2mtap3Ex-3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.468;entryY=1.02;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="3WU5Y8xsvsnA2mtap3Ex-2" target="8ftiR1pAZEAG93mxzUA_-12" edge="1">
@@ -193,7 +193,7 @@
         <mxCell id="3WU5Y8xsvsnA2mtap3Ex-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.421;entryY=0.1;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;startArrow=classic;startFill=1;" parent="1" source="3WU5Y8xsvsnA2mtap3Ex-2" target="8ftiR1pAZEAG93mxzUA_-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="nPn_2-71ksG3-iKqa8in-1" value="Virtual(type2 -&amp;gt; type3)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="nPn_2-71ksG3-iKqa8in-1" value="Virtual((type2,Alice) -&amp;gt; (type3, Bob)" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="850" y="1660" width="129.24" height="60" as="geometry" />
         </mxCell>
         <mxCell id="nPn_2-71ksG3-iKqa8in-2" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.043;entryY=0.08;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=classic;endFill=1;startArrow=none;startFill=0;" parent="1" source="hBDSrYq_m9CpTTxVlZOs-3" target="8ftiR1pAZEAG93mxzUA_-30" edge="1">
