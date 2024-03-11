@@ -960,9 +960,9 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
 }
 
 // considering a timestep, the function is almost the same as above but generate double contact times, based upon the timestep
-std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<double>, double>>> interactionContinuousContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez, std::string granularity,std::unordered_map<std::string,std::vector<std::string>> typeToNodeNames, bool undirectedTypeEdges, double timestep){
+std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>>> interactionContinuousContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes, int maximumIntertypeTime, bool useEntrez, std::string granularity,std::unordered_map<std::string,std::vector<std::string>> typeToNodeNames, bool undirectedTypeEdges, double timestep){
     string line;
-    std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<double>, double>>> ret;
+    std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>>> ret;
     // control if the granularity is valid
     if(granularity != "" && granularity != "type" && granularity != "node" && granularity != "typeAndNode"){
         throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid granularity, it must be typeAndNode(finer) or type(coarser), or only node(no types)");
@@ -1032,7 +1032,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                         }
                     }
 
-                    std::unordered_set<double> contactTimes;
+                    std::set<double> contactTimes;
                     double weight = std::stod( entries[indexWeight]);
                     if(noContactTimes){
                         // if no contact times are specified, then every time is a contact time, so all contact times from 0 to maximumIntertypeTime are added
@@ -1097,9 +1097,9 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                         //ignored because not in the subtypes
                     }
                     // add the edge with the contact times to the second vector in ret
-                    ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<double>, double>(startNodeName, endNodeName, startType, endType, contactTimes, weight));
+                    ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>(startNodeName, endNodeName, startType, endType, contactTimes, weight));
                     if(undirectedTypeEdges){
-                        ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::unordered_set<double>, double>(endNodeName, startNodeName, endType, startType, contactTimes, weight));
+                        ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>(endNodeName, startNodeName, endType, startType, contactTimes, weight));
                     }
                 } else {
                     std::cout << "[ERROR] columns detected: " << entries.size() << " columns " <<std::endl;
