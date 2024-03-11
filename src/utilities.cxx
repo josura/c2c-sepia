@@ -172,6 +172,17 @@ bool createFolder(const std::string& folderPath)
     return success;
 }
 
+bool setDoubleContainsInterval(std::set<double> set, double lower, double upper){
+    if(lower > upper){
+        throw std::invalid_argument("utilities::setDoubleContainsInterval: lower bound is greater than upper bound");
+    }
+    if(set.lower_bound(lower) != set.end() && *set.lower_bound(lower) <= upper){
+        return true;
+    }
+    return false;
+}
+
+
 
 std::vector<std::string> splitStringIntoVector(std::string toSplit , std::string delimiter){
 

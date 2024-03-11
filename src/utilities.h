@@ -273,6 +273,17 @@ struct hash_quadruple_strings {
         return hashStrings(tmp);
     }
 };
+
+/**
+ * \brief   Returns the new virtual nodes associated with a type along the edges in the augmented graph, it also return the graph of the interactions between types(as a tuple of:
+ *         - the start type/agent
+ *         - the end type/agent
+ *         - the contact times of the interaction
+ *         granularity needs to be specified as an argument
+ * \return the pair (map of the new virtual nodes associated with a type, graph of the interactions between types)
+ */
+bool setDoubleContainsInterval(std::set<double> set, double lower, double upper);
+
 /**
  * \brief   Returns the new virtual nodes associated with a type along the edges in the augmented graph, it also return the graph of the interactions between types(as a tuple of:
  *         - the start type/agent
