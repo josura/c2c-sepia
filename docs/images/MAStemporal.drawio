@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-03-13T15:38:50.651Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="SX59ltERDRfknFGq5JHG" version="24.0.5" type="github">
+<mxfile host="app.diagrams.net" modified="2024-03-13T15:43:17.734Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0" etag="8rcmiBK6x3lyCX2Y0rbh" version="24.0.5" type="github">
   <diagram name="Pagina-1" id="gPWjSC0sNMpcJGo77wKc">
     <mxGraphModel dx="1029" dy="634" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -228,6 +228,15 @@
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="800" y="400" as="sourcePoint" />
             <mxPoint x="380" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="En2KzqsClIfj5qpVhYQP-6" value="&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;Verdana&quot;&gt;Agents temporal &lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;vIOQpKhhw21pUGHrhAOD&quot;&gt;communication&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="590" y="30" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="En2KzqsClIfj5qpVhYQP-7" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.961;entryY=0.293;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="D8RpLal6LioXR98MJQWB-118">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="690" y="70" as="sourcePoint" />
+            <mxPoint x="490" y="270" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
