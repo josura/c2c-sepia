@@ -1302,6 +1302,11 @@ void saveNodeValues(std::string folderName, int iterationOuter, int intraIterati
     }
 }
 
+void saveNodeValuesWithTime(std::string folderName,int intraIteration, int interIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile, double timestep){
+
+}
+
+
 double vectorNorm(std::vector<double> vec){
     double norm=0;
     for (uint i = 0; i < vec.size(); ++i) {
