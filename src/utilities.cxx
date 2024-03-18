@@ -1325,7 +1325,7 @@ void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intra
     }
 
     //header
-    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\n";
+    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\ttime\n";
     //body
     for(uint i = 0; i < nodeValues.size(); i++){
         if(mapToEverything.size() !=0 && mapToEverything.contains(nodeNames[i]))
