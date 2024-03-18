@@ -396,13 +396,13 @@ void saveNodeValues(std::string folderName,int iteration, std::string cellName, 
  * \brief   save node values in folder
  *         better version of the above function
 */
-void saveNodeValues(std::string folderName,int intraIteration, int interIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false, std::string nodesDescriptionFile="");
+void saveNodeValues(std::string folderName,int iterationOuter, int intraIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez=false, std::string nodesDescriptionFile="");
 
 /**
  * \brief   save node values in folder
  *         add times as an additional feature
 */
-void saveNodeValuesWithTime(std::string folderName,int intraIteration, int interIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile="", double timestep=1.0);
+void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intraIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile="", double timestep=1.0);
 
 template<typename T>
 std::vector<T> vectorSubtraction(std::vector<T> vec1, std::vector<T> vec2){
