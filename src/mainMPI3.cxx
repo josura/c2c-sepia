@@ -1020,7 +1020,7 @@ int main(int argc, char** argv) {
                 std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
                 //TODO change how to save files to get more information about intratype and intertype iterations
                 //logger << "saving output values for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx] << ") in process " << rank <<std::endl;
-                saveNodeValues(outputFoldername, iterationInterType*intratypeIterations, iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename);
+                saveNodeValuesWithTime(outputFoldername, iterationInterType*intratypeIterations, iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename, timestep);
             }
 
             //update input
