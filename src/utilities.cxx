@@ -1333,11 +1333,11 @@ void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intra
         else {
             auto splittedVirtual = splitStringIntoVector(nodeNames[i], ":");
             if(splittedVirtual[0]=="v-in"){
-                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i])<< "\t" << std::to_string((iterationOuter + intraIteration) *timestep);
             } else if(splittedVirtual[0]=="v-out"){
-                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-output\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i]);
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-output\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i])<< "\t" << std::to_string((iterationOuter + intraIteration) *timestep);
             } else{ //when the node names are not genes but something else
-                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the graph\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i]);
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the graph\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i])<< "\t" << std::to_string((iterationOuter + intraIteration) *timestep);
             }
         }
         outfile << std::endl;
