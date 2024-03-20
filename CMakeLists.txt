@@ -33,7 +33,7 @@ FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 set(EXEC_MAIN "src/main.cxx")
-set(EXEC_MPI_MAIN "src/mainMPI3.cxx")
+set(EXEC_MPI_MAIN "src/mainMPI4.cxx")
 set(EXPERIMENT_MAIN "src/testingPerformance.cxx")
 set(LIB_SRCS 
     src/WeightedEdgeGraph.cxx
