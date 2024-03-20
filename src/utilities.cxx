@@ -1055,6 +1055,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                         std::vector<std::string> splittedContactTimes = splitStringIntoVector(contactTimesString, ",");
                         for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend(); iter++){
                             double contactTime = std::stod(*iter);
+                            // TODO change interTypeTime to be a double since it is a time, and I am now using the timestep to define the times and quantize the contacts
                             if(contactTime <= maximumIntertypeTime){
                                 contactTimes.insert(contactTime);
                             }
