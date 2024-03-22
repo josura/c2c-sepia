@@ -1126,10 +1126,160 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
     return ret;
 }
 
-std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>>> interactionContinuousContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,double maximumIntertypeTime,bool useEntrez, std::string granularity, std::unordered_map<std::string,std::vector<std::string>> typeToNodeNames , bool undirectedTypeEdges, double timestep){
+std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>>> interactionContinuousContactsFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,double maximumIntertypeTime, bool useEntrez, std::string granularity, std::unordered_map<std::string,std::vector<std::string>> typeToNodeNames , bool undirectedTypeEdges, double timestep){
     string line;
     std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>>,std::vector<std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>>> ret;
+    // control if the granularity is valid
+    if(granularity != "" && granularity != "type" && granularity != "node" && granularity != "typeAndNode"){
+        throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid granularity, it must be typeAndNode(finer) or type(coarser), or only node(no types)");
+    }
+    if(granularity == ""){
+        granularity = "type";
+    }
 
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
+    if(file_exists(filename)){
+        ifstream myfile (filename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> entriesHeader = splitStringIntoVector(line, "\t");
+            int indexTypeStart=-1, indexTypeEnd=-1, indexStartNode=-1, indexEndNode=-1, indexWeight=-1, indexContactTimes=-1;
+            for(uint i = 0; i < entriesHeader.size(); i++){ //TODO change names in the header to be more general
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("starttype") != std::string::npos) {
+                    indexTypeStart = i;
+                }
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endtype") != std::string::npos) {
+                    indexTypeEnd = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("startnodename") != std::string::npos) {
+                    indexStartNode = i;
+                }else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("endnodename") != std::string::npos) {
+                    indexEndNode = i;
+                } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
+                    indexWeight = i;
+                } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("contacttimes") != std::string::npos) {
+                    indexContactTimes = i;
+                }
+                //startType	startNodeName	endType	endNodeName	weight
+            }
+            bool noContactTimes = false;
+            if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0){
+                throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a start node, or an end node, or a weight feature");
+            }
+            if(indexContactTimes < 0){
+                noContactTimes = true;
+            }
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
+                if(entries.size()==5 || entries.size()==6){
+                    std::string startNodeName,endNodeName;
+                    if(!useEntrez){
+                        startNodeName = entries[indexStartNode];
+                        endNodeName = entries[indexEndNode];
+                        
+                    } else{
+                        if(mapEnsembleToEntrez.contains(entries[indexStartNode]) && mapEnsembleToEntrez.contains(entries[indexEndNode])){
+                            startNodeName = mapEnsembleToEntrez[entries[indexStartNode]];
+                            endNodeName = mapEnsembleToEntrez[entries[indexEndNode]];
+                        }
+                    }
+                    std::string startType = entries[indexTypeStart];
+                    std::string endType = entries[indexTypeEnd];
+                    if(typeToNodeNames.size() != 0){
+                        if(!vectorContains(typeToNodeNames[startType],startNodeName)){
+                            std::cout << "[ERROR] start node <"<< startNodeName <<"> for type: " << startType << " is not in the specified network, aborting " <<std::endl;
+                            throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the start node" + startNodeName + " is not in the type specified, aborting");
+                        }
+
+                        if(!vectorContains(typeToNodeNames[endType],endNodeName)){
+                            std::cout << "[ERROR] end node <"<< endNodeName <<"> for type: " << endType << " is not in the specified network, aborting " <<std::endl;
+                            throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the end node" + endNodeName + " is not in the type specified, aborting");
+                        }
+                    }
+
+                    std::set<double> contactTimes;
+                    double weight = std::stod( entries[indexWeight]);
+                    if(noContactTimes){
+                        // if no contact times are specified, then every time is a contact time, so all contact times from 0 to maximumIntertypeTime are added
+                        for(int i = 0; i < maximumIntertypeTime; i++){
+                            contactTimes.insert(i*timestep);
+                        }
+                    } else {
+                        std::string contactTimesString = entries[indexContactTimes];
+                        std::vector<std::string> splittedContactTimes = splitStringIntoVector(contactTimesString, ",");
+                        for(auto iter = splittedContactTimes.cbegin(); iter!=splittedContactTimes.cend(); iter++){
+                            double contactTime = std::stod(*iter);
+                            // TODO change interTypeTime to be a double since it is a time, and I am now using the timestep to define the times and quantize the contacts
+                            if(contactTime <= maximumIntertypeTime){
+                                contactTimes.insert(contactTime);
+                            } else {
+                                std::cout << "[WARNING] contact time: " << contactTime << " is greater than the maximumIntertypeTime: " << maximumIntertypeTime << " ignoring it" <<std::endl;
+                            }
+                        }
+                    }
+                    // add the edge to the augmented graph, only if the startType and the endType are in the subtypes
+                    if(vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
+                        std::string virtualInputEndType = "";
+                        std::string virtualOutputStartType = "";
+                        // when undirectedTypeEdges is true, virtual input for the startType and virtual output for the endType are added to the respective graphs 
+                        std::string virtualInputStartType = "";
+                        std::string virtualOutputEndType = "";
+                        if(granularity == "typeAndNode"){
+                            virtualInputEndType = "v-in:" + startType + "_" + startNodeName;
+                            virtualOutputStartType = "v-out:" + endType + "_" + endNodeName;
+                            virtualInputStartType = "v-in:" + endType + "_" + endNodeName;
+                            virtualOutputEndType = "v-out:" + startType + "_" + startNodeName;
+                        } else if (granularity == "type"){
+                            virtualInputEndType = "v-in:" + startType;
+                            virtualOutputStartType = "v-out:" + endType;
+                            virtualInputStartType = "v-in:" + endType;
+                            virtualOutputEndType = "v-out:" + startType;
+                        } else {
+                            virtualInputEndType = "v-in:" + startNodeName;
+                            virtualOutputStartType = "v-out:" + endNodeName;
+                            virtualInputStartType = "v-in:" + endNodeName;
+                            virtualOutputEndType = "v-out:" + startNodeName;
+                        }
+                        std::tuple<std::string,std::string,double> edgestartType(startNodeName, virtualOutputStartType,weight);
+                        std::tuple<std::string,std::string,double> undirectedEdgestartType(virtualInputStartType, startNodeName,weight);
+                        std::tuple<std::string,std::string,double> edgeEndType(virtualInputEndType, endNodeName,weight);
+                        std::tuple<std::string,std::string,double> undirectedEdgeEndType(endNodeName, virtualOutputEndType,weight);
+                        // add the edge to the startType
+                        if(!ret.first.contains(startType)){
+                            ret.first[startType] = std::vector<std::tuple<std::string,std::string,double>>();
+                        }
+                        ret.first[startType].push_back(edgestartType);
+                        if(undirectedTypeEdges){
+                            ret.first[startType].push_back(undirectedEdgestartType);
+                        }
+
+                        // add the edge to the endType
+                        if(!ret.first.contains(endType)){
+                            ret.first[endType] = std::vector<std::tuple<std::string,std::string,double>>();
+                        }
+                        ret.first[endType].push_back(edgeEndType);
+                        if(undirectedTypeEdges){
+                            ret.first[endType].push_back(undirectedEdgeEndType);
+                        }
+                    } else {
+                        //ignored because not in the subtypes
+                    }
+                    // add the edge with the contact times to the second vector in ret
+                    ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>(startNodeName, endNodeName, startType, endType, contactTimes, weight));
+                    if(undirectedTypeEdges){
+                        ret.second.push_back(std::tuple<std::string, std::string, std::string, std::string, std::set<double>, double>(endNodeName, startNodeName, endType, startType, contactTimes, weight));
+                    }
+                } else {
+                    std::cout << "[ERROR] columns detected: " << entries.size() << " columns " <<std::endl;
+                    throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: header doesn't have the right amount of columns(5 or 6 when considering interaction times) ");
+                }
+            }
+            myfile.close();
+        }
+    } else {
+        throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: file does not exists " + filename);
+    }
 
     return ret; 
 }
