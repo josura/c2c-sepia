@@ -666,9 +666,9 @@ int main(int argc, char** argv) {
             // the above can be implemented with the use of different matrices for every single type(from 1 to max(contactTimes)), where the matrix represent the current state of the network
             // another possibility is to use two matrices for every type-agent, one for the whole network without contact times and one is used to store the current network state at iteration i 
             // SOLUTION: granularity
-            typeInteractionsEdges  = interactionContinuousContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
+            typeInteractionsEdges  = interactionContinuousContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, types, intertypeIterations*timestep, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
         } else {
-            typeInteractionsEdges = interactionContinuousContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
+            typeInteractionsEdges = interactionContinuousContactsFileToEdgesListAndNodesByName(*typeInteractionFilename, subtypes, intertypeIterations*timestep, ensembleGeneNames, virtualNodesGranularity, typeToNodeNamesMap, undirectedTypeEdges);
         }
         #pragma omp parallel for
         for (int i = 0; i < finalWorkload;i++) {
