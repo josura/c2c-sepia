@@ -89,6 +89,7 @@ mpirun -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder data/testdata/testHeterog
             --subtypes data/testdata/testGraph/subcelltypes.txt \
             --dissipationModel scaled \
             --dissipationModelParameters 0.2 \
+            --virtualNodesGranularity typeAndNode \
             --saturation \
             --conservationModel scaled \
             --conservationModelParameters 0.5 \
