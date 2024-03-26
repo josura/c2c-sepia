@@ -524,7 +524,7 @@ int main(int argc, char** argv) {
     std::vector<std::vector<std::string>> graphsNodesAll; // used only initially to read the values, contains all types
     std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload, no virtual nodes
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
-    // a single graph is used for all the types
+    // a single graph is used for all the types in case it is specified by the parameter
     if(vm.count("fUniqueGraph")){
         namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
         graphsNodes.push_back(namesAndEdges[0].first);
