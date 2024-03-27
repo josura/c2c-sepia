@@ -275,14 +275,23 @@ struct hash_quadruple_strings {
 };
 
 /**
- * \brief   Returns the new virtual nodes associated with a type along the edges in the augmented graph, it also return the graph of the interactions between types(as a tuple of:
- *         - the start type/agent
- *         - the end type/agent
- *         - the contact times of the interaction
- *         granularity needs to be specified as an argument
- * \return the pair (map of the new virtual nodes associated with a type, graph of the interactions between types)
+ * \brief   Returns a boolean value if the set contains the interval(width is nonzero):
+ *         - set is the set of values
+ *         - lower is the lower bound of the interval
+ *         - upper  is the upper bound of the interval
+ * \return true if the set contains the interval, false otherwise
  */
 bool setDoubleContainsInterval(std::set<double> set, double lower, double upper);
+
+
+/**
+ * \brief   Returns how many values fall in the interval:
+ *         - set is the set of values
+ *         - lower is the lower bound of the interval
+ *         - upper  is the upper bound of the interval
+ * \return the number of values that fall in the interval
+ */
+int setDoubleIntervalWidth(std::set<double> set, double lower, double upper);
 
 /**
  * \brief   Returns the new virtual nodes associated with a type along the edges in the augmented graph, it also return the graph of the interactions between types(as a tuple of:
