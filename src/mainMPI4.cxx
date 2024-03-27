@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     bool undirectedTypeEdges = false;
     bool resetVirtualOutputs = false;
     std::string logMode="";
+    std::string quantizationMethod = "single";
     std::string virtualNodesGranularity = "type";
     namespace po = boost::program_options;
     po::options_description desc("Allowed options");
@@ -68,7 +69,7 @@ int main(int argc, char** argv) {
         ("resetVirtualOutputs",po::bool_switch(&resetVirtualOutputs), "reset the virtual outputs to 0 at each iteration, default to false")
         ("virtualNodesGranularity", po::value<std::string>(), "(string) granularity of the virtual nodes, available options are: 'type', 'node'(unstable), 'typeAndNode', default to type")
         ("virtualNodesGranularityParameters", po::value<std::vector<std::string>>()->multitoken(), "(vector<string>) parameters for the virtual nodes granularity, NOT USED for now")
-        ("quantizationMethod",po::value<std::string>(), "(string) define the quantization method used to quantize the contact times for the edges between different types, available options are: 'single' and 'multiple'")
+        ("quantizationMethod",po::value<std::string>(), "(string) define the quantization method used to quantize the contact times for the edges between different types, available options are: 'single' and 'multiple'") // aggiungere documentazione
         ("loggingOptions",po::value<std::string>(&logMode),"(string) logging options, available options are: 'all','none', default to all")
         ("savePerformance",po::value<std::string>(&performanceFilename), "(string) output performance (running time, number of total nodes, number of communities, number of total edges) to the defined file, if nothing is specified the performance are not saved")
     ;
@@ -161,6 +162,18 @@ int main(int argc, char** argv) {
     } else {
         logger << "[LOG] iterations intratype not set, set to default: 5 iterations \n";
         intratypeIterations = 5;
+    }
+
+    if (vm.count("quantizationMethod")) {
+        logger << "[LOG] quantization method set to " << vm["quantizationMethod"].as<std::string>();
+        if(vm["quantizationMethod"].as<std::string>() == "single"){
+            quantizationMethod = "single";
+        } else if(vm["quantizationMethod"].as<std::string>() == "multiple"){
+            quantizationMethod = "multiple";
+        } else {
+            std::cerr << "[ERROR], quantizationMethod set to a not available option, aborting";
+            return 1;            
+        }
     }
 
     // reading granularity
