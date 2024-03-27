@@ -1208,16 +1208,33 @@ int main(int argc, char** argv) {
                         int sourceTypePosition = isource + sourceRank*workloadPerProcess;
                         std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
                         //if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
-                        if(setDoubleContainsInterval(interactionBetweenTypesMap[keyTypes], iterationInterType* timestep, (iterationInterType + 1)* timestep)){
-                            // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
-                            // for(auto time: interactionBetweenTypesMap[keyTypes]){
-                            //     logger << time << ", ";
-                            // } 
-                            // logger << std::endl;
-                            if(localTypePosition==sourceTypePosition){
-                                if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
-                            } else {
-                                typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
+                        if(quantizationMethod=="single"){
+                            if(setDoubleContainsInterval(interactionBetweenTypesMap[keyTypes], iterationInterType* timestep, (iterationInterType + 1)* timestep)){
+                                // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
+                                // for(auto time: interactionBetweenTypesMap[keyTypes]){
+                                //     logger << time << ", ";
+                                // } 
+                                // logger << std::endl;
+                                if(localTypePosition==sourceTypePosition){
+                                    if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
+                                } else {
+                                    typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
+                                }
+                            }
+                        }else{
+                            int countIntervalWidth = setDoubleIntervalWidth(interactionBetweenTypesMap[keyTypes], iterationInterType* timestep, (iterationInterType + 1)* timestep);
+                            if(countIntervalWidth>0){
+                                // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
+                                // for(auto time: interactionBetweenTypesMap[keyTypes]){
+                                //     logger << time << ", ";
+                                // } 
+                                // logger << std::endl;
+                                double newValue = rankVirtualInputsBuffer[sourceRank][virtualInputPosition]*countIntervalWidth;
+                                if(localTypePosition==sourceTypePosition){
+                                    if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], newValue);
+                                } else {
+                                    typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], newValue);
+                                }
                             }
                         }
                     }
