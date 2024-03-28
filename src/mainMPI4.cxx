@@ -1221,7 +1221,7 @@ int main(int argc, char** argv) {
                                     typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], rankVirtualInputsBuffer[sourceRank][virtualInputPosition]);
                                 }
                             }
-                        }else{
+                        }else if(quantizationMethod=="multiple"){
                             int countIntervalWidth = setDoubleIntervalWidth(interactionBetweenTypesMap[keyTypes], iterationInterType* timestep, (iterationInterType + 1)* timestep);
                             if(countIntervalWidth>0){
                                 // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
@@ -1236,6 +1236,9 @@ int main(int argc, char** argv) {
                                     typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], newValue);
                                 }
                             }
+                        } else {
+                            std::cerr << "[ERROR] quantization method is not any of the types. quantization method available are single and multiple \n";
+                            return 1;
                         }
                     }
                 }
@@ -1279,23 +1282,48 @@ int main(int argc, char** argv) {
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
                             //if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
-                            if(setDoubleContainsInterval(interactionBetweenTypesFinerMap[interactionKey], iterationInterType* timestep, (iterationInterType + 1)* timestep)){
-                                double newValue = rankVirtualInputsBuffer[sourceRank][i];
-                                try{
-                                    if(sourceType == targetType){
-                                        if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, newValue);
-                                    } else {
-                                        typeComputations[targetTypeIndex]->setInputNodeValue(virtualInputNodeName, newValue);
+                            if(quantizationMethod=="single"){
+                                if(setDoubleContainsInterval(interactionBetweenTypesFinerMap[interactionKey], iterationInterType* timestep, (iterationInterType + 1)* timestep)){
+                                    double newValue = rankVirtualInputsBuffer[sourceRank][i];
+                                    try{
+                                        if(sourceType == targetType){
+                                            if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, newValue);
+                                        } else {
+                                            typeComputations[targetTypeIndex]->setInputNodeValue(virtualInputNodeName, newValue);
+                                        }
+                                    } catch(const std::exception& e){
+                                        std::cerr << e.what() << std::endl;
+                                        std::cerr << "[ERROR] error in setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
+                                        return 1;
                                     }
-                                } catch(const std::exception& e){
-                                    std::cerr << e.what() << std::endl;
-                                    std::cerr << "[ERROR] error in setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
-                                    return 1;
+                                } else {
+                                    // // TESTING
+                                    // std::cout << "[DEBUG] rank: " << rank << " interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " have no contact time for inter iteration "<< iterationInterType << std::endl;
+                                    // // TESTING
+                                }
+                            } else if(quantizationMethod=="multiple"){
+                                int countIntervalWidth = setDoubleIntervalWidth(interactionBetweenTypesFinerMap[interactionKey], iterationInterType* timestep, (iterationInterType + 1)* timestep);
+                                if(countIntervalWidth>0){
+                                    double newValue = rankVirtualInputsBuffer[sourceRank][i]*countIntervalWidth;
+                                    try{
+                                        if(sourceType == targetType){
+                                            if(sameTypeCommunication) typeComputations[targetTypeIndex ]->setInputNodeValue(virtualInputNodeName, newValue);
+                                        } else {
+                                            typeComputations[targetTypeIndex]->setInputNodeValue(virtualInputNodeName, newValue);
+                                        }
+                                    } catch(const std::exception& e){
+                                        std::cerr << e.what() << std::endl;
+                                        std::cerr << "[ERROR] error in setting input for virtual nodes from process "<< sourceRank<< " to process "<< targetRank << " for virtual nodes: " << virtualInputNodeName << " and " << virtualOutputNodeName << std::endl;
+                                        return 1;
+                                    }
+                                } else {
+                                    // // TESTING
+                                    // std::cout << "[DEBUG] rank: " << rank << " interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " have no contact time for inter iteration "<< iterationInterType << std::endl;
+                                    // // TESTING
                                 }
                             } else {
-                                // // TESTING
-                                // std::cout << "[DEBUG] rank: " << rank << " interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " have no contact time for inter iteration "<< iterationInterType << std::endl;
-                                // // TESTING
+                                std::cerr << "[ERROR] quantization method is not any of the types. quantization method available are single and multiple \n";
+                                return 1;
                             }
                         } else {
                             std::cerr << "[ERROR] interaction between nodes " << sourceNodeName << " and " << targetNodeName << " for types " << sourceType << " and " << targetType << " is not present in the interactionBetweenTypesFinerMap" << std::endl;
