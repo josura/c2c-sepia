@@ -1224,11 +1224,6 @@ int main(int argc, char** argv) {
                         }else if(quantizationMethod=="multiple"){
                             int countIntervalWidth = setDoubleIntervalWidth(interactionBetweenTypesMap[keyTypes], iterationInterType* timestep, (iterationInterType + 1)* timestep);
                             if(countIntervalWidth>0){
-                                // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
-                                // for(auto time: interactionBetweenTypesMap[keyTypes]){
-                                //     logger << time << ", ";
-                                // } 
-                                // logger << std::endl;
                                 double newValue = rankVirtualInputsBuffer[sourceRank][virtualInputPosition]*countIntervalWidth;
                                 if(localTypePosition==sourceTypePosition){
                                     if(sameTypeCommunication) typeComputations[ilocal]->setInputVinForType(types[sourceTypePosition], newValue);
@@ -1281,7 +1276,6 @@ int main(int argc, char** argv) {
                         if(targetTypeIndex == -1) throw std::runtime_error("main:: target type index not found for type: " + targetType);
                         std::tuple<std::string, std::string, std::string, std::string> interactionKey = std::make_tuple(sourceNodeName, targetNodeName, sourceType, targetType);
                         if(interactionBetweenTypesFinerMap.contains(interactionKey)){
-                            //if(interactionBetweenTypesFinerMap[interactionKey].contains(iterationInterType)){
                             if(quantizationMethod=="single"){
                                 if(setDoubleContainsInterval(interactionBetweenTypesFinerMap[interactionKey], iterationInterType* timestep, (iterationInterType + 1)* timestep)){
                                     double newValue = rankVirtualInputsBuffer[sourceRank][i];
