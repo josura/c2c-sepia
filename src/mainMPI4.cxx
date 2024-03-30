@@ -969,7 +969,6 @@ int main(int argc, char** argv) {
     std::vector<double*> virtualOutputs;
         std::vector<uint> rankVirtualOutputsSizes = std::vector<uint>(numProcesses,0);
         // different granularity for the virtual nodes means different ways of building the virtual outputs arrays and sizes
-        // TODO generalize, difficult though since the "type" granularity has a fixed number of spots for each type, while the "typeAndNode" granularity has a variable number of spots for each type
         if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
             for(int i = 0; i < numProcesses; i++){
                 int currentWorkload;
@@ -1010,13 +1009,11 @@ int main(int argc, char** argv) {
                 // TODO use stateful scaling function to consider previous times
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true);
                     } else if (vm.count("saturationTerm") >= 1) {
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
-                        // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, saturationVector);
                         //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, saturationVector);
                     }
@@ -1059,7 +1056,6 @@ int main(int argc, char** argv) {
 
         // send virtual outputs to the other processes, the vector contains the virtual outputs for each type as an array
         // for every type, send the virtual outputs to the other processes, all in the same array (this array will be decomposed on the target)
-        // build the array
 
 
         if(virtualNodesGranularity == "type"){ //classical way of building the virtual outputs arrays, one array for each type representing virtual nodes for each type
