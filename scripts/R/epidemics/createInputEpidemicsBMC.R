@@ -6,7 +6,17 @@ max_number_of_iteration <- 10
 
 # Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
 generate_graph_barabasi <- function(num_nodes, m) {
-  g <- barabasi.game(num_nodes, m = m, directed = FALSE)
+  #g <- barabasi.game(num_nodes, m = m, directed = FALSE)
+  g <- sample_pa(num_nodes, m = m, directed = FALSE)
+  E(g)$weight <- runif(ecount(g), min = 0, max = 1)
+  #assign names to nodes since they are not assigned by default and the ids are used as names
+  V(g)$name <- V(g)
+  return(g)
+}
+
+# Function to generate a graph with preferential attachment and aging rule, and random edge weights from 0 to 1
+generate_graph_barabasi_aging <- function(num_nodes, m, aging) {
+  g <- sample_pa_age(num_nodes, m = m, aging = aging, directed = FALSE)
   E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   #assign names to nodes since they are not assigned by default and the ids are used as names
   V(g)$name <- V(g)
@@ -15,7 +25,8 @@ generate_graph_barabasi <- function(num_nodes, m) {
 
 # Function to generate a random graph with erdos renyi model, and random edge weights from 0 to 1
 generate_graph_erdos <- function(num_nodes, prob) {
-  g <- erdos.renyi.game(num_nodes, prob, directed = FALSE)
+  #g <- erdos.renyi.game(num_nodes, prob, directed = FALSE)
+  g <- sample_gnp(num_nodes, prob, directed = FALSE)
   E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   #assign names to nodes since they are not assigned by default and the ids are used as names
   V(g)$name <- V(g)
