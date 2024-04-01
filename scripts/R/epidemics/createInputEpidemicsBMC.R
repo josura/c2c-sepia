@@ -33,6 +33,14 @@ generate_graph_erdos <- function(num_nodes, prob) {
   return(g)
 }
 
+# Function to generate a deterministic graph with a fixed number of nodes and edges, in a lattice structure
+generate_graph_lattice <- function(num_nodes, num_edges) {
+  g <- make_lattice(dim = c(num_nodes, num_nodes), nei = 1, directed = FALSE)
+  E(g)$weight <- runif(ecount(g), min = 0, max = 1)
+  #assign names to nodes since they are not assigned by default and the ids are used as names
+  V(g)$name <- V(g)
+  return(g)
+}
 
 # Function to assign node conditions (Susceptible or Infectious)
 assign_node_conditions <- function(graph, prob_infectious = 0.1) {
