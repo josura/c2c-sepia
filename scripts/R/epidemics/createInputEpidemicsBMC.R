@@ -16,7 +16,7 @@ generate_graph_barabasi <- function(num_nodes, m) {
 
 # Function to generate a graph with preferential attachment and aging rule, and random edge weights from 0 to 1
 generate_graph_barabasi_aging <- function(num_nodes, m, aging) {
-  g <- sample_pa_age(num_nodes, m = m, aging = aging, directed = FALSE)
+  g <- sample_pa_age(n = num_nodes, pa.exp = 1, aging.exp = aging, m = m, directed = FALSE)
   E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   #assign names to nodes since they are not assigned by default and the ids are used as names
   V(g)$name <- V(g)
@@ -35,7 +35,7 @@ generate_graph_erdos <- function(num_nodes, prob) {
 
 # Function to generate a deterministic graph with a fixed number of nodes and edges, in a lattice structure
 generate_graph_lattice <- function(num_nodes, num_edges) {
-  g <- make_lattice(dim = c(num_nodes, num_nodes), nei = 1, directed = FALSE)
+  g <- make_lattice(dim = c(num_nodes/6,6), nei = 1, directed = FALSE)
   E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   #assign names to nodes since they are not assigned by default and the ids are used as names
   V(g)$name <- V(g)
@@ -174,9 +174,12 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     contact_times_column[[i]] <- paste(sample(0:(max_number_of_iteration-1), number_of_contacts), collapse = ",")
   }
 
+  edges_between_communities$contactTimes <- contact_times_column
+
   
   # write the file
   write_tsv(edges_between_communities, paste0(output_dir,"interactions/interactions.tsv"), quote = "none",append = FALSE)
+
 }
 
 #create the directory to contain the significance analysis input data
@@ -226,13 +229,15 @@ for(numNodes in nodes.list){
     edge_data <- generate_edge_data(graph)
     
     # Plot the graph with node colors and edge widths
-    plot_graph(graph, node_conditions)
+    #plot_graph(graph, node_conditions)
     
     create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/"))
     # Write data to tsv files
     write_tsv(edge_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/edge_data.tsv"))
     write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/node_conditions.tsv"))
     write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/communities.tsv"))
+
+    print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment model.")
 
     ## PREFERENTIAL ATTACHMENT AGING
     current_dir <- paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/",i)
@@ -250,13 +255,15 @@ for(numNodes in nodes.list){
     edge_data <- generate_edge_data(graph)
 
     # Plot the graph with node colors and edge widths
-    plot_graph(graph, node_conditions)
+    #plot_graph(graph, node_conditions)
 
     create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/"))
     # Write data to tsv files
     write_tsv(edge_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/edge_data.tsv"))
     write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/node_conditions.tsv"))
     write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/communities.tsv"))
+
+    print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment and aging model.")
     
 
     ## ERDOS RENYI
@@ -275,7 +282,7 @@ for(numNodes in nodes.list){
     edge_data <- generate_edge_data(graph)
 
     # Plot the graph with node colors and edge widths
-    plot_graph(graph, node_conditions)
+    #plot_graph(graph, node_conditions)
 
     create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/"))
     # Write data to tsv files
@@ -300,14 +307,14 @@ for(numNodes in nodes.list){
     edge_data <- generate_edge_data(graph)
 
     # Plot the graph with node colors and edge widths
-    plot_graph(graph, node_conditions)
+    #plot_graph(graph, node_conditions)
 
     create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/lattice/",numNodes,"nodes/"))
     # Write data to tsv files
     write_tsv(edge_data, paste0("significanceAnalysys/lattice/",numNodes,"nodes/edge_data.tsv"))
     write_tsv(node_conditions, paste0("significanceAnalysys/lattice/",numNodes,"nodes/node_conditions.tsv"))
     write_tsv(community_data, paste0("significanceAnalysys/lattice/",numNodes,"nodes/communities.tsv"))
-    
+
   }
 }
 
