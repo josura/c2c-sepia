@@ -42,6 +42,15 @@ generate_graph_lattice <- function(num_nodes, num_edges) {
   return(g)
 }
 
+# Function to generate a deterministic regular graph
+generate_graph_regular <- function(num_nodes, degree) {
+  g <- make_full_graph(num_nodes) %du% make_full_graph(degree)
+  E(g)$weight <- runif(ecount(g), min = 0, max = 1)
+  #assign names to nodes since they are not assigned by default and the ids are used as names
+  V(g)$name <- V(g)
+  return(g)
+}
+
 # Function to assign node conditions (Susceptible or Infectious)
 assign_node_conditions <- function(graph, prob_infectious = 0.1) {
   nodes <- V(graph)
