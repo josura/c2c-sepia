@@ -237,7 +237,7 @@ for(numNodes in nodes.list){
     write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/node_conditions.tsv"))
     write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/communities.tsv"))
 
-    print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment model.")
+    print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment model."))
 
     ## PREFERENTIAL ATTACHMENT AGING
     current_dir <- paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/",i)
@@ -263,7 +263,7 @@ for(numNodes in nodes.list){
     write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/node_conditions.tsv"))
     write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/communities.tsv"))
 
-    print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment and aging model.")
+    print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment and aging model."))
     
 
     ## ERDOS RENYI
