@@ -44,7 +44,8 @@ generate_graph_lattice <- function(num_nodes, num_edges) {
 
 # Function to generate a deterministic regular graph
 generate_graph_regular <- function(num_nodes, degree) {
-  g <- make_full_graph(num_nodes) %du% make_full_graph(degree)
+  #g <- make_full_graph(num_nodes) %du% make_full_graph(degree)
+  g <- sample_k_regular(num_nodes, degree, directed = FALSE)
   E(g)$weight <- runif(ecount(g), min = 0, max = 1)
   #assign names to nodes since they are not assigned by default and the ids are used as names
   V(g)$name <- V(g)
@@ -201,7 +202,7 @@ dir.create("significanceAnalysys/preferentialAttachment", showWarnings = FALSE)
 dir.create("significanceAnalysys/erdosRenyi", showWarnings = FALSE)
 
 # create the directory for the graphs generated with lattice model
-dir.create("significanceAnalysys/lattice", showWarnings = FALSE)
+dir.create("significanceAnalysys/regular", showWarnings = FALSE)
 
 # create the directory for the graphs generated with preferential attachment and aging model
 dir.create("significanceAnalysys/preferentialAttachmentAging", showWarnings = FALSE)
@@ -216,14 +217,14 @@ for(numNodes in nodes.list){
   dir.create(paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes"), showWarnings = FALSE)
 
   # create the directory for the defined nodes in the list nodes.list, with lattice model, generate 30 graphs
-  dir.create(paste0("significanceAnalysys/lattice/",numNodes,"nodes"), showWarnings = FALSE)
+  dir.create(paste0("significanceAnalysys/regular/",numNodes,"nodes"), showWarnings = FALSE)
 
   # create the directory for the defined nodes in the list nodes.list, with preferential attachment and aging model, generate 30 graphs
   dir.create(paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes"), showWarnings = FALSE)
 
   for (i in 1:30){
     ## PREFERENTIAL ATTACHMENT
-    current_dir <- paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/",i)
+    current_dir <- paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/",i,"/")
     dir.create(current_dir, showWarnings = FALSE)
     # Generate a graph with preferential attachment (100 nodes, m=2 for preferential attachment)
     graph <- generate_graph_barabasi(numNodes, m = 2)
@@ -240,16 +241,16 @@ for(numNodes in nodes.list){
     # Plot the graph with node colors and edge widths
     #plot_graph(graph, node_conditions)
     
-    create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/"))
+    create_input_graphs(graph, node_conditions, community_data, current_dir)
     # Write data to tsv files
-    write_tsv(edge_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/edge_data.tsv"))
-    write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/node_conditions.tsv"))
-    write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes/communities.tsv"))
+    write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
+    write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
+    write_tsv(community_data, paste0(current_dir,"communities.tsv"))
 
     print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment model."))
 
     ## PREFERENTIAL ATTACHMENT AGING
-    current_dir <- paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/",i)
+    current_dir <- paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/",i,"/")
     dir.create(current_dir, showWarnings = FALSE)
     # Generate a graph with preferential attachment and aging (100 nodes, m=2 for preferential attachment, aging=1 for aging)
     graph <- generate_graph_barabasi_aging(numNodes, m = 2, aging = 1)
@@ -265,18 +266,18 @@ for(numNodes in nodes.list){
 
     # Plot the graph with node colors and edge widths
     #plot_graph(graph, node_conditions)
-
-    create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/"))
+    
+    create_input_graphs(graph, node_conditions, community_data, current_dir)
     # Write data to tsv files
-    write_tsv(edge_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/edge_data.tsv"))
-    write_tsv(node_conditions, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/node_conditions.tsv"))
-    write_tsv(community_data, paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/communities.tsv"))
+    write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
+    write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
+    write_tsv(community_data, paste0(current_dir,"communities.tsv"))
 
     print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment and aging model."))
     
 
     ## ERDOS RENYI
-    current_dir <- paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/",i)
+    current_dir <- paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/",i,"/")
     dir.create(current_dir, showWarnings = FALSE)
     # Generate a graph with erdos renyi model (100 nodes, prob=0.1 for erdos renyi)
     graph <- generate_graph_erdos(numNodes, prob = 0.1)
@@ -293,18 +294,18 @@ for(numNodes in nodes.list){
     # Plot the graph with node colors and edge widths
     #plot_graph(graph, node_conditions)
 
-    create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/"))
+    create_input_graphs(graph, node_conditions, community_data, current_dir)
     # Write data to tsv files
-    write_tsv(edge_data, paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/edge_data.tsv"))
-    write_tsv(node_conditions, paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/node_conditions.tsv"))
-    write_tsv(community_data, paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/communities.tsv"))
+    write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
+    write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
+    write_tsv(community_data, paste0(current_dir,"communities.tsv"))
 
-    ## LATTICE
-    current_dir <- paste0("significanceAnalysys/lattice/",numNodes,"nodes/",i)
+    ## Regular graph
+    current_dir <- paste0("significanceAnalysys/regular/",numNodes,"nodes/",i,"/")
     dir.create(current_dir, showWarnings = FALSE)
 
-    # Generate a graph with lattice model (100 nodes, 100 edges for lattice)
-    graph <- generate_graph_lattice(numNodes, num_edges = 100)
+    # Generate a graph with regular model (100 nodes, degree=2 for regular)
+    graph <- generate_graph_regular(numNodes, degree = 2)
 
     # Assign node conditions to the graph
     node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
@@ -317,12 +318,13 @@ for(numNodes in nodes.list){
 
     # Plot the graph with node colors and edge widths
     #plot_graph(graph, node_conditions)
-
-    create_input_graphs(graph, node_conditions, community_data, paste0("significanceAnalysys/lattice/",numNodes,"nodes/"))
+    
+    create_input_graphs(graph, node_conditions, community_data, current_dir)
     # Write data to tsv files
-    write_tsv(edge_data, paste0("significanceAnalysys/lattice/",numNodes,"nodes/edge_data.tsv"))
-    write_tsv(node_conditions, paste0("significanceAnalysys/lattice/",numNodes,"nodes/node_conditions.tsv"))
-    write_tsv(community_data, paste0("significanceAnalysys/lattice/",numNodes,"nodes/communities.tsv"))
+    write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
+    write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
+    write_tsv(community_data, paste0(current_dir,"communities.tsv"))
+
 
   }
 }
