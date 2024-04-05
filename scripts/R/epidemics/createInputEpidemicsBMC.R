@@ -299,33 +299,31 @@ for(numNodes in nodes.list){
     write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
     write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
     write_tsv(community_data, paste0(current_dir,"communities.tsv"))
-
-    ## Regular graph
-    current_dir <- paste0("significanceAnalysys/regular/",numNodes,"nodes/",i,"/")
-    dir.create(current_dir, showWarnings = FALSE)
-
-    # Generate a graph with regular model (100 nodes, degree=2 for regular)
-    graph <- generate_graph_regular(numNodes, degree = 2)
-
-    # Assign node conditions to the graph
-    node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
-
-    # Create communities based on the graph
-    community_data <- create_communities(graph)
-
-    # Generate edge data with edge weights
-    edge_data <- generate_edge_data(graph)
-
-    # Plot the graph with node colors and edge widths
-    #plot_graph(graph, node_conditions)
-    
-    create_input_graphs(graph, node_conditions, community_data, current_dir)
-    # Write data to tsv files
-    write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
-    write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
-    write_tsv(community_data, paste0(current_dir,"communities.tsv"))
-
-
   }
+
+  ## Regular graph
+  current_dir <- paste0("significanceAnalysys/regular/",numNodes,"nodes/")
+  #dir.create(current_dir, showWarnings = FALSE)
+
+  # Generate a graph with regular model (100 nodes, degree=2 for regular)
+  graph <- generate_graph_regular(numNodes, degree = 2)
+
+  # Assign node conditions to the graph
+  node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
+
+  # Create communities based on the graph
+  community_data <- create_communities(graph)
+
+  # Generate edge data with edge weights
+  edge_data <- generate_edge_data(graph)
+
+  # Plot the graph with node colors and edge widths
+  #plot_graph(graph, node_conditions)
+  
+  create_input_graphs(graph, node_conditions, community_data, current_dir)
+  # Write data to tsv files
+  write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
+  write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
+  write_tsv(community_data, paste0(current_dir,"communities.tsv"))
 }
 
