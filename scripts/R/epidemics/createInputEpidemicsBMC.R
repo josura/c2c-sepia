@@ -184,7 +184,7 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
     contact_times_column[[i]] <- paste(sample(0:(max_number_of_iteration-1), number_of_contacts), collapse = ",")
   }
 
-  edges_between_communities$contactTimes <- contact_times_column
+  edges_between_communities$contactTimes <- unlist(contact_times_column)
 
   
   # write the file
