@@ -207,7 +207,7 @@ dir.create("significanceAnalysys/regular", showWarnings = FALSE)
 # create the directory for the graphs generated with preferential attachment and aging model
 dir.create("significanceAnalysys/preferentialAttachmentAging", showWarnings = FALSE)
 
-nodes.list <- c(100, 1000, 10000, 30000)
+nodes.list <- c(100, 1000, 10000)
 
 for(numNodes in nodes.list){
   # create the directory for the defined nodes in the list nodes.list, with barabasi model, generate 30 graphs

@@ -9,7 +9,7 @@ fi
 # interface is passed as an argument
 interface=$1
 
-#example usage: sh scripts/bash/experiments/epidemicsExperimentsBMC.sh wlan0 scripts/R/epidemics/syntheticGraphs/ outputs/epidemics/ 
+#example usage: sh scripts/bash/experiments/epidemicsExperimentsBMC.sh wlan0 scripts/R/epidemics/syntheticGraphs/graphtype outputs/epidemics/graphtype 
 # get the directory of the inputs from the first argument
 inputsFolder=$1
 outputsFolder=$2
@@ -28,18 +28,15 @@ echo "Graph file: $graphsFolderName"
 echo "Initial perturbation file: $initialPerturbationFolderName"
 echo "Type interactions file: $typeInteractionsFolderName"
 
-listDissipationScaleFactors=(0 0.2 0.4 0.6)
-listPropagationScaleFactors=(0.5 1.0 2.0 4.0)
+dissipationScaleFactor=0.2
+propagationScaleFactor=0.5
 
-# loop through the permutation of scale factors (propagation vs dissipation)
-for dissipationScaleFactor in ${listDissipationScaleFactors[@]}; do
-    for propagationScaleFactor in ${listPropagationScaleFactors[@]}; do
         echo "Dissipation scale factor: $dissipationScaleFactor"
         echo "Propagation scale factor: $propagationScaleFactor"
         # get the output folder
         outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
         # run the simulation
-        mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
+        echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
             --initialPerturbationPerTypeFolder $initialPerturbationFolder \
             --typeInteractionFolder $typeInteractionsFolder \
             --dissipationModel scaled \
@@ -49,6 +46,4 @@ for dissipationScaleFactor in ${listDissipationScaleFactors[@]}; do
             --saturation \
             --undirectedEdges \
             --undirectedTypeEdges \
-            --outputFolder $outputFolder
-    done
-done
+            --outputFolder $outputFolder"
