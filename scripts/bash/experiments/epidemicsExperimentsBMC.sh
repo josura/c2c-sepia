@@ -14,27 +14,27 @@ interface=$1
 inputsFolder=$1
 outputsFolder=$2
 
-#get the graph file, the initial perturbation and the type interactions from the folder
-graphsFolderName=$(ls $inputsFolder | grep "graph")
-initialPerturbationFolderName=$(ls $inputsFolder | grep "node_conditions_discr")
-typeInteractionsFolderName=$(ls $inputsFolder | grep "interactions")
-
-# get the full path for the graph file, the initial perturbation and the type interactions 
-graphsFolder=$inputsFolder$graphsFolderName
-initialPerturbationFolder=$inputsFolder$initialPerturbationFolderName
-typeInteractionsFolder=$inputsFolder$typeInteractionsFolderName
-
-echo "Graph file: $graphsFolderName"
-echo "Initial perturbation file: $initialPerturbationFolderName"
-echo "Type interactions file: $typeInteractionsFolderName"
-
 dissipationScaleFactor=0.2
 propagationScaleFactor=0.5
 
 # from the input folder where the graphs are stored, select the inputs for every graph and echo the command to run the simulation, the name of the graphs folders go from 1 to 30
-for i in {1..30}
-        echo "Dissipation scale factor: $dissipationScaleFactor"
-        echo "Propagation scale factor: $propagationScaleFactor"
+for i in {1..30} 
+do
+
+        #get the graph file, the initial perturbation and the type interactions from the folder
+        graphsFolderName=$(ls $inputsFolder$i | grep "graph") 
+        initialPerturbationFolderName=$(ls $inputsFolder$i | grep "node_conditions_discr")
+        typeInteractionsFolderName=$(ls $inputsFolder$i | grep "interactions")
+
+        # get the full path for the graph file, the initial perturbation and the type interactions 
+        graphsFolder=$inputsFolder$graphsFolderName
+        initialPerturbationFolder=$inputsFolder$initialPerturbationFolderName
+        typeInteractionsFolder=$inputsFolder$typeInteractionsFolderName
+
+        echo "Graph file: $graphsFolderName"
+        echo "Initial perturbation file: $initialPerturbationFolderName"
+        echo "Type interactions file: $typeInteractionsFolderName"
+
         # get the output folder
         outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
         # run the simulation
