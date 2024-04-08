@@ -31,6 +31,8 @@ echo "Type interactions file: $typeInteractionsFolderName"
 dissipationScaleFactor=0.2
 propagationScaleFactor=0.5
 
+# from the input folder where the graphs are stored, select the inputs for every graph and echo the command to run the simulation, the name of the graphs folders go from 1 to 30
+for i in {1..30}
         echo "Dissipation scale factor: $dissipationScaleFactor"
         echo "Propagation scale factor: $propagationScaleFactor"
         # get the output folder
@@ -46,4 +48,5 @@ propagationScaleFactor=0.5
             --saturation \
             --undirectedEdges \
             --undirectedTypeEdges \
-            --outputFolder $outputFolder"
+            --outputFolder $outputFolder"    
+done
