@@ -9,7 +9,7 @@ fi
 # interface is passed as an argument
 interface=$1
 
-#example usage: sh scripts/bash/experiments/epidemicsExperimentsBMC.sh wlan0 scripts/R/epidemics/syntheticGraphs/graphtype outputs/epidemics/graphtype 
+#example usage: sh scripts/bash/experiments/epidemicsExperimentsBMC.sh wlan0 scripts/R/epidemics/syntheticGraphs/graphtype/numberOfNodes outputs/epidemics/graphtype/numberOfNodes 
 # get the directory of the inputs from the first argument
 inputsFolder=$2
 outputsFolder=$3
@@ -20,33 +20,32 @@ propagationScaleFactor=0.5
 # from the input folder where the graphs are stored, select the inputs for every graph and echo the command to run the simulation, the name of the graphs folders go from 1 to 30
 for i in {1..30} 
 do
+    #get the graph file, the initial perturbation and the type interactions from the folder
+    graphsFolderName=$(ls $inputsFolder/$i | grep "graph") 
+    initialPerturbationFolderName=$(ls $inputsFolder/$i | grep "node_conditions_discr")
+    typeInteractionsFolderName=$(ls $inputsFolder/$i | grep "interactions")
 
-        #get the graph file, the initial perturbation and the type interactions from the folder
-        graphsFolderName=$(ls $inputsFolder/$i | grep "graph") 
-        initialPerturbationFolderName=$(ls $inputsFolder/$i | grep "node_conditions_discr")
-        typeInteractionsFolderName=$(ls $inputsFolder/$i | grep "interactions")
+    # get the full path for the graph file, the initial perturbation and the type interactions 
+    graphsFolder=$inputsFolder/$i/$graphsFolderName
+    initialPerturbationFolder=$inputsFolder/$i/$initialPerturbationFolderName
+    typeInteractionsFolder=$inputsFolder/$i/$typeInteractionsFolderName
 
-        # get the full path for the graph file, the initial perturbation and the type interactions 
-        graphsFolder=$inputsFolder/$i/$graphsFolderName
-        initialPerturbationFolder=$inputsFolder/$i/$initialPerturbationFolderName
-        typeInteractionsFolder=$inputsFolder/$i/$typeInteractionsFolderName
+    echo "Graph file: $graphsFolderName"
+    echo "Initial perturbation file: $initialPerturbationFolderName"
+    echo "Type interactions file: $typeInteractionsFolderName"
 
-        echo "Graph file: $graphsFolderName"
-        echo "Initial perturbation file: $initialPerturbationFolderName"
-        echo "Type interactions file: $typeInteractionsFolderName"
-
-        # get the output folder
-        outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
-        # run the simulation
-        echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
-            --initialPerturbationPerTypeFolder $initialPerturbationFolder \
-            --typeInteractionFolder $typeInteractionsFolder \
-            --dissipationModel scaled \
-            --dissipationModelParameters $dissipationScaleFactor \
-            --propagationModel neighbors \
-            --propagationModelParameters $propagationScaleFactor \
-            --saturation \
-            --undirectedEdges \
-            --undirectedTypeEdges \
-            --outputFolder $outputFolder"    
+    # get the output folder
+    outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
+    # run the simulation
+    echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
+        --initialPerturbationPerTypeFolder $initialPerturbationFolder \
+        --typeInteractionFolder $typeInteractionsFolder \
+        --dissipationModel scaled \
+        --dissipationModelParameters $dissipationScaleFactor \
+        --propagationModel neighbors \
+        --propagationModelParameters $propagationScaleFactor \
+        --saturation \
+        --undirectedEdges \
+        --undirectedTypeEdges \
+        --outputFolder $outputFolder"    
 done
