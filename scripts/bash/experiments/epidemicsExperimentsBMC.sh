@@ -35,7 +35,8 @@ do
     echo "Type interactions file: $typeInteractionsFolderName"
 
     # get the output folder
-    outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
+    #outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
+    outputFolder="$outputsFolder/$i"
     # run the simulation
     echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
         --initialPerturbationPerTypeFolder $initialPerturbationFolder \
@@ -44,6 +45,9 @@ do
         --dissipationModelParameters $dissipationScaleFactor \
         --propagationModel neighbors \
         --propagationModelParameters $propagationScaleFactor \
+        --intertypeIterations 9 \
+        --intratypeIterations 3 \
+        --virtualNodesGranularity typeAndNode \
         --saturation \
         --undirectedEdges \
         --undirectedTypeEdges \
