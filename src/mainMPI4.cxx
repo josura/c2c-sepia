@@ -487,6 +487,12 @@ int main(int argc, char** argv) {
         logger << "[LOG] subtypes filename not set, set to default: all types \n";
         subtypes = types;
     }
+
+    logger << "[LOG] types found in the folder used for the computation: " << std::endl;
+    for (auto type : types) {
+        logger << type << ", ";
+    }
+    logger << std::endl;
     
     //filter types with the subtypesresetVirtualOutputs
     types = vectorsIntersection(types, subtypes);
@@ -494,6 +500,11 @@ int main(int argc, char** argv) {
         std::cerr << "[ERROR] no types in common between the types and subtypes: aborting"<<std::endl;
         return 1;
     }
+    logger << "[LOG] final types used for the computation: " << std::endl;
+    for (auto type : types) {
+        logger << type << ", ";
+    }
+    logger << std::endl;
 
 
     // take starting time before initializing MPI and the computation
