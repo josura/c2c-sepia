@@ -11,8 +11,8 @@ interface=$1
 
 #example usage: sh scripts/bash/experiments/epidemicsExperimentsBMC.sh wlan0 scripts/R/epidemics/syntheticGraphs/graphtype outputs/epidemics/graphtype 
 # get the directory of the inputs from the first argument
-inputsFolder=$1
-outputsFolder=$2
+inputsFolder=$2
+outputsFolder=$3
 
 dissipationScaleFactor=0.2
 propagationScaleFactor=0.5
@@ -22,9 +22,9 @@ for i in {1..30}
 do
 
         #get the graph file, the initial perturbation and the type interactions from the folder
-        graphsFolderName=$(ls $inputsFolder$i | grep "graph") 
-        initialPerturbationFolderName=$(ls $inputsFolder$i | grep "node_conditions_discr")
-        typeInteractionsFolderName=$(ls $inputsFolder$i | grep "interactions")
+        graphsFolderName=$(ls $inputsFolder/$i | grep "graph") 
+        initialPerturbationFolderName=$(ls $inputsFolder/$i | grep "node_conditions_discr")
+        typeInteractionsFolderName=$(ls $inputsFolder/$i | grep "interactions")
 
         # get the full path for the graph file, the initial perturbation and the type interactions 
         graphsFolder=$inputsFolder$graphsFolderName
