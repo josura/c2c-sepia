@@ -614,6 +614,7 @@ int main(int argc, char** argv) {
         std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
         return 1;
     }
+    logger << "[LOG] initial perturbation values successfully read for rank "<< rank << std::endl;
     std::vector<std::string> initialNames = std::get<0>(initialValues);
     inputInitials = std::get<2>(initialValues);
     std::vector<std::string> typesFromValues = std::get<1>(initialValues);
@@ -680,6 +681,7 @@ int main(int argc, char** argv) {
 
     }
 
+    logger << "[LOG] loading type interactions for rank "<< rank << std::endl;
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
     // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
     std::unordered_map<std::pair<std::string, std::string>, std::set<double>, hash_pair_strings> interactionBetweenTypesMap;
@@ -842,6 +844,7 @@ int main(int argc, char** argv) {
         }
         
     }
+    logger << "[LOG] type interactions loaded for rank "<< rank << std::endl; 
     
 
     // setting propagation model in this moment since in the case of the original model, the pseudoinverse should be computed for the augmented pathway
