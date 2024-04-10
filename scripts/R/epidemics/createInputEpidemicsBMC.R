@@ -179,9 +179,11 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
   # add random contact times (unique integers for every edge, increasing order,) from 0 to max_number_of_iteration to every edge between communities
   # the contact times for every edge are strings separated by a comma
   contact_times_column <- list()
-  for (i in 1:nrow(edges_between_communities)){
-    number_of_contacts <- sample(1:max_number_of_iteration, 1)
-    contact_times_column[[i]] <- paste(sample(0:(max_number_of_iteration-1), number_of_contacts), collapse = ",")
+  if(nrow(edges_between_communities) > 0){
+    for (i in 1:nrow(edges_between_communities)){
+      number_of_contacts <- sample(1:max_number_of_iteration, 1)
+      contact_times_column[[i]] <- paste(sample(0:(max_number_of_iteration-1), number_of_contacts), collapse = ",")
+    }
   }
 
   edges_between_communities$contactTimes <- unlist(contact_times_column)
@@ -212,13 +214,13 @@ nodes.list <- c(100, 1000, 10000)
 for(numNodes in nodes.list){
   # create the directory for the defined nodes in the list nodes.list, with barabasi model, generate 30 graphs
   dir.create(paste0("significanceAnalysys/preferentialAttachment/",numNodes,"nodes"), showWarnings = FALSE)
-
+  
   # create the directory for the defined nodes in the list nodes.list, with erdos renyi model, generate 30 graphs
   dir.create(paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes"), showWarnings = FALSE)
-
+  
   # create the directory for the defined nodes in the list nodes.list, with lattice model, generate 30 graphs
   dir.create(paste0("significanceAnalysys/regular/",numNodes,"nodes"), showWarnings = FALSE)
-
+  
   # create the directory for the defined nodes in the list nodes.list, with preferential attachment and aging model, generate 30 graphs
   dir.create(paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes"), showWarnings = FALSE)
 
@@ -246,9 +248,9 @@ for(numNodes in nodes.list){
     write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
     write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
     write_tsv(community_data, paste0(current_dir,"communities.tsv"))
-
+    
     print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment model."))
-
+    
     ## PREFERENTIAL ATTACHMENT AGING
     current_dir <- paste0("significanceAnalysys/preferentialAttachmentAging/",numNodes,"nodes/",i,"/")
     dir.create(current_dir, showWarnings = FALSE)
@@ -257,13 +259,13 @@ for(numNodes in nodes.list){
     
     # Assign node conditions to the graph
     node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
-
+    
     # Create communities based on the graph
     community_data <- create_communities(graph)
-
+    
     # Generate edge data with edge weights
     edge_data <- generate_edge_data(graph)
-
+    
     # Plot the graph with node colors and edge widths
     #plot_graph(graph, node_conditions)
     
@@ -272,7 +274,7 @@ for(numNodes in nodes.list){
     write_tsv(edge_data, paste0(current_dir,"edge_data.tsv"))
     write_tsv(node_conditions, paste0(current_dir,"node_conditions.tsv"))
     write_tsv(community_data, paste0(current_dir,"communities.tsv"))
-
+    
     print(paste0("saved graph ",i," for ",numNodes," nodes with preferential attachment and aging model."))
     
 
@@ -280,7 +282,7 @@ for(numNodes in nodes.list){
     current_dir <- paste0("significanceAnalysys/erdosRenyi/",numNodes,"nodes/",i,"/")
     dir.create(current_dir, showWarnings = FALSE)
     # Generate a graph with erdos renyi model (100 nodes, prob=0.1 for erdos renyi)
-    graph <- generate_graph_erdos(numNodes, prob = 0.1)
+    graph <- generate_graph_erdos(numNodes, prob = 1/numNodes)
 
     # Assign node conditions to the graph
     node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
@@ -304,19 +306,19 @@ for(numNodes in nodes.list){
   ## Regular graph
   current_dir <- paste0("significanceAnalysys/regular/",numNodes,"nodes/")
   #dir.create(current_dir, showWarnings = FALSE)
-
+  
   # Generate a graph with regular model (100 nodes, degree=2 for regular)
   graph <- generate_graph_regular(numNodes, degree = 2)
-
+  
   # Assign node conditions to the graph
   node_conditions <- assign_node_conditions(graph, prob_infectious = 0.1)
-
+  
   # Create communities based on the graph
   community_data <- create_communities(graph)
-
+  
   # Generate edge data with edge weights
   edge_data <- generate_edge_data(graph)
-
+  
   # Plot the graph with node colors and edge widths
   #plot_graph(graph, node_conditions)
   
