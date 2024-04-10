@@ -52,6 +52,4 @@ do
         --undirectedEdges \
         --undirectedTypeEdges \
         --outputFolder $outputFolder
-    # sleep for 1 second to avoid problems with the outputs
-    sleep 1
 done
