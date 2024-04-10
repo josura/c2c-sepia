@@ -38,7 +38,7 @@ do
     #outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
     outputFolder="$outputsFolder/$i"
     # run the simulation
-    echo "mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
+    mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
         --initialPerturbationPerTypeFolder $initialPerturbationFolder \
         --typeInteractionFolder $typeInteractionsFolder \
         --dissipationModel scaled \
@@ -51,5 +51,7 @@ do
         --saturation \
         --undirectedEdges \
         --undirectedTypeEdges \
-        --outputFolder $outputFolder"    
+        --outputFolder $outputFolder
+    # sleep for 1 second to avoid problems with the outputs
+    sleep 1
 done
