@@ -561,6 +561,8 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
         std::string type = splitStringIntoVector(filename, ".")[0];
         if(vectorContains(subType,type)){
             filteredFiles.push_back(*iter);
+        } else {
+            std::cout << "[LOG] discarding file " << *iter << " since it is not in the subtypes" << std::endl;
         }
     }
     if(filteredFiles.size()==0){

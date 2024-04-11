@@ -338,6 +338,8 @@ std::vector<T> Matrix<T>::asVector()const{
         }
         return ret;
     } else {
+        std::cerr << "[ERROR] Matrix::asVector: the matrix is not a vector (1 column, n rows)";
+        std::cerr << "rows_=" << rows_ << " cols_=" << cols_ << std::endl;
         throw std::domain_error("[ERROR] Matrix::asVector: the matrix is not a vector (1 column, n rows)");
     }
 }
