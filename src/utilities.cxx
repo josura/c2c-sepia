@@ -342,6 +342,10 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
                     }
                 }
             }
+            // control if resulting edges vector is empty
+            if(ret.size()==0){
+                std::cerr << "[WARNING] edgesFileToEdgesListAndNodesByName: no edges found in the file " << filename << std::endl;
+            }
             myfile.close();
         }
     } else {
@@ -463,6 +467,8 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
+
+// TODO: refactor
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeMatrixToCellVectors(std::string filename, const std::vector<std::string>& finalNames,std::vector<std::string> subTypes ,bool useEntrez){
     string line;
     std::vector<std::vector<double>> ret;
@@ -527,6 +533,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
+// TODO: refactor
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath,const std::vector<std::string>& allTypes , const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType, bool useEntrez){
     std::vector<std::string> cellNames;
     std::vector<std::string> geneNames;
@@ -630,6 +637,52 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
     return std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> (geneNames,cellNames,ret);
             
 }
+
+
+std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationFolder(std::string folderPath){
+    std::map<std::string,std::vector<std::string>> ret;
+    auto files = get_all(folderPath,".tsv");
+    if(files.size()==0){
+        throw std::invalid_argument("utilities::nodeNamesFromInitialPerturbationFolder: no files found in the folder " + folderPath);
+    }
+    for(auto iter = files.cbegin();iter!=files.cend();iter++){
+        std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
+        std::string filename = splitted[splitted.size()-1]; //last element
+        std::vector<std::string> splittedFilename = splitStringIntoVector(filename, "."); //split the extension
+        std::string type = splittedFilename[0];
+        std::vector<std::string> nodeNames;
+        if(file_exists(*iter)){
+            ifstream myfile (*iter);
+            string line;
+            getline (myfile,line);  // first line is header
+            // search for name column
+            std::vector<std::string> splittedHeader = splitStringIntoVector(line, "\t");
+            int indexName=-1;
+            for(uint i = 0; i < splittedHeader.size(); i++){
+                if (boost::algorithm::to_lower_copy(splittedHeader[i]).find("name") != std::string::npos) {
+                    indexName = i;
+                }
+            }
+            if(indexName < 0){
+                throw std::invalid_argument("utilities::nodeNamesFromInitialPerturbationFolder: invalid file, the header does not contain a name feature");
+            }
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
+                if(entries.size()==splittedHeader.size()){
+                    nodeNames.push_back(entries[indexName]);
+                }
+            }
+            myfile.close();
+            ret[type] = nodeNames;
+        } else {
+            throw std::invalid_argument("utilities::nodeNamesFromInitialPerturbationFolder: file does not exists " + *iter);
+        }
+    }
+    return ret;
+
+}
+
 
 
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez){

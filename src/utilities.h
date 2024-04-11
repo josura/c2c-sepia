@@ -216,6 +216,8 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez=false);
 
+std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationFolder(std::string folderPath);
+
 // A hash function used to hash a pair of any kind
 struct hash_pair_strings {
     size_t operator()(const std::pair<std::string, std::string>& p) const
