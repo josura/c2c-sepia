@@ -218,6 +218,16 @@ std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> in
 
 std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationFolder(std::string folderPath);
 
+// function to return the keys in a map
+template<typename K, typename V>
+std::vector<K> getKeys(std::map<K,V> const& input_map) {
+    std::vector<K> retval;
+    for (auto const& element : input_map) {
+        retval.push_back(element.first);
+    }
+    return retval;
+}
+
 // A hash function used to hash a pair of any kind
 struct hash_pair_strings {
     size_t operator()(const std::pair<std::string, std::string>& p) const
