@@ -550,6 +550,7 @@ int main(int argc, char** argv) {
     std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload, no virtual nodes
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     // a single graph is used for all the types in case it is specified by the parameter
+    // TODO correct the reading of the nodes from the file, since the edge file it is used for now, and isolated nodes are not considered
     if(vm.count("fUniqueGraph")){
         namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
         graphsNodes.push_back(namesAndEdges[0].first);
@@ -565,10 +566,16 @@ int main(int argc, char** argv) {
         }
 
     } else if (vm.count("graphsFilesFolder")) { // the graphs are in a folder, each graph is a type
-        auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);
+        auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);  // TODO change the function to return only the set of edges and type names, use another function to get the nodes
+        std::map<std::string, std::vector<std::string>> namesFromInitialPerturbation = nodeNamesFromInitialPerturbationFolder(typeInitialPerturbationFolderFilename);
         auto typesFromFolder = allGraphs.first;
+        auto typesFromValues = getKeys<std::string,std::vector<std::string>>(namesFromInitialPerturbation);
         if(typesFromFolder.size() != types.size()){
             std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+            return 1;
+        }
+        if(typesFromValues.size() != types.size()){
+            std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
             return 1;
         }
         for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
@@ -579,11 +586,14 @@ int main(int argc, char** argv) {
         }
         namesAndEdges = allGraphs.second;
         for(uint i = 0; i < types.size(); i++){
-            graphsNodesAll.push_back(namesAndEdges[i].first);
-            typeToNodeNamesMap[types[i]] = namesAndEdges[i].first;
+            //graphsNodesAll.push_back(namesAndEdges[i].first);
+            graphsNodesAll.push_back(namesFromInitialPerturbation[types[i]]);
+            // typeToNodeNamesMap[types[i]] = namesAndEdges[i].first;
+            typeToNodeNamesMap[types[i]] = namesFromInitialPerturbation[types[i]];
         }
         for(int i = startIdx; i < endIdx; i++){
-            graphsNodes.push_back(namesAndEdges[i].first);
+            //graphsNodes.push_back(namesAndEdges[i].first);
+            graphsNodes.push_back(namesFromInitialPerturbation[types[i]]);
             graphs[i-startIdx] = new WeightedEdgeGraph(graphsNodes[i-startIdx]);
         }
     } 
