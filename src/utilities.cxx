@@ -639,11 +639,11 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 }
 
 
-std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationFolder(std::string folderPath){
+std::map<std::string,std::vector<std::string>> nodeNamesFromFolder(std::string folderPath){
     std::map<std::string,std::vector<std::string>> ret;
     auto files = get_all(folderPath,".tsv");
     if(files.size()==0){
-        throw std::invalid_argument("utilities::nodeNamesFromInitialPerturbationFolder: no files found in the folder " + folderPath);
+        throw std::invalid_argument("utilities::nodeNamesFromFolder: no files found in the folder " + folderPath);
     }
     for(auto iter = files.cbegin();iter!=files.cend();iter++){
         std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
@@ -664,7 +664,7 @@ std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationF
                 }
             }
             if(indexName < 0){
-                throw std::invalid_argument("utilities::nodeNamesFromInitialPerturbationFolder: invalid file, the header does not contain a name feature");
+                throw std::invalid_argument("utilities::nodeNamesFromFolder: invalid file, the header does not contain a name feature");
             }
             while ( getline (myfile,line) )
             {
@@ -676,7 +676,7 @@ std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationF
             myfile.close();
             ret[type] = nodeNames;
         } else {
-            throw std::invalid_argument("utilities::nodeNamesFromInitialPerturbationFolder: file does not exists " + *iter);
+            throw std::invalid_argument("utilities::nodeNamesFromFolder: file does not exists " + *iter);
         }
     }
     return ret;

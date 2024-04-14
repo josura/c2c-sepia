@@ -216,7 +216,7 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename,bool useEntrez=false);
 std::map<std::string,std::vector<std::tuple<std::string,std::string,double>>> interactionFileToEdgesListAndNodesByName(std::string filename, std::vector<std::string> subtypes,bool useEntrez=false);
 
-std::map<std::string,std::vector<std::string>> nodeNamesFromInitialPerturbationFolder(std::string folderPath);
+std::map<std::string,std::vector<std::string>> nodeNamesFromFolder(std::string folderPath);
 
 // function to return the keys in a map
 template<typename K, typename V>
