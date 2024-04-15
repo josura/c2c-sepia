@@ -79,7 +79,7 @@ class Matrix {
         //get functions
         int getRows()const{return rows_;}
         int getCols()const{return cols_;}
-        bool isVector()const{return (rows_ => 1 && cols_ == 1); }
+        bool isVector()const{return (rows_ >= 1 && cols_ == 1); }
         std::vector<T> asVector()const; 
 
         //functions to add rows and columns while mantaining the original data in the upperleft corner(these functions are bad, better use a vector when trying to work with dynamically instantiated data)
