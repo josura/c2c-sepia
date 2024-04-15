@@ -344,7 +344,7 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
             }
             // control if resulting edges vector is empty
             if(ret.size()==0){
-                std::cerr << "[WARNING] edgesFileToEdgesListAndNodesByName: no edges found in the file " << filename << std::endl;
+                std::cerr << "[WARNING] edgesFileToEdgesListAndNodesByName: no edges found in the file " << filename << " .Use the nodeDescriptionFolder parameter to pass the graphs nodes, otherwise an error will occur" << std::endl;
             }
             myfile.close();
         }
