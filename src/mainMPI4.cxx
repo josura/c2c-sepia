@@ -47,7 +47,8 @@ int main(int argc, char** argv) {
         ("subtypes", po::value<std::string>(), "subtypes filename, for an example see in data, see data/testdata/testGraph/subcelltypes.txt")
         ("initialPerturbationPerTypeFolder", po::value<std::string>(), "(string) initialPerturbationPerType folder, for an example see in data data/testdata/testGraph/initialValues")
         ("typeInteractionFolder", po::value<std::string>(), "(string) directory for the type interactions, for an example see in data data/testdata/testHeterogeneousGraph/interactions")
-        ("nodeDescriptionFile", po::value<std::string>(), "(string) node description file, used to generate the output description, if not specified no names are used. for an example see in data resources/graphs/metapathwayNew/nodes.tsv")
+        ("nodeDescriptionFile", po::value<std::string>(), "(string) node description file, used to generate the output description in the case of common graph between types, if not specified no names are used. For an example see in data resources/graphs/metapathwayNew/nodes.tsv")
+        ("nodeDescriptionFolder", po::value<std::string>(), "(string) node description folder, where the files containing the description for all the graphs are contained, used to read the graph nodes, if not specified the graphs will be built with the edges files(could not contain some isolated nodes) for an example see in data/testdata/testHeterogeneousTemporalGraph/nodesDescriptionDifferentStructure")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"() use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
         ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"() use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
         ("outputFolder",po::value<std::string>()->required(),"(string) output folder for output of the algorithm at each iteration")
@@ -457,6 +458,14 @@ int main(int argc, char** argv) {
         logger <<"[LOG] no nodes description"<<std::endl;
     }
 
+    std::string nodesDescriptionFolder="";
+    if(vm.count("nodeDescriptionFolder")){
+        logger <<"[LOG] using node description folder to get the names of the nodes in the graphs"<<std::endl;
+        nodesDescriptionFolder = vm["nodeDescriptionFolder"].as<std::string>();
+    } else {
+        logger <<"[LOG] no nodes description folder"<<std::endl;
+    }
+
 
     // these types will be used for indexing the single processes, rank 0 is the master process, rank 1 will get the first type, rank 2 the second and so on
     std::vector<std::string> types;
@@ -567,15 +576,29 @@ int main(int argc, char** argv) {
 
     } else if (vm.count("graphsFilesFolder")) { // the graphs are in a folder, each graph is a type
         auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);  // TODO change the function to return only the set of edges and type names, use another function to get the nodes
-        std::map<std::string, std::vector<std::string>> namesFromInitialPerturbation = nodeNamesFromInitialPerturbationFolder(typeInitialPerturbationFolderFilename);
+        std::map<std::string, std::vector<std::string>> namesFromFolder;
+        if(nodesDescriptionFolder != ""){        
+            namesFromFolder = nodeNamesFromFolder(nodesDescriptionFolder);
+            auto typesFromValues = getKeys<std::string,std::vector<std::string>>(namesFromFolder);
+            if(typesFromValues.size() != types.size()){
+                std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
+                return 1;
+            }
+            for(uint i = 0; i < typesFromValues.size(); i++){
+                if(typesFromValues[i] != types[i]){
+                    std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
+                    return 1;
+                }
+            }
+        } else {
+            for(uint i = 0; i < types.size(); i++){
+                //graphsNodesAll.push_back(namesAndEdges[i].first);
+                namesFromFolder[types[i]] = namesAndEdges[i].first;
+            }
+        }
         auto typesFromFolder = allGraphs.first;
-        auto typesFromValues = getKeys<std::string,std::vector<std::string>>(namesFromInitialPerturbation);
         if(typesFromFolder.size() != types.size()){
             std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
-            return 1;
-        }
-        if(typesFromValues.size() != types.size()){
-            std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
             return 1;
         }
         for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
@@ -587,13 +610,13 @@ int main(int argc, char** argv) {
         namesAndEdges = allGraphs.second;
         for(uint i = 0; i < types.size(); i++){
             //graphsNodesAll.push_back(namesAndEdges[i].first);
-            graphsNodesAll.push_back(namesFromInitialPerturbation[types[i]]);
+            graphsNodesAll.push_back(namesFromFolder[types[i]]);
             // typeToNodeNamesMap[types[i]] = namesAndEdges[i].first;
-            typeToNodeNamesMap[types[i]] = namesFromInitialPerturbation[types[i]];
+            typeToNodeNamesMap[types[i]] = namesFromFolder[types[i]];
         }
         for(int i = startIdx; i < endIdx; i++){
             //graphsNodes.push_back(namesAndEdges[i].first);
-            graphsNodes.push_back(namesFromInitialPerturbation[types[i]]);
+            graphsNodes.push_back(namesFromFolder[types[i]]);
             graphs[i-startIdx] = new WeightedEdgeGraph(graphsNodes[i-startIdx]);
         }
     } 

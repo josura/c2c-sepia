@@ -1538,6 +1538,7 @@ void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intra
         throw std::invalid_argument("utilities::saveNodeValues: unable to open output file " + outputFilename);
     }
 
+    //TODO specifiy if the nodes description are in a folder with the graphs description files?
     if(nodesDescriptionFile.length()==0 && useEntrez){
             nodesDescriptionFile = "resources/graphs/metapathwayNew/nodes.tsv";
     } else if(nodesDescriptionFile.length()!=0 && !file_exists(nodesDescriptionFile)){
