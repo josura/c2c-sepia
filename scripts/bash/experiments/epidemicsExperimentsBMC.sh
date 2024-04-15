@@ -24,15 +24,18 @@ do
     graphsFolderName=$(ls $inputsFolder/$i | grep "graph") 
     initialPerturbationFolderName=$(ls $inputsFolder/$i | grep "node_conditions_discr")
     typeInteractionsFolderName=$(ls $inputsFolder/$i | grep "interactions")
+    
 
     # get the full path for the graph file, the initial perturbation and the type interactions 
     graphsFolder=$inputsFolder/$i/$graphsFolderName
     initialPerturbationFolder=$inputsFolder/$i/$initialPerturbationFolderName
     typeInteractionsFolder=$inputsFolder/$i/$typeInteractionsFolderName
+    nodesFolder=$inputsFolder/$i/communities
 
     echo "Graph file: $graphsFolderName"
     echo "Initial perturbation file: $initialPerturbationFolderName"
     echo "Type interactions file: $typeInteractionsFolderName"
+    echo "Nodes file: $nodesFolderName"
 
     # get the output folder
     #outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
@@ -41,6 +44,7 @@ do
     mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
         --initialPerturbationPerTypeFolder $initialPerturbationFolder \
         --typeInteractionFolder $typeInteractionsFolder \
+        --nodeDescriptionFolder $nodesFolder \
         --dissipationModel scaled \
         --dissipationModelParameters $dissipationScaleFactor \
         --propagationModel neighbors \
