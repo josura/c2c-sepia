@@ -106,36 +106,39 @@ for(graphModel in graphModels){
   pathToPerturbationFolder <- paste0("~/Projects/ccc/c2c-sepia/outputs/",graphModel,"/")
   pathToTimeSeriesFolder <- paste0("~/Projects/ccc/c2c-sepia/outputsTimeSeries/",graphModel,"/")
   for(nodes in nodesNumber){
-    # path to output perturbation folder (results of the simulations)
-    pathToPerturbationFolder <- paste0(pathToPerturbationFolder,nodes,"Nodes/")
-    #path to output time series folder
-    pathToTimeSeriesFolder <- paste0(pathToTimeSeriesFolder,nodes,"Nodes/")
+    for(graphName in range(1,30)){
+      # path to output perturbation folder (results of the simulations)
+      pathToPerturbationFolder <- paste0(pathToPerturbationFolder,nodes,"Nodes/",graphName,"/")
+      #path to output time series folder
+      pathToTimeSeriesFolder <- paste0(pathToTimeSeriesFolder,nodes,"Nodes/",graphName,"/")
 
-    # get the subfolders in the folder
-    subfolders <- list.dirs(pathToPerturbationFolder, recursive = FALSE)
+      # get the subfolders in the folder
+      subfolders <- list.dirs(pathToPerturbationFolder, recursive = FALSE)
 
-    # iterate over the subfolders
-    for (subfolder in subfolders) {
-      # get the name of the subfolder
-      subfolder_name <- basename(subfolder)
+      # iterate over the subfolders
+      for (subfolder in subfolders) {
+        # get the name of the subfolder
+        subfolder_name <- basename(subfolder)
 
-      # set the path to the folder containing the files
-      pathToPerturbation <- paste0(pathToPerturbationFolder, subfolder_name, "/")
-      # set the path to the output folder 
-      pathToOutput <- paste0(pathToTimeSeriesFolder, subfolder_name, "/")
-      pathToSingleFiles <- paste0(pathToOutput, "singleFiles/")
+        # set the path to the folder containing the files
+        pathToPerturbation <- paste0(pathToPerturbationFolder, subfolder_name, "/")
+        # set the path to the output folder 
+        pathToOutput <- paste0(pathToTimeSeriesFolder, subfolder_name, "/")
+        pathToSingleFiles <- paste0(pathToOutput, "singleFiles/")
 
-      # create the output folder if it does not exist
-      dir.create(pathToOutput, showWarnings = FALSE, recursive = TRUE)
-      dir.create(pathToSingleFiles, showWarnings = FALSE, recursive = TRUE)
+        # create the output folder if it does not exist
+        dir.create(pathToOutput, showWarnings = FALSE, recursive = TRUE)
+        dir.create(pathToSingleFiles, showWarnings = FALSE, recursive = TRUE)
 
-      # get the perturbation time series
-      getperturbationTimeSeries(path = pathToPerturbation,output = pathToSingleFiles)
+        # get the perturbation time series
+        getperturbationTimeSeries(path = pathToPerturbation,output = pathToSingleFiles)
 
-      # get a single file with all the values like before, but without the virtual nodes
-      pathToOutputAll <- paste0(pathToOutput, "allFiles/")
-      dir.create(pathToOutputAll, showWarnings = FALSE, recursive = TRUE)
+        # get a single file with all the values like before, but without the virtual nodes
+        pathToOutputAll <- paste0(pathToOutput, "allFiles/")
+        dir.create(pathToOutputAll, showWarnings = FALSE, recursive = TRUE)
 
-      getAllGraph(pathToSingleFiles,pathToOutputAll)
+        getAllGraph(pathToSingleFiles,pathToOutputAll)
+      } 
     }
+  }
 }
