@@ -113,12 +113,12 @@ for(graphModel in graphModels){
   pathToTimeSeriesFolder <- paste0(outputsTimeSeriesFolder,graphModel,"/")
   for(nodes in nodesNumber){
     # path to output perturbation folder (results of the simulations)
-    pathToPerturbationFolder <- paste0(pathToPerturbationFolder,nodes,"Nodes/")
+    pathToPerturbationFolder.nodes <- paste0(pathToPerturbationFolder,nodes,"Nodes/")
     #path to output time series folder
-    pathToTimeSeriesFolder <- paste0(pathToTimeSeriesFolder,nodes,"Nodes/")
+    pathToTimeSeriesFolder.nodes <- paste0(pathToTimeSeriesFolder,nodes,"Nodes/")
 
     # get the subfolders in the folder
-    subfolders <- list.dirs(pathToPerturbationFolder, recursive = FALSE)
+    subfolders <- list.dirs(pathToPerturbationFolder.nodes, recursive = FALSE)
 
     # iterate over the subfolders
     for (subfolder in subfolders) {
@@ -126,9 +126,9 @@ for(graphModel in graphModels){
       subfolder_name <- basename(subfolder)
 
       # set the path to the folder containing the files
-      pathToPerturbation <- paste0(pathToPerturbationFolder, subfolder_name, "/")
+      pathToPerturbation <- paste0(pathToPerturbationFolder.nodes, subfolder_name, "/")
       # set the path to the output folder 
-      pathToOutput <- paste0(pathToTimeSeriesFolder, subfolder_name, "/")
+      pathToOutput <- paste0(pathToTimeSeriesFolder.nodes, subfolder_name, "/")
       pathToSingleFiles <- paste0(pathToOutput, "singleFiles/")
 
       # create the output folder if it does not exist
