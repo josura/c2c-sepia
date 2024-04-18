@@ -1,10 +1,12 @@
 
-# control if parameters are passed
-if [ $# -ne 3 ]; then
+# control if parameters are passed, if only three arguments are passed, the number of processors is set to 4
+if [ $# -ne 3 ] && [ $# -ne 4 ]; then
     echo $# arguments passed
-    echo "Please pass the interface, the folder with the inputs and the folder where to save the outputs"
+    echo "Please pass the interface, the folder with the inputs and the folder where to save the outputs, and optionally the number of processors to use"
     exit 1
 fi
+
+
 
 # interface is passed as an argument
 interface=$1
@@ -13,6 +15,12 @@ interface=$1
 # get the directory of the inputs from the first argument
 inputsFolder=$2
 outputsFolder=$3
+
+numberOfProcessors=4
+
+if [ $# -eq 4 ]; then
+    numberOfProcessors=$4
+fi
 
 dissipationScaleFactor=0.2
 propagationScaleFactor=0.5
@@ -41,7 +49,7 @@ do
     #outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
     outputFolder="$outputsFolder/$i"
     # run the simulation
-    mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
+    mpirun --mca pml ob1 --mca btl tcp,self --mca btl_tcp_if_include $interface -np $numberOfProcessors ./build/c2c-sepia-MPI --graphsFilesFolder $graphsFolder \
         --initialPerturbationPerTypeFolder $initialPerturbationFolder \
         --typeInteractionFolder $typeInteractionsFolder \
         --nodeDescriptionFolder $nodesFolder \
@@ -49,8 +57,8 @@ do
         --dissipationModelParameters $dissipationScaleFactor \
         --propagationModel neighbors \
         --propagationModelParameters $propagationScaleFactor \
-        --intertypeIterations 9 \
-        --intratypeIterations 3 \
+        --intertypeIterations 10 \
+        --intratypeIterations 5 \
         --virtualNodesGranularity typeAndNode \
         --saturation \
         --undirectedEdges \
