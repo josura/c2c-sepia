@@ -44,6 +44,28 @@ for network_type in networks_types:
                 infected_nodes[i].append(len(row[row == 1])/len(row))
         
 
+        # create another list of lists with the length of one of the infected node lists(the timesteps that are all the same) , effectively transposing the infected nodes list
+        infected_nodes_transposed = []
+        for i in range(len(infected_nodes[0])):
+            infected_nodes_transposed.append([])
+            for j in range(len(infected_nodes)):
+                infected_nodes_transposed[i].append(infected_nodes[j][i])
+
+        # print the infected nodes transposed list sizes
+        for i in range(len(infected_nodes_transposed)):
+            print('timestep ' + str(i) + ' has ' + str(len(infected_nodes_transposed[i])) + ' samples')
+
+
+        # add the violin plot of the percentage of infected nodes at a specific time, the different folders are the samples, only one violin plot per network type, nodes number and time step
+        fig, ax = plt.subplots()
+        ax.violinplot(infected_nodes_transposed, showmeans=False, showmedians=True)
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Density of Infected Nodes')
+        ax.set_title('Density of Infected Nodes, ' + network_type + ' Network, ' + str(nodesNumber) + ' Nodes')
+        # pause the execution to see the plot, close the plot to continue with the next on
+        plt.show()
+        
+
 
     
 
@@ -52,23 +74,23 @@ for network_type in networks_types:
 
 
 # plot the percentages through time, on the x axis we have the time steps and on the y axis we have the percentage of infected nodes, each line represents a different folder
-fig, ax = plt.subplots()
-ax.set_xlim(0, len(infected_nodes[0]))
-ax.set_ylim(0, 1)
-ax.set_xlabel('Time')
-ax.set_ylabel('Percentage of Infected Nodes')
-ax.set_title('Percentage of Infected Nodes, Different Parameters (Dissipation scale factor, Propagation scale factor)')
-for i in range(len(infected_nodes)):
-    folder = folders[i]
-    folderNoPath = folder.split('/')[-1]
-    # the file has the following format: dissipationScaleFactor<float>_propagationScaleFactor<float>
-    dissipationScaleFactor = folderNoPath.split('_')[0]
-    dissipationScaleFactor = dissipationScaleFactor.split('dissipationScaleFactor')[1]
-    propagationScaleFactor = folderNoPath.split('_')[1]
-    propagationScaleFactor = propagationScaleFactor.split('propagationScaleFactor')[1]
-    label = '( ' + dissipationScaleFactor + ' , ' + propagationScaleFactor + ' )'
-    ax.plot(infected_nodes[i], label=label)
-# augment dimensions of the legend box
-ax.legend(title="(\u03BB (n), \u03C9 (n))", fontsize=12)
-plt.show()
+# fig, ax = plt.subplots()
+# ax.set_xlim(0, len(infected_nodes[0]))
+# ax.set_ylim(0, 1)
+# ax.set_xlabel('Time')
+# ax.set_ylabel('Percentage of Infected Nodes')
+# ax.set_title('Percentage of Infected Nodes, Different Parameters (Dissipation scale factor, Propagation scale factor)')
+# for i in range(len(infected_nodes)):
+#     folder = folders[i]
+#     folderNoPath = folder.split('/')[-1]
+#     # the file has the following format: dissipationScaleFactor<float>_propagationScaleFactor<float>
+#     dissipationScaleFactor = folderNoPath.split('_')[0]
+#     dissipationScaleFactor = dissipationScaleFactor.split('dissipationScaleFactor')[1]
+#     propagationScaleFactor = folderNoPath.split('_')[1]
+#     propagationScaleFactor = propagationScaleFactor.split('propagationScaleFactor')[1]
+#     label = '( ' + dissipationScaleFactor + ' , ' + propagationScaleFactor + ' )'
+#     ax.plot(infected_nodes[i], label=label)
+# # augment dimensions of the legend box
+# ax.legend(title="(\u03BB (n), \u03C9 (n))", fontsize=12)
+# plt.show()
 
