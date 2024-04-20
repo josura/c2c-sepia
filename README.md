@@ -5,6 +5,7 @@ Specifically built for Cell-to-cell communication with enriched pathways, using 
 ## DEPENDENCIES
 - armadillo
 - MPI implementation (tested on OpenMPI)
+- boost (eventually program options as well)
 
 ## BUILD
 ```bash
