@@ -576,38 +576,44 @@ int main(int argc, char** argv) {
 
     } else if (vm.count("graphsFilesFolder")) { // the graphs are in a folder, each graph is a type
         auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);  // TODO change the function to return only the set of edges and type names, use another function to get the nodes
+        
+        // control if the types from the edges folder and the types from the values match
+        auto typesFromFolder = allGraphs.first;
+        if(typesFromFolder.size() != types.size()){
+            std::cerr << "[ERROR] types from folder and types from values do not have the same length: aborting"<<std::endl;
+            return 1;
+        }
+        for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
+            if(typesFromFolder[i] != types[i]){  // TODO this control can be faulty, since the order of the types is not guaranteed when reading the files
+                std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+                return 1;
+            }
+        }
+        namesAndEdges = allGraphs.second;
+        
         std::map<std::string, std::vector<std::string>> namesFromFolder;
         if(nodesDescriptionFolder != ""){        
             namesFromFolder = nodeNamesFromFolder(nodesDescriptionFolder);
-            auto typesFromValues = getKeys<std::string,std::vector<std::string>>(namesFromFolder);
-            if(typesFromValues.size() != types.size()){
+            auto typesFromNames = getKeys<std::string,std::vector<std::string>>(namesFromFolder);
+            if(typesFromNames.size() != types.size()){ //TODO change the control over the types read from the graph, since the values can be not expressed for some graphs
                 std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
                 return 1;
             }
-            for(uint i = 0; i < typesFromValues.size(); i++){
-                if(typesFromValues[i] != types[i]){
-                    std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
-                    return 1;
-                }
-            }
+            // control over the values and the order is useless since the map is unordered and doesn't guarantee the order of reading the files
+            // for(uint i = 0; i < typesFromNames.size(); i++){
+            //     if(typesFromNames[i] != types[i]){
+            //         std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
+            //         return 1;
+            //     }
+            // }
         } else {
             for(uint i = 0; i < types.size(); i++){
                 //graphsNodesAll.push_back(namesAndEdges[i].first);
                 namesFromFolder[types[i]] = namesAndEdges[i].first;
             }
         }
-        auto typesFromFolder = allGraphs.first;
-        if(typesFromFolder.size() != types.size()){
-            std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
-            return 1;
-        }
-        for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
-            if(typesFromFolder[i] != types[i]){
-                std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
-                return 1;
-            }
-        }
-        namesAndEdges = allGraphs.second;
+
+        // create the graphs and the map for the nodes
         for(uint i = 0; i < types.size(); i++){
             //graphsNodesAll.push_back(namesAndEdges[i].first);
             graphsNodesAll.push_back(namesFromFolder[types[i]]);
