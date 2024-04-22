@@ -30,6 +30,8 @@ endif()
 
 
 FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
+# print out the boost include directories
+MESSAGE( STATUS "Boost_INCLUDE_DIRS: " ${Boost_INCLUDE_DIRS} )
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 set(EXEC_MAIN "src/main.cxx")
