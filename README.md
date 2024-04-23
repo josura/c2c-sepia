@@ -10,7 +10,8 @@ Specifically built for Cell-to-cell communication with enriched pathways, using 
 ## BUILD
 ```bash
 mkdir build
-cmake .
+cmake -B build
+cd build
 make
 ```
 
