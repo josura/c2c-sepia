@@ -2,6 +2,7 @@ library(igraph)
 library(dplyr)
 library(readr)
 
+# update when using a different number of inter-type iterations
 max_number_of_iteration <- 10
 
 # Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
