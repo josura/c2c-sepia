@@ -579,13 +579,14 @@ int main(int argc, char** argv) {
         
         // control if the types from the edges folder and the types from the values match
         auto typesFromFolder = allGraphs.first;
-        if(typesFromFolder.size() != types.size()){
-            std::cerr << "[ERROR] types from folder and types from values do not have the same length: aborting"<<std::endl;
+        auto typesFromFolderFiltered = vectorsIntersection(typesFromFolder, subtypes);
+        if(typesFromFolderFiltered.size() != types.size()){
+            std::cerr << "[ERROR] types from folder (filtered with subtypes) and types from values do not have the same length: aborting"<<std::endl;
             return 1;
         }
-        for (uint i = 0; i<typesFromFolder.size(); i++){ //TODO map the types from the folder to the types from the file
-            if(typesFromFolder[i] != types[i]){  // TODO this control can be faulty, since the order of the types is not guaranteed when reading the files
-                std::cerr << "[ERROR] types from folder and types from file do not match: aborting"<<std::endl;
+        for (uint i = 0; i<typesFromFolderFiltered.size(); i++){ //TODO map the types from the folder to the types from the file
+            if(typesFromFolderFiltered[i] != types[i]){  // TODO this control can be faulty, since the order of the types is not guaranteed when reading the files
+                std::cerr << "[ERROR] types from folder(filtered with subtypes) and types from file do not match: aborting"<<std::endl;
                 return 1;
             }
         }
@@ -595,8 +596,9 @@ int main(int argc, char** argv) {
         if(nodesDescriptionFolder != ""){        
             namesFromFolder = nodeNamesFromFolder(nodesDescriptionFolder);
             auto typesFromNames = getKeys<std::string,std::vector<std::string>>(namesFromFolder);
-            if(typesFromNames.size() != types.size()){ //TODO change the control over the types read from the graph, since the values can be not expressed for some graphs
-                std::cerr << "[ERROR] types from values(inital perturbation) and types from file do not match: aborting"<<std::endl;
+            auto typesFromNamesFiltered = vectorsIntersection(typesFromNames, subtypes);
+            if(typesFromNamesFiltered.size() != types.size()){ //TODO change the control over the types read from the graph, since the values can be not expressed for some graphs
+                std::cerr << "[ERROR] types from values(initial perturbation, filtered by subtypes) and types from file do not match: aborting"<<std::endl;
                 return 1;
             }
             // control over the values and the order is useless since the map is unordered and doesn't guarantee the order of reading the files
@@ -609,16 +611,27 @@ int main(int argc, char** argv) {
         } else {
             for(uint i = 0; i < types.size(); i++){
                 //graphsNodesAll.push_back(namesAndEdges[i].first);
-                namesFromFolder[types[i]] = namesAndEdges[i].first;
+                int namesAndEdgesIdx = 0;
+                for(int tmpidx=0; tmpidx<SizeToInt(typesFromFolder.size()); tmpidx++){
+                    if(typesFromFolder[tmpidx] == types[i]){
+                        namesAndEdgesIdx = tmpidx;
+                        break;
+                    }
+                }
+
+                namesFromFolder[types[i]] = namesAndEdges[namesAndEdgesIdx].first;
             }
         }
 
         // create the graphs and the map for the nodes
         for(uint i = 0; i < types.size(); i++){
             //graphsNodesAll.push_back(namesAndEdges[i].first);
-            graphsNodesAll.push_back(namesFromFolder[types[i]]);
+            std::string tmpType = types[i];
+            graphsNodesAll.push_back(namesFromFolder[tmpType]);
             // typeToNodeNamesMap[types[i]] = namesAndEdges[i].first;
-            typeToNodeNamesMap[types[i]] = namesFromFolder[types[i]];
+            auto tmpNodeNames = namesFromFolder[tmpType];
+            
+            typeToNodeNamesMap[tmpType] = tmpNodeNames;
         }
         for(int i = startIdx; i < endIdx; i++){
             //graphsNodes.push_back(namesAndEdges[i].first);
