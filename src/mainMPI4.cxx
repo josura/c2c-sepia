@@ -554,6 +554,7 @@ int main(int argc, char** argv) {
 
     //use the number of types for workload to allocate an array of pointers to contain the graph for each type
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
+    std::vector<std::string> typesFromFolder;
     std::vector<std::vector<std::string>> graphsNodes;
     std::vector<std::vector<std::string>> graphsNodesAll; // used only initially to read the values, contains all types
     std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload, no virtual nodes
@@ -578,7 +579,7 @@ int main(int argc, char** argv) {
         auto allGraphs = edgesFileToEdgesListAndNodesByNameFromFolder(graphsFilesFolder);  // TODO change the function to return only the set of edges and type names, use another function to get the nodes
         
         // control if the types from the edges folder and the types from the values match
-        auto typesFromFolder = allGraphs.first;
+        typesFromFolder = allGraphs.first;
         auto typesFromFolderFiltered = vectorsIntersection(typesFromFolder, subtypes);
         if(typesFromFolderFiltered.size() != types.size()){
             std::cerr << "[ERROR] types from folder (filtered with subtypes) and types from values do not have the same length: aborting"<<std::endl;
@@ -647,7 +648,14 @@ int main(int argc, char** argv) {
         }
     } else if (vm.count("graphsFilesFolder")) {
         for(int i = startIdx; i < endIdx; i++){
-            for(auto edge = namesAndEdges[i].second.cbegin() ; edge != namesAndEdges[i].second.cend(); edge++ ){
+            int namesAndEdgesIdx = 0;
+            for(int tmpidx=0; tmpidx<SizeToInt(typesFromFolder.size()); tmpidx++){
+                if(typesFromFolder[tmpidx] == types[i]){
+                    namesAndEdgesIdx = tmpidx;
+                    break;
+                }
+            }
+            for(auto edge = namesAndEdges[namesAndEdgesIdx].second.cbegin() ; edge != namesAndEdges[namesAndEdgesIdx].second.cend(); edge++ ){
                 graphs[i-startIdx]->addEdge(std::get<0> (*edge), std::get<1> (*edge) ,std::get<2>(*edge) ,!undirected);
             }
         }
