@@ -1254,7 +1254,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                     std::string startType = entries[indexTypeStart];
                     std::string endType = entries[indexTypeEnd];
-                    if(typeToNodeNames.size() != 0){
+                    if(typeToNodeNames.size() != 0 && vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                         if(!vectorContains(typeToNodeNames[startType],startNodeName)){
                             std::cout << "[ERROR] start node <"<< startNodeName <<"> for type: " << startType << " is not in the specified network, aborting " <<std::endl;
                             throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the start node" + startNodeName + " is not in the type specified, aborting");
