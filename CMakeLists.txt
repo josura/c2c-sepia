@@ -15,6 +15,14 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+# set cmake policy to find packages to NEW (using <package_name>_ROOT to find packages)
+# cmake_policy(SET CMP0144 NEW)
+# set boost root and linker path to find boost, not necessary if boost is installed in the system and there is only one version
+# set(BOOST_ROOT "/path/to/boost")
+# set(LD_LIBRARY_PATH "/path/to/boost/lib:$LD_LIBRARY_PATH")
+#export CPLUS_INCLUDE_PATH=/usr/local/include:$CPLUS_INCLUDE_PATH
+
+
 find_package(MPI REQUIRED)
 
 find_package(Armadillo REQUIRED)
