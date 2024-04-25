@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "utilities.h"
+#include "armaUtilities.h"
 
 class armaUtilitiesTesting : public ::testing::Test {
     protected:
