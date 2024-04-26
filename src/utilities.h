@@ -29,9 +29,6 @@
 // hash function for unordered_map
 #include <bits/stdc++.h>
 
-#define INTMAX 100
-#define DOUBLEMAX 100.0
-
 //custom types
 typedef std::vector<int> NodeList;
 using NodeBitList = std::vector<bool>;
