@@ -222,6 +222,8 @@ sns.barplot(ax = ax,
             y = 'p-value',
             hue = 'networkType')
 plt.title('Shapiro-Wilk Test p-values, 100 Nodes')
+# add significance line
+plt.axhline(0.05, color='r', linestyle='--')
 plt.show()
 
 fig, ax = plt.subplots()
@@ -231,6 +233,7 @@ sns.barplot(ax = ax,
             y = 'p-value',
             hue = 'networkType')
 plt.title('Shapiro-Wilk Test p-values, 1000 Nodes')
+plt.axhline(0.05, color='r', linestyle='--')
 plt.show()
 
 fig, ax = plt.subplots()
@@ -240,4 +243,5 @@ sns.barplot(ax = ax,
             y = 'p-value',
             hue = 'networkType')
 plt.title('Shapiro-Wilk Test p-values, 10000 Nodes')
+plt.axhline(0.05, color='r', linestyle='--')
 plt.show()
