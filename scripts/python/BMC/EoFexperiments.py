@@ -26,5 +26,7 @@ for node in G.nodes():
         initial_infecteds.append(node)
 
 
-# run the simulation in the graphs
-t, S, I, R = EoN.fast_SIR(G, tau, gamma, initial_infecteds, tmax=float('inf'), return_full_data=True)
+# run the SIS simulation in the graphs
+t, S, I = EoN.fast_SIS(G, tau, gamma, initial_infecteds=initial_infecteds, tmax=100)
+
+plt.plot(t, I)
