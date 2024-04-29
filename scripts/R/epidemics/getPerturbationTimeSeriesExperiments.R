@@ -101,11 +101,11 @@ getAllGraph <- function(pathToSingleFiles,pathToOutput){
   write_tsv(df, outputFileNameAll, quote = "none", append = FALSE)
 }
 
-graphModels <- c("barabasiAlbert","erdosRenyi","barabasiAlbertAging")
+graphModels <- c("preferentialAttachment","erdosRenyi","preferentialAttachmentAging")
 
 nodesNumber <- c(100,1000,10000)
 
-outputsFolder <- "~/Projects/ccc/c2c-sepia/outputs/epidemics/"
+outputsFolder <- "~/Projects/ccc/c2c-sepia/outputs/epidemics/epidemics100iterations/epidemics/"
 outputsTimeSeriesFolder <- "~/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/"
 
 for(graphModel in graphModels){
