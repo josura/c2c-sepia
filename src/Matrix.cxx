@@ -116,6 +116,7 @@ Matrix<T>::Matrix(const Matrix<T>& m) : rows_(m.rows_), cols_(m.cols_)
 template Matrix<double>::Matrix(const Matrix<double>& m);
 
 //static methods
+// generate random matrix, values ranging from -DOUBLE_MAX to DOUBLE_MAX
 template<typename T>
 Matrix<T> Matrix<T>::createRandom(int rows,int cols){
     Matrix<T> retMat=Matrix<T>(rows,cols);
