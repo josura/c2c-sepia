@@ -57,9 +57,11 @@ char generateRandomCharacter() {
 }
 
 void setRandom(int& val) { 
+    int INTMAX = std::numeric_limits<int>::max();
     val =  randomNumber(-INTMAX, INTMAX);
 }
 void setRandom(double& val) { 
+    double DOUBLEMAX = std::numeric_limits<double>::max();
     val = randomRealNumber(-DOUBLEMAX, DOUBLEMAX);
 }
 void setRandom(char& val) { 
