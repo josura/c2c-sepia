@@ -44,7 +44,7 @@ t_sis, S_sis, I_sis = EoN.fast_SIS(G_prefAtt, tau, gamma, initial_infecteds=init
 t_sir, S_sir, I_sir, R_sir = EoN.fast_SIR(G_prefAtt, tau, gamma, initial_infecteds=initial_infecteds_prefAtt, tmax=100)
 
 # read timeseries from the file
-timeseriesFilePrefAtt = 'BMC/timeseries_prefAtt_10000Nodes.tsv'
+timeseriesFilePrefAtt = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/preferentialAttachment/10000Nodes/1/allFiles/fullGraph_output.tsv'
 
 timeSeries_dataframe_prefAtt = pd.read_csv(timeseriesFilePrefAtt, sep='\t')
 thresholded_timeseries_prefAtt = timeSeries_dataframe_prefAtt.copy()
