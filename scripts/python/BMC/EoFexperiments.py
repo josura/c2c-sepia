@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import EoN
 import pandas as pd
 import numpy as np
+from collections import defaultdict
 
 # set the parameters for the simulation
 gamma = 0.2
@@ -43,6 +44,24 @@ t_sis, S_sis, I_sis = EoN.fast_SIS(G_prefAtt, tau, gamma, initial_infecteds=init
 # run the SIR simulation in the graph
 t_sir, S_sir, I_sir, R_sir = EoN.fast_SIR(G_prefAtt, tau, gamma, initial_infecteds=initial_infecteds_prefAtt, tmax=100)
 
+# SIRS simulation setup
+
+H = nx.DiGraph()  #DiGraph showing possible transitions that don't require an interaction
+H.add_edge('I', 'R', rate = 0.2)   # recovery rate
+H.add_edge('R', 'S', rate = 0.1)   # immunity loss rate
+
+J = nx.DiGraph()    #DiGraph showing transition that does require an interaction.
+J.add_edge(('I', 'S'), ('I', 'I'), rate = 0.5)  #IS->II
+
+IC_prefAtt = defaultdict(lambda: 'S')
+for node in initial_infecteds_prefAtt:
+    IC_prefAtt[node] = 'I'
+
+return_statuses = ('S', 'I', 'R')
+
+t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G_prefAtt, H, J, IC_prefAtt, return_statuses, tmax = 100)
+
+
 # read timeseries from the file
 timeseriesFilePrefAtt = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/preferentialAttachment/10000Nodes/1/allFiles/fullGraph_output.tsv'
 
@@ -59,6 +78,7 @@ infecteds = thresholded_timeseries_prefAtt.iloc[:, 1:].sum(axis=1)
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
 plt.plot(t_sir, I_sir, label='EoN SIR simulation')
+plt.plot(t_sirs, I_sirs, label='EoN SIRS simulation')
 plt.plot(thresholded_timeseries_prefAtt['time'], infecteds, label='MASFENON simulation')
 plt.xlabel('Time')
 plt.ylabel('Number of infecteds')
@@ -103,6 +123,12 @@ t_sis, S_sis, I_sis = EoN.fast_SIS(G_prefAttAging, tau, gamma, initial_infecteds
 # run the SIR simulation in the graph
 t_sir, S_sir, I_sir, R_sir = EoN.fast_SIR(G_prefAttAging, tau, gamma, initial_infecteds=initial_infecteds_prefAttAging, tmax=100)
 
+# SIRS simulation setup
+IC_prefAttAging = defaultdict(lambda: 'S')
+for node in initial_infecteds_prefAttAging:
+    IC_prefAttAging[node] = 'I'
+
+t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G_prefAttAging, H, J, IC_prefAttAging, return_statuses, tmax = 100)
 
 # read timeseries from the file
 timeseriesFilePrefAttAging = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/preferentialAttachmentAging/10000Nodes/1/allFiles/fullGraph_output.tsv'
@@ -120,6 +146,7 @@ infecteds = thresholded_timeseries_prefAttAging.iloc[:, 1:].sum(axis=1)
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
 plt.plot(t_sir, I_sir, label='EoN SIR simulation')
+plt.plot(t_sirs, I_sirs, label='EoN SIRS simulation')
 plt.plot(thresholded_timeseries_prefAttAging['time'], infecteds, label='MASFENON simulation')
 plt.xlabel('Time')
 plt.ylabel('Number of infecteds')
@@ -162,6 +189,13 @@ t_sis, S_sis, I_sis = EoN.fast_SIS(G_erdosRenyi, tau, gamma, initial_infecteds=i
 # run the SIR simulation in the graph
 t_sir, S_sir, I_sir, R_sir = EoN.fast_SIR(G_erdosRenyi, tau, gamma, initial_infecteds=initial_infecteds_erdosRenyi, tmax=100)
 
+# SIRS simulation setup
+IC_erdosRenyi = defaultdict(lambda: 'S')
+for node in initial_infecteds_erdosRenyi:
+    IC_erdosRenyi[node] = 'I'
+
+t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G_erdosRenyi, H, J, IC_erdosRenyi, return_statuses, tmax = 100)
+
 # read timeseries from the file
 timeseriesFileErdosRenyi = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/erdosRenyi/10000Nodes/1/allFiles/fullGraph_output.tsv'
 
@@ -178,6 +212,7 @@ infecteds = thresholded_timeseries_erdosRenyi.iloc[:, 1:].sum(axis=1)
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
 plt.plot(t_sir, I_sir, label='EoN SIR simulation')
+plt.plot(t_sirs, I_sirs, label='EoN SIRS simulation')
 plt.plot(thresholded_timeseries_erdosRenyi['time'], infecteds, label='MASFENON simulation')
 plt.xlabel('Time')
 plt.ylabel('Number of infecteds')
@@ -221,6 +256,13 @@ t_sis, S_sis, I_sis = EoN.fast_SIS(G_regular, tau, gamma, initial_infecteds=init
 # run the SIR simulation in the graph
 t_sir, S_sir, I_sir, R_sir = EoN.fast_SIR(G_regular, tau, gamma, initial_infecteds=initial_infecteds_regular, tmax=100)
 
+# SIRS simulation setup
+IC_regular = defaultdict(lambda: 'S')
+for node in initial_infecteds_regular:
+    IC_regular[node] = 'I'
+
+t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G_regular, H, J, IC_regular, return_statuses, tmax = 100)
+
 # read timeseries from the file
 timeseriesFileRegular = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/regular/10000Nodes/allFiles/fullGraph_output.tsv'
 
@@ -238,6 +280,7 @@ infecteds = thresholded_timeseries_regular.iloc[:, 1:].sum(axis=1)
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
 plt.plot(t_sir, I_sir, label='EoN SIR simulation')
+plt.plot(t_sirs, I_sirs, label='EoN SIRS simulation')
 plt.plot(thresholded_timeseries_regular['time'], infecteds, label='MASFENON simulation')
 plt.xlabel('Time')
 plt.ylabel('Number of infecteds')
