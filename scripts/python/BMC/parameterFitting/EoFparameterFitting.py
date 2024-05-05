@@ -63,23 +63,23 @@ t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G_prefAtt, H, J,
 
 
 # read timeseries from the file
-timeseriesFilePrefAtt = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/epidemics-BMC/preferentialAttachment/10000Nodes/1/allFiles/fullGraph_output.tsv'
+timeSeriesParameterPrefAttSIS = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/parameterSetting/preferentialAttachment/dissipationScaleFactor0_propagationScaleFactor0.5/allFiles/fullGraph_output.tsv'
 
-timeSeries_dataframe_prefAtt = pd.read_csv(timeseriesFilePrefAtt, sep='\t')
-thresholded_timeseries_prefAtt = timeSeries_dataframe_prefAtt.copy()
+timeSeries_dataframe_prefAttSIS = pd.read_csv(timeSeriesParameterPrefAttSIS, sep='\t')
+thresholded_timeseries_prefAttSIS = timeSeries_dataframe_prefAttSIS.copy()
 
-thresholded_timeseries_prefAtt.iloc[:, 1:] = np.where(thresholded_timeseries_prefAtt.iloc[:, 1:] > 0.5, 1, 0)
+thresholded_timeseries_prefAttSIS.iloc[:, 1:] = np.where(thresholded_timeseries_prefAttSIS.iloc[:, 1:] > 0.5, 1, 0)
 # sort the rows by the time column
-thresholded_timeseries_prefAtt = thresholded_timeseries_prefAtt.sort_values(by='time')
+thresholded_timeseries_prefAttSIS = thresholded_timeseries_prefAttSIS.sort_values(by='time')
 
 # get the number of infecteds at each time
-infecteds = thresholded_timeseries_prefAtt.iloc[:, 1:].sum(axis=1)
+infecteds_prefAttSIS = thresholded_timeseries_prefAttSIS.iloc[:, 1:].sum(axis=1)
 
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
 plt.plot(t_sir, I_sir, label='EoN SIR simulation')
 plt.plot(t_sirs, I_sirs, label='EoN SIRS simulation')
-plt.plot(thresholded_timeseries_prefAtt['time'], infecteds, label='MASFENON simulation')
+plt.plot(thresholded_timeseries_prefAttSIS['time'], infecteds_prefAttSIS, label='MASFENON simulation')
 plt.xlabel('Time')
 plt.ylabel('Number of infecteds')
 plt.legend()
