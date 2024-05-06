@@ -20,7 +20,15 @@ graphFolder = sys.argv[1]
 
 
 # get the network from one of the generated files that contains the edge data (Start, End, Weight), first line is the header
-graphEdgesFile = '/edge_data.tsv'
+graphEdgesFile = graphFolder + '/edge_data.tsv'
+# control if the file for the graph edges exists
+try:
+    with open(graphEdgesFile, 'r') as f:
+        pass
+except FileNotFoundError:
+    print('The file ' + graphEdgesFile + ' does not exist')
+    sys.exit(1)
+
 G = nx.Graph()
 with open(graphEdgesFile, 'r') as f:
     # skip the header
@@ -32,7 +40,15 @@ with open(graphEdgesFile, 'r') as f:
 # read the initial condition of every node from a file
 # the file should have the following format:
 # node_name  condition(Susceptible, Infected)
-initialConditionFile = '/home/josura/Projects/ccc/c2c-sepia/scripts/R/epidemics/significanceAnalysys/preferentialAttachment/10000nodes/1/node_conditions.tsv'
+initialConditionFile = graphFolder + '/node_conditions.tsv'
+# control if the file for the node conditions exists
+try:
+    with open(initialConditionFile, 'r') as f:
+        pass
+except FileNotFoundError:
+    print('The file ' + initialConditionFile + ' does not exist')
+    sys.exit(1)
+
 initialConditions = {}
 with open(initialConditionFile, 'r') as f:
     for line in f:
@@ -71,7 +87,14 @@ t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G, H, J, IC, ret
 
 
 # read timeseries from the file
-timeSeriesParameterSIS = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/parameterSetting/preferentialAttachment/dissipationScaleFactor0.8_propagationScaleFactor64.0/allFiles/fullGraph_output.tsv'
+timeSeriesParameterSIS = sys.argv[2]
+# control if the file for the time series exists
+try:
+    with open(timeSeriesParameterSIS, 'r') as f:
+        pass
+except FileNotFoundError:
+    print('The file ' + timeSeriesParameterSIS + ' does not exist')
+    sys.exit(1)
 
 timeSeries_dataframeSIS = pd.read_csv(timeSeriesParameterSIS, sep='\t')
 thresholded_timeseriesSIS = timeSeries_dataframeSIS.copy()
@@ -82,6 +105,10 @@ thresholded_timeseriesSIS = thresholded_timeseriesSIS.sort_values(by='time')
 
 # get the number of infecteds at each time
 infectedsSIS = thresholded_timeseriesSIS.iloc[:, 1:].sum(axis=1)
+
+# print the least squares error between the EoN simulation and the MASFENON simulation for every time point
+# leastSquaresError = np.sum(np.square(I_sis - infectedsSIS))
+# print('Least squares error between EoN SIS simulation and MASFENON simulation: ' + str(leastSquaresError))
 
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
