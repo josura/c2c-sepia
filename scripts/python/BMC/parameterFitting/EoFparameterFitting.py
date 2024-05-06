@@ -63,7 +63,7 @@ t_sirs, S_sirs, I_sirs, R_sirs = EoN.Gillespie_simple_contagion(G_prefAtt, H, J,
 
 
 # read timeseries from the file
-timeSeriesParameterPrefAttSIS = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/parameterSetting/preferentialAttachment/dissipationScaleFactor0_propagationScaleFactor0.5/allFiles/fullGraph_output.tsv'
+timeSeriesParameterPrefAttSIS = '/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/parameterSetting/preferentialAttachment/dissipationScaleFactor0.8_propagationScaleFactor64.0/allFiles/fullGraph_output.tsv'
 
 timeSeries_dataframe_prefAttSIS = pd.read_csv(timeSeriesParameterPrefAttSIS, sep='\t')
 thresholded_timeseries_prefAttSIS = timeSeries_dataframe_prefAttSIS.copy()
