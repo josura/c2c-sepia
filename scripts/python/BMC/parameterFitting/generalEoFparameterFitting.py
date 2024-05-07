@@ -107,8 +107,16 @@ thresholded_timeseriesSIS = thresholded_timeseriesSIS.sort_values(by='time')
 infectedsSIS = thresholded_timeseriesSIS.iloc[:, 1:].sum(axis=1)
 
 # print the least squares error between the EoN simulation and the MASFENON simulation for every time point
-# leastSquaresError = np.sum(np.square(I_sis - infectedsSIS))
-# print('Least squares error between EoN SIS simulation and MASFENON simulation: ' + str(leastSquaresError))
+I_sis_filtered = []
+for i in thresholded_timeseriesSIS["time"]:
+    #I_sis_filtered.append(I_sis[np.where(t_sis == i)[0]]) # doesn't work since the time points in the SIS simulation are double values and are increased, the comparison should be done with the closest time point
+    closestTimePoint = min(t_sis, key=lambda x:abs(x-i))
+    I_sis_filtered.append(I_sis[np.where(t_sis == closestTimePoint)[0]])
+
+I_sis_filtered = np.array(I_sis_filtered).flatten()
+
+leastSquaresError = np.sum(np.square(I_sis_filtered - infectedsSIS))
+print('Least squares error between EoN SIS simulation and MASFENON simulation: ' + str(leastSquaresError))
 
 # plot the number of infecteds from the EoN simulation and the thresholded timeseries as line plots
 plt.plot(t_sis, I_sis, label='EoN SIS simulation')
