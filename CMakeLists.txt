@@ -173,6 +173,14 @@ target_link_libraries(
   ${lapackblas_libraries}
 )
 
+add_executable(PropagationModelTesting  "src/PropagationModelTesting.cc")
+target_link_libraries(
+  PropagationModelTesting
+  GTest::gtest_main
+  mysharedlib
+  ${lapackblas_libraries}
+)
+
 include(GoogleTest)
 gtest_discover_tests(GraphTesting)
 gtest_discover_tests(MatrixTesting)
@@ -182,3 +190,4 @@ gtest_discover_tests(ConservationModelTesting)
 gtest_discover_tests(ComputationTestingPerturbation)
 gtest_discover_tests(armaUtilitiesTesting)
 gtest_discover_tests(utilitiesTesting)
+gtest_discover_tests(PropagationModelTesting)
