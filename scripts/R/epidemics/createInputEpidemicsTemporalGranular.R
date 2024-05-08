@@ -2,7 +2,7 @@ library(igraph)
 library(dplyr)
 library(readr)
 
-max_number_of_iteration <- 10
+max_number_of_iteration <- 20
 
 # Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
 generate_graph <- function(num_nodes, m) {
