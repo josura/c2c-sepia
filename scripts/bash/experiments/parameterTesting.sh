@@ -27,9 +27,9 @@ initialPerturbationFolderName=$(ls $inputsFolder | grep "node_conditions_discr")
 typeInteractionsFolderName=$(ls $inputsFolder | grep "interactions")
 
 # get the full path for the graph file, the initial perturbation and the type interactions 
-graphsFolder=$inputsFolder$graphsFolderName
-initialPerturbationFolder=$inputsFolder$initialPerturbationFolderName
-typeInteractionsFolder=$inputsFolder$typeInteractionsFolderName
+graphsFolder=$inputsFolder/$graphsFolderName
+initialPerturbationFolder=$inputsFolder/$initialPerturbationFolderName
+typeInteractionsFolder=$inputsFolder/$typeInteractionsFolderName
 
 echo "Graph file: $graphsFolderName"
 echo "Initial perturbation file: $initialPerturbationFolderName"
