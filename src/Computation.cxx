@@ -521,8 +521,11 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
         arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
         for(uint i = 0;i<outputArma.n_elem;i++){
-            double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
-            outputArma[i] = saturatedValue;
+            // TO TEST SINCE SOME VALUES SEEM TO BE NEGATIVE
+            if(std::abs(outputArma[i]) > saturationVectorVar[i]){
+                double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
+                outputArma[i] = saturatedValue;
+            }
         }
         outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;

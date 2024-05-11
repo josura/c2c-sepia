@@ -1002,7 +1002,7 @@ int main(int argc, char** argv) {
             return 1;
         }
     } else {
-        logger << "[LOG] propagation model was not set. set to default (none)\n";
+        logger << "[LOG] propagation model was not set. set to default (pseudoInverse)\n";
         for(int i = 0; i < finalWorkload;i++ ){
             PropagationModel* tmpPropagationModel = new PropagationModelOriginal(typeComputations[i]->getAugmentedGraph(),propagationScalingFunction);
             typeComputations[i]->setPropagationModel(tmpPropagationModel);
