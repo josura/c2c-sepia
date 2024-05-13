@@ -131,6 +131,10 @@ double hyperbolicTangentScaled(double xInput, double scaleFactor ){
     return scaleFactor*(firstTerm - secondTerm)/(firstTerm + secondTerm);
 }
 
+double lerping(double a, double b, double t){
+    return a + t * (b - a);
+}
+
 bool file_exists (const std::string& name) {
   struct stat buffer;   
   return (stat (name.c_str(), &buffer) == 0); 

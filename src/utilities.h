@@ -159,6 +159,18 @@ scale the hyperbolic tangent function, the return value is always < c , the func
 */
 double hyperbolicTangentScaled(double xInput, double scaleFactor );
 
+/**
+ * \brief  Linear interpolation between two values, a and b, with a parameter t going from 0 to 1
+ * \return  the interpolated value
+*/
+
+double lerping(double a, double b, double t);
+
+/**
+ * \brief  Convert an array to a vector
+ * \return  the vector
+*/
+
 template<typename T>
 std::vector<T> arrayToVector(T* array, int size){
     return std::vector<T>(array, array + size);
