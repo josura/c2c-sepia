@@ -27,6 +27,7 @@ class Computation{
         DissipationModel* dissipationModel=nullptr;
         ConservationModel* conservationModel=nullptr;
         PropagationModel* propagationModel=nullptr;
+        std::function<double(double,double)> saturationFunction;
     public:
         Computation();
         ~Computation();

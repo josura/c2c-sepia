@@ -21,6 +21,10 @@ Computation::Computation(){
     graph = new WeightedEdgeGraph();
     augmentedGraph = new WeightedEdgeGraph();
     cellTypes = std::vector<std::string>();
+    saturationFunction = [](double value,double saturation)-> double{
+        if(value > saturation)return saturation;
+        else return value;
+    };
 }
 
 Computation::~Computation(){
@@ -35,6 +39,10 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     graph = new WeightedEdgeGraph();
     augmentedGraph = new WeightedEdgeGraph();
     cellTypes = std::vector<std::string>();
+    saturationFunction = [](double value,double saturation)-> double{
+        if(value > saturation)return saturation;
+        else return value;
+    };
 }
 
 
@@ -61,6 +69,10 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     InputArma = Matrix<double>(input).asArmadilloColumnVector();
     pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     armaInitializedNotAugmented = true;
+    saturationFunction = [](double value,double saturation)-> double{
+        if(value > saturation)return saturation;
+        else return value;
+    };
 }
 
 Computation::Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _graph, const std::vector<std::string>& graphNames){
@@ -86,6 +98,10 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     // std::cout << "[LOG] computing pseudoinverse for graph cell : " + localCellType << std::endl;
     // pseudoInverseArma = arma::pinv(IdentityArma - WtransArma);
     // armaInitializedNotAugmented = true;
+    saturationFunction = [](double value,double saturation)-> double{
+        if(value > saturation)return saturation;
+        else return value;
+    };
 }
 
 void Computation::augmentGraph(const std::vector<std::string>& _types,const std::vector<std::pair<std::string, std::string>>& newEdgesList,const std::vector<double>& newEdgesValue, bool includeSelfVirtual){
@@ -521,7 +537,7 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
         arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
         for(uint i = 0;i<outputArma.n_elem;i++){
-            // TO TEST SINCE SOME VALUES SEEM TO BE NEGATIVE
+            // TODO change to be more general, doesn't make sense to have the hyperbolic tangent if the condition is controlled (already a control of saturation)
             if(std::abs(outputArma[i]) > saturationVectorVar[i]){
                 double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
                 outputArma[i] = saturatedValue;
