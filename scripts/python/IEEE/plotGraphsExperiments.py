@@ -35,7 +35,7 @@ thresholded_data_sorted = nodes_data.copy()
 for i in range(len(thresholded_data_sorted)):
     thresholded_data_sorted[i].iloc[:, 1:] = np.where(thresholded_data_sorted[i].iloc[:, 1:] > 0.5, 1, 0)
     # order the rows by the iteration column
-    thresholded_data_sorted[i] = thresholded_data_sorted[i].sort_values(by=['iteration'])
+    thresholded_data_sorted[i] = thresholded_data_sorted[i].sort_values(by=['time'])
 
     
 
