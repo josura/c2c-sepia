@@ -121,7 +121,8 @@ pathToPerturbationFolder <- paste0(outputsFolder,"/")
 pathToTimeSeriesFolder <- paste0(outputsTimeSeriesFolder,"/")
 # get the subfolders in the folder
 subfolders <- list.dirs(pathToPerturbationFolder, recursive = FALSE)
-subFiles <- list.files(pathToPerturbationFolder, full.names = TRUE, recursive = FALSE)
+# get only the files in the folder not the subfolders
+subFiles <- list.files(pathToPerturbationFolder, pattern=".tsv" ,full.names = TRUE, recursive = FALSE)
 
 # control if the folder is empty or if the folder contains the time series files (no subfolders)
 if (length(subfolders) == 0) {
