@@ -529,21 +529,32 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
             throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: saturationVector is not of the same size as output vector. abort");
         }
         //dissipation
-        arma::Col<double> dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
-        //conservation
-        if(augmentedGraph == nullptr){
-            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedGraph is not set. abort");
+        arma::Col<double> dissipatedPerturbationArma;
+        try
+        {
+            dissipatedPerturbationArma = dissipationModel->dissipate(InputAugmentedArma, timeStep);
+            //conservation
+            if(augmentedGraph == nullptr){
+                throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: augmentedGraph is not set. abort");
+            }
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            throw std::invalid_argument("[ERROR] Computation::computeAugmentedPerturbationEnhanced4: error during the computation of dissipation");
         }
         arma::Col<double> outputArma = propagationModel->propagate(dissipatedPerturbationArma,timeStep) - conservationModel->conservationTerm(dissipatedPerturbationArma, normalize1Rows(augmentedGraph->adjMatrix.asArmadilloMatrix()) , timeStep, qVectorVar);
         //saturation
-        for(uint i = 0;i<outputArma.n_elem;i++){
+        outputAugmented = armaColumnToVector(outputArma);
+        for(uint i = 0;i<outputAugmented.size();i++){
             // TODO change to be more general, doesn't make sense to have the hyperbolic tangent if the condition is controlled (already a control of saturation)
-            if(std::abs(outputArma[i]) > saturationVectorVar[i]){
-                double saturatedValue = hyperbolicTangentScaled(outputArma[i], saturationVectorVar[i]);
-                outputArma[i] = saturatedValue;
+            if(std::abs(outputAugmented[i]) > saturationVectorVar[i]){
+                //double saturatedValue = hyperbolicTangentScaled(outputAugmented[i], saturationVectorVar[i]); //problems when the ouput value is big enough, gives nan
+                //double saturatedValue = saturationFunction(outputAugmented[i], saturationVectorVar[i]);
+                double saturatedValue = saturationVectorVar[i];
+                outputAugmented[i] = saturatedValue;
             }
         }
-        outputAugmented = armaColumnToVector(outputArma);
         return outputAugmented;
     } else {
         //dissipation
