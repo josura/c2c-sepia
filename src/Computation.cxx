@@ -551,7 +551,9 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
             if(std::abs(outputAugmented[i]) > saturationVectorVar[i]){
                 //double saturatedValue = hyperbolicTangentScaled(outputAugmented[i], saturationVectorVar[i]); //problems when the ouput value is big enough, gives nan
                 //double saturatedValue = saturationFunction(outputAugmented[i], saturationVectorVar[i]);
-                double saturatedValue = saturationVectorVar[i];
+                double saturatedValue;
+                if(outputAugmented[i] > 0) saturatedValue = saturationVectorVar[i];
+                else saturatedValue = -saturationVectorVar[i];
                 outputAugmented[i] = saturatedValue;
             }
         }
