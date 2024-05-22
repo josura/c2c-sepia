@@ -43,7 +43,7 @@ do
     echo "Graph file: $graphsFolderName"
     echo "Initial perturbation file: $initialPerturbationFolderName"
     echo "Type interactions file: $typeInteractionsFolderName"
-    echo "Nodes file: $nodesFolderName"
+    echo "Nodes file: $nodesFolder"
 
     # get the output folder
     #outputFolder="$outputsFolder/dissipationScaleFactor${dissipationScaleFactor}_propagationScaleFactor${propagationScaleFactor}"
