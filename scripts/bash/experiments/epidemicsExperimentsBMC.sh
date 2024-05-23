@@ -57,7 +57,7 @@ do
         --dissipationModelParameters $dissipationScaleFactor \
         --propagationModel neighbors \
         --propagationModelParameters $propagationScaleFactor \
-        --intertypeIterations 10 \
+        --intertypeIterations 20 \
         --intratypeIterations 5 \
         --virtualNodesGranularity typeAndNode \
         --saturation \
