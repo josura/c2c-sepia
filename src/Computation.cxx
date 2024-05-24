@@ -550,10 +550,11 @@ std::vector<double> Computation::computeAugmentedPerturbationEnhanced4(double ti
             // TODO change to be more general, doesn't make sense to have the hyperbolic tangent if the condition is controlled (already a control of saturation)
             if(std::abs(outputAugmented[i]) > saturationVectorVar[i]){
                 //double saturatedValue = hyperbolicTangentScaled(outputAugmented[i], saturationVectorVar[i]); //problems when the ouput value is big enough, gives nan
-                //double saturatedValue = saturationFunction(outputAugmented[i], saturationVectorVar[i]);
-                double saturatedValue;
-                if(outputAugmented[i] > 0) saturatedValue = saturationVectorVar[i];
-                else saturatedValue = -saturationVectorVar[i];
+                saturationFunction = [](double value,double saturation)-> double{
+                    if(value > saturation)return saturation;
+                    else return value;
+                };
+                double saturatedValue = saturationFunction(outputAugmented[i], saturationVectorVar[i]);
                 outputAugmented[i] = saturatedValue;
             }
         }
