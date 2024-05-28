@@ -131,6 +131,10 @@ class Computation{
         void setConservationModel(ConservationModel* conservationModel);
         void setPropagationModel(PropagationModel* propagationModel);
 
+        // get-set for saturation function
+        std::function<double(double,double)> getSaturationFunction()const{return saturationFunction;}
+        void setSaturationFunction(std::function<double(double,double)> saturationFunction){this->saturationFunction = saturationFunction;}
+
         void resetVirtualOutputs();
 
         //optimization
