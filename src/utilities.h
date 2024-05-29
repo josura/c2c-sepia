@@ -443,6 +443,13 @@ void saveNodeValues(std::string folderName,int iterationOuter, int intraIteratio
 */
 void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intraIteration, std::string cellName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile="", double timestep=1.0);
 
+/**
+ * \brief   save node values in folder, no info about intra-iteration and inter-iteration is passed
+ *         add times as an additional feature
+*/
+void saveNodeValuesWithTimeSimple(std::string folderName, int currentIteration, double currentTime, std::string typeName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile="");
+
+
 template<typename T>
 std::vector<T> vectorSubtraction(std::vector<T> vec1, std::vector<T> vec2){
     if(vec1.size()!=vec2.size()){

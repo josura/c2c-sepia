@@ -1579,6 +1579,51 @@ void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intra
 }
 
 
+void saveNodeValuesWithTimeSimple(std::string folderName,int currentIteration, double currentTime, std::string typeName, std::vector<double> nodeValues,std::vector<std::string> nodeNames, bool useEntrez, std::string nodesDescriptionFile){
+    std::string outputFilename = folderName + "/" + typeName + "--"+std::to_string(currentIteration) + ".tsv";
+    std::ofstream outfile(outputFilename,ios::out|ios::trunc);
+
+    if (!outfile.is_open()) {
+        std::cout << "Unable to open file " << outputFilename << std::endl;
+        throw std::invalid_argument("utilities::saveNodeValues: unable to open output file " + outputFilename);
+    }
+
+    //TODO specifiy if the nodes description are in a folder with the graphs description files?
+    if(nodesDescriptionFile.length()==0 && useEntrez){
+            nodesDescriptionFile = "resources/graphs/metapathwayNew/nodes.tsv";
+    } else if(nodesDescriptionFile.length()!=0 && !file_exists(nodesDescriptionFile)){
+        throw std::invalid_argument("utilities::saveNodeValues: file does not exists " + nodesDescriptionFile);
+    }
+
+    std::map<std::string, std::vector<std::string>> mapToEverything;
+    if(useEntrez || nodesDescriptionFile.length()!=0){
+        mapToEverything = getFullNodesDescription(nodesDescriptionFile);
+    } else {
+        mapToEverything = std::map<std::string, std::vector<std::string>>();
+    }
+
+    //header
+    outfile << "nodeID\tnodeName\ttype\talias\tnodeValue\ttime\n";
+    //body
+    for(uint i = 0; i < nodeValues.size(); i++){
+        if(mapToEverything.size() !=0 && mapToEverything.contains(nodeNames[i]))
+            outfile<<mapToEverything.at(nodeNames[i])[0]<<"\t"<<mapToEverything.at(nodeNames[i])[1]<<"\t"<<mapToEverything.at(nodeNames[i])[2]<<"\t"<<mapToEverything.at(nodeNames[i])[3]<<"\t"<< std::to_string(nodeValues[i]) << "\t" << std::to_string(currentTime);
+        else {
+            auto splittedVirtual = splitStringIntoVector(nodeNames[i], ":");
+            if(splittedVirtual[0]=="v-in"){
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-input\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i])<< "\t" << std::to_string(currentTime);
+            } else if(splittedVirtual[0]=="v-out"){
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"virtual-output\t"<<splittedVirtual[1]<<"\t"<<std::to_string(nodeValues[i])<< "\t" << std::to_string(currentTime);
+            } else{ //when the node names are not genes but something else
+                outfile<<nodeNames[i]<<"\t"<<nodeNames[i]<<"\t"<<"nodes in the graph\t"<<nodeNames[i]<<"\t"<<std::to_string(nodeValues[i])<< "\t" << std::to_string(currentTime);
+            }
+        }
+        outfile << std::endl;
+    }
+}
+
+
+
 double vectorNorm(std::vector<double> vec){
     double norm=0;
     for (uint i = 0; i < vec.size(); ++i) {
