@@ -770,11 +770,6 @@ int main(int argc, char** argv) {
             std::pair<std::string,std::string> keyTypes = std::make_pair(std::get<2> (*edge), std::get<3> (*edge));
             std::tuple<std::string,std::string,std::string,std::string> keyTypesFiner = std::make_tuple(std::get<0> (*edge), std::get<1> (*edge), std::get<2> (*edge), std::get<3> (*edge));
             
-            // TESTING
-            // printing keytypesFiner
-            // std::cout << "keyTypesFiner: (" << std::get<0> (keyTypesFiner) << " " << std::get<1> (keyTypesFiner) << " " << std::get<2> (keyTypesFiner) << " " << std::get<3> (keyTypesFiner)<< ")" << std::endl;
-            // TESTING
-
             if(interactionBetweenTypesMap.contains(keyTypes)){
                 interactionBetweenTypesMap[keyTypes].insert(std::get<4>(*edge).begin(),std::get<4>(*edge).end()); // directly inserting means the union of the two sets
             } else {
@@ -1083,17 +1078,13 @@ int main(int argc, char** argv) {
                 // TODO use stateful scaling function to consider previous times
                 if (saturation) {
                     if(vm.count("saturationTerm") == 0){
-                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true);
                     } else if (vm.count("saturationTerm") >= 1) {
                         double saturationTerm = vm["saturationTerm"].as<double>();
                         std::vector<double> saturationVector = std::vector<double>(graphsNodes[invertedTypesIndexes[i]].size(),saturationTerm);
-                        //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, saturationVector, std::vector<double>(), propagationScalingFunction); 
                         std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = true, saturationVector);
                     }
                 } else{
-                    // std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced2((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = false);
-                    //std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced3((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = false, std::vector<double>(), std::vector<double>(), propagationScalingFunction);
                     std::vector<double> outputValues = typeComputations[i]->computeAugmentedPerturbationEnhanced4((iterationInterType*intratypeIterations + iterationIntraType)*timestep, saturation = false);
                 }
             }
@@ -1104,6 +1095,7 @@ int main(int argc, char** argv) {
             for(int i = 0; i < finalWorkload; i++){
                 std::vector<std::string> nodeNames = typeComputations[i]->getAugmentedGraph()->getNodeNames();
                 //TODO change how to save files to get more information about intratype and intertype iterations, time and timestep included
+                // TODO also change the output format, maybe by creating a single file for every type (all outputs of the iterations are saved inside this single file)
                 //logger << "saving output values for iteration intertype-intratype ("+ std::to_string(iterationInterType) + "<->"+ std::to_string(iterationIntraType) + ") for type (" + types[i+startIdx] << ") in process " << rank <<std::endl;
                 saveNodeValuesWithTime(outputFoldername, iterationInterType*intratypeIterations, iterationIntraType, types[i+startIdx], typeComputations[i]->getOutputAugmented(), nodeNames,ensembleGeneNames, nodesDescriptionFilename, timestep);
             }
@@ -1277,7 +1269,6 @@ int main(int argc, char** argv) {
                         int localTypePosition = ilocal + startIdx;
                         int sourceTypePosition = isource + sourceRank*workloadPerProcess;
                         std::pair<std::string,std::string> keyTypes = std::make_pair(types[localTypePosition], types[sourceTypePosition]);
-                        //if(interactionBetweenTypesMap[keyTypes].contains(iterationInterType)){
                         if(quantizationMethod=="single"){
                             if(setDoubleContainsInterval(interactionBetweenTypesMap[keyTypes], iterationInterType* timestep, (iterationInterType + 1)* timestep)){
                                 // logger << "[TEST] contact times for types " << types[localTypePosition] << " and " << types[sourceTypePosition] << " are ";
