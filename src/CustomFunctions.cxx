@@ -1,4 +1,4 @@
-#include "CustomScalingFunctions.h"
+#include "CustomFunctions.h"
 
 
 //add scaling function as lambda function for dissipation, value should be between 0 and 1 to not get negative values

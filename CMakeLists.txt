@@ -62,7 +62,7 @@ set(LIB_SRCS
     src/PropagationModelNeighbors.cxx
     src/PropagationModelOriginal.cxx
     src/PropagationModelCustom.cxx
-    src/CustomScalingFunctions.cxx
+    src/CustomFunctions.cxx
     src/Logger.cxx
 )
 

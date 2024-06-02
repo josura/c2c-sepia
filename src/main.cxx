@@ -19,7 +19,7 @@
 #include "DissipationModelScaled.h"
 #include "WeightedEdgeGraph.h"
 #include "utilities.h"
-#include "CustomScalingFunctions.h"
+#include "CustomFunctions.h"
 #include "Logger.hxx"
 
 
