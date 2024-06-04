@@ -16,7 +16,7 @@ make
 ```
 
 ## PARAMETER CUSTOMIZATION
-The custom functions used for the scaling of the perturbation values (dissipation and conservation) are defined in <src/CustomScalingFunctions> in the source folder
+The custom functions used for the scaling of the perturbation values (dissipation and conservation) are defined in <src/CustomFunctions> in the source folder
 
 
 ## USAGE
