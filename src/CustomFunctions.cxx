@@ -24,3 +24,11 @@ std::function<double(double)> getPropagationScalingFunction(){
         return 0.5;
     };
 }
+
+// saturation function
+std::function<double(double,double)> getSaturationFunction(){
+    return [](double value,double saturation)-> double{
+        if(value > saturation)return saturation;
+        else return value;
+    };
+}

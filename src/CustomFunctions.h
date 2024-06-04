@@ -10,3 +10,6 @@ std::function<double(double)> getConservationScalingFunction();
 
 //add scaling function as lambda function for propagation
 std::function<double(double)> getPropagationScalingFunction();
+
+// saturation function
+std::function<double(double,double)> getSaturationFunction();
