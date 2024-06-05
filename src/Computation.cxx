@@ -23,6 +23,7 @@ Computation::Computation(){
     cellTypes = std::vector<std::string>();
     saturationFunction = [](double value,double saturation)-> double{
         if(value > saturation)return saturation;
+        else if (value < -saturation) return -saturation;
         else return value;
     };
 }
@@ -41,6 +42,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     cellTypes = std::vector<std::string>();
     saturationFunction = [](double value,double saturation)-> double{
         if(value > saturation)return saturation;
+        else if (value < -saturation) return -saturation;
         else return value;
     };
 }
@@ -71,6 +73,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     armaInitializedNotAugmented = true;
     saturationFunction = [](double value,double saturation)-> double{
         if(value > saturation)return saturation;
+        else if (value < -saturation) return -saturation;
         else return value;
     };
 }
@@ -100,6 +103,7 @@ Computation::Computation(std::string _thisCellType,const std::vector<double>& _i
     // armaInitializedNotAugmented = true;
     saturationFunction = [](double value,double saturation)-> double{
         if(value > saturation)return saturation;
+        else if (value < -saturation) return -saturation;
         else return value;
     };
 }

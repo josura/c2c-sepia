@@ -29,6 +29,7 @@ std::function<double(double)> getPropagationScalingFunction(){
 std::function<double(double,double)> getSaturationFunction(){
     return [](double value,double saturation)-> double{
         if(value > saturation)return saturation;
+        else if (value < -saturation) return -saturation;
         else return value;
     };
 }
