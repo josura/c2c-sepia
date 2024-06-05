@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
     bool ensembleGeneNames=false;
     bool sameTypeCommunication=false;
     bool saturation=false;
+    bool customSaturation=false;
     bool conservateInitialNorm=false;
     bool undirected = false;
     bool undirectedTypeEdges = false;
@@ -63,7 +64,8 @@ int main(int argc, char** argv) {
         ("propagationModel",po::value<std::string>(),"(string) the propagation model used for the computation, available models are: 'default(pseudoinverse creation)','scaled (pseudoinverse * scale parameter)', neighbors(propagate the values only on neighbors at every iteration and scale parameter) and 'customScaling' (pseudoinverse*scalingFunction(parameters)), 'customScalingNeighbors' (neighbors propagation and scalingFunction(parameters)), 'customPropagation' (custom scaling function and custom propagation function defined in src/PropagationModelCustom) ")
         ("propagationModelParameters", po::value<std::vector<double>>()->multitoken(),"(vector<double>) the parameters for the propagation model, for the scaled parameter the constant used to scale the conservation final results")
         ("saturation",po::bool_switch(&saturation),"use saturation of values, default to 1, if another value is needed, use the saturationTerm")
-        ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm]")
+        ("saturationTerm",po::value<double>(),"defines the limits of the saturation [-saturationTerm,saturationTerm], default to 1, if saturation is not set, this option is not used, if specified the program will stop the execution")
+        ("customSaturationFunction",po::bool_switch(&customSaturation),"use custom saturation function defined in src/CustomFunctions.cxx, if this option is not set, the saturation function will be the default one")
         ("conservateInitialNorm",po::bool_switch(&conservateInitialNorm), "conservate the initial euclidean norm of the perturbation values, that is ||Pn|| <= ||Initial||, default to false")
         ("undirectedEdges",po::bool_switch(&undirected), "edges in the graphs are undirected")
         ("undirectedTypeEdges",po::bool_switch(&undirectedTypeEdges), "edges between types are undirected")
@@ -144,6 +146,17 @@ int main(int argc, char** argv) {
         std::cerr << "[ERROR] fInitialPerturbationPerType and initialPerturbationPerTypeFolder were both set. Aborting\n";
         return 1;
     }
+
+    if(!saturation){
+        if (vm.count("saturationTerm")){
+            std::cerr << "[ERROR] saturationTerm was set but saturation was not set, impossible configuration, aborting"<<std::endl;
+            return 1;
+        }
+        if (customSaturation){
+            std::cerr << "[ERROR] customSaturation was set but saturation was not set, impossible configuration, aborting"<<std::endl;
+            return 1;
+        }
+    } 
 
     // reading the parameters
 
@@ -525,6 +538,9 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    // print the number of processes and the rank
+    std::cout << "[LOG] Number of processes: " << numProcesses << ", rank: " << rank << std::endl;
+
     // control if the number of processes is greater than the number of types, exit if true (useless process are not accepted)
     if (numProcesses > SizeToInt(types.size())) {
         std::cerr << "[ERROR] number of processes is greater than the number of types: aborting"<<std::endl;
@@ -739,6 +755,16 @@ int main(int argc, char** argv) {
         invertedTypesIndexes[indexComputation] = i;
         indexComputation++;
 
+    }
+
+    // saturation function for the computation is changed if custom saturation is set
+    if(saturation && customSaturation){
+        logger << "[LOG] custom saturation function set, using the custom saturation function defined in src/CustomFunctions.cxx"<<std::endl;
+        for(int i = 0; i < finalWorkload;i++){
+            typeComputations[typesIndexes[i]]->setSaturationFunction(getSaturationFunction());
+        }
+    } else {
+        logger << "[LOG] custom saturation function not set, using the default saturation function"<<std::endl;
     }
 
     logger << "[LOG] loading type interactions for rank "<< rank << std::endl;
