@@ -7,7 +7,7 @@ import os
 
 # get different time series from different folder in the specified folder
 
-network_types = ['erdosReniy', 'preferentialAttachment', 'preferentialAttachmentAging', 'regular']
+network_types = ['erdosRenyi', 'preferentialAttachment', 'preferentialAttachmentAging', 'regular']
 
 for network_type in network_types:
     # get the folders in the specified folder
@@ -58,11 +58,12 @@ for network_type in network_types:
     ax.set_xlabel('Time')
     ax.set_ylabel('Dissipation Scale Factor')
     ax.set_zlabel('Percentage of Infected Nodes')
-    ax.set_title('Percentage of Infected Nodes, Different Dissipation Scale Factors')
+    #ax.set_title('Percentage of Infected Nodes for '+ network_type + ' network, Different Dissipation Scale Factors')
     for i in range(len(infected_nodes)):
         ax.plot(range(len(infected_nodes[i])), [dissipationScaleFactors[i]]*len(infected_nodes[i]), infected_nodes[i])
 
-    fig.show()
+    # save the plot
+    plt.savefig('/home/josura/Projects/ccc/c2c-sepia/docs/plots/epidemics/BMC/3dplot' + network_type + 'Dissipations.png')
 
     # PROPAGATIONS PLOTTING
     folders = [f for f in os.listdir(specified_folder_changingPropagations) if os.path.isdir(os.path.join(specified_folder_changingPropagations, f))]
@@ -106,8 +107,9 @@ for network_type in network_types:
     ax.set_xlabel('Time')
     ax.set_ylabel('Propagation Scale Factor')
     ax.set_zlabel('Percentage of Infected Nodes')
-    ax.set_title('Percentage of Infected Nodes, Different Propagation Scale Factors')
+    #ax.set_title('Percentage of Infected Nodes for '+ network_type + ' network, Different Propagation Scale Factors')
     for i in range(len(infected_nodes)):
         ax.plot(range(len(infected_nodes[i])), [propagationScaleFactors[i]]*len(infected_nodes[i]), infected_nodes[i])
 
-    fig.show()
+    # save the plot
+    plt.savefig('/home/josura/Projects/ccc/c2c-sepia/docs/plots/epidemics/BMC/3dplot' + network_type + 'Propagations.png')
