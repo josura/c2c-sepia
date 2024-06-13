@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
         ("nodeDescriptionFolder", po::value<std::string>(), "(string) node description folder, where the files containing the description for all the graphs are contained, used to read the graph nodes, if not specified the graphs will be built with the edges files(could not contain some isolated nodes) for an example see in data/testdata/testHeterogeneousTemporalGraph/nodesDescriptionDifferentStructure")
         ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"() use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
         ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"() use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
-        ("outputFolder",po::value<std::string>()->required(),"(string) output folder for output of the algorithm at each iteration")
+        ("outputFolder",po::value<std::string>(),"(string) output folder for output of the algorithm at each iteration")
         ("intertypeIterations",po::value<uint>(),"(positive integer) number of iterations for intertype communication")
         ("intratypeIterations",po::value<uint>(),"(positive integer) number of iterations for intratype communication")
         ("timestep",po::value<double>(),"timestep to use for the iteration, the final time is iterationIntracell*iterationIntercell*timestep")
