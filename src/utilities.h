@@ -135,9 +135,9 @@ bool controlForDuplicates(std::vector<T> v){
     auto last = std::unique(v2.begin(), v2.end());
     v2.erase(last, v2.end());
     if(v.size()!=v2.size()){
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 // convert size to int and  launch an exception if it is not possible
