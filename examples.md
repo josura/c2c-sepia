@@ -5,11 +5,11 @@ This page contains a collection of MPI examples of running the framework on test
 
 ## Homogeneous graph
     
-### Example 1: custom propagation model (neighbors if the code in src/propagationModelCustom.cxx is unmodified), scaled dissipation and conservation models set at constants, saturation at default value (1.0)
+### Example 1: custom propagation model (neighbors if the code in src/propagationModelCustom.cxx is unmodified), scaled dissipation and conservation models set at constants, saturation at default value (1.0), virtual nodes granularity set to type
 ```bash
 mpirun -np 2 ./build/c2c-sepia-MPI --fUniqueGraph data/testdata/testHomogeneousGraph/edges-Graph1-general.tsv \
             --fInitialPerturbation data/testdata/testHomogeneousGraph/initialValues-general.tsv \
-            --fInteractions data/testdata/testHomogeneousGraph/interactions.tsv \
+            --typeInteractionFolder data/testdata/testHomogeneousGraph/interactions \
             --dissipationModel scaled \
             --dissipationModelParameters 0.2 \
             --conservationModel scaled \
@@ -18,6 +18,22 @@ mpirun -np 2 ./build/c2c-sepia-MPI --fUniqueGraph data/testdata/testHomogeneousG
             --propagationModelParameters 0.2 \
             --saturation \
             --outputFolder outputs/testingMPIsingle
+```
+
+### Example 2: custom propagation model (neighbors if the code in src/propagationModelCustom.cxx is unmodified), scaled dissipation and conservation models set at constants, saturation at default value (1.0), virtual nodes granularity set to type and node
+```bash
+mpirun -np 2 ./build/c2c-sepia-MPI --fUniqueGraph data/testdata/testHomogeneousGraph/edges-Graph1-general.tsv \
+            --fInitialPerturbation data/testdata/testHomogeneousGraph/initialValues-general.tsv \
+            --typeInteractionFolder data/testdata/testHomogeneousGraph/interactions \
+            --dissipationModel scaled \
+            --dissipationModelParameters 0.2 \
+            --conservationModel scaled \
+            --conservationModelParameters 0.2 \
+            --propagationModel customPropagation \
+            --propagationModelParameters 0.2 \
+            --virtualNodesGranularity typeAndNode \
+            --saturation \
+            --outputFolder outputs/testingMPISingleGranular
 ```
 
 
