@@ -36,6 +36,21 @@ mpirun -np 2 ./build/c2c-sepia-MPI --fUniqueGraph data/testdata/testHomogeneousG
             --outputFolder outputs/testingMPISingleGranular
 ```
 
+### Example 3: custom propagation model (neighbors if the code in src/propagationModelCustom.cxx is unmodified), scaled dissipation and conservation models set at constants, saturation at default value (1.0), virtual nodes granularity set to type and node, using a folder for the  initial perturbation values
+```bash
+mpirun -np 2 ./build/c2c-sepia-MPI --fUniqueGraph data/testdata/testHomogeneousGraph/edges-Graph1-general.tsv \
+            --initialPerturbationPerTypeFolder data/testdata/testHomogeneousGraph/initialValues \
+            --typeInteractionFolder data/testdata/testHomogeneousGraph/interactions \
+            --dissipationModel scaled \
+            --dissipationModelParameters 0.2 \
+            --conservationModel scaled \
+            --conservationModelParameters 0.2 \
+            --propagationModel customPropagation \
+            --propagationModelParameters 0.2 \
+            --virtualNodesGranularity typeAndNode \
+            --saturation \
+            --outputFolder outputs/testingMPISingleGranular
+```
 
 
 ## Heterogeneous temporal graph
