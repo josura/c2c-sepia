@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     bool undirected = false;
     bool undirectedTypeEdges = false;
     bool resetVirtualOutputs = false;
+    bool resumeCheckpoint = false;
     std::string logMode="";
     std::string quantizationMethod = "single";
     std::string virtualNodesGranularity = "type";
@@ -75,6 +76,7 @@ int main(int argc, char** argv) {
         ("quantizationMethod",po::value<std::string>(), "(string) define the quantization method used to quantize the contact times for the edges between different types, available options are: 'single' and 'multiple'") // aggiungere documentazione
         ("loggingOptions",po::value<std::string>(&logMode),"(string) logging options, available options are: 'all','none', default to all")
         ("savePerformance",po::value<std::string>(&performanceFilename), "(string) output performance (running time, number of total nodes, number of communities, number of total edges) to the defined file, if nothing is specified the performance are not saved")
+        ("resumeCheckpoint",po::bool_switch(&resumeCheckpoint), "resume the computation from the last checkpoint, if the checkpoint is not found, the computation will start from the beginning")
     ;
     //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
