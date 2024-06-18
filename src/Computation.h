@@ -130,6 +130,7 @@ class Computation{
         void setDissipationModel(DissipationModel* dissipationModel);
         void setConservationModel(ConservationModel* conservationModel);
         void setPropagationModel(PropagationModel* propagationModel);
+        void setInputAugmented(const std::vector<double>& inputAugmented);
 
         // get-set for saturation function
         std::function<double(double,double)> getSaturationFunction()const{return saturationFunction;}

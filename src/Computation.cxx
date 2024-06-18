@@ -634,6 +634,14 @@ void Computation::setPropagationModel(PropagationModel *propagationModel){
     this->propagationModel = propagationModel;
 }
 
+
+void Computation::setInputAugmented(const std::vector<double>& newInputAugmented){
+    if(newInputAugmented.size() == inputAugmented.size()){
+        inputAugmented = newInputAugmented;
+        InputAugmentedArma = arma::Col<double>(newInputAugmented);
+    }
+}
+
 void Computation::resetVirtualOutputs(){
     //virtual outputs have the names starting with v-out:
     for(auto it = nodeToIndex.cbegin(); it!=nodeToIndex.cend();it++){
