@@ -32,25 +32,23 @@ class Computation{
         Computation();
         ~Computation();
         Computation(std::string _thisCellType, const std::vector<double>& _input);   // useless???
-
-        /*
-        Computation without knowledge of the other cell types, this part can be seen as the classical algorithm without additional computation for message passing
-        between cells, only intra-cell propagation
-        @param std::string _thisCellType: the type of this computation, this information will be used as the unique name for the Agent
-        @param const std::vector<double>& _input: input vector of the nodes values, initially the one passed in the input
-        @param const Matrix<double>& _W: the adjacency matrix along the values of every edge in the graph that it represents
-        @param const std::vector<std::string>& graphNames: the graph nodes names, in order defined by the adjacency matrix
+        /**
+         * \brief constructor function without knowledge of the other cell types, this part can be seen as the classical algorithm without additional computation for message passing between cells, only intra-cell propagation
+         * @param std::string _thisCellType: the type of this computation, this information will be used as the unique name for the Agent
+         * @param const std::vector<double>& _input: input vector of the nodes values, initially the one passed in the input
+         * @param const Matrix<double>& _W: the adjacency matrix along the values of every edge in the graph that it represents
+         * @param const std::vector<std::string>& graphNames: the graph nodes names, in order defined by the adjacency matrix
+         * \return nothing
         */
         Computation(std::string _thisCellType,const std::vector<double>& _input, const Matrix<double>& _W, const std::vector<std::string>& graphNames);
 
 
-        /*
-        Computation without knowledge of the other cell types, this part can be seen as the classical algorithm without additional computation for message passing
-        between cells, only intra-cell propagation
-        @param std::string _thisCellType: the type of this computation, this information will be used as the unique name for the Agent
-        @param const std::vector<double>& _input: input vector of the nodes values, initially the one passed in the input
-        @param const Matrix<double>& _W: the adjacency matrix along the values of every edge in the graph that it represents
-        @param const std::vector<std::string>& graphNames: the graph nodes names, in order defined by the adjacency matrix
+        /**
+         * \brief constructor function Computation without knowledge of the other cell types, this part can be seen as the classical algorithm without additional computation for message passing between cells, only intra-cell propagation
+         * @param std::string _thisCellType: the type of this computation, this information will be used as the unique name for the Agent
+         * @param const std::vector<double>& _input: input vector of the nodes values, initially the one passed in the input
+         * @param const Matrix<double>& _W: the adjacency matrix along the values of every edge in the graph that it represents
+         * @param const std::vector<std::string>& graphNames: the graph nodes names, in order defined by the adjacency matrix
         */
         Computation(std::string _thisCellType,const std::vector<double>& _input, WeightedEdgeGraph* _graph, const std::vector<std::string>& graphNames);
         
@@ -97,24 +95,41 @@ class Computation{
         arma::Mat<double> getPseudoInverseArma()const{return pseudoInverseArma;}
         arma::Col<double> getInputAugmentedArma()const{return InputAugmentedArma;}
         arma::Mat<double> getPseudoInverseAugmentedArma()const{return pseudoInverseAugmentedArma;}
+        /**
+         * \brief get the value of a node in the graph
+         * @param std::string nodeName: the name of the node in the graph
+        */
         double getOutputNodeValue(std::string nodeName)const{
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
                 throw std::out_of_range("Computation::getOutputNodeValue: the node name is not in the graph");
             int index = nodeToIndex.at(nodeName);
             return outputAugmented[index];
             };
+        /**
+         * \brief get the value of a node in the graph
+         * @param std::string nodeName: the name of the node in the graph
+         */
         double getInputNodeValue(std::string nodeName)const{
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
                 throw std::out_of_range("Computation::getInputNodeValue: the node name is not in the graph");
             int index = nodeToIndex.at(nodeName);
             return inputAugmented[index];
             };
+        /**
+         * \brief get the value of a node in the graph
+         * @param std::string nodeName: the name of the node in the graph
+         */
         double getInputNodeValueArma(std::string nodeName)const{
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
                 throw std::out_of_range("Computation::getInputNodeValueArma: the node name is not in the graph");
             int index = nodeToIndex.at(nodeName);
             return InputAugmentedArma[index];
             };
+        /**
+         * \brief set the value of a node in the graph
+         * @param std::string nodeName: the name of the node in the graph
+         * @param double value: the value to set
+         */
         void setInputNodeValue(std::string nodeName, double value){
             if(nodeToIndex.find(nodeName) == nodeToIndex.end())
                 throw std::out_of_range("Computation::setInputNodeValue: the node name is not in the graph");
@@ -131,6 +146,7 @@ class Computation{
         void setConservationModel(ConservationModel* conservationModel);
         void setPropagationModel(PropagationModel* propagationModel);
         void setInputAugmented(const std::vector<double>& inputAugmented);
+
 
         // get-set for saturation function
         std::function<double(double,double)> getSaturationFunction()const{return saturationFunction;}
