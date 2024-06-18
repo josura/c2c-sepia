@@ -1,6 +1,4 @@
-#ifndef CHECKPOINT_HXX
-#define CHECKPOINT_HXX
-
+#pragma once
 #include <string>
 
 class Checkpoint {
@@ -14,7 +12,5 @@ public:
     // Add your variables and methods here
 
 private:
-    // Add your private variables and methods here
+    std::string checkPointFolder;
 };
-
-#endif // CHECKPOINT_HXX
