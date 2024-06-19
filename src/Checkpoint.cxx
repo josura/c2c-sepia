@@ -19,7 +19,7 @@ Checkpoint::~Checkpoint() {
 }
 
 void Checkpoint::saveState(const std::string type, const int interIteration, const int intraIteration, const Computation* currentComputation) {
-    std::string fileName = this->checkPointFolder + "checkpoint_" + std::to_string(interIteration) + "_" + std::to_string(intraIteration) + ".txt";
+    std::string fileName = this->checkPointFolder + "checkpoint_" + type + "_" + std::to_string(interIteration) + "_" + std::to_string(intraIteration) + ".tsv";
     std::ofstream file(fileName);
     std::vector<std::string> nodeNames = currentComputation->getAugmentedGraph()->getNodeNames();
     std::vector<double> nodeValues = currentComputation->getOutputAugmented();
@@ -36,6 +36,34 @@ void Checkpoint::saveState(const std::string type, const int interIteration, con
     }
     else
     {
-        std::cerr << "Error: Unable to open file " << fileName << std::endl;
+        std::cerr << "[ERROR] Checkpoint::saveState: Unable to open file " << fileName << std::endl;
+    }
+}
+
+void Checkpoint::loadState(const std::string type, int& interIteration, int& intraIteration, Computation* computation) {
+    std::string fileName = this->checkPointFolder + "checkpoint_" + type + "_" + std::to_string(interIteration) + "_" + std::to_string(intraIteration) + ".tsv";
+    std::ifstream file(fileName);
+    if (file.is_open())
+    {
+        std::string line;
+        std::getline(file, line); // skip header
+        while (std::getline(file, line))
+        {
+            std::istringstream iss(line);
+            std::string interIterationStr;
+            std::string intraIterationStr;
+            std::string nodeName;
+            std::string nodeValueStr;
+            iss >> interIterationStr >> intraIterationStr >> nodeName >> nodeValueStr;
+            double nodeValue = std::stod(nodeValueStr);
+            interIteration = std::stoi(interIterationStr);
+            intraIteration = std::stoi(intraIterationStr);
+            computation->setInputNodeValue(nodeName, nodeValue);
+        }
+        file.close();
+    }
+    else
+    {
+        std::cerr << "[ERROR] Checkpoint::loadState: Unable to open file " << fileName << std::endl;
     }
 }
