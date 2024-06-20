@@ -198,6 +198,11 @@ bool folderExists(const std::string& folderPath);
  */
 bool createFolder(const std::string& folderPath);
 /**
+ * \brief   List the files in the specified folder
+ * \return  the vector of the files in the folder
+ */
+std::vector<std::string> listFiles(const std::string& folderPath,bool noHiddenFiles=true, bool noFolders=true);
+/**
  * \brief  Split a string into a vector of strings using the specified delimiter
  * \return  the vector of strings
 */

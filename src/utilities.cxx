@@ -178,6 +178,21 @@ bool createFolder(const std::string& folderPath)
     return success;
 }
 
+
+std::vector<std::string> listFiles(const std::string& folderPath,bool noHiddenFiles, bool noFolders){
+    std::vector<std::string> files;
+    for (const auto & entry : std::filesystem::directory_iterator(folderPath)){
+        if(noHiddenFiles && entry.path().filename().string().at(0)=='.'){
+            continue;
+        }
+        if(noFolders && entry.is_directory()){
+            continue;
+        }
+        files.push_back(entry.path().string());
+    }
+    return files;
+}
+
 bool setDoubleContainsInterval(std::set<double> set, double lower, double upper){
     if(lower > upper){
         throw std::invalid_argument("utilities::setDoubleContainsInterval: lower bound is greater than upper bound");
