@@ -1,7 +1,7 @@
-#include<Checkpoint.hxx>
-#include<Computation.h>
-#include<string>
-#include<utilities.h>
+#include "Checkpoint.hxx"
+#include "Computation.h"
+#include <string>
+#include "utilities.h"
 
 Checkpoint::Checkpoint() {
     this->checkPointFolder = "checkpoints/";

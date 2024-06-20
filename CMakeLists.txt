@@ -64,6 +64,7 @@ set(LIB_SRCS
     src/PropagationModelCustom.cxx
     src/CustomFunctions.cxx
     src/Logger.cxx
+    src/Checkpoint.cxx
 )
 
 if(CUDAavailable)
