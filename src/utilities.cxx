@@ -322,10 +322,10 @@ std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::strin
             std::vector<std::string> entriesHeader = splitStringIntoVector(line, "\t");
             int indexStart=-1,indexEnd=-1,indexWeight=-1;
             for(uint i = 0; i < entriesHeader.size(); i++){
-                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("start") != std::string::npos) {
+                if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("start") != std::string::npos || boost::algorithm::to_lower_copy(entriesHeader[i]).find("source") != std::string::npos) {
                     indexStart = i;
                 }
-                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("end") != std::string::npos) {
+                else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("end") != std::string::npos || boost::algorithm::to_lower_copy(entriesHeader[i]).find("target") != std::string::npos){
                     indexEnd = i;
                 } else if (boost::algorithm::to_lower_copy(entriesHeader[i]).find("weight") != std::string::npos) {
                     indexWeight = i;
