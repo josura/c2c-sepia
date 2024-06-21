@@ -22,6 +22,7 @@
 #include "utilities.h"
 #include "CustomFunctions.h"
 #include "Logger.hxx"
+#include "Checkpoint.hxx"
 
 
 
@@ -461,6 +462,9 @@ int main(int argc, char** argv) {
             return 1;
         }
     }
+
+    // Checkpoint initialization
+    Checkpoint checkpoint;
     //end program options section
 
     std::string nodesDescriptionFilename="";
@@ -1094,10 +1098,24 @@ int main(int argc, char** argv) {
         } else {
             std::cerr << "[ERROR] virtual nodes granularity is not any of the types. virtual nodes granularity available are type and typeAndNode \n";
             return 1;
-        } 
+        }
 
-    for(int iterationInterType = 0; iterationInterType < intertypeIterations; iterationInterType++){
-        for(int iterationIntraType = 0; iterationIntraType < intratypeIterations; iterationIntraType++){
+    // load checkpoint if resumeCheckpoint parameter is set
+    int startingInterIteration = 0;
+    int startingIntraIteration = 0;
+    if(resumeCheckpoint){
+        for(int i = 0; i < finalWorkload; i++){
+            checkpoint.loadState(types[i+startIdx], startingInterIteration, startingIntraIteration, typeComputations[i]);
+        }
+    }
+
+    for(int iterationInterType = startingInterIteration; iterationInterType < intertypeIterations; iterationInterType++){
+        for(int iterationIntraType = startingIntraIteration; iterationIntraType < intratypeIterations; iterationIntraType++){
+            // save checkpoint
+            for(int i = 0; i < finalWorkload; i++){
+                checkpoint.cleanCheckpoints(types[i+startIdx]);
+                checkpoint.saveState(types[i+startIdx], iterationInterType, iterationIntraType, typeComputations[i]);
+            }
             
             // computation of perturbation
             #pragma omp parallel for
@@ -1162,12 +1180,12 @@ int main(int argc, char** argv) {
                 } else {
                     targetWorkload = workloadPerProcess;
                 }
-                    int targetPosition = i - targetRank * workloadPerProcess;
-                    for(int j = 0; j < finalWorkload; j++ ){
-                        int virtualOutputPosition = targetPosition + j * targetWorkload;
-                        
-                        virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
-                    }
+                int targetPosition = i - targetRank * workloadPerProcess;
+                for(int j = 0; j < finalWorkload; j++ ){
+                    int virtualOutputPosition = targetPosition + j * targetWorkload;
+                    
+                    virtualOutputs[targetRank][virtualOutputPosition] = typeComputations[j]->getVirtualOutputForType(types[i]);
+                }
                 
             }
         } else if (virtualNodesGranularity == "typeAndNode"){ // finer granularity, one array for each type and node representing virtual nodes for each type and node (as a couple)    
