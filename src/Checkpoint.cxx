@@ -40,6 +40,22 @@ void Checkpoint::saveState(const std::string type, const int interIteration, con
     }
 }
 
+void Checkpoint::cleanCheckpoints(std::string type) {
+    std::string folder = this->checkPointFolder;
+    std::vector<std::string> files = listFiles(folder);
+    for (std::string file : files)
+    {
+        if (file.find("checkpoint_" + type) != std::string::npos)
+        {
+            std::string fileName = folder + file;
+            if (remove(fileName.c_str()) != 0)
+            {
+                std::cerr << "[ERROR] Checkpoint::cleanCheckpoints: Unable to delete file " << fileName << std::endl;
+            }
+        }
+    }
+}
+
 void Checkpoint::loadState(const std::string type, int& interIteration, int& intraIteration, Computation* computation) {
     std::string fileName = this->checkPointFolder + "checkpoint_" + type + "_" + std::to_string(interIteration) + "_" + std::to_string(intraIteration) + ".tsv";
     std::ifstream file(fileName);
