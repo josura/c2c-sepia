@@ -55,3 +55,4 @@ outputsTimeSeries/
 CmakeListsFolder/
 scripts/R/epidemics/*.tsv
 Testing
+checkpoints/
