@@ -554,6 +554,70 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
 
 }
 
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> valuesMatrixToTypeVectors(std::string filename, const std::vector<std::string>& finalNames,std::vector<std::string> subTypes ,bool useEntrez){
+    string line;
+    std::vector<std::vector<double>> ret;
+    std::vector<std::string> typeNames;
+    std::vector<std::string> nodeNames;
+    std::vector<std::string> discardedGenes;
+    std::map<std::string, int> finalNodesToIndex;
+    for(int i = 0 ; i < SizeToInt(finalNames.size()); i++){
+        finalNodesToIndex[finalNames[i]] = i;
+    }
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
+    if(file_exists(filename)){
+        ifstream myfile (filename);
+        if (myfile.is_open())
+        {
+            getline (myfile,line);  // first line is header IMPORTANT
+            std::vector<std::string> splittedHeader = splitStringIntoVector(line, "\t");  //could already be used as the typenames vector,
+            std::vector<int> subTypeIndexes;
+            for (int i = 1; i < SizeToInt( splittedHeader.size()); i++) {
+                if(vectorContains(subTypes,splittedHeader[i])){
+                    typeNames.push_back(splittedHeader[i]);
+                    subTypeIndexes.push_back(i);
+                    ret.push_back(std::vector<double>(finalNames.size(),0));
+                }
+            }
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
+                if(entries.size()==splittedHeader.size()){
+                    if(!useEntrez){
+                        nodeNames.push_back(entries[0]);
+                        for(uint i = 0; i<subTypeIndexes.size();i++){
+                            ret[i][finalNodesToIndex[entries[0]]] = std::stod(entries[subTypeIndexes[i]]);
+                        } //TODO control over the names in the network like its done below with the mapping, but without the mapping and by taking a vector maybe
+                    }
+                    else{
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalNodesToIndex.contains(mapEnsembleToEntrez[entries[0]])) {
+                            nodeNames.push_back(mapEnsembleToEntrez[entries[0]]);
+                            for(uint i = 0; i< subTypeIndexes.size();i++){
+                                ret[i][finalNodesToIndex[mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[subTypeIndexes[i]]);
+                            }
+                        } else{
+                            discardedGenes.push_back(entries[0]);
+                        }//else don't do nothing since the node is not in the graph
+                    }
+                } else {
+                    throw std::invalid_argument("utilities::valuesMatrixToTypeVectors: header doesn't have the same amount of columns as the data " + filename);
+                }
+            }
+            myfile.close();
+            std::cout << "[LOG] No nodes in the graph for nodes: " << std::endl;
+            for(auto iter = discardedGenes.cbegin();iter!=discardedGenes.cend();iter++){
+                std::cout << "," << *iter;
+            }
+            std::cout << std::endl <<"[LOG] discarding values for the nodes not in the graph" << std::endl;
+            
+        }
+    } else {
+        throw std::invalid_argument("utilities::valuesMatrixToTypeVectors: file does not exists " + filename);
+    }
+    return std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> (nodeNames,typeNames,ret);
+
+}
+
 // TODO: refactor
 std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> logFoldChangeCellVectorsFromFolder(std::string folderPath,const std::vector<std::string>& allTypes , const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType, bool useEntrez){
     std::vector<std::string> cellNames;
