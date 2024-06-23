@@ -723,6 +723,109 @@ std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::ve
             
 }
 
+std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> valuesVectorsFromFolder(std::string folderPath,const std::vector<std::string>& allTypes, const std::vector<std::vector<std::string>>& finalNames,std::vector<std::string> subType, bool useEntrez){
+    std::vector<std::string> typeNames;
+    std::vector<std::string> nodeNames;
+    std::vector<std::vector<double>> ret;
+    std::vector<std::string> discardedNodes;
+    std::map<std::string ,std::map<std::string, int>> finalNodesToIndex;
+    for(int i = 0 ; i < SizeToInt(finalNames.size()); i++){
+        std::map<std::string, int> tmp;
+        for(int j = 0 ; j < SizeToInt(finalNames[i].size()); j++){
+            tmp[finalNames[i][j]] = j;
+        }
+        finalNodesToIndex[allTypes[i]]= tmp;
+    }
+    auto mapEnsembleToEntrez = getEnsembletoEntrezidMap();
+    auto files = get_all(folderPath,".tsv");
+    if(files.size()==0){
+        throw std::invalid_argument("utilities::valuesVectorsFromFolder: no files found in the folder " + folderPath);
+    }
+    //default argument for subtype is empty, if empty, use all files in the folder
+    if(subType.size()==0){
+        for(auto iter = files.cbegin();iter!=files.cend();iter++){
+            std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
+            std::string filename = splitted[splitted.size()-1]; //last element
+            subType.push_back(splitStringIntoVector(filename, ".")[0]);
+        }
+    }
+    //filter files from subtypes (first part of the filename before the extension)
+    std::vector<std::string> filteredFiles;
+    for(auto iter = files.cbegin();iter!=files.cend();iter++){
+        std::vector<std::string> fileSplitPath = splitStringIntoVector(*iter, "/");
+        std::string filename = fileSplitPath[fileSplitPath.size()-1];
+        std::string type = splitStringIntoVector(filename, ".")[0];
+        if(vectorContains(subType,type)){
+            filteredFiles.push_back(*iter);
+        } else {
+            std::cout << "[LOG] discarding file " << *iter << " since it is not in the subtypes" << std::endl;
+        }
+    }
+    if(filteredFiles.size()==0){
+        throw std::invalid_argument("utilities::valuesVectorsFromFolder: no files found in the folder that are similar to the subtypes " + folderPath);
+    }
+    for(auto iter = filteredFiles.cbegin();iter!=filteredFiles.cend();iter++){
+        std::vector<std::string> splitted = splitStringIntoVector(*iter, "/"); //split the path
+        std::string filenameNoPath = splitted[splitted.size()-1]; //last element
+        std::string cellName = splitStringIntoVector(filenameNoPath, ".")[0];
+        typeNames.push_back(cellName);
+        std::string filename = *iter;
+        if(file_exists(filename)){
+            //first line is the header, the first column is the gene, the second column is the value
+            ifstream myfile (filename);
+            string line;
+            std::vector<double> cellValues(finalNodesToIndex[cellName].size(),0);
+            std::string lineHeader;
+            getline (myfile,lineHeader);  // first line is header IMPORTANT
+            std::vector<std::string> splittedHeader = splitStringIntoVector(lineHeader, "\t");
+            //check if the header is correct
+            if(splittedHeader.size()!=2){
+                throw std::invalid_argument("utilities::valuesVectorsFromFolder: header doesn't have the same amount of columns as the data " + filename);
+            }
+            if(splittedHeader[0]!="name" || splittedHeader[1] != "value"){
+                throw std::invalid_argument("utilities::valuesVectorsFromFolder: header doesn't have the name and value columns or it does not have  an header" + filename);
+            }
+            //get file contents
+            while ( getline (myfile,line) )
+            {
+                std::vector<std::string> entries = splitStringIntoVector(line, "\t");
+                if(entries.size()==2){
+                    if(!useEntrez){
+                        if(finalNodesToIndex[cellName].contains(entries[0])){
+                            cellValues[finalNodesToIndex[cellName][entries[0]]] = std::stod(entries[1]);
+                            nodeNames.push_back(entries[0]);
+                        } else{
+                            discardedNodes.push_back(entries[0]);
+                        }
+                    }
+                    else{
+                        if (mapEnsembleToEntrez.contains(entries[0]) && finalNodesToIndex[cellName].contains(mapEnsembleToEntrez[entries[0]])) {
+                            cellValues[finalNodesToIndex[cellName][mapEnsembleToEntrez[entries[0]]]] = std::stod(entries[1]);
+                            nodeNames.push_back(mapEnsembleToEntrez[entries[0]]);
+                        } else{
+                            discardedNodes.push_back(entries[0]);
+                        }//else don't do nothing since the node is not in the graph
+                    }
+                } else {
+                    throw std::invalid_argument("utilities::valuesVectorsFromFolder: header doesn't have the same amount of columns as the data " + filename);
+                }
+            }
+            myfile.close();
+            std::cout << "[LOG] discarding values for the nodes not in the graph for type "<< cellName << ", the nodes discarded are:" << std::endl;
+            for(auto iter = discardedNodes.cbegin();iter!=discardedNodes.cend();iter++){
+                std::cout << "," << *iter;
+            }
+            std::cout << std::endl;
+            ret.push_back(cellValues);
+
+        
+        } else {
+            throw std::invalid_argument("utilities::valuesVectorsFromFolder: file does not exists " + filename);
+        }
+    }
+    return std::tuple<std::vector<std::string>,std::vector<std::string>,std::vector<std::vector<double>>> (nodeNames,typeNames,ret);
+}
+
 
 std::map<std::string,std::vector<std::string>> nodeNamesFromFolder(std::string folderPath){
     std::map<std::string,std::vector<std::string>> ret;
