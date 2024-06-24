@@ -688,10 +688,10 @@ int main(int argc, char** argv) {
     std::vector<std::vector<double>> inputInitials;
     if(vm.count("fInitialPerturbationPerType")){
         logger << "[LOG] initial perturbation per type specified, using the file "<<typesInitialPerturbationMatrixFilename<<std::endl;
-        initialValues = logFoldChangeMatrixToCellVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
+        initialValues = valuesMatrixToTypeVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
     } else if (vm.count("initialPerturbationPerTypeFolder")){
         logger << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
-        initialValues = logFoldChangeCellVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodesAll,subtypes,ensembleGeneNames);
+        initialValues = valuesVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodesAll,subtypes,ensembleGeneNames);
     } else {
         std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
         return 1;
