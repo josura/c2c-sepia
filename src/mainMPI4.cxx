@@ -257,7 +257,7 @@ int main(int argc, char** argv) {
     << vm["fUniqueGraph"].as<std::string>() << ".\n";
         filename = vm["fUniqueGraph"].as<std::string>();
         if(!fileExistsPath(filename)){
-            std::cerr << "[ERROR] file for the graph do not exist: aborting"<<std::endl;
+            std::cerr << "[ERROR] file "<< filename <<" for the graph do not exist: aborting"<<std::endl;
             return 1;
         }
     } else if(vm.count("graphsFilesFolder")){
@@ -265,7 +265,7 @@ int main(int argc, char** argv) {
     << vm["graphsFilesFolder"].as<std::string>() << ".\n";
         graphsFilesFolder = vm["graphsFilesFolder"].as<std::string>();
         if(!folderExists(graphsFilesFolder)){
-            std::cerr << "[ERROR] folder for the graphs do not exist: aborting"<<std::endl;
+            std::cerr << "[ERROR] folder "<< graphsFilesFolder << " for the graphs do not exist: aborting"<<std::endl;
             return 1;
         }
     }
@@ -274,7 +274,7 @@ int main(int argc, char** argv) {
     << vm["fInitialPerturbationPerType"].as<std::string>() << ".\n";
         typesInitialPerturbationMatrixFilename = vm["fInitialPerturbationPerType"].as<std::string>();
         if(!fileExistsPath(typesInitialPerturbationMatrixFilename)){
-            std::cerr << "[ERROR] file for the initialPerturbationPerType does not exist: aborting"<<std::endl;
+            std::cerr << "[ERROR] file "<< typesInitialPerturbationMatrixFilename << " for the initialPerturbationPerType does not exist: aborting"<<std::endl;
             return 1;
         }
     } else if (vm.count("initialPerturbationPerTypeFolder")) {
@@ -282,7 +282,7 @@ int main(int argc, char** argv) {
     << vm["initialPerturbationPerTypeFolder"].as<std::string>() << ".\n";
         typeInitialPerturbationFolderFilename = vm["initialPerturbationPerTypeFolder"].as<std::string>();
         if(!folderExists(typeInitialPerturbationFolderFilename)){
-            std::cerr << "[ERROR] folder for the initialPerturbationPerType do not exist: aborting"<<std::endl;
+            std::cerr << "[ERROR] folder "<< typeInitialPerturbationFolderFilename << " for the initialPerturbationPerType do not exist: aborting"<<std::endl;
             return 1;
         }
     }
@@ -292,7 +292,7 @@ int main(int argc, char** argv) {
     << vm["typeInteractionFolder"].as<std::string>() << ".\n";
         typesInteractionFoldername = vm["typeInteractionFolder"].as<std::string>();
         if(!folderExists(typesInteractionFoldername)){
-            std::cerr << "[ERROR] folder for the type interactions do not exist: aborting"<<std::endl;
+            std::cerr << "[ERROR] folder"<< typesInteractionFoldername << " for the type interactions do not exist: aborting"<<std::endl;
             return 1;
         }
     } else {
