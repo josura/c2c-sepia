@@ -592,6 +592,7 @@ int main(int argc, char** argv) {
             graphsNodes.push_back(namesAndEdges[0].first);
             graphs[i] = graphs[0];
         }
+        // TODO only use the single graph for the setup phase, without filling all the maps for all the other types, optimize the memory usage
         for (uint i = 0; i<types.size(); i++){
             graphsNodesAll.push_back(namesAndEdges[0].first);
         }
@@ -695,7 +696,7 @@ int main(int argc, char** argv) {
         initialValues = valuesMatrixToTypeVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
     } else if (vm.count("initialPerturbationPerTypeFolder")){
         logger << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
-        initialValues = valuesVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodesAll,subtypes,ensembleGeneNames);
+        initialValues = valuesVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodesAll,subtypes,ensembleGeneNames); // TODO change the function to return only the values for the types in the workload
     } else {
         std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
         return 1;
