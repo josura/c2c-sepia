@@ -578,7 +578,7 @@ int main(int argc, char** argv) {
     WeightedEdgeGraph **graphs = new WeightedEdgeGraph*[finalWorkload];
     std::vector<std::string> typesFromFolder;
     std::vector<std::vector<std::string>> graphsNodes;
-    std::vector<std::vector<std::string>> graphsNodesAll; // used only initially to read the values, contains all types
+    std::vector<std::vector<std::string>> graphsNodesAll; // used only in the setup phase to read the initial input values, contains all types
     std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload, no virtual nodes
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     // a single graph is used for all the types in case it is specified by the parameter
@@ -592,6 +592,10 @@ int main(int argc, char** argv) {
             graphsNodes.push_back(namesAndEdges[0].first);
             graphs[i] = graphs[0];
         }
+        for (uint i = 0; i<types.size(); i++){
+            graphsNodesAll.push_back(namesAndEdges[0].first);
+        }
+            
         // create the map also for the use case of a single graph, TODO only use the map for the single graph case without filling all the maps
         for(uint i = 0; i < types.size(); i++){
             typeToNodeNamesMap[types[i]] = namesAndEdges[0].first;
@@ -691,7 +695,7 @@ int main(int argc, char** argv) {
         initialValues = valuesMatrixToTypeVectors(typesInitialPerturbationMatrixFilename,graphsNodes[0],subtypes,ensembleGeneNames);
     } else if (vm.count("initialPerturbationPerTypeFolder")){
         logger << "[LOG] initial perturbation per type specified, using the folder "<<typeInitialPerturbationFolderFilename<<std::endl;
-        initialValues = valuesVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodes,subtypes,ensembleGeneNames);
+        initialValues = valuesVectorsFromFolder(typeInitialPerturbationFolderFilename,types,graphsNodesAll,subtypes,ensembleGeneNames);
     } else {
         std::cerr << "[ERROR] no initial perturbation file or folder specified: aborting"<<std::endl;
         return 1;
