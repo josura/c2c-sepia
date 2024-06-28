@@ -1420,6 +1420,8 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
             }
             bool noContactTimes = false;
             if(indexTypeStart < 0 || indexTypeEnd < 0 || indexStartNode < 0 || indexEndNode < 0 || indexWeight < 0){
+                std::cerr << "[ERROR] invalid file, the header does not contain one of the following: startType, endType, start node, end node, weight feature" <<std::endl;
+                std::cerr << "[ERROR] values found for startType: " << indexTypeStart << " endType: " << indexTypeEnd << " start node: " << indexStartNode << " end node: " << indexEndNode << " weight: " << indexWeight <<std::endl;
                 throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the header does not contain a startType, or an endType, or a start node, or an end node, or a weight feature");
             }
             if(indexContactTimes < 0){
