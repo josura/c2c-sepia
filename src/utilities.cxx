@@ -1447,12 +1447,12 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     if(typeToNodeNames.size() != 0 && vectorContains(subtypes, startType) && vectorContains(subtypes, endType)){
                         if(!vectorContains(typeToNodeNames[startType],startNodeName)){
                             std::cerr << "[ERROR] start node <"<< startNodeName <<"> for type: " << startType << " is not in the specified network, aborting " <<std::endl;
-                            throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the start node" + startNodeName + " is not in the type specified, aborting");
+                            throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file" + filename +" , the start node" + startNodeName + " is not in the type specified, aborting");
                         }
 
                         if(!vectorContains(typeToNodeNames[endType],endNodeName)){
                             std::cerr << "[ERROR] end node <"<< endNodeName <<"> for type: " << endType << " is not in the specified network, aborting " <<std::endl;
-                            throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file, the end node" + endNodeName + " is not in the type specified, aborting");
+                            throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: invalid file " + filename +" , the end node" + endNodeName + " is not in the type specified, aborting");
                         }
                     }
 
@@ -1530,7 +1530,7 @@ std::pair<std::map<std::string,std::vector<std::tuple<std::string,std::string,do
                     }
                 } else {
                     std::cerr << "[ERROR] columns detected: " << entries.size() << " columns " <<std::endl;
-                    throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: header doesn't have the right amount of columns(5 or 6 when considering interaction times) ");
+                    throw std::invalid_argument("utilities::interactionContinuousContactsFileToEdgesListAndNodesByName: header in file " + filename +" doesn't have the right amount of columns(5 or 6 when considering interaction times) ");
                 }
             }
             myfile.close();
