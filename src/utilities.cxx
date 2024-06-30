@@ -1618,7 +1618,7 @@ void saveNodeValues(std::string folderName, int iteration, std::string cellName,
     std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
     if (!outfile.is_open()) {
-        std::cout << "Unable to open file " << outputFilename << std::endl;
+        std::cerr << "[ERROR] Unable to open file " << outputFilename << std::endl;
         return;
     }
     if(nodesDescriptionFile.length()==0){
@@ -1682,7 +1682,7 @@ void saveNodeValues(std::string folderName, int iterationOuter, int intraIterati
     std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
     if (!outfile.is_open()) {
-        std::cout << "Unable to open file " << outputFilename << std::endl;
+        std::cerr << "[ERROR] Unable to open file " << outputFilename << std::endl;
         throw std::invalid_argument("utilities::saveNodeValues: unable to open output file " + outputFilename);
     }
 
@@ -1724,7 +1724,7 @@ void saveNodeValuesWithTime(std::string folderName,int iterationOuter, int intra
     std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
     if (!outfile.is_open()) {
-        std::cout << "Unable to open file " << outputFilename << std::endl;
+        std::cerr << "[ERROR] Unable to open file " << outputFilename << std::endl;
         throw std::invalid_argument("utilities::saveNodeValues: unable to open output file " + outputFilename);
     }
 
@@ -1768,7 +1768,7 @@ void saveNodeValuesWithTimeSimple(std::string folderName,int currentIteration, d
     std::ofstream outfile(outputFilename,ios::out|ios::trunc);
 
     if (!outfile.is_open()) {
-        std::cout << "Unable to open file " << outputFilename << std::endl;
+        std::cerr << "[ERROR] Unable to open file " << outputFilename << std::endl;
         throw std::invalid_argument("utilities::saveNodeValues: unable to open output file " + outputFilename);
     }
 
