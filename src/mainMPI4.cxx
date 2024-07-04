@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
     //controls over impossible configurations
     if(vm.count("fUniqueGraph") == 0 && vm.count("graphsFilesFolder") == 0){
         //no unique graph of folder of the graphs was set
-        std::cerr << "[ERROR] no unique graph filename or folder was set to get the graphs, set one "<<std::endl;
+        std::cerr << "[ERROR] no unique graph filename or folder was set to get the graphs, set one. abort "<<std::endl;
         return 1;
     }
 

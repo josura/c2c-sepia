@@ -58,7 +58,7 @@ The options are the following:
 ## INPUTS 
 For the structure of the input see the following reference example data in the repository:
 - Graph: 
-    - Generic graph: data/testdata/testGraph/edges-Graph1-general.tsv, these graphs are represented with set of edges and the nodes are added from the **Initial values** file. If there are no edges, the file need to exist as well since this information is used by the program
+    - Generic graph: data/testdata/testGraph/edges-Graph1-general.tsv, these graphs are represented with set of edges and the nodes are added from the **Initial values** file. **IMPORTANT** If there are no edges, the file need to exist as well since this information is used by the program
     - entrez-id graph(the name of the nodes are entrez-ids): data/testdata/edges.tsv
 - Graphs folder (the name of the files should be the types, with a tsv format and extension): data/testdata/testHeterogeneousGraph
 - Initial values of the nodes for every type:
