@@ -79,7 +79,6 @@ int main(int argc, char** argv) {
         ("savePerformance",po::value<std::string>(&performanceFilename), "(string) output performance (running time, number of total nodes, number of communities, number of total edges) to the defined file, if nothing is specified the performance are not saved")
         ("resumeCheckpoint",po::bool_switch(&resumeCheckpoint), "resume the computation from the last checkpoint, if the checkpoint is not found, the computation will start from the beginning")
     ;
-    //TODO add additional boolean parameter to control if the graph names are not genes and the algorithm should use the graph names directly, no conversion or mapping
 
     
 
@@ -587,7 +586,6 @@ int main(int argc, char** argv) {
     std::unordered_map<std::string, std::vector<std::string>> typeToNodeNamesMap; // map from all types to the node names, not only the ones in the workload, no virtual nodes
     std::vector<std::pair<std::vector<std::string>,std::vector<std::tuple<std::string,std::string,double>>>> namesAndEdges;
     // a single graph is used for all the types in case it is specified by the parameter
-    // TODO correct the reading of the nodes from the file, since the edge file it is used for now, and isolated nodes are not considered
     if(vm.count("fUniqueGraph")){
         namesAndEdges.push_back(edgesFileToEdgesListAndNodesByName(filename));
         graphsNodes.push_back(namesAndEdges[0].first);
