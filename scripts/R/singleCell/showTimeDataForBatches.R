@@ -4,9 +4,37 @@ library(readr)
 timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/datiIdoResults_corrected" 
 
 readTimeSeries <- function(timeSeriesDirectory) {
-  timeSeries <- list.files(timeSeriesDirectory, full.names = TRUE) %>%
+  files <- list.files(timeSeriesDirectory, full.names = TRUE)
+  timeSeries <- files  %>%
     lapply(read_tsv)
+  # remove .x from the column names, when present
+  for (i in 1:length(timeSeries)) {
+    colnames(timeSeries[[i]]) <- gsub("\\.x", "", colnames(timeSeries[[i]]))
+        }
+  # get the common columns of all the data frames in the list
+  commonCols <- Reduce(intersect, lapply(timeSeries, colnames))
+  # select only the common columns for eevery data frame in the list
+  for (i in 1:length(timeSeries)) {
+    timeSeries[[i]] <- timeSeries[[i]][, commonCols]
+  }
+  # add the name of the file without the path and the extension to every data frame in the list
+  typeNames <- sapply(files, function(x) {
+    basename(x) %>%
+      gsub("\\_outputAll.tsv", "", .)
+  })
+  # remove names from the typeNames vector
+  names(typeNames) <- NULL
+  for (i in 1:length(timeSeries)) {
+    timeSeries[[i]]$type <- typeNames[i]
+  } 
   return(timeSeries)
 }
 
 timeSeries <- readTimeSeries(timeSeriesDirectory)
+
+
+
+timeSeries_all <- timeSeries[[1]]
+for (i in 2:length(timeSeries)) {
+  timeSeries_all <- rbind(timeSeries_all, timeSeries[[i]])
+}
