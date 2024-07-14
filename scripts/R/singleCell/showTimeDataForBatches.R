@@ -6,7 +6,7 @@ timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/da
 readTimeSeries <- function(timeSeriesDirectory) {
   files <- list.files(timeSeriesDirectory, full.names = TRUE)
   #remove the fullgraph_output.tsv file
-  files <- files[!grepl("fullgraph_output.tsv", files)]
+  files <- files[!grepl("fullGraph_output.tsv", files)]
   timeSeries <- files  %>%
     lapply(read_tsv)
   # remove .x from the column names, when present
