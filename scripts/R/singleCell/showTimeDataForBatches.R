@@ -1,7 +1,8 @@
 library(dplyr)
 library(readr)
 
-timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/risultatiIdo_noSat" 
+#timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/risultatiIdo_noSat" 
+timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/datiIdoResults_corrected" 
 
 readTimeSeries <- function(timeSeriesDirectory) {
   files <- list.files(timeSeriesDirectory, full.names = TRUE)
@@ -45,6 +46,7 @@ features_to_visualize <- c("Kras","Trp53","Egfr","Rb1","Nf1","Myc","Braf")
 
 install.packages("gridExtra")
 library(gridExtra)
+library(ggplot2)
 
 plotList <- list()
 for (feature in features_to_visualize) {
