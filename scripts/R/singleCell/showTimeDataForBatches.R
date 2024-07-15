@@ -1,7 +1,7 @@
 library(dplyr)
 library(readr)
 
-timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/datiIdoResults_corrected" 
+timeSeriesDirectory <- "/home/josura/Projects/ccc/c2c-sepia/outputsTimeSeries/risultatiIdo_noSat" 
 
 readTimeSeries <- function(timeSeriesDirectory) {
   files <- list.files(timeSeriesDirectory, full.names = TRUE)
