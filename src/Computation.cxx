@@ -330,12 +330,6 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     return outputAugmented;
 }
 
-std::vector<double> Computation::computeAugmentedPerturbationNorm(){
-    arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-    outputAugmented = armaColumnToVector(outputArma);
-    return outputAugmented;
-}
-
 std::vector<double> Computation::computeAugmentedPerturbationDissipatedPow2(){
     arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
     arma::Col<double> dissipationTerm = pow(InputAugmentedArma,2);
