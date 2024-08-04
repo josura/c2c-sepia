@@ -66,7 +66,6 @@ class Computation{
         void addEdgesAndNodes(const std::vector<std::tuple<std::string,std::string,double>>&  , bool bothDirections = false, bool inverseComputation = true);
         std::vector<double> computePerturbation();
         std::vector<double> computeAugmentedPerturbation(); //taking into account virtual nodes in the augmented graph
-        std::vector<double> computeAugmentedPerturbationDissipatedPow2(); //taking into account dissipation after every iteration(a kind of starvation probably) subtracting the pow2 of every perturbation before the computation
         std::vector<double> computeAugmentedPerturbationDissipatedAfterCompute(double timeStep); //taking into account dissipation after every iteration(Dissipation model), dissipation after the computation of the perturbated value
         std::vector<double> computeAugmentedPerturbationDissipatedBeforeCompute(double timeStep); //taking into account dissipation after every iteration (Dissipation model), dissipation before the computation of the perturbated value
         std::vector<double> computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector = std::vector<double>()); //taking into account saturation(hyperbolic tangent and scaling) after every iteration
