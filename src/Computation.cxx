@@ -330,29 +330,6 @@ std::vector<double> Computation::computeAugmentedPerturbation(){
     return outputAugmented;
 }
 
-std::vector<double> Computation::computeAugmentedPerturbationSaturated(const std::vector<double>& saturationsVector){
-    if(saturationsVector.size() != 0){
-        if (saturationsVector.size() == InputAugmentedArma.n_elem) {
-            arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-            for(uint i = 0;i<outputArma.n_elem;i++){
-                outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
-            }
-            outputAugmented = armaColumnToVector(outputArma);
-            return outputAugmented;
-        } else{
-            throw std::invalid_argument("saturationVector is not of the same size as output vector. abort");
-        }
-    }
-    else {
-        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
-        for(uint i = 0;i<outputArma.n_elem;i++){
-            outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
-        }
-        outputAugmented = armaColumnToVector(outputArma);
-        return outputAugmented;
-    }
-}
-
 std::vector<double> Computation::computeAugmentedPerturbationDissipatedAfterCompute(double timeStep){
     if (dissipationModel) {
         arma::Col<double> outputArma =  pseudoInverseAugmentedArma * InputAugmentedArma;
