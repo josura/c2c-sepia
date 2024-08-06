@@ -315,35 +315,6 @@ std::vector<double> ComputationOptimized::computeAugmentedPerturbationSaturatedA
     }
 }
 
-//TODO test if it works in the correct way
-std::vector<double> ComputationOptimized::computeAugmentedPerturbationEnhanced1(double timeStep, bool saturation, const std::vector<double>& saturationsVector){
-    if(saturation){
-        if (saturationsVector.size() ) {
-            if (saturationsVector.size() == InputAugmentedArma.n_elem) {
-                arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
-                for(uint i = 0;i<outputArma.n_elem;i++){
-                    outputArma[i] = hyperbolicTangentScaled(outputArma[i], saturationsVector[i]);
-                }
-                outputAugmented = armaColumnToVector(outputArma);
-                return outputAugmented;
-            } else{
-                throw std::invalid_argument("[ERROR] ComputationOptimized::computeAugmentedPerturbationEnhanced1: saturationVector is not of the same size as output vector. abort");
-            }
-        }
-        else {
-            arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
-            for(uint i = 0;i<outputArma.n_elem;i++){
-                outputArma[i] = hyperbolicTangentScaled(outputArma[i], 1);
-            }
-            outputAugmented = armaColumnToVector(outputArma);
-            return outputAugmented;
-        }
-    } else {
-        arma::Col<double> outputArma =  pseudoInverseAugmentedArma * dissipationModel->dissipate(InputAugmentedArma, timeStep);
-        outputAugmented = armaColumnToVector(outputArma);
-        return outputAugmented;
-    }
-}
 
 //TODO test if it works in the correct way
 std::vector<double> ComputationOptimized::computeAugmentedPerturbationEnhanced2(double timeStep, bool saturation, const std::vector<double>& saturationsVector,const std::vector<double>& qVector){
