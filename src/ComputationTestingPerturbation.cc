@@ -63,6 +63,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
     computationTest.setDissipationModel(dms);
     computationTest.setConservationModel(cms);
     std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,false);
+    //std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced4(0,false);
     std::vector<double> expected{3.256667,2.736364,2.924242,5.593939,0,0,1.303030,2.796970};
     ASSERT_EQ(result.size(),expected.size());
     for (uint i = 0; i < expected.size() ; i++) {
@@ -99,6 +100,7 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDe
     std::vector<double> saturationVector = std::vector<double>(8,0.5);
     //std::vector<double> saturationVector{2,1.5,2,4,1,1,0.5,1.5};
     std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,false);
+    //std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced4(0,false);
     std::vector<double> expected{3.256667/2,2.736364/2,2.924242/2,5.593939/2,0,0,1.303030/2,2.796970/2};
     ASSERT_EQ(result.size(),expected.size());
     for (uint i = 0; i < expected.size() ; i++) {
