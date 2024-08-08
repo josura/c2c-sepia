@@ -6,6 +6,10 @@
 #include "ConservationModel.h"
 #include "DissipationModel.h"
 #include "DissipationModelScaled.h"
+#include "PropagationModel.hxx"
+#include "PropagationModelOriginal.hxx"
+#include "PropagationModelNeighbors.hxx"
+#include "WeightedEdgeGraph.h"
 #include "Matrix.h"
 #include "utilities.h"
 
@@ -51,6 +55,11 @@ class ComputationTestingPerturbation : public ::testing::Test {
 
         ConservationModel* cms = new ConservationModel( [](double x){return 0;} );
         ConservationModel* cms2 = new ConservationModel(); //default constructor uses the functions that returns 0.5 for every iteration
+
+        WeightedEdgeGraph* graph = new WeightedEdgeGraph(_W);
+
+        PropagationModel* pmsNeighbors = new PropagationModelNeighbors(graph);
+
   
 };
 
@@ -63,8 +72,28 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
     computationTest.setDissipationModel(dms);
     computationTest.setConservationModel(cms);
     std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced2(0,false);
-    //std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced4(0,false);
     std::vector<double> expected{3.256667,2.736364,2.924242,5.593939,0,0,1.303030,2.796970};
+    ASSERT_EQ(result.size(),expected.size());
+    for (uint i = 0; i < expected.size() ; i++) {
+        EXPECT_NEAR(result[i],expected[i],1e-4);
+    }
+}
+
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationOriginalPropagationNoSaturation) {
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentGraphNoComputeInverse(types);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    computationTest.setDissipationModel(dms);
+    computationTest.setConservationModel(cms);
+
+    WeightedEdgeGraph* currentGraph = computationTest.getAugmentedGraph();
+    PropagationModel* pmsOriginal = new PropagationModelOriginal(currentGraph);
+
+    computationTest.setPropagationModel(pmsOriginal);
+    std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced4(0,false);
+    std::vector<double> expected{1.6283333333333301,1.3681818181818173,1.4621212121212099,2.7969696969696951,0,0,0.65151515151515138,1.3984848484848476};
     ASSERT_EQ(result.size(),expected.size());
     for (uint i = 0; i < expected.size() ; i++) {
         EXPECT_NEAR(result[i],expected[i],1e-4);
