@@ -118,6 +118,28 @@ TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipation
     }
 }
 
+TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectNoDissipationNoConservationOriginalPropagationSaturationSingle){
+    Computation computationTest;
+    computationTest.assign(*c1);
+    computationTest.augmentGraphNoComputeInverse(types);
+    computationTest.addEdges(virtualInputEdges,virtualInputEdgesValues);
+    computationTest.addEdges(virtualOutputEdges,virtualOutputEdgesValues);
+    computationTest.setDissipationModel(dms);
+    computationTest.setConservationModel(cms);
+
+    WeightedEdgeGraph* currentGraph = computationTest.getAugmentedGraph();
+    PropagationModel* pmsOriginal = new PropagationModelOriginal(currentGraph);
+
+    computationTest.setPropagationModel(pmsOriginal);
+    std::vector<double> saturationVector = std::vector<double>(8,0.5);
+    std::vector<double> result = computationTest.computeAugmentedPerturbationEnhanced4(0,true,saturationVector);
+    std::vector<double> expected{0.5,0.5,0.5,0.5,0,0,0.5,0.5};
+    ASSERT_EQ(result.size(),expected.size());
+    for (uint i = 0; i < expected.size() ; i++) {
+        EXPECT_NEAR(result[i],expected[i],1e-2);
+    }
+}
+
 TEST_F(ComputationTestingPerturbation, computePerturbationIsCorrectDissipationDefaultNoConservationNoSaturation) {
     Computation computationTest;
     computationTest.assign(*c1);
