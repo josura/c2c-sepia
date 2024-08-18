@@ -4,3 +4,33 @@ if [ $# -ne 3 ]; then
     echo "Please pass the folder with the inputs and the folder where to save the outputs and the maximum number of processors"
     exit 1
 fi
+
+inputsFolder=$1
+outputFolder=$2
+maxProcessors=$3
+
+#nodes list goes from 1000 to 100000
+nodesList=$(seq 1000 1000 100000)
+
+# iterate over all nodes in input folder
+for nodes in ${nodesList[@]}; do
+    # create the output folder
+    outputFolderName="$outputFolder/nodes${nodes}"
+    if [ ! -d $outputFolderName ]; then
+        mkdir -p $outputFolderName
+    fi
+    # run the simulation
+    mpirun -np $maxProcessors ./build/c2c-sepia-MPI --fUniqueGraph $inputsFolder/metapathwayEdges.tsv \
+        --initialPerturbationPerTypeFolder $inputsFolder/inputValues \
+        --typeInteractionFolder $inputsFolder/interactions \
+        --nodeDescriptionFile $inputsFolder/nodesInfo.tsv \
+        --dissipationModel scaled \
+        --dissipationModelParameters 0.5 \
+        --propagationModel neighbors \
+        --propagationModelParameters 0.5 \
+        --intertypeIterations 20 \
+        --intratypeIterations 5 \
+        --virtualNodesGranularity typeAndNode \
+        --saturation \
+        --outputFolder $outputFolderName
+done
