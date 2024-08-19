@@ -19,18 +19,8 @@ for nodes in ${nodesList[@]}; do
     if [ ! -d $outputFolderName ]; then
         mkdir -p $outputFolderName
     fi
-    # run the simulation
-    mpirun -np $maxProcessors ./build/c2c-sepia-MPI --fUniqueGraph $inputsFolder/metapathwayEdges.tsv \
-        --initialPerturbationPerTypeFolder $inputsFolder/inputValues \
-        --typeInteractionFolder $inputsFolder/interactions \
-        --nodeDescriptionFile $inputsFolder/nodesInfo.tsv \
-        --dissipationModel scaled \
-        --dissipationModelParameters 0.5 \
-        --propagationModel neighbors \
-        --propagationModelParameters 0.5 \
-        --intertypeIterations 20 \
-        --intratypeIterations 5 \
-        --virtualNodesGranularity typeAndNode \
-        --saturation \
-        --outputFolder $outputFolderName
+    # run the simulation, start from 1 processor to the maximum number of processors
+    for i in $(seq 1 $maxProcessors); do
+        bash submitPerformanceExperiments.sh $inputsFolder $outputFolderName $i
+    done
 done
