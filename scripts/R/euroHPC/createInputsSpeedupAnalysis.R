@@ -3,7 +3,7 @@ library(dplyr)
 library(readr)
 
 # update when using a different number of inter-type iterations
-max_number_of_iteration <- 20
+max_number_of_iteration <- 100
 
 # Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
 generate_graph_barabasi <- function(num_nodes, m) {
@@ -203,14 +203,15 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
 #create the directory to contain the significance analysis input data
 dir.create("euroHPCgraphs", showWarnings = FALSE)
 
-# generate the graphs from 1000 nodes to 100000 nodes, with 1000 nodes step  
-nodes.list <- seq(1000, 100000, by = 1000)
+# generate the graphs from 10000 nodes to 100000 nodes, with 10000 nodes step  
+nodes.list <- seq(10000, 100000, by = 10000)
 
 # generate all the graphs with preferential attachment 
 for (num_nodes in nodes.list) {
   print(paste0("Generating graphs with ", num_nodes, " nodes"))
+  dir.create(paste0("euroHPCgraphs/", num_nodes), showWarnings = FALSE)
   graph <- generate_graph_barabasi(num_nodes, 1)
   node_conditions <- assign_node_conditions(graph)
   community_data <- create_communities(graph)
-  create_input_graphs(graph, node_conditions, community_data, "euroHPCgraphs/")
+  create_input_graphs(graph, node_conditions, community_data, paste0("euroHPCgraphs/", num_nodes, "/"))
 }
