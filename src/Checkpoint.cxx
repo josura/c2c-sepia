@@ -47,7 +47,7 @@ void Checkpoint::cleanCheckpoints(std::string type) {
     std::vector<std::string> files = listFiles(folder);
     for (std::string file : files)
     {
-        if (file.find("checkpoint_" + type) != std::string::npos)
+        if (file.find("checkpoint_" + type + "_") != std::string::npos)
         {
             // std::string fileName = folder + file;
             if (remove(file.c_str()))
