@@ -11,16 +11,18 @@ inputsFolder=$1
 outputFolder=$2
 processors=$3
 
-srun -n $processors ./build/c2c-sepia-MPI --fUniqueGraph $inputsFolder/metapathwayEdges.tsv \
-    --initialPerturbationPerTypeFolder $inputsFolder/inputValues \
+srun -n $processors ./build/c2c-sepia-MPI ----graphsFilesFolder $inputsFolder/graphs \
+    --initialPerturbationPerTypeFolder $inputsFolder/node_conditions_discr \
     --typeInteractionFolder $inputsFolder/interactions \
-    --nodeDescriptionFile $inputsFolder/nodesInfo.tsv \
+    --nodeDescriptionFolder $inputsFolder/communities \
     --dissipationModel scaled \
     --dissipationModelParameters 0.5 \
     --propagationModel neighbors \
     --propagationModelParameters 0.5 \
     --intertypeIterations 20 \
     --intratypeIterations 5 \
+    --timestep 5 \
     --virtualNodesGranularity typeAndNode \
     --saturation \
+    --savePerformance performanceTimes.tsv \
     --outputFolder $outputFolder
