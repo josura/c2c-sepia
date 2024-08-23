@@ -4,6 +4,7 @@ library(readr)
 
 # update when using a different number of inter-type iterations
 max_number_of_iteration <- 100
+max_time <- 20
 
 # Function to generate a graph with preferential attachment rule, and random edge weights from 0 to 1
 generate_graph_barabasi <- function(num_nodes, m) {
@@ -101,6 +102,11 @@ plot_graph <- function(graph, node_conditions) {
   )
 }
 
+# generate a list of real numbers in the range [min, max] n times
+generate_random_numbers <- function(n, min, max) {
+  return(runif(n, min, max))
+}
+
 # Create the input graphs for single types(communities) and create file for interactions between communities
 # The interaction file should have the following format:
 # startType	startNodeName	endType	endNodeName	weight
@@ -188,7 +194,8 @@ create_input_graphs <- function(graph, node_conditions, community_data, output_d
   if(nrow(edges_between_communities) > 0){
     for (i in 1:nrow(edges_between_communities)){
       number_of_contacts <- sample(1:max_number_of_iteration, 1)
-      contact_times_column[[i]] <- paste(sample(0:(max_number_of_iteration-1), number_of_contacts), collapse = ",")
+      #contact_times_column[[i]] <- paste(sample(0:(max_number_of_iteration-1), number_of_contacts), collapse = ",")
+      contact_times_column[[i]] <- paste(generate_random_numbers(number_of_contacts, 0, max_time), collapse = ",")
     }
   }
 
