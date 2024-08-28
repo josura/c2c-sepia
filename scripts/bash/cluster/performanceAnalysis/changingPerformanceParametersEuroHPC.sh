@@ -11,7 +11,7 @@ inputsFolder=$1
 outputFolder=$2
 processors=$3
 
-srun -n $processors ./build/c2c-sepia-MPI ----graphsFilesFolder $inputsFolder/graphs \
+srun -n $processors ./build/c2c-sepia-MPI --graphsFilesFolder $inputsFolder/graphs \
     --initialPerturbationPerTypeFolder $inputsFolder/node_conditions_discr \
     --typeInteractionFolder $inputsFolder/interactions \
     --nodeDescriptionFolder $inputsFolder/communities \
