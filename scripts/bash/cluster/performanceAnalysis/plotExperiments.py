@@ -27,24 +27,23 @@ plt.show()
 # also plot as wireframe
 ax = plt.figure().add_subplot(projection='3d')
 # Create data
-x = data["graphNodesNumber"].unique()
-y = data["numberProcesses"].unique()
-X, Y = np.meshgrid(x, y)
-Z = np.array(data["time"]).reshape(len(y), len(x))
-# Plot the 3D surface
-ax.plot_surface(X, Y, Z, edgecolor='royalblue', lw=0.5, rstride=8, cstride=8,
-                alpha=0.3)
+nodes = data["graphNodesNumber"].unique()
+processes = data["numberProcesses"].unique()
+X, Y = np.meshgrid(nodes, processes)
+Z = np.zeros_like(X, dtype=np.float64)
 
-# Plot projections of the contours for each dimension.  By choosing offsets
-# that match the appropriate axes limits, the projected contours will sit on
-# the 'walls' of the graph
-ax.contourf(X, Y, Z, zdir='z', offset=-100, cmap='coolwarm')
-ax.contourf(X, Y, Z, zdir='x', offset=-40, cmap='coolwarm')
-ax.contourf(X, Y, Z, zdir='y', offset=40, cmap='coolwarm')
+for i, node in enumerate(nodes):
+    for j, process in enumerate(processes):
+        Z[j, i] = data[(data['graphNodesNumber'] == node) & (data['numberProcesses'] == process)]['time'].values[0]
 
-ax.set(xlim=(-40, 40), ylim=(-40, 40), zlim=(-100, 100),
-       xlabel='X', ylabel='Y', zlabel='Z')
+# Plot the wireframe
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_wireframe(X, Y, Z)
 
+ax.set_xlabel('Number of Nodes')
+ax.set_ylabel('Number of Processes')
+ax.set_zlabel('Average Time')
 plt.show()
 
 # add column with the speedup per number of nodes and number of processes
@@ -64,4 +63,27 @@ ax.scatter(data["graphNodesNumber"], data["numberProcesses"], data["speedup"])
 ax.set_xlabel('Number of Nodes')
 ax.set_ylabel('Number of Processes')
 ax.set_zlabel('Speedup')
+plt.show()
+
+# also plot as wireframe
+ax = plt.figure().add_subplot(projection='3d')
+# Create data
+nodes = data["graphNodesNumber"].unique()
+processes = data["numberProcesses"].unique()
+X, Y = np.meshgrid(nodes, processes)
+Z = np.zeros_like(X, dtype=np.float64)
+
+for i, node in enumerate(nodes):
+    for j, process in enumerate(processes):
+        Z[j, i] = data[(data['graphNodesNumber'] == node) & (data['numberProcesses'] == process)]['speedup'].values[0]
+
+# Plot the wireframe
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_wireframe(X, Y, Z)
+
+ax.set_xlabel('Number of Nodes')
+ax.set_ylabel('Number of Processes')
+ax.set_zlabel('Speedup')
+
 plt.show()
