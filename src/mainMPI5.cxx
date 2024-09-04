@@ -28,7 +28,6 @@
 
 int main(int argc, char** argv) {    
     //program options
-    bool ensembleGeneNames=false;
     bool sameTypeCommunication=false;
     bool saturation=false;
     bool customSaturation=false;
@@ -52,7 +51,6 @@ int main(int argc, char** argv) {
         ("typeInteractionFolder", po::value<std::string>(), "(string) directory for the type interactions, for an example see in data data/testdata/testHeterogeneousGraph/interactions")
         ("nodeDescriptionFile", po::value<std::string>(), "(string) node description file, used to generate the output description in the case of common graph between types, if not specified no names are used. For an example see in data resources/graphs/metapathwayNew/nodes.tsv")
         ("nodeDescriptionFolder", po::value<std::string>(), "(string) nodes folder, where the files containing the description/nodes for all the graphs are contained, used to read the graph nodes, if not specified the graphs will be built with the edges files(could not contain some isolated nodes) for an example see the folder structure in data/testdata/testHeterogeneousTemporalGraph/nodesDescriptionDifferentStructure")
-        ("ensembleGeneNames",po::bool_switch(&ensembleGeneNames),"() use ensemble gene names, since the graph used in resources have entrez_ids, a map will be done from ensemble to entrez, the map is available in resources")
         ("sameTypeCommunication",po::bool_switch(&sameTypeCommunication),"() use same type communication, since it is not permitted as the standard definition of the model, this adds a virtual node for the same type type")
         ("outputFolder",po::value<std::string>(),"(string) output folder for output of the algorithm at each iteration")
         ("intertypeIterations",po::value<uint>(),"(positive integer) number of iterations for intertype communication")
