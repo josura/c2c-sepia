@@ -83,12 +83,12 @@ For the structure of the input see the following reference example data in the r
             --outputFolder outputs
 ```
 
-To use the MPI version with 4 processors, the command is the following
+To use the MPI version with 2 processors(as the subtypes used are only 2), the command is the following
 ```bash
-mpirun -np 4 ./build/c2c-sepia-MPI --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
+mpirun -np 2 ./build/c2c-sepia-MPI --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
             --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
             --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
-            --subtypes data/testdata/testGraph/subcelltypes.txt \
+            --subtypes data/testdata/testGraph/testHeterogeneousGraph/subcelltypes.txt \
             --dissipationModel scaled \
             --dissipationModelParameters 0.2 \
             --virtualNodesGranularity typeAndNode \
