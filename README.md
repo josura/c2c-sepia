@@ -88,7 +88,7 @@ To use the MPI version with 2 processors(as the subtypes used are only 2), the c
 mpirun -np 2 ./build/c2c-sepia-MPI --graphsFilesFolder data/testdata/testHeterogeneousGraph/graphs \
             --initialPerturbationPerTypeFolder data/testdata/testHeterogeneousGraph/initialValuesPartialTypes \
             --typeInteractionFolder data/testdata/testHeterogeneousGraph/interactions \
-            --subtypes data/testdata/testGraph/testHeterogeneousGraph/subcelltypes.txt \
+            --subtypes data/testdata/testHeterogeneousGraph/subcelltypes.txt \
             --dissipationModel scaled \
             --dissipationModelParameters 0.2 \
             --virtualNodesGranularity typeAndNode \
