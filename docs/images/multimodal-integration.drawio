@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-09-29T17:29:19.706Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0" etag="bikQyAQbVkI0QJ9Eso3t" version="24.2.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-09-29T17:29:50.289Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0" etag="pJemm8LiC_3NEJqLrhkz" version="24.2.1" type="github">
   <diagram name="Page-1" id="blZKFijT3qBmkAFtz_N1">
     <mxGraphModel dx="3046" dy="1360" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -60,6 +60,9 @@
             <mxPoint x="696" y="811" as="sourcePoint" />
             <mxPoint x="776" y="811" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="KCe79-yEBINX289Halzp-297" value="&lt;div&gt;Time&amp;nbsp;&lt;/div&gt;&lt;div&gt;series&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="700" y="753" width="60" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
