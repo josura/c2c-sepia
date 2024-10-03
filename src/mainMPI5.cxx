@@ -95,5 +95,23 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    //logging options
+    Logger logger(std::cout);
+    if(vm.count("loggingOptions")){
+        if(logMode == "all"){
+            std::cout << "[LOG] logging options set to all"<<std::endl;
+            logger.enable();
+        } else if (logMode == "none"){
+            std::cout << "[LOG] logging options set to none"<<std::endl;
+            logger.disable();
+        } else {
+            std::cout << "[LOG] logging options set to default (all)"<<std::endl;
+            logger.enable();
+        }
+    } else {
+        std::cout << "[LOG] logging options set to default (all)"<<std::endl;
+        logger.enable();
+    }
+
     return 0;
 }
