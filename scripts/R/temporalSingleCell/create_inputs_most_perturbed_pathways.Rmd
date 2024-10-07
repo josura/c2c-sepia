@@ -7,6 +7,8 @@ library(CellChat)
 library(Seurat)
 library(readr)
 library(Matrix)
+#library for transpose function
+library(data.table)
 ```
 
 ```{r}
@@ -169,6 +171,14 @@ for (cellType in cellTypes){
   write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
+### create the nodes map for each cell type
+```{r}
+availableNodesMap <- list()
+for (cellType in cellTypes){
+  availableNodesMap[[cellType]] <- union(unique(inputGraphs[[cellType]]$Source),unique(inputGraphs[[cellType]]$Target))
+}
+```
+
 # interaction inference
 ## load the cellChatDB
 ```{r}
@@ -333,4 +343,14 @@ createInputsFilesFromSeuratobject <- function(seurat_obj,cellTypeToNodesMap, out
   
 
 }
+```
+
+### create the node values files
+```{r}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues", showWarnings = FALSE)
+}
+## normalize the data
+seurat.obj.1h.filtered <- NormalizeData(seurat.obj.1h.filtered) 
+createInputsFilesFromSeuratobject(seurat.obj.1h.filtered,availableNodesMap,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/")
 ```
