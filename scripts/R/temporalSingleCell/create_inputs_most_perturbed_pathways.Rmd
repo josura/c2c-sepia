@@ -266,3 +266,10 @@ createInterationsFile <- function(interactionNetwork,inputGraphs,cellTypes,outpu
   
 }
 ```
+
+### create the interactions file
+```{r}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions", showWarnings = FALSE)
+}
+createInterationsFile(df.net,inputGraphs,cellTypes,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/")
