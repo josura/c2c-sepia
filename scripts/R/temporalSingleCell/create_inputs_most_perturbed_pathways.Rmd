@@ -227,7 +227,7 @@ createInterationsFile <- function(interactionNetwork,inputGraphs,cellTypes,outpu
     endNodeNames <- interactionNetwork$receptor
     weights <- interactionNetwork$prob
     interactionDF <- data.frame(startType = startTypes, startNodeName = startNodeNames, endType = endTypes, endNodeName = endNodeNames, weight = weights)
-    # change node names since some of them are in all caps, while official names have only the first letter in caps
+    # change node names to first letter in caps since some of them are in all caps, while official names have only the first letter in caps
     interactionDF$startNodeName <- tolower(interactionDF$startNodeName)
     interactionDF$endNodeName <- tolower(interactionDF$endNodeName)
     # make the first letter of each word in the node name uppercase
@@ -247,6 +247,19 @@ createInterationsFile <- function(interactionNetwork,inputGraphs,cellTypes,outpu
     interactionDF.splitted$endNodeName <- sapply(interactionDF.splitted$endNodeName, function(x) {
         paste0(toupper(substring(x, 1, 1)), substring(x, 2))
     })
+    # filter the interactions that are not possible
+    for(irow in 1:nrow(interactionDF.splitted)){
+        # get the cell types of the source and the target
+        sourceCellType <- interactionDF.splitted$startType[irow]
+        targetCellType <- interactionDF.splitted$endType[irow]
+        # get the nodes in the graph for the cell type
+        nodes_source <- union(unique(inputGraphs[[sourceCellType]]$Source),unique(inputGraphs[[sourceCellType]]$Target))
+        nodes_target <- union(unique(inputGraphs[[targetCellType]]$Source),unique(inputGraphs[[targetCellType]]$Target))
+        # check if the source and the target are in the nodes of the graph
+        if(interactionDF.splitted$startNodeName[irow] %in% nodes_source == FALSE | interactionDF.splitted$endNodeName[irow] %in% nodes_target == FALSE){
+            interactionDF.splitted[irow,] <- NA
+        }
+    }
 
     interactionFile <- paste0(outputDir,"interactions.tsv")
     write_tsv(interactionDF.splitted,interactionFile, quote = "none", append = FALSE)
