@@ -286,7 +286,7 @@ createInterationsFile(df.net,inputGraphs,cellTypes,"/home/josura/Projects/ccc/da
 
 ## create the node values, that is the expression of the genes in the nodes
 ```{r}
-createInputsFilesFromSeuratobject <- function(seurat_obj,outputDir){
+createInputsFilesFromSeuratobject <- function(seurat_obj,cellTypeToNodesMap, outputDir){
     #create a file for each cell type
     #every input is a file with two columns
     # first column is the gene name
@@ -317,6 +317,11 @@ createInputsFilesFromSeuratobject <- function(seurat_obj,outputDir){
     cellTypeDF <- transpose(transposed_umis.summedCell)
     rownames(cellTypeDF) <- genes
     colnames(cellTypeDF) <- rownames(transposed_umis.summedCell)
+
+    # filter the genes to the ones in the nodes
+    for(cellType in cellTypes){
+        cellTypeDF <- cellTypeDF[rownames(cellTypeDF) %in% cellTypeToNodesMap[[cellType]],]
+    }
 
     # save each cell type(columns of the dataframe) in a file
     for(i in 1:length(colnames(cellTypeDF))){
