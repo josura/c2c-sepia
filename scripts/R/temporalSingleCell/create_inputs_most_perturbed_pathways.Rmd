@@ -283,3 +283,49 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions") =
 }
 createInterationsFile(df.net,inputGraphs,cellTypes,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/")
 ```
+
+## create the node values, that is the expression of the genes in the nodes
+```{r}
+createInputsFilesFromSeuratobject <- function(seurat_obj,outputDir){
+    #create a file for each cell type
+    #every input is a file with two columns
+    # first column is the gene name
+    # second column is the expression value (aggregated by mean) of the gene in the cell type
+    # the file is named as the cell type
+    # the files are saved in the outputDir
+    generalDF <- seurat_obj@assays$RNA$data
+    # convert dgCMatrix to data.frame
+    generalDF <- as.data.frame(as.matrix(generalDF))
+    # get the cell types
+    cellTypesAll <- seurat_obj@meta.data$cell_type
+    cellTypes <- unique(cellTypesAll)
+    # get the genes
+    genes <- rownames(seurat_obj)
+    # transpose the generalDF matrix  to have the cells in the rows and the genes in the columns
+    generalDF <- transpose(generalDF)
+    generalDF$cell_type <- cellTypesAll
+    # group by cell_type, summing the values of each gene, using dplyr, summing all the values except cell_type
+    transposed_umis.summedCell = generalDF %>% 
+                                    group_by(cell_type) %>% 
+                                    summarise_all(sum) %>%
+                                    as.data.frame()
+
+    rownames(transposed_umis.summedCell) = transposed_umis.summedCell$cell_type
+    # remove the cell_type column
+    transposed_umis.summedCell$cell_type = NULL
+
+    cellTypeDF <- transpose(transposed_umis.summedCell)
+    rownames(cellTypeDF) <- genes
+    colnames(cellTypeDF) <- rownames(transposed_umis.summedCell)
+
+    # save each cell type(columns of the dataframe) in a file
+    for(i in 1:length(colnames(cellTypeDF))){
+        temp.DF <- data.frame(name = rownames(cellTypeDF), value = cellTypeDF[,i])
+        cellType <- colnames(cellTypeDF)[i]
+        cellTypeFile <- paste0(outputDir,cellType,".tsv")
+        write_tsv(temp.DF,cellTypeFile, quote = "none", append = FALSE)
+    }
+  
+
+}
+```
