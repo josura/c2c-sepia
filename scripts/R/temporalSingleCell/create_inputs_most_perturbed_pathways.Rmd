@@ -206,7 +206,7 @@ saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.rds")
 ### loading the inferred network
 ```{r}
 # load the inferred cellular communication network
-df.net <- readRDS("cellchat_inferred_network.1h.rds")
+df.net <- readRDS("inputGraphs/1h/cellchat_inferred_network.1h.rds")
 ```
 ## filter only the possible interactions between two cell types, considering the source and target nodes in the source and target graphs
 ### function to save the interactions, filtering the interactions that are not possible
@@ -260,6 +260,7 @@ createInterationsFile <- function(interactionNetwork,inputGraphs,cellTypes,outpu
             interactionDF.splitted[irow,] <- NA
         }
     }
+    interactionDF.splitted <- na.omit(interactionDF.splitted)
 
     interactionFile <- paste0(outputDir,"interactions.tsv")
     write_tsv(interactionDF.splitted,interactionFile, quote = "none", append = FALSE)
@@ -273,3 +274,4 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions") =
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions", showWarnings = FALSE)
 }
 createInterationsFile(df.net,inputGraphs,cellTypes,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/")
+```
