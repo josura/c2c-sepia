@@ -123,6 +123,7 @@ for (cellType in cellTypes){
 ```
 
 ## create the input graph from the ranked pathways
+### function to create the input graph
 ```{r}
 #function to create the input graph
 createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType){
@@ -141,9 +142,10 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
 if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h") == FALSE){
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h", showWarnings = FALSE)
 }
+inputGraphs <- list()
 for (cellType in cellTypes){
-  inputGraph <- createInputGraph(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType)
-  write.table(inputGraph, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/",cellType,".tsv"), sep = "\t", row.names = FALSE)
+  inputGraphs[[cellType]] <- createInputGraph(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType)
+  write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/",cellType,".tsv"), sep = "\t", row.names = FALSE)
 }
 ```
   
