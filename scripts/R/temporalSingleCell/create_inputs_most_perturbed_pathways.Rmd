@@ -148,4 +148,22 @@ for (cellType in cellTypes){
   write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/",cellType,".tsv"), sep = "\t", row.names = FALSE)
 }
 ```
-  
+# interaction inference
+## load the cellChatDB
+```{r}
+CellChatDB <- CellChatDB.mouse # use CellChatDB.human if running on human data
+showDatabaseCategory(CellChatDB)
+
+# use a subset of CellChatDB for cell-cell communication analysis
+CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "annotation") # use Secreted Signaling
+```
+## prepare the data for the 1h timepoint
+```{r}
+seurat_obj <- NormalizeData(seurat_obj)
+data.input <- seurat_obj[["RNA"]]$data # normalized data matrix
+Idents(seurat_obj) <- "cell_type"
+labels <- Idents(seurat_obj)
+meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat_obj@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
+
+cellchat <- createCellChat(object = data.input, meta = meta, group.by = "labels")
+```
