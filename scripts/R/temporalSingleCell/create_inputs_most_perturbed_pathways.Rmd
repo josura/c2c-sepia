@@ -53,6 +53,13 @@ pathwayInfo$EdgeEnd <- nodesInfoMap[as.character(pathwayInfo$EdgeEnd),]
 # remove duplicate rows on source,target and weight values
 pathwayInfo <- pathwayInfo[!duplicated(pathwayInfo),]
 ```
+# remove edges that have at least one of the nodes as a COMPOUND (found in the Type column of the nodes file)
+```{r}
+# get the nodes that are COMPOUND
+compoundNodes <- nodesinfo[nodesinfo$Type == "COMPOUND",]$Name
+# remove the edges in the pathwayInfo that have at least one of the nodes as a COMPOUND
+pathwayInfo <- pathwayInfo[!(pathwayInfo$EdgeStart %in% compoundNodes | pathwayInfo$EdgeEnd %in% compoundNodes),]
+```
 ## create map of pathways, where each pathway is mapped to a list of nodes/geneNames, no duplicates
 ```{r}
 pathwayMap <- pathwayInfo %>% group_by(PathwayId) %>% summarise(geneNames = list(unique(c(EdgeStart, EdgeEnd))))
@@ -133,6 +140,7 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
   nodes <- pathwayMap[pathwayMap$PathwayId %in% rankedPathways$PathwayId,] %>% select(geneNames) %>% unlist()
   nodes <- unique(nodes)
   # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
+  # TODO remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target
   edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
   return(edges)
 }
