@@ -1,0 +1,218 @@
+---
+title: "load batches for input creation at the Teesside with the data from Ido"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# loading libraries
+
+```{r}
+require(dplyr)
+library(Seurat)
+```
+
+# defining the functions that will be used to read on the data
+
+```{r}
+.read.scdbtab=function(amp_batches.7d, scdb_path=".") {
+  files=paste(scdb_path,"/",amp_batches.7d,".txt",sep="")
+  l=lapply(files,FUN=function(x){read.delim(x,header=T,check.names=F,stringsAsFactors=F,row.names=1)})
+  a=do.call("cbind", l) 
+  return(a) 
+}
+```
+
+# defining the batches that will be used
+
+```{r}
+batches.1h <- c(paste("AB", c(1856,1857,1858,1859,1907,1908), sep="")) #PN 1h
+batches.6h <- c(paste("AB", c(1997,1998,1999,2000), sep="")) #PN 6h
+batches.7h <- c(paste("AB", c(2189,2190,2191,2192,2297), sep="")) #PN 7h 
+batches.10h <- c(paste("AB", c(1245,1246,1247,1248,1412), sep=""))#PN 10h 
+batches.16h <- c(paste("AB", c(2001,2002,2003,2004), sep=""))#PN 16h
+```
+
+# metadata with cell types and well names
+
+## load metadata from tsv
+
+```{r}
+umidir = "/home/josura/Projects/ccc/datiIdo/AB_UMI"
+#load metadata, containing Amplification batch id, that will probably be used to mitigate batch effects with something like pseudo-bulk i don't know
+metadata = read.delim("/home/josura/Projects/ccc/datiIdo/metadata_2.tsv", header=T, check.names=F, stringsAsFactors=F)
+# load well metadata containing information about cell types
+well_metadata = read.delim("/home/josura/Projects/ccc/datiIdo/lung_map.txt", header=T, check.names=F, stringsAsFactors=F) 
+
+```
+
+## filter metadata to the well metadata
+
+```{r}
+# filter metadata to the well metadata
+metadata.filtered = metadata[metadata$well %in% well_metadata$well,]
+# remove columns with NA values
+metadata.filtered = metadata.filtered[, colSums(is.na(metadata.filtered)) == 0]
+# join metadata.filtered with well_metadata
+metadata.filtered = merge(metadata.filtered, well_metadata, by="well")
+# select only columns containing well number, cell_type and amp_batch_id
+metadata.filtered = metadata.filtered[c("well","cell_type", "Amp_batch_ID")]
+```
+
+## remove columns with NA values
+
+```{r}
+metadata.filtered = metadata.filtered[,
+colSums(is.na(metadata.filtered)) == 0]
+```
+
+# 1h experiments
+
+```{r}
+umis_all.1h = .read.scdbtab(batches.1h, scdb_path = umidir) 
+
+# filter metadata.filtered rows to the columns in umis_all.1h via the well column (colnames in umis_all.1h)
+metadata.filtered.1h = metadata.filtered[metadata.filtered$well %in% colnames(umis_all.1h),]
+
+# filter the umis_all.1h to the metadata.filtered.1h, selecting the columns with names in metadata.filtered.1h$well
+umis_all.1h.filtered = umis_all.1h[, colnames(umis_all.1h) %in% metadata.filtered.1h$well]
+
+seurat_obj.1h = CreateSeuratObject(counts = umis_all.1h.filtered, project = "ABlung")
+# add cell types to the seurat object
+seurat_obj.1h = AddMetaData(object = seurat_obj.1h, metadata = metadata.filtered.1h, col.name = "cell_type")
+# add sample id to seurat object
+seurat_obj.1h = AddMetaData(object = seurat_obj.1h, metadata = metadata.filtered.1h, col.name = "Amp_batch_ID")
+
+# save the seurat object
+saveRDS(seurat_obj.1h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.1h.rds")
+
+
+```
+## eventually remove the data from memory after saving the object
+
+```{r}
+rm(seurat_obj.1h)
+rm(umis_all.1h)
+rm(umis_all.1h.filtered)
+```
+
+# 6h experiments
+
+```{r}
+umis_all.6h = .read.scdbtab(batches.6h, scdb_path = umidir) 
+
+# filter metadata.filtered rows to the columns in umis_all.6h via the well column (colnames in umis_all.6h)
+metadata.filtered.6h = metadata.filtered[metadata.filtered$well %in% colnames(umis_all.6h),]
+
+# filter the umis_all.6h to the metadata.filtered.6h, selecting the columns with names in metadata.filtered.6h$well
+umis_all.6h.filtered = umis_all.6h[, colnames(umis_all.6h) %in% metadata.filtered.6h$well]
+
+seurat_obj.6h = CreateSeuratObject(counts = umis_all.6h.filtered, project = "ABlung")
+# add cell types to the seurat object
+seurat_obj.6h = AddMetaData(object = seurat_obj.6h, metadata = metadata.filtered.6h, col.name = "cell_type")
+# add sample id to seurat object
+seurat_obj.6h = AddMetaData(object = seurat_obj.6h, metadata = metadata.filtered.6h, col.name = "Amp_batch_ID")
+
+# save the seurat object
+saveRDS(seurat_obj.6h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.6h.rds")
+
+
+```
+## eventually remove the data from memory after saving the object
+
+```{r}
+rm(seurat_obj.6h)
+rm(umis_all.6h)
+rm(umis_all.6h.filtered)
+```
+
+
+# 7h experiments
+
+```{r}
+umis_all.7h = .read.scdbtab(batches.7h, scdb_path = umidir) 
+
+# filter metadata.filtered rows to the columns in umis_all.7h via the well column (colnames in umis_all.7h)
+metadata.filtered.7h = metadata.filtered[metadata.filtered$well %in% colnames(umis_all.7h),]
+
+# filter the umis_all.7h to the metadata.filtered.7h, selecting the columns with names in metadata.filtered.7h$well
+umis_all.7h.filtered = umis_all.7h[, colnames(umis_all.7h) %in% metadata.filtered.7h$well]
+
+seurat_obj.7h = CreateSeuratObject(counts = umis_all.7h.filtered, project = "ABlung")
+# add cell types to the seurat object
+seurat_obj.7h = AddMetaData(object = seurat_obj.7h, metadata = metadata.filtered.7h, col.name = "cell_type")
+# add sample id to seurat object
+seurat_obj.7h = AddMetaData(object = seurat_obj.7h, metadata = metadata.filtered.7h, col.name = "Amp_batch_ID")
+
+# save the seurat object
+saveRDS(seurat_obj.7h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.7h.rds")
+
+
+```
+## eventually remove the data from memory after saving the object
+
+```{r}
+rm(seurat_obj.7h)
+rm(umis_all.7h)
+rm(umis_all.7h.filtered)
+```
+
+# 10h experiments
+
+```{r}
+umis_all.10h = .read.scdbtab(batches.10h, scdb_path = umidir) 
+
+# filter metadata.filtered rows to the columns in umis_all.10h via the well column (colnames in umis_all.10h)
+metadata.filtered.10h = metadata.filtered[metadata.filtered$well %in% colnames(umis_all.10h),]
+
+# filter the umis_all.10h to the metadata.filtered.10h, selecting the columns with names in metadata.filtered.10h$well
+umis_all.10h.filtered = umis_all.10h[, colnames(umis_all.10h) %in% metadata.filtered.10h$well]
+
+seurat_obj.10h = CreateSeuratObject(counts = umis_all.10h.filtered, project = "ABlung")
+# add cell types to the seurat object
+seurat_obj.10h = AddMetaData(object = seurat_obj.10h, metadata = metadata.filtered.10h, col.name = "cell_type")
+# add sample id to seurat object
+seurat_obj.10h = AddMetaData(object = seurat_obj.10h, metadata = metadata.filtered.10h, col.name = "Amp_batch_ID")
+
+# save the seurat object
+saveRDS(seurat_obj.10h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.10h.rds")
+
+
+```
+## eventually remove the data from memory after saving the object
+
+```{r}
+rm(seurat_obj.10h)
+rm(umis_all.10h)
+rm(umis_all.10h.filtered)
+```
+
+# 16h experiments
+
+```{r}
+umis_all.16h = .read.scdbtab(batches.16h, scdb_path = umidir) 
+
+# filter metadata.filtered rows to the columns in umis_all.16h via the well column (colnames in umis_all.16h)
+metadata.filtered.16h = metadata.filtered[metadata.filtered$well %in% colnames(umis_all.16h),]
+
+# filter the umis_all.16h to the metadata.filtered.16h, selecting the columns with names in metadata.filtered.16h$well
+umis_all.16h.filtered = umis_all.16h[, colnames(umis_all.16h) %in% metadata.filtered.16h$well]
+
+seurat_obj.16h = CreateSeuratObject(counts = umis_all.16h.filtered, project = "ABlung")
+# add cell types to the seurat object
+seurat_obj.16h = AddMetaData(object = seurat_obj.16h, metadata = metadata.filtered.16h, col.name = "cell_type")
+# add sample id to seurat object
+seurat_obj.16h = AddMetaData(object = seurat_obj.16h, metadata = metadata.filtered.16h, col.name = "Amp_batch_ID")
+
+# save the seurat object
+saveRDS(seurat_obj.16h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.16h.rds")
+
+
+```
+## eventually remove the data from memory after saving the object
+
+```{r}
+rm(seurat_obj.16h)
+rm(umis_all.16h)
+rm(umis_all.16h.filtered)
+```

@@ -1,0 +1,149 @@
+---
+title: "test"
+---
+
+```{r}
+library(CellChat)
+library(Seurat)
+library(readr)
+library(Matrix)
+```
+
+```{r}
+#the nodes file has the following columns separated by \t: Id	Name	Type	Aliases
+nodesInfoFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/nodes_mmu.txt"
+# the map file contains the mapping between nodes and pathway names, has the format: PathwayId	PathwayName	EdgeStart	EdgeEnd
+pathwayInfoFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/map_mmu.txt"
+#the edges file has the following columns separated by \t: Source	Target	Type	Subtype	Weight
+metapathwayEdgesFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/edges_mmu.txt"
+
+```
+
+```{r}
+nodesinfo <- read_tsv(nodesInfoFile)
+
+# create map that maps The Id in nodesInfoFile to the Name in nodesInfoFile, this map will be used to change the source and target in the metapathwayEdgesFile
+nodesInfoMap <- nodesinfo %>% select(Id, Name) %>% as.data.frame()
+nodesInfoMap <- nodesInfoMap[!duplicated(nodesInfoMap$Id),]
+rownames(nodesInfoMap) <- nodesInfoMap$Id
+nodesInfoMap$Id <- NULL
+
+```
+
+```{r}
+
+metaPathwayEdges <- read_tsv(metapathwayEdgesFile)
+#change the entrez IDs of the sources and the target to the gene names
+metaPathwayEdges$Source <- nodesInfoMap[as.character(metaPathwayEdges$Source),]
+metaPathwayEdges$Target <- nodesInfoMap[as.character(metaPathwayEdges$Target),]
+# remove duplicate rows on source,target and weight values
+metaPathwayEdges <- metaPathwayEdges[!duplicated(metaPathwayEdges),]
+# remove edges with weight equal to 0
+metaPathwayEdges <- metaPathwayEdges[metaPathwayEdges$Weight != 0,]
+
+```
+
+```{r}
+pathwayInfo <- read_tsv(pathwayInfoFile)
+# substitute EdgeStart and EdgeEnd with its related names using the nodesInfoMap
+
+pathwayInfo$EdgeStart <- nodesInfoMap[as.character(pathwayInfo$EdgeStart),]
+pathwayInfo$EdgeEnd <- nodesInfoMap[as.character(pathwayInfo$EdgeEnd),]
+
+# remove duplicate rows on source,target and weight values
+pathwayInfo <- pathwayInfo[!duplicated(pathwayInfo),]
+```
+## create map of pathways, where each pathway is mapped to a list of nodes/geneNames, no duplicates
+```{r}
+pathwayMap <- pathwayInfo %>% group_by(PathwayId) %>% summarise(geneNames = list(unique(c(EdgeStart, EdgeEnd))))
+
+```
+## compute the average expression of each gene in each pathway for a specific cell type
+### function to compute the average expression
+```{r}
+computeAverageExpression <- function(seurat.obj, pathwayGenes, cellType){
+  # get the average expression of each gene in the pathway for the specific cell type
+  pathwayGeneExpressionToSpecificCellType <- seurat.obj[rownames(seurat.obj) %in% pathwayGenes,seurat.obj$cell_type == cellType]
+  # the average will be computed for each cell type, not for each cell, meaning that the average will be the sum of the expression of the genes in the pathway across a single cell type divided by the number of cells in that cell type * number of genes in the pathway
+  pathwayGeneExpressionAverage <- sum(pathwayGeneExpressionToSpecificCellType@assays$RNA@layers$counts)/length(pathwayGeneExpressionToSpecificCellType@assays$RNA@layers$counts)
+  return(pathwayGeneExpressionAverage)
+}
+ 
+```
+## compute perturbation for all the pathways
+```{r}
+# load the data from seurat.obj
+seurat.obj <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.1h.rds")
+cellTypes <- unique(seurat.obj$cell_type)
+```
+### compute the average perturbation
+```{r}
+# get the average expression of each gene in each pathway for a specific cell type
+averageExpressionsPerCellTypeAndPathway <- data.frame(data.frame(matrix(ncol=length(cellTypes),nrow=0)))
+for (i in 1:length(pathwayMap$PathwayId)){
+  pathwayAveragesList <- list()
+  columnIndex <- 1
+  for (cellType in cellTypes){
+    pathwayAveragesList[[columnIndex]] <- computeAverageExpression(seurat.obj, pathwayMap$geneNames[[i]],cellType)
+    columnIndex <- columnIndex + 1
+  }
+  averageExpressionsPerCellTypeAndPathway <- rbind(averageExpressionsPerCellTypeAndPathway, pathwayAveragesList)  
+}
+colnames(averageExpressionsPerCellTypeAndPathway) <- cellTypes
+rownames(averageExpressionsPerCellTypeAndPathway) <- pathwayMap$PathwayId
+averageExpressionsPerCellTypeAndPathway$PathwayId <- pathwayMap$PathwayId
+```
+### save the average expressions in a file
+```{r}
+write.table(averageExpressionsPerCellTypeAndPathway, file = "/home/josura/Projects/ccc/datiIdo/averageExpressionsPerCellTypeAndPathway.tsv", sep = "\t", row.names = FALSE,quote = FALSE)
+```
+### load the average expressions from the file
+```{r}
+averageExpressionsPerCellTypeAndPathway <- read_tsv("/home/josura/Projects/ccc/datiIdo/averageExpressionsPerCellTypeAndPathway.tsv")
+averageExpressionsPerCellTypeAndPathway <- data.frame(averageExpressionsPerCellTypeAndPathway)
+```
+
+### rank the pathways for every cell based on the average expression of the single pathway for the single cell type
+```{r}
+# for every cell type, rank the pathways based on the average expression and select the first 10
+rankedPathwaysPerCellType <- list()
+currentColumn <- 1
+for (cellType in cellTypes){
+  rankedPathwaysPerCellType[[cellType]] <- averageExpressionsPerCellTypeAndPathway[order(averageExpressionsPerCellTypeAndPathway[,currentColumn],decreasing = TRUE),]  %>% select(cellType, PathwayId) %>% head(40)
+  currentColumn <- currentColumn + 1
+    }
+```
+
+### save the ranked pathways in different files for each cell type
+```{r}
+dir.create("/home/josura/Projects/ccc/datiIdo/rankedPathways/1h", showWarnings = FALSE)
+for (cellType in cellTypes){
+  write.table(rankedPathwaysPerCellType[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/rankedPathways/1h/",cellType,".tsv"), sep = "\t", row.names = FALSE)
+}
+```
+
+## create the input graph from the ranked pathways
+```{r}
+#function to create the input graph
+createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType){
+  # get the ranked pathways for the specific cell type
+  rankedPathways <- rankedPathwaysPerCellType[[cellType]]
+  # get the nodes of the ranked pathways
+  nodes <- pathwayMap[pathwayMap$PathwayId %in% rankedPathways$PathwayId,] %>% select(geneNames) %>% unlist()
+  nodes <- unique(nodes)
+  # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
+  edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
+  return(edges)
+}
+```
+### create the input graph for each cell type
+```{r}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h", showWarnings = FALSE)
+}
+for (cellType in cellTypes){
+  inputGraph <- createInputGraph(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType)
+  write.table(inputGraph, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/",cellType,".tsv"), sep = "\t", row.names = FALSE)
+}
+```
+  
