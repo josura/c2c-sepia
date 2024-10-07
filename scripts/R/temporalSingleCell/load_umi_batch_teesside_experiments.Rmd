@@ -216,3 +216,34 @@ rm(seurat_obj.16h)
 rm(umis_all.16h)
 rm(umis_all.16h.filtered)
 ```
+# read all the seuratObjects and plot them
+
+```{r}
+seurat.obj.1h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.1h.rds")
+seurat.obj.6h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.6h.rds")
+seurat.obj.7h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.7h.rds")
+seurat.obj.10h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.10h.rds")
+seurat.obj.16h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.16h.rds")
+```
+
+# plot the seurat objects
+## 1h
+```{r}
+plot1h <- DimPlot(seurat.obj.1h, group.by = "cell_type")
+```
+## 6h
+```{r}
+plot6h <- DimPlot(seurat.obj.6h, group.by = "cell_type")
+```
+## 7h
+```{r}
+plot7h <- DimPlot(seurat.obj.7h, group.by = "cell_type")
+```
+## 10h
+```{r}
+plot10h <- DimPlot(seurat.obj.10h, group.by = "cell_type")
+```
+## 16h
+```{r}
+plot16h <- DimPlot(seurat.obj.16h, group.by = "cell_type")
+```
