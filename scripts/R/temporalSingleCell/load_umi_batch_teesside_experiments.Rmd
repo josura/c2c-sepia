@@ -88,6 +88,7 @@ saveRDS(seurat_obj.1h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.1h.rds
 
 
 ```
+
 ## eventually remove the data from memory after saving the object
 
 ```{r}
@@ -118,6 +119,7 @@ saveRDS(seurat_obj.6h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.6h.rds
 
 
 ```
+
 ## eventually remove the data from memory after saving the object
 
 ```{r}
@@ -125,7 +127,6 @@ rm(seurat_obj.6h)
 rm(umis_all.6h)
 rm(umis_all.6h.filtered)
 ```
-
 
 # 7h experiments
 
@@ -149,6 +150,7 @@ saveRDS(seurat_obj.7h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.7h.rds
 
 
 ```
+
 ## eventually remove the data from memory after saving the object
 
 ```{r}
@@ -179,6 +181,7 @@ saveRDS(seurat_obj.10h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.10h.r
 
 
 ```
+
 ## eventually remove the data from memory after saving the object
 
 ```{r}
@@ -209,6 +212,7 @@ saveRDS(seurat_obj.16h, file="/home/josura/Projects/ccc/datiIdo/seurat_obj.16h.r
 
 
 ```
+
 ## eventually remove the data from memory after saving the object
 
 ```{r}
@@ -216,6 +220,7 @@ rm(seurat_obj.16h)
 rm(umis_all.16h)
 rm(umis_all.16h.filtered)
 ```
+
 # read all the seuratObjects and plot them
 
 ```{r}
@@ -227,23 +232,73 @@ seurat.obj.16h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.16h.rds"
 ```
 
 # plot the seurat objects
+
 ## 1h
+
 ```{r}
+seurat.obj.1h <- NormalizeData(seurat.obj.1h)
+seurat.obj.1h <- FindVariableFeatures(seurat.obj.1h, selection.method = "vst", nfeatures = 2000)
+all.genes = rownames(seurat.obj.1h)
+seurat.obj.1h <- ScaleData(seurat.obj.1h, features = all.genes)
+seurat.obj.1h <- RunPCA(seurat.obj.1h, features = VariableFeatures(object = seurat.obj.1h))
+seurat.obj.1h <- RunUMAP(seurat.obj.1h, dims = 1:17)
+Idents(seurat.obj.1h) <- "cell_type"
+DimPlot(seurat.obj.1h, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
 plot1h <- DimPlot(seurat.obj.1h, group.by = "cell_type")
 ```
+
 ## 6h
+
 ```{r}
+seurat.obj.6h <- NormalizeData(seurat.obj.6h)
+seurat.obj.6h <- FindVariableFeatures(seurat.obj.6h, selection.method = "vst", nfeatures = 2000)
+all.genes = rownames(seurat.obj.6h)
+seurat.obj.6h <- ScaleData(seurat.obj.6h, features = all.genes)
+seurat.obj.6h <- RunPCA(seurat.obj.6h, features = VariableFeatures(object = seurat.obj.6h))
+seurat.obj.6h <- RunUMAP(seurat.obj.6h, dims = 1:17)
+Idents(seurat.obj.6h) <- "cell_type"
+DimPlot(seurat.obj.6h, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
 plot6h <- DimPlot(seurat.obj.6h, group.by = "cell_type")
 ```
+
 ## 7h
+
 ```{r}
+seurat.obj.7h <- NormalizeData(seurat.obj.7h)
+seurat.obj.7h <- FindVariableFeatures(seurat.obj.7h, selection.method = "vst", nfeatures = 2000)
+all.genes = rownames(seurat.obj.7h)
+seurat.obj.7h <- ScaleData(seurat.obj.7h, features = all.genes)
+seurat.obj.7h <- RunPCA(seurat.obj.7h, features = VariableFeatures(object = seurat.obj.7h))
+seurat.obj.7h <- RunUMAP(seurat.obj.7h, dims = 1:17)
+Idents(seurat.obj.7h) <- "cell_type"
+DimPlot(seurat.obj.7h, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
 plot7h <- DimPlot(seurat.obj.7h, group.by = "cell_type")
 ```
+
 ## 10h
+
 ```{r}
+seurat.obj.10h <- NormalizeData(seurat.obj.10h)
+seurat.obj.10h <- FindVariableFeatures(seurat.obj.10h, selection.method = "vst", nfeatures = 2000)
+all.genes = rownames(seurat.obj.10h)
+seurat.obj.10h <- ScaleData(seurat.obj.10h, features = all.genes)
+seurat.obj.10h <- RunPCA(seurat.obj.10h, features = VariableFeatures(object = seurat.obj.10h))
+seurat.obj.10h <- RunUMAP(seurat.obj.10h, dims = 1:17)
+Idents(seurat.obj.10h) <- "cell_type"
+DimPlot(seurat.obj.10h, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
 plot10h <- DimPlot(seurat.obj.10h, group.by = "cell_type")
 ```
+
 ## 16h
+
 ```{r}
+seurat.obj.16h <- NormalizeData(seurat.obj.16h)
+seurat.obj.16h <- FindVariableFeatures(seurat.obj.16h, selection.method = "vst", nfeatures = 2000)
+all.genes = rownames(seurat.obj.16h)
+seurat.obj.16h <- ScaleData(seurat.obj.16h, features = all.genes)
+seurat.obj.16h <- RunPCA(seurat.obj.16h, features = VariableFeatures(object = seurat.obj.16h))
+seurat.obj.16h <- RunUMAP(seurat.obj.16h, dims = 1:17)
+Idents(seurat.obj.16h) <- "cell_type"
+DimPlot(seurat.obj.16h, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
 plot16h <- DimPlot(seurat.obj.16h, group.by = "cell_type")
 ```
