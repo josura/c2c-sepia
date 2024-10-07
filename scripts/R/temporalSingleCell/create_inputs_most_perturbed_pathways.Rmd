@@ -175,7 +175,7 @@ CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "ann
 ### TODO: compute only the interactions that are possible with the node available in one graph related to a cell, that is for every couple (cellType1, cellType2) get the union of the nodes in the two graphs and compute the interactions only for the nodes in the union
 ```{r}
 seurat.obj.1h.filtered <- seurat.obj.1h[rownames(seurat.obj.1h) %in% unique(unlist(pathwayMap$geneNames)),]
-
+```
 
 ## initialize variables to be used for the interaction inference 
 ```{r}
@@ -209,3 +209,47 @@ saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.rds")
 df.net <- readRDS("cellchat_inferred_network.1h.rds")
 ```
 ## filter only the possible interactions between two cell types, considering the source and target nodes in the source and target graphs
+### function to save the interactions, filtering the interactions that are not possible
+```{r}
+createInterationsFile <- function(interactionNetwork,inputGraphs,cellTypes,outputDir){
+    #create a file with the interactions
+    # the file has five columns
+    # startType, startNodeName , endType, endNodeName, weight
+    # weight is the communication probability
+    # the file is saved in the outputDir
+    startTypes <- interactionNetwork$source
+    # convert factors to characters
+    startTypes <- as.character(startTypes)
+    endTypes <- interactionNetwork$target
+    # convert factors to characters
+    endTypes <- as.character(endTypes)
+    startNodeNames <- interactionNetwork$ligand
+    endNodeNames <- interactionNetwork$receptor
+    weights <- interactionNetwork$prob
+    interactionDF <- data.frame(startType = startTypes, startNodeName = startNodeNames, endType = endTypes, endNodeName = endNodeNames, weight = weights)
+    # change node names since some of them are in all caps, while official names have only the first letter in caps
+    interactionDF$startNodeName <- tolower(interactionDF$startNodeName)
+    interactionDF$endNodeName <- tolower(interactionDF$endNodeName)
+    # make the first letter of each word in the node name uppercase
+    interactionDF$startNodeName <- sapply(interactionDF$startNodeName, function(x) {
+        paste0(toupper(substring(x, 1, 1)), substring(x, 2))
+    })
+    interactionDF$endNodeName <- sapply(interactionDF$endNodeName, function(x) {
+        paste0(toupper(substring(x, 1, 1)), substring(x, 2))
+    })
+    # in the case of double interactions between one ligand and more than one receptor(identified by the two or more receptors contatenated with _ in the receptor feature(endNodeName in the dataframe) in the interaction network), the interaction is split in two or more rows, with the same ligand and other features
+    splittedReceptors <- strsplit(interactionDF$endNodeName,"_")
+    interactionDF.splitted <- transform(interactionDF[rep(seq_len(nrow(interactionDF)), lengths(splittedReceptors)),],c = unlist(splittedReceptors))
+    interactionDF.splitted$fullname <- interactionDF.splitted$endNodeName
+    interactionDF.splitted$endNodeName <-  interactionDF.splitted$c
+    interactionDF.splitted$c <- NULL
+    # endNodeName should also have the first letter of each word in uppercase
+    interactionDF.splitted$endNodeName <- sapply(interactionDF.splitted$endNodeName, function(x) {
+        paste0(toupper(substring(x, 1, 1)), substring(x, 2))
+    })
+
+    interactionFile <- paste0(outputDir,"interactions.tsv")
+    write_tsv(interactionDF.splitted,interactionFile, quote = "none", append = FALSE)
+  
+}
+```
