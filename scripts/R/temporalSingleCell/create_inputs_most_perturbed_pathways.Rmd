@@ -157,7 +157,7 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes") == FALSE
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes", showWarnings = FALSE)
 }
 for (cellType in cellTypes){
-  nodes <- nodesInfo[nodesInfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesInfo$Name %in% unique(inputGraphs[[cellType]]$Target),]
+  nodes <- nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),]
   write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
@@ -172,11 +172,11 @@ CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "ann
 ```
 ## prepare the data for the 1h timepoint
 ```{r}
-seurat_obj <- NormalizeData(seurat_obj)
-data.input <- seurat_obj[["RNA"]]$data # normalized data matrix
-Idents(seurat_obj) <- "cell_type"
-labels <- Idents(seurat_obj)
-meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat_obj@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
+seurat.obj <- NormalizeData(seurat.obj)
+data.input <- seurat.obj[["RNA"]]$data # normalized data matrix
+Idents(seurat.obj) <- "cell_type"
+labels <- Idents(seurat.obj)
+meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat.obj@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
 
 cellchat <- createCellChat(object = data.input, meta = meta, group.by = "labels")
 # set the used database in the object
@@ -188,12 +188,16 @@ future::plan("multisession", workers = 4) # do parallel
 cellchat <- identifyOverExpressedGenes(cellchat,do.fast = FALSE)
 cellchat <- identifyOverExpressedInteractions(cellchat)
 
-
 # Compute the communication probability and infer cellular communication network
 cellchat <- computeCommunProb(cellchat, type = "triMean")
 ## Users can filter out the cell-cell communication if there are only few cells in certain cell groups. By default, the minimum number of cells required in each cell group for cell-cell communication is 10.
 cellchat <- filterCommunication(cellchat, min.cells = 8)
 df.net <- subsetCommunication(cellchat)
 # save the inferred cellular communication network as an object
-saveRDS(df.net, file = "cellchat_inferred_network.rds")
+saveRDS(df.net, file = "cellchat_inferred_network.1h.rds")
+```
+### loading the inferred network
+```{r}
+# load the inferred cellular communication network
+df.net <- readRDS("cellchat_inferred_network.rds")
 ```
