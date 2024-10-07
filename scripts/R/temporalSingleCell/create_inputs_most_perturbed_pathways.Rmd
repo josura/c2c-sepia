@@ -73,8 +73,8 @@ computeAverageExpression <- function(seurat.obj, pathwayGenes, cellType){
 ## compute perturbation for all the pathways
 ```{r}
 # load the data from seurat.obj
-seurat.obj <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.1h.rds")
-cellTypes <- unique(seurat.obj$cell_type)
+seurat.obj.1h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.1h.rds")
+cellTypes <- unique(seurat.obj.1h$cell_type)
 ```
 ### compute the average perturbation
 ```{r}
@@ -84,7 +84,7 @@ for (i in 1:length(pathwayMap$PathwayId)){
   pathwayAveragesList <- list()
   columnIndex <- 1
   for (cellType in cellTypes){
-    pathwayAveragesList[[columnIndex]] <- computeAverageExpression(seurat.obj, pathwayMap$geneNames[[i]],cellType)
+    pathwayAveragesList[[columnIndex]] <- computeAverageExpression(seurat.obj.1h, pathwayMap$geneNames[[i]],cellType)
     columnIndex <- columnIndex + 1
   }
   averageExpressionsPerCellTypeAndPathway <- rbind(averageExpressionsPerCellTypeAndPathway, pathwayAveragesList)  
@@ -171,12 +171,19 @@ showDatabaseCategory(CellChatDB)
 CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "annotation") # use Secreted Signaling
 ```
 ## prepare the data for the 1h timepoint
+### prepare the seurat object by filtering the genes to the ones in the ranked pathways, as a single list to get all the interactions
+### TODO: compute only the interactions that are possible with the node available in one graph related to a cell, that is for every couple (cellType1, cellType2) get the union of the nodes in the two graphs and compute the interactions only for the nodes in the union
 ```{r}
-seurat.obj <- NormalizeData(seurat.obj)
-data.input <- seurat.obj[["RNA"]]$data # normalized data matrix
-Idents(seurat.obj) <- "cell_type"
-labels <- Idents(seurat.obj)
-meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat.obj@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
+seurat.obj.1h.filtered <- seurat.obj.1h[rownames(seurat.obj.1h) %in% unique(unlist(pathwayMap$geneNames)),]
+
+
+## initialize variables to be used for the interaction inference 
+```{r}
+seurat.obj.1h.filtered <- NormalizeData(seurat.obj.1h.filtered)
+data.input <- seurat.obj.1h.filtered[["RNA"]]$data # normalized data matrix
+Idents(seurat.obj.1h.filtered) <- "cell_type"
+labels <- Idents(seurat.obj.1h.filtered)
+meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat.obj.1h.filtered@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
 
 cellchat <- createCellChat(object = data.input, meta = meta, group.by = "labels")
 # set the used database in the object
@@ -194,10 +201,11 @@ cellchat <- computeCommunProb(cellchat, type = "triMean")
 cellchat <- filterCommunication(cellchat, min.cells = 8)
 df.net <- subsetCommunication(cellchat)
 # save the inferred cellular communication network as an object
-saveRDS(df.net, file = "cellchat_inferred_network.1h.rds")
+saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.rds")
 ```
 ### loading the inferred network
 ```{r}
 # load the inferred cellular communication network
-df.net <- readRDS("cellchat_inferred_network.rds")
+df.net <- readRDS("cellchat_inferred_network.1h.rds")
 ```
+## filter only the possible interactions between two cell types, considering the source and target nodes in the source and target graphs
