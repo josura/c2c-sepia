@@ -142,10 +142,23 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
 if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h") == FALSE){
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h", showWarnings = FALSE)
 }
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs", showWarnings = FALSE)
+}
 inputGraphs <- list()
 for (cellType in cellTypes){
   inputGraphs[[cellType]] <- createInputGraph(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType)
-  write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/",cellType,".tsv"), sep = "\t", row.names = FALSE)
+  write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/",cellType,".tsv"), sep = "\t", row.names = FALSE)
+}
+```
+### create the nodes for each cell type
+```{r}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes", showWarnings = FALSE)
+}
+for (cellType in cellTypes){
+  nodes <- nodesInfo[nodesInfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesInfo$Name %in% unique(inputGraphs[[cellType]]$Target),]
+  write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
 # interaction inference
@@ -166,4 +179,21 @@ labels <- Idents(seurat_obj)
 meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat_obj@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
 
 cellchat <- createCellChat(object = data.input, meta = meta, group.by = "labels")
+# set the used database in the object
+cellchat@DB <- CellChatDB.use
+# subset the expression data of signaling genes for saving computation cost
+cellchat <- subsetData(cellchat) # This step is necessary even if using the whole database
+future::plan("multisession", workers = 4) # do parallel
+
+cellchat <- identifyOverExpressedGenes(cellchat,do.fast = FALSE)
+cellchat <- identifyOverExpressedInteractions(cellchat)
+
+
+# Compute the communication probability and infer cellular communication network
+cellchat <- computeCommunProb(cellchat, type = "triMean")
+## Users can filter out the cell-cell communication if there are only few cells in certain cell groups. By default, the minimum number of cells required in each cell group for cell-cell communication is 10.
+cellchat <- filterCommunication(cellchat, min.cells = 8)
+df.net <- subsetCommunication(cellchat)
+# save the inferred cellular communication network as an object
+saveRDS(df.net, file = "cellchat_inferred_network.rds")
 ```
