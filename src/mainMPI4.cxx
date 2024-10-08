@@ -782,6 +782,7 @@ int main(int argc, char** argv) {
     }
 
     logger << "[LOG] loading type interactions for rank "<< rank << std::endl;
+    // TODO test for multiple interaction between two edges in two files
     auto allFilesInteraction = get_all(typesInteractionFoldername,".tsv");
     // define the map for the type interactions, an hash function should be defined for the pair of strings used as the identifier of the interaction
     std::unordered_map<std::pair<std::string, std::string>, std::set<double>, hash_pair_strings> interactionBetweenTypesMap;
