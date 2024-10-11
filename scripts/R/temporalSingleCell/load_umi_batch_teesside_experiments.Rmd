@@ -231,7 +231,54 @@ seurat.obj.10h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.10h.rds"
 seurat.obj.16h <- readRDS("/home/josura/Projects/ccc/datiIdo/seurat_obj.16h.rds")
 ```
 
+# create a single seurat object with all the data, with the time information as additional metadata
+
+```{r}
+removeChars <- function(x, chars) {
+  gsub(paste(chars, collapse = ""), "", x)
+}
+```
+
+```{r}
+seurat.obj.all <- merge(seurat.obj.1h, y = seurat.obj.6h, add.cell.ids = c("1h", "6h"))
+seurat.obj.all <- merge(seurat.obj.all, y = seurat.obj.7h, add.cell.ids = c("","7h"))
+seurat.obj.all <- merge(seurat.obj.all, y = seurat.obj.10h, add.cell.ids = c("","10h"))
+seurat.obj.all <- merge(seurat.obj.all, y = seurat.obj.16h, add.cell.ids = c("","16h"))
+cell_names <- colnames(seurat.obj.all)
+# remove the underscores from the first part of the cell names, and split with the "h" character
+times <- sapply(cell_names, function(x) strsplit(removeChars(x, "_"),"h")[[1]][1])
+```
+
 # plot the seurat objects
+
+```{r}
+seurat.obj.all <- AddMetaData(object = seurat.obj.all, metadata = data.frame(time = times), col.name = "time")
+```
+
+
+
+# full dataset
+
+```{r}
+seurat.obj.all <- NormalizeData(seurat.obj.all)
+seurat.obj.all <- FindVariableFeatures(seurat.obj.all, selection.method = "vst", nfeatures = 2000)
+all.genes = rownames(seurat.obj.all)
+seurat.obj.all <- ScaleData(seurat.obj.all, features = all.genes)
+seurat.obj.all <- RunPCA(seurat.obj.all, features = VariableFeatures(object = seurat.obj.all))
+seurat.obj.all <- RunUMAP(seurat.obj.all, dims = 1:17)
+Idents(seurat.obj.all) <- "cell_type"
+DimPlot(seurat.obj.all, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+#plotall <- DimPlot(seurat.obj.all, group.by = "cell_type")
+```
+
+# also plot the full dataset with the time information
+
+```{r}
+Idents(seurat.obj.all) <- "time"
+DimPlot(seurat.obj.all, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+```
+
+# single time points
 
 ## 1h
 
@@ -302,3 +349,7 @@ Idents(seurat.obj.16h) <- "cell_type"
 DimPlot(seurat.obj.16h, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
 plot16h <- DimPlot(seurat.obj.16h, group.by = "cell_type")
 ```
+
+# statistics on the dataset, (celltype polulation etc...)
+
+```{r}
