@@ -351,6 +351,7 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues") == 
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues", showWarnings = FALSE)
 }
 ## normalize the data
+## TODO do an additional step of normalization maybe since the resulting data is very large in the number that comes out
 seurat.obj.1h.filtered <- NormalizeData(seurat.obj.1h.filtered) 
 createInputsFilesFromSeuratobject(seurat.obj.1h.filtered,availableNodesMap,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/")
 ```
