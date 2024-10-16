@@ -21,7 +21,7 @@ moduleInfoLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mo
 incidenceMatrixLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/cmMat_complete_mouse_c70_m168.csv"
 # module to gene influence has the following format:
 # first column is the module id, everything after is the list of genes that are influenced by the module
-moduleToGeneInfluenceLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_m168.csv"
+moduleToGeneInfluenceLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_complete_mouse_m168.csv"
 # fluxes file generated from scFEA
 metabolitesFluxesLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_metabolites_module168_cell1037_20241014-125629.csv"
 modulesFluxesLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_module168_cell1037_20241014-125629.csv"
@@ -47,4 +47,7 @@ moduleMapToGeneList <- list()
 for (i in 1:length(moduleIDS)){
   moduleMapToGeneList[[moduleIDS[i]]] <- moduleToGeneInfluence[i,-1] %>% unlist %>% na.omit
 }
+```
+
+```{r}
 
