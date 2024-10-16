@@ -87,3 +87,5 @@ ax.set_ylabel('Number of Processes')
 ax.set_zlabel('Speedup')
 
 plt.show()
+
+# save aggregated data into a file
