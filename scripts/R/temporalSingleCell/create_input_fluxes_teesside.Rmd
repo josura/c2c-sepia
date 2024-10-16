@@ -15,7 +15,20 @@ library(data.table)
 # information about the graph that will be built from the metabolic network
 moduleInfoLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
 incidenceMatrixLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/cmMat_complete_mouse_c70_m168.csv"
-moduleToGeneInfluence <- "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_m168.csv"
+moduleToGeneInfluenceLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_m168.csv"
 # fluxes file generated from scFEA
-        
+metabolitesFluxesLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_metabolites_module168_cell1037_20241014-125629.csv"
+modulesFluxesLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_module168_cell1037_20241014-125629.csv"
+```
+# read the network information
+```{r}
+moduleInfo <- read_csv(moduleInfoLocation)
+incidenceMatrix <- read_csv(incidenceMatrixLocation)
+moduleToGeneInfluence <- read_csv(moduleToGeneInfluenceLocation)
+```
+
+# read the fluxes
+```{r}
+metabolitesFluxes <- read_csv(metabolitesFluxesLocation)
+modulesFluxes <- read_csv(modulesFluxesLocation)
 ```
