@@ -1,0 +1,21 @@
+---
+title: "creating inputs for fluxes"
+---
+
+```{r}
+library(CellChat)
+library(Seurat)
+library(readr)
+library(Matrix)
+#library for transpose function
+library(data.table)
+```
+
+```{r}
+# information about the graph that will be built from the metabolic network
+moduleInfoLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
+incidenceMatrixLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/cmMat_complete_mouse_c70_m168.csv"
+moduleToGeneInfluence <- "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_m168.csv"
+# fluxes file generated from scFEA
+        
+```
