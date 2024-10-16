@@ -13,8 +13,14 @@ library(data.table)
 
 ```{r}
 # information about the graph that will be built from the metabolic network
+# module info has the following format:
+# M_id	M_name	C_in	C_in_name	C_out	C_out_name	Supermodule_id
 moduleInfoLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
+# incidence matrix has the following format:
+# rows are the metabolites(70 metabolites), columns are the modules(171 modules)
 incidenceMatrixLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/cmMat_complete_mouse_c70_m168.csv"
+# module to gene influence has the following format:
+# first column is the module id, everything after is the list of genes that are influenced by the module
 moduleToGeneInfluenceLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_m168.csv"
 # fluxes file generated from scFEA
 metabolitesFluxesLocation <- "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_metabolites_module168_cell1037_20241014-125629.csv"
@@ -32,3 +38,13 @@ moduleToGeneInfluence <- read_csv(moduleToGeneInfluenceLocation)
 metabolitesFluxes <- read_csv(metabolitesFluxesLocation)
 modulesFluxes <- read_csv(modulesFluxesLocation)
 ```
+
+# transform the data
+```{r}
+# convert the module to gene influence to a map of moduleId -> <geneList>
+moduleIDS <- moduleToGeneInfluence[,1]
+moduleMapToGeneList <- list()
+for (i in 1:length(moduleIDS)){
+  moduleMapToGeneList[[moduleIDS[i]]] <- moduleToGeneInfluence[i,-1] %>% unlist %>% na.omit
+}
+
