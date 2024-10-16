@@ -48,6 +48,8 @@ for (i in 1:length(moduleIDS)){
   moduleMapToGeneList[[moduleIDS[i]]] <- moduleToGeneInfluence[i,-1] %>% unlist %>% na.omit
 }
 ```
-
+# convert the incidence matrix to a list of edges
 ```{r}
+edgesList <- moduleInfo %>% select(M_id, C_in, C_out) %>% as.data.frame()
+```
 
