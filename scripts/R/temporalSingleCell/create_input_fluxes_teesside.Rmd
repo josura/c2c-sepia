@@ -53,3 +53,6 @@ for (i in 1:length(moduleIDS)){
 edgesList <- moduleInfo %>% select(M_id, C_in, C_out) %>% as.data.frame()
 ```
 
+# function to create the input graph
+```{r}
+```
