@@ -55,4 +55,11 @@ edgesList <- moduleInfo %>% select(M_id, C_in, C_out) %>% as.data.frame()
 
 # function to create the input graph
 ```{r}
+createInputGraph <- function(edgesList, moduleMapToGeneList, metabolitesFluxes, modulesFluxes){
+  # create the graph
+  graph <- createGraph(edgesList, moduleMapToGeneList)
+  # add the fluxes
+  graph <- addFluxes(graph, metabolitesFluxes, modulesFluxes)
+  return(graph)
+}
 ```
