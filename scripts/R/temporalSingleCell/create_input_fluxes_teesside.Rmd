@@ -53,9 +53,31 @@ for (i in 1:length(moduleIDS)){
 edgesList <- moduleInfo %>% select(M_id, C_in, C_out) %>% as.data.frame()
 ```
 
+# get the list of different graphs from an input folder containing the graphs generated from the pathways 
+
+```{r}
+# get the list of different graphs from an input folder containing the graphs generated from the pathways
+getGraphs <- function(inputFolder){
+  graphs <- list()
+  files <- list.files(inputFolder)
+  types <- sapply(files, function(x) strsplit(x, ".")[[1]][2])
+  graphNames <- sapply(files, function(x) strsplit(x, ".")[[1]][1])
+  finalGraphNames <- list()
+  for (i in 1:length(files)){
+    file <- files[i]
+    type <- types[i]
+    graphName <- graphNames[i]
+    if (type == "csv"){
+      finalGraphNames <- c(finalGraphNames, graphName)
+    }
+  }
+  return (finalGraphNames)
+}
+```
+
 # functions to create the input graph
 ```{r}
-createGraph <- function(edgesList, moduleMapToGeneList){
+createGraphs <- function(edgesList, moduleMapToGeneList){
   graph <- list()
   for (i in 1:nrow(edgesList)){
     edge <- edgesList[i,]
