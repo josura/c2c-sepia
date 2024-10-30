@@ -176,7 +176,7 @@ p <- ggplot(data.spaceOccupied.finer, aes(x=nodes, y=max_memory)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_line(aes(x=x, y=y, color = "nodes^2*log(nodes)")) + # Assigning a color aesthetic for the legend
   geom_line(aes(x=nodes, y=y.spaceEstimate, color = "Estimated Memory")) + # Assigning a color aesthetic for the legend
-  scale_color_manual(name = "Legend", values = c("Actual Memory" = "black", "nodes^2*log(nodes)" = "red", "Estimated Memory" = "yellow")) # Manual color and label assignment for the legend
+  scale_color_manual(name = "Legend", values = c("Actual Memory" = "black", "nodes^2*log(nodes)" = "red", "Estimated Memory" = "blue")) # Manual color and label assignment for the legend
 
 p
 
