@@ -1,3 +1,4 @@
 syntheticGraphsWeakScalingDifferentCommunities/
 syntheticGraphsWeakScalingDifferentNodes/
 *.tsv
+*Rproj
