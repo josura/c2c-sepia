@@ -108,9 +108,9 @@
             <mxPoint x="790" y="501" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Wc59ne-grfjn9hL5iWiq-8" value="dd" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="7sBlaiQmrPPdrRpwnvc7-87">
+        <mxCell id="Wc59ne-grfjn9hL5iWiq-8" value="&lt;div&gt;Infection values&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=90;" vertex="1" connectable="0" parent="7sBlaiQmrPPdrRpwnvc7-87">
           <mxGeometry x="-0.2141" y="3" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="17" y="4" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="7sBlaiQmrPPdrRpwnvc7-88" value="Ranked Pathways 6h cellType1" style="text;strokeColor=#DFDFDF;fillColor=#F7F7F7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.bootstrap.topButton;rSize=5;fontColor=#333333;" parent="1" vertex="1">
