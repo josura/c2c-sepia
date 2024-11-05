@@ -76,16 +76,15 @@
         <mxCell id="7sBlaiQmrPPdrRpwnvc7-18" value="genes" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="35" y="609" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="7sBlaiQmrPPdrRpwnvc7-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;" parent="1" source="7sBlaiQmrPPdrRpwnvc7-20" target="7sBlaiQmrPPdrRpwnvc7-80" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="7sBlaiQmrPPdrRpwnvc7-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;" parent="1" target="7sBlaiQmrPPdrRpwnvc7-80" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="599" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="7sBlaiQmrPPdrRpwnvc7-112" value="1,n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="7sBlaiQmrPPdrRpwnvc7-85" vertex="1" connectable="0">
           <mxGeometry x="-0.4518" y="-19" relative="1" as="geometry">
             <mxPoint x="20" y="-17" as="offset" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="7sBlaiQmrPPdrRpwnvc7-20" value="&amp;nbsp;" style="swimlane;whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
-          <mxGeometry x="-360" y="454" width="680" height="290" as="geometry" />
         </mxCell>
         <mxCell id="7sBlaiQmrPPdrRpwnvc7-80" value="" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=0;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="690" y="571" width="200" height="120" as="geometry" />
