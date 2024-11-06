@@ -9,13 +9,17 @@ data.differentProcessors <- read.table("timesDifferentProcessors.tsv", header=TR
 data.spaceOccupied <- read.table("spaceOccupied.tsv", header=TRUE, sep="\t")
 data.spaceOccupied.finer <- read.table("spaceOccupiedFiner.tsv", header=TRUE, sep="\t")
 
+data.plottedForBMC <- read.table("/home/josura/Projects/ccc/MASFENON/scripts/bash/cluster/performanceAnalysis/localPerformanceTimesMultipleExperiments.tsv", header=TRUE, sep="\t")
+
+data.plottedForBMC.10000Nodes <- data.plottedForBMC[data.plottedForBMC$graphNodesNumber == 10000,]
+
 # Plot the data
 # the data have the following format:
 # graphNodesNumber	numberProcesses	numberTypes	numberIterations	time
 # every point in the plot is a graph represented by the number of nodes and for every graph we have the average as the center point and the standard deviation as the error bar
 # different colors of lines represent different number of iterations
 # x axis is the number of nodes
-plotTimesDifferentNodes <- function(data, title){
+plotTimesDifferentNodesDifferentNumberOfIterations <- function(data, title){
     # prepare the data
     data.prepared <- data %>% 
         group_by(graphNodesNumber, numberIterations) %>% 
@@ -32,6 +36,25 @@ plotTimesDifferentNodes <- function(data, title){
 
     return(p)
 
+}
+
+plotTimesDifferentNodesDifferentProcessors <- function(data, title){
+  # prepare the data
+  data.prepared <- data %>% 
+    group_by(graphNodesNumber, numberProcesses) %>% 
+    summarise(value = mean(time), sd = sd(time))
+  # plot the data
+  p <- ggplot(data.prepared, aes(x=graphNodesNumber, y=value, color=numberProcesses, group=numberProcesses)) + 
+    #geom_line() + 
+    geom_line() +
+    geom_errorbar(aes(ymin=value-sd, ymax=value+sd), width=.1) +
+    ggtitle(title) +
+    xlab("number of nodes") +
+    ylab("time (milliseconds)") +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  return(p)
+  
 }
 
 
@@ -83,13 +106,17 @@ plotTimesDifferentProcessors <- function(data, title){
     theme(plot.title = element_text(hjust = 0.5))
   
   return(p)
-  
 }
 
-plotTimesDifferentNodes(data.differentNodes, "weak-scaling: different number of nodes")
+
+
+plotTimesDifferentNodesDifferentNumberOfIterations(data.differentNodes, "weak-scaling: different number of nodes")
 plotTimesDifferentCommunities(data.differentCommunities, "weak-scaling: different number of communities for the same number of nodes(10000)")
 plotTimesDifferentProcessors(data.differentProcessors, "strong-scaling: different number of processors for the same graph(30000 nodes, 113 communities)")
 
+# BMC performance
+plotTimesDifferentNodesDifferentProcessors(data.plottedForBMC,"weak-scaling: different number of nodes")
+plotTimesDifferentProcessors(data.plottedForBMC.10000Nodes,"strong-scaling: different number of processors for one of the 10000 nodes Erdos-Renyi graph")
 
 # plot speedup for strong scaling
 # the data is the same as for the plotTimesDifferentProcessors, but we need to calculate the speedup
