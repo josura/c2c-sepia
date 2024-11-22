@@ -1,3 +1,4 @@
+# testing the code at https://liana-py.readthedocs.io/en/latest/notebooks/sc_multi.html
 import numpy as np
 import liana as li
 import mudata as mu
@@ -25,3 +26,38 @@ celltypes = list(rna.obs["celltype"].values)
 
 fig = px.scatter(x=X, y=Y, color=celltypes)
 fig.show()
+
+# Obtain a ligand-receptor resource of interest
+resource = li.rs.select_resource(resource_name='consensus')
+# Append AB: to the receptor names
+resource['receptor'] = 'AB:' + resource['receptor']
+
+# Append AB: to the protein modality
+mdata.mod['prot'].var_names = 'AB:' + mdata.mod['prot'].var['gene_ids']
+
+li.mt.rank_aggregate(adata=mdata,
+                     groupby='celltype',
+                     # pass our modified resource
+                     resource=resource,
+                     # NOTE: Essential arguments when handling multimodal data
+                     mdata_kwargs={
+                     # Ligand-Receptor pairs are directed so we need to correctly pass
+                     # `RNA` with ligands as `x_mod` and receptors as `y_mod`
+                     'x_mod': 'rna',
+                     'y_mod': 'prot',
+                     # We use .X from the x_mod
+                     'x_use_raw':False,
+                     # We use .X from the y_mod
+                     'y_use_raw':False,
+                     # NOTE: we need to ensure that the modalities are correctly transformed
+                     'x_transform':li.ut.zi_minmax,
+                     'y_transform':li.ut.zi_minmax,
+                    },
+                  verbose=True
+                  )
+
+mdata.uns['liana_res'].head()
+
+
+# Create the object to use for the matbolite-liana analysis
+adata = mdata.mod['rna']
