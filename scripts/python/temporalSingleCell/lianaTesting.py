@@ -8,10 +8,10 @@ from matplotlib import pyplot as plt
 from plotly import express as px
 
 # Load the data
-# prot = sc.read('temporalSingleCell/citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
-# rna = sc.read('temporalSingleCell/citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
-prot = sc.read('temporalSingleCell/citeseq_prot.h5ad')
-rna = sc.read('temporalSingleCell/citeseq_rna.h5ad')
+# prot = sc.read('citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
+# rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
+prot = sc.read('citeseq_prot.h5ad')
+rna = sc.read('citeseq_rna.h5ad')
 
 mdata = mu.MuData({'rna': rna, 'prot': prot})
 # make sure that cell type is accessible
