@@ -96,18 +96,18 @@ metalinks_translated = li.rs.translate_column(resource=metalinks,
                                    map_df=map_df,
                                    column='gene_symbol',
                                    one_to_many=1)
-metalinks.head()
+metalinks_translated.head()
 
 
 
 ## preparing the metabolite-receptor pairs
-resource = metalinks[metalinks['type']=='lr'].copy()
+resource = metalinks_translated[metalinks_translated['type']=='lr'].copy()
 resource = resource[['metabolite', 'gene_symbol']]\
     .rename(columns={'gene_symbol':'receptor'}).drop_duplicates()
 resource.head()
 
 ## Prepare the Production-Degradation Network
-pd_net = metalinks[metalinks['type'] == 'pd']
+pd_net = metalinks_translated[metalinks_translated['type'] == 'pd']
 # we need to aggregate the production-degradation values
 pd_net = pd_net[['metabolite', 'gene_symbol', 'mor']].groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
 pd_net.head()
