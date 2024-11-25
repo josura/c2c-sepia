@@ -77,3 +77,9 @@ plot.show()
 ## Focus on Transcriptomics Data
 adata = mdata.mod['rna']
 ## Obtain MetalinksDB Prior Knowledge
+metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
+                                      source=['CellPhoneDB', 'Cellinker', 'scConnect', # Ligand-Receptor resources
+                                              'recon', 'hmr', 'rhea', 'hmdb' # Production-Degradation resources
+                                              ],
+                                      types=['pd', 'lr'], # NOTE: we obtain both ligand-receptor and production-degradation sets
+                                     )
