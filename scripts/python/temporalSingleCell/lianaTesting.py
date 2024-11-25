@@ -58,7 +58,7 @@ li.mt.rank_aggregate(adata=mdata,
 
 mdata.uns['liana_res'].head()
 
-li.pl.dotplot(adata = mdata,
+plot = li.pl.dotplot(adata = mdata,
               colour='lr_means',
               size='specificity_rank',
               inverse_size=True, # we inverse sign since we want small p-values to have large sizes
@@ -70,7 +70,10 @@ li.pl.dotplot(adata = mdata,
               filter_fun=lambda x: x['cellphone_pvals'] <= 0.05,
               cmap='plasma'
              )
+plot.show()
 
 
 # Create the object to use for the matbolite-liana analysis
+## Focus on Transcriptomics Data
 adata = mdata.mod['rna']
+## Obtain MetalinksDB Prior Knowledge
