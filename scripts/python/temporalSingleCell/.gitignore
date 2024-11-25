@@ -1,2 +1,5 @@
 *.h5ad
 *.db
+*.csv
+*.gz
+*.txt
