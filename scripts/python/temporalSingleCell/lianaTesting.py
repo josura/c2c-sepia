@@ -76,6 +76,14 @@ plot.show()
 # Create the object to use for the matbolite-liana analysis
 ## Focus on Transcriptomics Data
 adata = mdata.mod['rna']
+
+
+## convert to murine symbols from human to mouse, vignette available at: https://liana-py.readthedocs.io/en/latest/notebooks/sma.html
+map_df = li.rs.get_hcop_orthologs(columns=['human_symbol', 'mouse_symbol'],
+                                  min_evidence=3
+                                  ).rename(columns={'human_symbol':'source',
+                                                   'mouse_symbol':'target'})
+
 ## Obtain MetalinksDB Prior Knowledge
 metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
                                       source=['CellPhoneDB', 'Cellinker', 'scConnect', # Ligand-Receptor resources
@@ -83,6 +91,15 @@ metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
                                               ],
                                       types=['pd', 'lr'], # NOTE: we obtain both ligand-receptor and production-degradation sets
                                      )
+
+metalinks_translated = li.rs.translate_column(resource=metalinks,
+                                   map_df=map_df,
+                                   column='gene_symbol',
+                                   one_to_many=1)
+metalinks.head()
+
+
+
 ## preparing the metabolite-receptor pairs
 resource = metalinks[metalinks['type']=='lr'].copy()
 resource = resource[['metabolite', 'gene_symbol']]\
