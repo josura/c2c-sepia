@@ -83,3 +83,8 @@ metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
                                               ],
                                       types=['pd', 'lr'], # NOTE: we obtain both ligand-receptor and production-degradation sets
                                      )
+## preparing the metabolite-receptor pairs
+resource = metalinks[metalinks['type']=='lr'].copy()
+resource = resource[['metabolite', 'gene_symbol']]\
+    .rename(columns={'gene_symbol':'receptor'}).drop_duplicates()
+resource.head()
