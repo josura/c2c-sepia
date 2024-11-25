@@ -10,8 +10,8 @@ from plotly import express as px
 # Load the data
 # prot = sc.read('citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
 # rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
-prot = sc.read('citeseq_prot.h5ad')
-rna = sc.read('citeseq_rna.h5ad')
+prot = sc.read('/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/citeseq_prot.h5ad')
+rna = sc.read('/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/citeseq_rna.h5ad')
 
 mdata = mu.MuData({'rna': rna, 'prot': prot})
 # make sure that cell type is accessible
@@ -111,4 +111,13 @@ pd_net = metalinks_translated[metalinks_translated['type'] == 'pd']
 # we need to aggregate the production-degradation values
 pd_net = pd_net[['metabolite', 'gene_symbol', 'mor']].groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
 pd_net.head()
+
+
+## Prepare the Transport Network
+t_net = metalinks_translated[metalinks_translated['type'] == 'pd']
+t_net = t_net[['metabolite', 'gene_symbol', 'transport_direction']].dropna()
+# Note that we treat export as positive and import as negative
+t_net['mor'] = t_net['transport_direction'].apply(lambda x: 1 if x == 'out' else -1 if x == 'in' else None)
+t_net = t_net[['metabolite', 'gene_symbol', 'mor']].dropna().groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
+t_net = t_net[t_net['mor']!=0]
 
