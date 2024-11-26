@@ -121,3 +121,14 @@ t_net['mor'] = t_net['transport_direction'].apply(lambda x: 1 if x == 'out' else
 t_net = t_net[['metabolite', 'gene_symbol', 'mor']].dropna().groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
 t_net = t_net[t_net['mor']!=0]
 
+meta = li.mt.fun.estimate_metalinks(adata,
+                                    resource,
+                                    pd_net=pd_net,
+                                    t_net=t_net, # (Optional)
+                                    use_raw=False,
+                                    # keyword arguments passed to decoupler-py
+                                    source='metabolite', target='gene_symbol',
+                                    weight='mor', min_n=3)
+# pass cell type information
+meta.obs['celltype'] = adata.obs['celltype']
+
