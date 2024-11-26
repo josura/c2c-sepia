@@ -6,6 +6,7 @@ cfgv==3.4.0
 charset-normalizer==3.4.0
 contourpy==1.2.1
 cycler==0.12.1
+decoupler==1.8.0
 distlib==0.3.9
 docrep==0.3.2
 EoN==1.1
@@ -53,6 +54,7 @@ stdlib-list==0.11.0
 tenacity==9.0.0
 threadpoolctl==3.5.0
 tqdm==4.67.0
+typing_extensions==4.12.2
 tzdata==2024.1
 umap-learn==0.5.7
 urllib3==2.2.3
