@@ -90,15 +90,6 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="OC2pTcRIkbZyPAuTaFmb-16" value="" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.network;" vertex="1" parent="1">
-          <mxGeometry x="705" y="-240" width="65" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="OC2pTcRIkbZyPAuTaFmb-17" value="" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.network;" vertex="1" parent="1">
-          <mxGeometry x="765" y="-210" width="65" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="OC2pTcRIkbZyPAuTaFmb-18" value="" style="html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#AFFFAF;shape=mxgraph.archimate3.network;" vertex="1" parent="1">
-          <mxGeometry x="700" y="-160" width="65" height="50" as="geometry" />
-        </mxCell>
         <mxCell id="OC2pTcRIkbZyPAuTaFmb-19" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;curved=1;dashed=1;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="570" y="-168.82999999999993" as="sourcePoint" />
@@ -109,6 +100,27 @@
           <mxGeometry x="-0.0278" y="3" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-21" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="730" y="-160" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-22" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="764" y="-138" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-23" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="801" y="-128" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-24" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="840" y="-133" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-25" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="875" y="-157" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-26" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="895" y="-190" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-27" value="v" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="905" y="-225" width="20" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
