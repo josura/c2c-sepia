@@ -43,7 +43,7 @@
         <mxCell id="OC2pTcRIkbZyPAuTaFmb-1" value="" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=0;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="700" y="200" width="200" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OC2pTcRIkbZyPAuTaFmb-2" value="Ranked Pathways 1h cellType1" style="text;strokeColor=#DFDFDF;fillColor=#F7F7F7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.bootstrap.topButton;rSize=5;fontColor=#333333;" parent="OC2pTcRIkbZyPAuTaFmb-1" vertex="1">
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-2" value="Ranked Pathways cellType1" style="text;strokeColor=#DFDFDF;fillColor=#F7F7F7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.bootstrap.topButton;rSize=5;fontColor=#333333;" parent="OC2pTcRIkbZyPAuTaFmb-1" vertex="1">
           <mxGeometry width="200" height="30" as="geometry" />
         </mxCell>
         <mxCell id="OC2pTcRIkbZyPAuTaFmb-3" value="PahtwayId1" style="text;strokeColor=#DFDFDF;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fontColor=#333333;" parent="OC2pTcRIkbZyPAuTaFmb-1" vertex="1">
@@ -58,7 +58,7 @@
         <mxCell id="OC2pTcRIkbZyPAuTaFmb-6" value="" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=0;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="720" y="222" width="200" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OC2pTcRIkbZyPAuTaFmb-7" value="Ranked Pathways 1h cellTypeA" style="text;strokeColor=#DFDFDF;fillColor=#F7F7F7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.bootstrap.topButton;rSize=5;fontColor=#333333;" parent="OC2pTcRIkbZyPAuTaFmb-6" vertex="1">
+        <mxCell id="OC2pTcRIkbZyPAuTaFmb-7" value="Ranked Pathways cellTypeA" style="text;strokeColor=#DFDFDF;fillColor=#F7F7F7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;shape=mxgraph.bootstrap.topButton;rSize=5;fontColor=#333333;" parent="OC2pTcRIkbZyPAuTaFmb-6" vertex="1">
           <mxGeometry width="200" height="30" as="geometry" />
         </mxCell>
         <mxCell id="OC2pTcRIkbZyPAuTaFmb-8" value="PahtwayId1" style="text;strokeColor=#DFDFDF;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;rSize=5;fontColor=#333333;" parent="OC2pTcRIkbZyPAuTaFmb-6" vertex="1">
