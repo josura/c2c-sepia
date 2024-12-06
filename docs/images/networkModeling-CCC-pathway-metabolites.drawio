@@ -240,6 +240,9 @@
             <mxPoint x="558" y="-25" as="targetPoint" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="b63gKIj_njwSAhKnd1lL-34" value="Signaling pathways" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="140" y="-48" width="130" height="30" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
