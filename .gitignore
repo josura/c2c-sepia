@@ -56,4 +56,10 @@ CmakeListsFolder/
 scripts/R/epidemics/*.tsv
 Testing
 checkpoints/
+
+# R generated files
 .Rproj.user
+.RData
+.Ruserdata
+.Rhistory
+*.Rproj
