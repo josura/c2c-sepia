@@ -98,6 +98,10 @@ metalinks_translated = li.rs.translate_column(resource=metalinks,
                                    one_to_many=1)
 metalinks_translated.head()
 
+#adata translated, changing row names with the mouse symbols
+adata_translated = adata.copy()
+adata_translated.var.index = 
+
 
 
 ## preparing the metabolite-receptor pairs
@@ -132,3 +136,9 @@ meta = li.mt.fun.estimate_metalinks(adata,
 # pass cell type information
 meta.obs['celltype'] = adata.obs['celltype']
 
+with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
+    sc.pl.umap(meta.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
+
+
+# to get the dataframe representing the metabolite/protein data
+mdata.mod["prot"].to_df()
