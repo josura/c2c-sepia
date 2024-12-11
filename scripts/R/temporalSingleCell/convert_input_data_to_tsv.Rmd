@@ -8,11 +8,69 @@ date: "2024-12-11"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Load necessary libraries
 ```{r cars}
-summary(cars)
+library(Seurat)
 ```
 
 # converting input data to tsv
 ```{r}
 oututFolder <- "/home/josura/Projects/ccc/datiIdo/lianaInputs"
+
+# read the data
+seurat.obj.1h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.1h.rds")
+seurat.obj.6h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.6h.rds")
+seurat.obj.7h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.7h.rds")
+seurat.obj.10h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.10h.rds")
+seurat.obj.16h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.16h.rds")
+```
+
+# save the important data to tsv
+# that is:
+# - the expression matrix, where every row is a cell and every column is a gene
+# - the cell metadata, where every row is a cell and every column is a metadata field
+```{r}
+
+# save the sparse expression matrix (dgcMatrix) to tsv
+
+## 1h
+sparseMatrix <- seurat.obj.1h@assays$RNA@layers$counts
+sparseMatrix <- as.matrix(sparseMatrix)
+colnames(sparseMatrix) <- colnames(seurat.obj.1h)
+rownames(sparseMatrix) <- rownames(seurat.obj.1h)
+sparseMatrix <- t(sparseMatrix)
+write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-1h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 6h
+sparseMatrix <- seurat.obj.6h@assays$RNA@layers$counts
+sparseMatrix <- as.matrix(sparseMatrix)
+colnames(sparseMatrix) <- colnames(seurat.obj.6h)
+rownames(sparseMatrix) <- rownames(seurat.obj.6h)
+sparseMatrix <- t(sparseMatrix)
+write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-6h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 7h
+sparseMatrix <- seurat.obj.7h@assays$RNA@layers$counts
+sparseMatrix <- as.matrix(sparseMatrix)
+colnames(sparseMatrix) <- colnames(seurat.obj.7h)
+rownames(sparseMatrix) <- rownames(seurat.obj.7h)
+sparseMatrix <- t(sparseMatrix)
+write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-7h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+
+## 10h
+sparseMatrix <- seurat.obj.10h@assays$RNA@layers$counts
+sparseMatrix <- as.matrix(sparseMatrix)
+colnames(sparseMatrix) <- colnames(seurat.obj.10h)
+rownames(sparseMatrix) <- rownames(seurat.obj.10h)
+sparseMatrix <- t(sparseMatrix)
+write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-10h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 16h
+sparseMatrix <- seurat.obj.16h@assays$RNA@layers$counts
+sparseMatrix <- as.matrix(sparseMatrix)
+colnames(sparseMatrix) <- colnames(seurat.obj.16h)
+rownames(sparseMatrix) <- rownames(seurat.obj.16h)
+sparseMatrix <- t(sparseMatrix)
+write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-16h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
 ```
