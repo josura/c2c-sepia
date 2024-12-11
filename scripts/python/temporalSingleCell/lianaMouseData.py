@@ -10,8 +10,9 @@ from plotly import express as px
 # Load the data
 # prot = sc.read('citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
 # rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
-prot = sc.read('/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/citeseq_prot.h5ad')
-rna = sc.read('/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/citeseq_rna.h5ad')
+rna_1hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h.tsv"
+rna_1h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h-metadata.tsv"
+metabolitesFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
 
 mdata = mu.MuData({'rna': rna, 'prot': prot})
 # make sure that cell type is accessible
