@@ -13,3 +13,6 @@ summary(cars)
 ```
 
 # converting input data to tsv
+```{r}
+oututFolder <- "/home/josura/Projects/ccc/datiIdo/lianaInputs"
+```
