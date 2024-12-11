@@ -74,3 +74,26 @@ rownames(sparseMatrix) <- rownames(seurat.obj.16h)
 sparseMatrix <- t(sparseMatrix)
 write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-16h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
 ```
+
+# save the cell metadata to tsv
+```{r}
+## 1h
+metadata <- seurat.obj.1h@meta.data
+write.table(metadata, file = paste0(oututFolder, "/rna-1h-metadata.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 6h
+metadata <- seurat.obj.6h@meta.data
+write.table(metadata, file = paste0(oututFolder, "/rna-6h-metadata.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 7h
+metadata <- seurat.obj.7h@meta.data
+write.table(metadata, file = paste0(oututFolder, "/rna-7h-metadata.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 10h
+metadata <- seurat.obj.10h@meta.data
+write.table(metadata, file = paste0(oututFolder, "/rna-10h-metadata.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+
+## 16h
+metadata <- seurat.obj.16h@meta.data
+write.table(metadata, file = paste0(oututFolder, "/rna-16h-metadata.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+```
