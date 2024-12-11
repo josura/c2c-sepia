@@ -1,11 +1,22 @@
+```{r}
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+remotes::install_github("mojaveazure/seurat-disk")
+```
+
+```{r}
 # Load necessary libraries
 library(Seurat)
 library(SeuratDisk)
 
 # Function save Seurat object to h5ad format
 convert_seurat_to_h5ad <- function(seurat_object, output_file) {
-    # Save Seurat object to h5ad format
-    write10xCounts(seurat_object, output_file)
+    # save seurat object to h5ad format
+    SaveH5Seurat(seurat_object, filename = output_file)
+    
+    saved.filename <- paste0(output_file, ".h5seurat")
+    Convert(saved.filename, dest = "h5ad")
 
     # Print message
     print(paste("Seurat object saved to", output_file))
@@ -19,6 +30,17 @@ seurat.obj.1h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.1h.rds")
 seurat.obj.6h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.6h.rds")
 seurat.obj.7h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.7h.rds")
 seurat.obj.10h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.10h.rds")
+seurat.obj.16h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.16h.rds")
+
+```
+
 
 # Convert and save to h5ad
 # convert_seurat_to_h5ad(seurat_object, "output_file.h5ad")
+```{r}
+convert_seurat_to_h5ad(seurat.obj.1h, "~/Projects/ccc/datiIdo/h5ad/rna-1h")
+convert_seurat_to_h5ad(seurat.obj.6h, "~/Projects/ccc/datiIdo/h5ad/rna-6h")
+convert_seurat_to_h5ad(seurat.obj.7h, "~/Projects/ccc/datiIdo/h5ad/rna-7h")
+convert_seurat_to_h5ad(seurat.obj.10h, "~/Projects/ccc/datiIdo/h5ad/rna-10h")
+convert_seurat_to_h5ad(seurat.obj.16h, "~/Projects/ccc/datiIdo/h5ad/rna-16h")
+```
