@@ -1,0 +1,15 @@
+---
+title: "ConvertSeuratToMatrixAndVectors"
+output: html_document
+date: "2024-12-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+summary(cars)
+```
+
+# converting input data to tsv
