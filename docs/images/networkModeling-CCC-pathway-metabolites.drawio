@@ -508,6 +508,12 @@
         <mxCell id="MOy88jmch2NlMyBtGRWF-12" value="&lt;div&gt;TRANSLATION&lt;/div&gt;&lt;div&gt;AND&lt;/div&gt;&lt;div&gt;CONVERSION&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="566" y="-168" width="110" height="60" as="geometry" />
         </mxCell>
+        <mxCell id="MOy88jmch2NlMyBtGRWF-13" value="&lt;div&gt;FILTERING&lt;/div&gt;&lt;div&gt;AND&lt;/div&gt;&lt;div&gt;PATHWAY SCORE&lt;/div&gt;&lt;div&gt;COMPUTATION&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="559" y="268" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="MOy88jmch2NlMyBtGRWF-14" value="&lt;div&gt;TRANSLATION&lt;/div&gt;&lt;div&gt;AND&lt;/div&gt;&lt;div&gt;UNION&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="929" y="289" width="110" height="60" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
