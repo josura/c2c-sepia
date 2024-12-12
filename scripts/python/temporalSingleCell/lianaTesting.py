@@ -106,6 +106,8 @@ t_net['mor'] = t_net['transport_direction'].apply(lambda x: 1 if x == 'out' else
 t_net = t_net[['metabolite', 'gene_symbol', 'mor']].dropna().groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
 t_net = t_net[t_net['mor']!=0]
 
+# Estimate Metabolites from anndata object, and return a MuData object of metabolites and receptors.
+# documentation at https://liana-py.readthedocs.io/en/latest/api/liana.method.estimate_metalinks.html#liana.method.estimate_metalinks
 meta = li.mt.fun.estimate_metalinks(adata,
                                     resource,
                                     pd_net=pd_net,
@@ -120,3 +122,20 @@ meta.obs['celltype'] = adata.obs['celltype']
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
+#Infer Metabolite-Receptor Interactions
+#We will next infer the putative ligand-receptor interactions between these two modalities.
+li.mt.rank_aggregate(adata=meta,
+                     groupby='celltype',
+                     # pass our modified resource
+                     resource=resource.rename(columns={'metabolite':'ligand'}),
+                     # NOTE: Essential arguments when handling multimodal data
+                     mdata_kwargs={
+                     'x_mod': 'metabolite',
+                     'y_mod': 'receptor',
+                     'x_use_raw':False,
+                     'y_use_raw':False,
+                     'x_transform':li.ut.zi_minmax,
+                     'y_transform':li.ut.zi_minmax,
+                    },
+                  verbose=True
+                  )
