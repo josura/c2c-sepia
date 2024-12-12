@@ -40,7 +40,9 @@ colnames(sparseMatrix) <- colnames(seurat.obj.1h)
 rownames(sparseMatrix) <- rownames(seurat.obj.1h)
 sparseMatrix <- t(sparseMatrix)
 write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-1h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+```
 
+```{r}
 ## 6h
 sparseMatrix <- seurat.obj.6h@assays$RNA@layers$counts
 sparseMatrix <- as.matrix(sparseMatrix)
@@ -48,7 +50,9 @@ colnames(sparseMatrix) <- colnames(seurat.obj.6h)
 rownames(sparseMatrix) <- rownames(seurat.obj.6h)
 sparseMatrix <- t(sparseMatrix)
 write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-6h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+```
 
+```{r}
 ## 7h
 sparseMatrix <- seurat.obj.7h@assays$RNA@layers$counts
 sparseMatrix <- as.matrix(sparseMatrix)
@@ -56,8 +60,9 @@ colnames(sparseMatrix) <- colnames(seurat.obj.7h)
 rownames(sparseMatrix) <- rownames(seurat.obj.7h)
 sparseMatrix <- t(sparseMatrix)
 write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-7h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+```
 
-
+```{r}
 ## 10h
 sparseMatrix <- seurat.obj.10h@assays$RNA@layers$counts
 sparseMatrix <- as.matrix(sparseMatrix)
@@ -65,7 +70,9 @@ colnames(sparseMatrix) <- colnames(seurat.obj.10h)
 rownames(sparseMatrix) <- rownames(seurat.obj.10h)
 sparseMatrix <- t(sparseMatrix)
 write.table(as.matrix(sparseMatrix), file = paste0(oututFolder, "/rna-10h.tsv"), sep = "\t", quote = FALSE, row.names = TRUE, col.names = TRUE)
+```
 
+```{r}
 ## 16h
 sparseMatrix <- seurat.obj.16h@assays$RNA@layers$counts
 sparseMatrix <- as.matrix(sparseMatrix)
