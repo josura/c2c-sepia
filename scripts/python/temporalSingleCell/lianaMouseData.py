@@ -103,6 +103,28 @@ mdata.uns['liana_res'].head()
 
 # metabolite receptors analysis TODO
 
+## control the intersection between pd.unique(metalinks_translated["metabolite"]) and metabolites.to_df().columns
+list(set(metalinks_translated["metabolite"]) & set(metabolites.to_df().columns))
+## the list is very small, ['Ornithine', 'Glycine', 'Glutathione', 'Deoxyadenosine', 'Hypoxanthine', 'Cholesterol', 'Choline']
+## we need to use other IDs to match the metabolites
+
+name_map_70 = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_70_mouse.csv", sep=",")
+name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_metalinks.csv", sep=",")
+
+# filter the rows that have NaN value in the HMDB column
+name_map_metalinks = name_map_metalinks[name_map_metalinks['HMDB'].notna()]
+name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
+
+# filter the rows that are not in the name_map_70 for the metabolites data
+metabolites_filtered = metabolites.to_df()[name_map_70['HMDB'].values]
+
+
+mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
+# make sure that cell type is accessible
+mdata.obs['celltype'] = mdata.mod['rna'].obs['cell_type'].astype('category')
+# inspect the object
+mdata
+
 plot = li.pl.dotplot(adata = mdata,
               colour='lr_means',
               size='specificity_rank',
