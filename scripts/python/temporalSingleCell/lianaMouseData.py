@@ -3,6 +3,7 @@ import numpy as np
 import liana as li
 import mudata as mu
 import scanpy as sc
+import pandas as pd
 
 from matplotlib import pyplot as plt
 from plotly import express as px
@@ -14,16 +15,30 @@ rna_1hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h.tsv"
 rna_1h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h-metadata.tsv"
 metabolitesFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
 
-mdata = mu.MuData({'rna': rna, 'prot': prot})
+rna_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
+rna_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
+metabolites_pd = pd.read_csv(metabolitesFile, sep=",", index_col=0)
+#drop first row in metabolites_pd
+metabolites_pd = metabolites_pd.iloc[1:]
+
+rna = sc.AnnData(rna_pd)
+rna.obs = rna_metadata_pd
+metabolites = sc.AnnData(metabolites_pd)
+
+mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
 # make sure that cell type is accessible
-mdata.obs['celltype'] = mdata.mod['rna'].obs['celltype'].astype('category')
+mdata.obs['celltype'] = mdata.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
 mdata
+
+# add UMAP coordinates to the RNA data
+sc.pp.neighbors(rna, n_neighbors=10)
+sc.tl.umap(rna)
 
 # show the data
 X = list(map(lambda x: x[0], rna.obsm["X_umap"]))
 Y = list(map(lambda x: x[1], rna.obsm["X_umap"]))
-celltypes = list(rna.obs["celltype"].values)
+celltypes = list(rna.obs["cell_type"].values)
 
 fig = px.scatter(x=X, y=Y, color=celltypes)
 fig.show()
