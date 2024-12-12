@@ -77,17 +77,17 @@ resource_translated = li.rs.translate_column(resource=resource_translated,
                                       one_to_many=1)
 
 
-
+# ligand receptors analysis
 li.mt.rank_aggregate(adata=mdata,
                      groupby='celltype',
                      # pass our modified resource
-                     resource=resource,
+                     resource=resource_translated,
                      # NOTE: Essential arguments when handling multimodal data
                      mdata_kwargs={
                      # Ligand-Receptor pairs are directed so we need to correctly pass
                      # `RNA` with ligands as `x_mod` and receptors as `y_mod`
                      'x_mod': 'rna',
-                     'y_mod': 'prot',
+                     'y_mod': 'rna',
                      # We use .X from the x_mod
                      'x_use_raw':False,
                      # We use .X from the y_mod
@@ -100,6 +100,8 @@ li.mt.rank_aggregate(adata=mdata,
                   )
 
 mdata.uns['liana_res'].head()
+
+# metabolite receptors analysis TODO
 
 plot = li.pl.dotplot(adata = mdata,
               colour='lr_means',
