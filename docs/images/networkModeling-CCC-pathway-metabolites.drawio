@@ -490,7 +490,7 @@
         <mxCell id="MOy88jmch2NlMyBtGRWF-5" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="1260" y="90" as="sourcePoint" />
-            <mxPoint x="1420" y="238" as="targetPoint" />
+            <mxPoint x="1480" y="90" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="MOy88jmch2NlMyBtGRWF-6" value="&lt;div&gt;INTRACELL INTERACTIONS&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;rotation=0;" parent="1" vertex="1">
