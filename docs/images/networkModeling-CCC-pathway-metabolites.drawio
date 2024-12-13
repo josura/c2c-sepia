@@ -494,7 +494,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="MOy88jmch2NlMyBtGRWF-6" value="&lt;div&gt;INTRACELL INTERACTIONS&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;rotation=0;" parent="1" vertex="1">
-          <mxGeometry x="1275" y="39" width="180" height="30" as="geometry" />
+          <mxGeometry x="1268" y="53" width="180" height="30" as="geometry" />
         </mxCell>
         <mxCell id="MOy88jmch2NlMyBtGRWF-8" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;INTERACTIONS&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;rotation=-90;" parent="1" vertex="1">
           <mxGeometry x="1090" y="39" width="248" height="34" as="geometry" />
