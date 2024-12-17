@@ -115,8 +115,8 @@ name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/py
 name_map_metalinks = name_map_metalinks[name_map_metalinks['HMDB'].notna()]
 name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
 
-# filter the rows that are not in the name_map_70 for the metabolites data
-metabolites_filtered = metabolites.to_df()[name_map_70['HMDB'].values]
+# filter the column that are not in the name_map_70 for the metabolites data (match column in the name_map_70)
+metabolites_filtered_df = metabolites.to_df()[name_map_70['Match'].values] 
 
 
 mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
