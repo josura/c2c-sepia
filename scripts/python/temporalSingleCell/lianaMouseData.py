@@ -118,6 +118,8 @@ name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
 # filter the column that are not in the name_map_70 for the metabolites data (match column in the name_map_70)
 ## last column is not in the name_map_70( controlled by observing the data)
 metabolites_filtered_df = metabolites.to_df()[metabolites.to_df().columns[:-1]]
+## changing the column names to the HMDB ids
+metabolites_filtered_df.columns = name_map_70['HMDB'].values
 metabolites_filtered_df = metabolites.to_df()[name_map_70['Match'].values] 
 
 
