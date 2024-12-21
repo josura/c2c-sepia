@@ -120,7 +120,6 @@ name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
 metabolites_filtered_df = metabolites.to_df()[metabolites.to_df().columns[:-1]]
 ## changing the column names to the HMDB ids
 metabolites_filtered_df.columns = name_map_70['HMDB'].values
-metabolites_filtered_df = metabolites.to_df()[name_map_70['Match'].values] 
 
 
 mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
