@@ -121,6 +121,7 @@ metabolites_filtered_df = metabolites.to_df()[metabolites.to_df().columns[:-1]]
 ## changing the column names to the HMDB ids
 metabolites_filtered_df.columns = name_map_70['HMDB'].values
 
+metabolites_filtered = sc.AnnData(metabolites_filtered_df)
 
 mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
 # make sure that cell type is accessible
