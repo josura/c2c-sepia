@@ -123,7 +123,7 @@ metabolites_filtered_df.columns = name_map_70['HMDB'].values
 
 metabolites_filtered = sc.AnnData(metabolites_filtered_df)
 
-mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
+mdata = mu.MuData({'rna': rna, 'metabolites': metabolites_filtered})
 # make sure that cell type is accessible
 mdata.obs['celltype'] = mdata.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
