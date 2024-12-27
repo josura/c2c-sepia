@@ -520,7 +520,7 @@
             <mxPoint x="-590" y="-193" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="stueBqOR2pK5M0xEPbkB-2" value="&lt;div&gt;INTRACELL INTERACTIONS&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;rotation=0;" vertex="1" parent="1">
+        <mxCell id="stueBqOR2pK5M0xEPbkB-2" value="&lt;div&gt;INTERCELL INTERACTIONS&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;rotation=0;" vertex="1" parent="1">
           <mxGeometry x="-802" y="-230" width="180" height="30" as="geometry" />
         </mxCell>
       </root>
