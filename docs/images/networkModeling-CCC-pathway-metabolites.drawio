@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0" version="25.0.3">
   <diagram name="Page-1" id="vNIgMX_SSKbVrhW1Lgju">
-    <mxGraphModel dx="3347" dy="2120" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="4053" dy="2557" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -554,7 +554,10 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="stueBqOR2pK5M0xEPbkB-12" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-1250" y="-490" width="200" height="200" as="geometry" />
+          <mxGeometry x="-1350" y="-490" width="286.09" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="stueBqOR2pK5M0xEPbkB-16" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://liana-py.readthedocs.io/en/latest/_static/logo.png;" vertex="1" parent="stueBqOR2pK5M0xEPbkB-12">
+          <mxGeometry x="-10" y="-1" width="204.02" height="234" as="geometry" />
         </mxCell>
         <mxCell id="stueBqOR2pK5M0xEPbkB-13" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-1240" y="-60" width="200" height="200" as="geometry" />
