@@ -553,8 +553,8 @@
             <mxPoint x="200" y="135" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="stueBqOR2pK5M0xEPbkB-12" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-1350" y="-490" width="286.09" height="330" as="geometry" />
+        <mxCell id="stueBqOR2pK5M0xEPbkB-12" value="Metabolic network-&amp;gt;pathways" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-1350" y="-540" width="310" height="380" as="geometry" />
         </mxCell>
         <mxCell id="stueBqOR2pK5M0xEPbkB-16" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://liana-py.readthedocs.io/en/latest/_static/logo.png;" vertex="1" parent="stueBqOR2pK5M0xEPbkB-12">
           <mxGeometry x="-10" y="-1" width="204.02" height="234" as="geometry" />
