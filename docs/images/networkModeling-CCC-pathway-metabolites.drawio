@@ -560,7 +560,7 @@
           <mxGeometry x="10" y="36" width="204.02" height="234" as="geometry" />
         </mxCell>
         <mxCell id="stueBqOR2pK5M0xEPbkB-13" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-1240" y="-60" width="200" height="200" as="geometry" />
+          <mxGeometry x="-1350" y="-60" width="310" height="320" as="geometry" />
         </mxCell>
         <mxCell id="stueBqOR2pK5M0xEPbkB-14" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
