@@ -129,21 +129,6 @@ mdata.obs['celltype'] = mdata.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
 mdata
 
-plot = li.pl.dotplot(adata = mdata,
-              colour='lr_means',
-              size='specificity_rank',
-              inverse_size=True, # we inverse sign since we want small p-values to have large sizes
-              source_labels=['CD4+ naïve T', 'NK', 'Treg', 'CD8+ memory T'],
-              target_labels=['CD14 mono', 'mature B', 'CD8+ memory T', 'CD16 mono'],
-              figure_size=(9, 5),
-              # finally, since cpdbv2 suggests using a filter to FPs
-              # we filter the pvals column to <= 0.05
-              filter_fun=lambda x: x['cellphone_pvals'] <= 0.05,
-              cmap='plasma'
-             )
-plot.show()
-
-
 # Create the object to use for the matbolite-liana analysis
 ## Focus on Transcriptomics Data
 adata = mdata.mod['rna']
