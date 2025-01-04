@@ -108,7 +108,7 @@ list(set(metalinks_translated["metabolite"]) & set(metabolites.to_df().columns))
 ## the list is very small, ['Ornithine', 'Glycine', 'Glutathione', 'Deoxyadenosine', 'Hypoxanthine', 'Cholesterol', 'Choline']
 ## we need to use other IDs to match the metabolites
 
-name_map_70 = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_70_mouse.csv", sep=",")
+name_map_70 = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_70_mouse_fixed.csv", sep=",")  #using the fixed name map for changing the glucose
 name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_metalinks.csv", sep=",")
 
 # filter the rows that have NaN value in the HMDB column
@@ -121,10 +121,10 @@ metabolites_filtered_df = metabolites.to_df()[metabolites.to_df().columns[:-1]]
 ## changing the column names to the HMDB ids
 metabolites_filtered_df.columns = name_map_70['HMDB'].values
 
-metabolites_filtered = sc.AnnData(metabolites_filtered_df)
-
 # control the intersection between pd.unique(metalinks_translated["HMDB"]) and metabolites_filtered_df.columns
 list(set(metalinks_translated["hmdb"]) & set(metabolites_filtered_df.columns))
+
+metabolites_filtered = sc.AnnData(metabolites_filtered_df)
 
 mdata = mu.MuData({'rna': rna, 'metabolites': metabolites_filtered})
 # make sure that cell type is accessible
