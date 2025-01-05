@@ -136,15 +136,10 @@ mdata
 ## Focus on Transcriptomics Data
 adata = mdata.mod['rna']
 
-#adata translated, changing row names with the mouse symbols
-adata_translated = adata.copy()
-adata_translated.var.index = 
-
-
 
 ## preparing the metabolite-receptor pairs
 resource = metalinks_translated[metalinks_translated['type']=='lr'].copy()
-resource = resource[['metabolite', 'gene_symbol']]\
+resource = resource[['hmdb', 'gene_symbol']]\
     .rename(columns={'gene_symbol':'receptor'}).drop_duplicates()
 resource.head()
 
