@@ -146,7 +146,7 @@ resource.head()
 ## Prepare the Production-Degradation Network
 pd_net = metalinks_translated[metalinks_translated['type'] == 'pd']
 # we need to aggregate the production-degradation values
-pd_net = pd_net[['metabolite', 'gene_symbol', 'mor']].groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
+pd_net = pd_net[['hmdb', 'gene_symbol', 'mor']].groupby(['hmdb', 'gene_symbol']).agg('mean').reset_index()
 pd_net.head()
 
 
