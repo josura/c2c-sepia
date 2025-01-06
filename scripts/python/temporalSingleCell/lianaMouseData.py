@@ -152,10 +152,10 @@ pd_net.head()
 
 ## Prepare the Transport Network
 t_net = metalinks_translated[metalinks_translated['type'] == 'pd']
-t_net = t_net[['metabolite', 'gene_symbol', 'transport_direction']].dropna()
+t_net = t_net[['hmdb', 'gene_symbol', 'transport_direction']].dropna()
 # Note that we treat export as positive and import as negative
 t_net['mor'] = t_net['transport_direction'].apply(lambda x: 1 if x == 'out' else -1 if x == 'in' else None)
-t_net = t_net[['metabolite', 'gene_symbol', 'mor']].dropna().groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
+t_net = t_net[['hmdb', 'gene_symbol', 'mor']].dropna().groupby(['hmdb', 'gene_symbol']).agg('mean').reset_index()
 t_net = t_net[t_net['mor']!=0]
 
 meta = li.mt.fun.estimate_metalinks(adata,
