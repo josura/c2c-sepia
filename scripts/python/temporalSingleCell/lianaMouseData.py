@@ -164,6 +164,7 @@ meta = li.mt.fun.estimate_metalinks(adata,
                                     t_net=t_net, # (Optional)
                                     use_raw=False,
                                     # keyword arguments passed to decoupler-py
+                                    x_name='hmdb',
                                     source='hmdb', target='gene_symbol',
                                     weight='mor', min_n=3)
 # pass cell type information
