@@ -168,7 +168,7 @@ meta = li.mt.fun.estimate_metalinks(adata,
                                     source='hmdb', target='gene_symbol',
                                     weight='mor', min_n=3)
 # pass cell type information
-meta.obs['celltype'] = adata.obs['celltype']
+meta.obs['celltype'] = adata.obs['cell_type']
 
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
