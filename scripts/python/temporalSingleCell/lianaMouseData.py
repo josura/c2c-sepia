@@ -171,7 +171,7 @@ meta = li.mt.fun.estimate_metalinks(adata,
 meta.obs['celltype'] = adata.obs['cell_type']
 
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
-    sc.pl.umap(meta.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
+    sc.pl.umap(meta.mod['hmdb'], color=['Endothel', 'AT1', 'celltype'], cmap='coolwarm')
 
 
 # to get the dataframe representing the metabolite/protein data
