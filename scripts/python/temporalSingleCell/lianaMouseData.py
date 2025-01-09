@@ -176,3 +176,21 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
 
 # to get the dataframe representing the metabolite/protein data
 mdata.mod["prot"].to_df()
+
+#Infer Metabolite-Receptor Interactions
+#We will next infer the putative ligand-receptor interactions between these two modalities.
+li.mt.rank_aggregate(adata=meta,
+                     groupby='celltype',
+                     # pass our modified resource
+                     resource=resource.rename(columns={'metabolite':'ligand'}),
+                     # NOTE: Essential arguments when handling multimodal data
+                     mdata_kwargs={
+                     'x_mod': 'metabolite',
+                     'y_mod': 'receptor',
+                     'x_use_raw':False,
+                     'y_use_raw':False,
+                     'x_transform':li.ut.zi_minmax,
+                     'y_transform':li.ut.zi_minmax,
+                    },
+                  verbose=True
+                  )
