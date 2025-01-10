@@ -179,7 +179,7 @@ mdata.mod["prot"].to_df()
 
 #Infer Metabolite-Receptor Interactions
 #We will next infer the putative ligand-receptor interactions between these two modalities.
-li.mt.rank_aggregate(adata=meta,
+li.mt.rank_aggregate(adata=mdata,
                      groupby='celltype',
                      # pass our modified resource
                      resource=resource.rename(columns={'metabolite':'ligand'}),
