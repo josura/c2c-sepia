@@ -171,8 +171,8 @@ meta = li.mt.fun.estimate_metalinks(adata,
 meta.obs['celltype'] = adata.obs['cell_type']
 
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
-    sc.pl.umap(meta.mod['hmdb'], color=['Endothel', 'AT1', 'celltype'], cmap='coolwarm')
-
+    sc.pl.umap(mdata.mod['hmdb'], color=['HMDB0000122', 'HMDB0000123', 'celltype'], cmap='coolwarm')
+# plotting D-glucose and glycine
 
 # to get the dataframe representing the metabolite/protein data
 mdata.mod["prot"].to_df()
