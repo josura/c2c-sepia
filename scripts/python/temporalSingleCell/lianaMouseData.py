@@ -189,13 +189,13 @@ mdata.mod["prot"].to_df()
 
 #Infer Metabolite-Receptor Interactions
 #We will next infer the putative ligand-receptor interactions between these two modalities.
-li.mt.rank_aggregate(adata=mdata,
+li.mt.rank_aggregate(adata=meta,
                      groupby='celltype',
                      # pass our modified resource
-                     resource=resource.rename(columns={'metabolite':'ligand'}),
+                     resource=resource.rename(columns={'hmdb':'ligand'}),
                      # NOTE: Essential arguments when handling multimodal data
                      mdata_kwargs={
-                     'x_mod': 'metabolite',
+                     'x_mod': 'hmdb',
                      'y_mod': 'receptor',
                      'x_use_raw':False,
                      'y_use_raw':False,
@@ -204,3 +204,21 @@ li.mt.rank_aggregate(adata=mdata,
                     },
                   verbose=True
                   )
+
+meta.uns['liana_res'].head()
+
+interactionPlot = li.pl.dotplot(adata = meta,
+              colour='lr_means',
+              size='cellphone_pvals',
+              inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+              source_labels=['CD4+ naïve T', 'NK', 'Treg', 'CD8+ memory T'],
+              target_labels=['CD14 mono', 'mature B', 'CD8+ memory T', 'CD16 mono'],
+              figure_size=(12, 6),
+              # Filter to top 10 acc to magnitude rank
+              top_n=10,
+              orderby='magnitude_rank',
+              orderby_ascending=True,
+              cmap='plasma'
+             )
+
+interactionPlot.show()
