@@ -18,8 +18,6 @@ metabolitesFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabo
 rna_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
 rna_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
 metabolites_pd = pd.read_csv(metabolitesFile, sep=",", index_col=0)
-#drop first row in metabolites_pd
-metabolites_pd = metabolites_pd.iloc[1:]
 
 rna = sc.AnnData(rna_pd)
 rna.obs = rna_metadata_pd
