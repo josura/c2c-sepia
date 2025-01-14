@@ -175,6 +175,9 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta.mod['hmdb'], color=['HMDB0000122', 'HMDB0000123', 'cell_type'], cmap='coolwarm')
 # plotting D-glucose and glycine for the inferred metabolites 
 
+
+mdata.mod["metabolites"].obs["cell_type"] = adata.obs['cell_type']
+
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(mdata.mod['metabolites'], color=['HMDB0000122', 'HMDB0000123', 'cell_type'], cmap='coolwarm')
 # plotting D-glucose and glycine for the original metabolites
