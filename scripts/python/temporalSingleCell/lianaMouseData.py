@@ -177,6 +177,8 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
 
 
 mdata.mod["metabolites"].obs["cell_type"] = adata.obs['cell_type']
+# add UMAP coordinates to the metabolites data
+mdata.mod["metabolites"].obsm["X_umap"] = mdata.mod["rna"].obsm["X_umap"]
 
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(mdata.mod['metabolites'], color=['HMDB0000122', 'HMDB0000123', 'cell_type'], cmap='coolwarm')
