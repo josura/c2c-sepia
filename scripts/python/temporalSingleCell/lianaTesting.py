@@ -139,3 +139,19 @@ li.mt.rank_aggregate(adata=meta,
                     },
                   verbose=True
                   )
+
+meta.uns['liana_res'].head()
+
+li.pl.dotplot(adata = meta,
+              colour='lr_means',
+              size='cellphone_pvals',
+              inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+              source_labels=['CD4+ naïve T', 'NK', 'Treg', 'CD8+ memory T'],
+              target_labels=['CD14 mono', 'mature B', 'CD8+ memory T', 'CD16 mono'],
+              figure_size=(12, 6),
+              # Filter to top 10 acc to magnitude rank
+              top_n=10,
+              orderby='magnitude_rank',
+              orderby_ascending=True,
+              cmap='plasma'
+             )
