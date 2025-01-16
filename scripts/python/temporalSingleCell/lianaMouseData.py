@@ -182,10 +182,12 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(mdata.mod['metabolites'], color=['HMDB0000122', 'HMDB0000123', 'cell_type'], cmap='coolwarm')
 # plotting D-glucose and glycine for the original metabolites
 
+# add scFEA metabolites to meta 
+meta.mod["scFEA"] = mdata.mod["metabolites"]
 
+# filter the resources to only include the metabolites that are in the scFEA data (column names)
+resource_filtered = resource[resource['hmdb'].isin(mdata.mod["metabolites"].to_df().columns)]
 
-# to get the dataframe representing the metabolite/protein data
-mdata.mod["prot"].to_df()
 
 #Infer Metabolite-Receptor Interactions
 #We will next infer the putative ligand-receptor interactions between these two modalities.
@@ -204,6 +206,21 @@ li.mt.rank_aggregate(adata=meta,
                     },
                   verbose=True
                   )
+# li.mt.rank_aggregate(adata=mdata,
+#                      groupby='celltype',
+#                      # pass our modified resource
+#                      resource=resource.rename(columns={'metabolites':'ligand'}),
+#                      # NOTE: Essential arguments when handling multimodal data
+#                      mdata_kwargs={
+#                      'x_mod': 'metabolites',
+#                      'y_mod': 'rna',
+#                      'x_use_raw':False,
+#                      'y_use_raw':False,
+#                      'x_transform':li.ut.zi_minmax,
+#                      'y_transform':li.ut.zi_minmax,
+#                     },
+#                   verbose=True
+#                   )
 
 meta.uns['liana_res'].head()
 # celltypes available for source are 'DC', 'AT1', 'T', 'Neut', 'MacIII', 'Mon', 'MacII', 'Fibro', 'B', 'Endothel', 'Baso', 'NK', 'Smooth', 'Clara', 'Matrix', 'AT2'
