@@ -197,7 +197,7 @@ li.mt.rank_aggregate(adata=meta,
                      resource=resource.rename(columns={'hmdb':'ligand'}),
                      # NOTE: Essential arguments when handling multimodal data
                      mdata_kwargs={
-                     'x_mod': 'hmdb',
+                     'x_mod': 'scFEA',
                      'y_mod': 'receptor',
                      'x_use_raw':False,
                      'y_use_raw':False,
@@ -224,13 +224,13 @@ li.mt.rank_aggregate(adata=meta,
 
 meta.uns['liana_res'].head()
 # celltypes available for source are 'DC', 'AT1', 'T', 'Neut', 'MacIII', 'Mon', 'MacII', 'Fibro', 'B', 'Endothel', 'Baso', 'NK', 'Smooth', 'Clara', 'Matrix', 'AT2'
-# celltypes available for target are 'Baso', 'MacIII', 'B', 'Matrix', 'MacII', 'Smooth', 'AT2', 'AT1', 'Mon', 'Endothel', 'Neut', 'Clara', 'DC', 'Fibro', 'NK', 'T'
+# celltypes available for target are 'Clara', 'NK', 'Smooth', 'AT2', 'Matrix', 'Endothel', 'DC', 'Fibro', 'Baso', 'AT1'
 interactionPlot = li.pl.dotplot(adata = meta,
               colour='lr_means',
               size='cellphone_pvals',
               inverse_size=True, # we inverse sign since we want small p-values to have large sizes
               source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
-              target_labels=['AT2', 'DC', 'NK', 'B'],
+              target_labels=['AT1' ,'AT2', 'DC', 'NK'],
               figure_size=(12, 6),
               # Filter to top 10 acc to magnitude rank
               top_n=10,
