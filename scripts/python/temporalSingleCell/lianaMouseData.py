@@ -206,13 +206,14 @@ li.mt.rank_aggregate(adata=meta,
                   )
 
 meta.uns['liana_res'].head()
-
+# celltypes available for source are 'DC', 'AT1', 'T', 'Neut', 'MacIII', 'Mon', 'MacII', 'Fibro', 'B', 'Endothel', 'Baso', 'NK', 'Smooth', 'Clara', 'Matrix', 'AT2'
+# celltypes available for target are 'Baso', 'MacIII', 'B', 'Matrix', 'MacII', 'Smooth', 'AT2', 'AT1', 'Mon', 'Endothel', 'Neut', 'Clara', 'DC', 'Fibro', 'NK', 'T'
 interactionPlot = li.pl.dotplot(adata = meta,
               colour='lr_means',
               size='cellphone_pvals',
               inverse_size=True, # we inverse sign since we want small p-values to have large sizes
-              source_labels=['CD4+ naïve T', 'NK', 'Treg', 'CD8+ memory T'],
-              target_labels=['CD14 mono', 'mature B', 'CD8+ memory T', 'CD16 mono'],
+              source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
+              target_labels=['AT2', 'DC', 'NK', 'B'],
               figure_size=(12, 6),
               # Filter to top 10 acc to magnitude rank
               top_n=10,
