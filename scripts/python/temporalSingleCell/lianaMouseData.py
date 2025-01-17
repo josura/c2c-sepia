@@ -209,7 +209,7 @@ li.mt.rank_aggregate(adata=meta,
 # li.mt.rank_aggregate(adata=mdata,
 #                      groupby='celltype',
 #                      # pass our modified resource
-#                      resource=resource.rename(columns={'metabolites':'ligand'}),
+#                      resource=resource.rename(columns={'hmdb':'ligand'}),
 #                      # NOTE: Essential arguments when handling multimodal data
 #                      mdata_kwargs={
 #                      'x_mod': 'metabolites',
