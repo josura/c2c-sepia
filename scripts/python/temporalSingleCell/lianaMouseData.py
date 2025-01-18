@@ -15,11 +15,11 @@ rna_1hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h.tsv"
 rna_1h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h-metadata.tsv"
 metabolitesFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
 
-rna_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
+rna_1h_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
 rna_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
 metabolites_pd = pd.read_csv(metabolitesFile, sep=",", index_col=0)
 
-rna = sc.AnnData(rna_pd)
+rna = sc.AnnData(rna_1h_pd)
 rna.obs = rna_metadata_pd
 metabolites = sc.AnnData(metabolites_pd)
 
