@@ -16,12 +16,12 @@ rna_1h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h-meta
 metabolites_1hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
 
 rna_1h_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
-rna_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
-metabolites_pd = pd.read_csv(metabolites_1hFile, sep=",", index_col=0)
+rna_1h_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
+metabolites_1h_pd = pd.read_csv(metabolites_1hFile, sep=",", index_col=0)
 
 rna = sc.AnnData(rna_1h_pd)
-rna.obs = rna_metadata_pd
-metabolites = sc.AnnData(metabolites_pd)
+rna.obs = rna_1h_metadata_pd
+metabolites = sc.AnnData(metabolites_1h_pd)
 
 mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
 # make sure that cell type is accessible
