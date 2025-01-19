@@ -19,15 +19,15 @@ rna_1h_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
 rna_1h_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
 metabolites_1h_pd = pd.read_csv(metabolites_1hFile, sep=",", index_col=0)
 
-rna = sc.AnnData(rna_1h_pd)
-rna.obs = rna_1h_metadata_pd
-metabolites = sc.AnnData(metabolites_1h_pd)
+rna_1h = sc.AnnData(rna_1h_pd)
+rna_1h.obs = rna_1h_metadata_pd
+metabolites_1h = sc.AnnData(metabolites_1h_pd)
 
-mdata = mu.MuData({'rna': rna, 'metabolites': metabolites})
+mdata_1h = mu.MuData({'rna': rna_1h, 'metabolites': metabolites_1h})
 # make sure that cell type is accessible
-mdata.obs['celltype'] = mdata.mod['rna'].obs['cell_type'].astype('category')
+mdata_1h.obs['celltype'] = mdata_1h.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
-mdata
+mdata_1h
 
 # add UMAP coordinates to the RNA data
 sc.pp.neighbors(rna, n_neighbors=10)
@@ -76,12 +76,12 @@ resource_translated = li.rs.translate_column(resource=resource_translated,
 
 
 # ligand receptors analysis
-li.mt.rank_aggregate(adata=mdata,
+li.mt.rank_aggregate(adata=mdata_1h,
                      groupby='celltype',
                      # pass our modified resource
                      resource=resource_translated,
                      # NOTE: Essential arguments when handling multimodal data
-                     mdata_kwargs={
+                     mdata_1h_kwargs={
                      # Ligand-Receptor pairs are directed so we need to correctly pass
                      # `RNA` with ligands as `x_mod` and receptors as `y_mod`
                      'x_mod': 'rna',
@@ -97,7 +97,7 @@ li.mt.rank_aggregate(adata=mdata,
                   verbose=True
                   )
 
-mdata.uns['liana_res'].head()
+mdata_1h.uns['liana_res'].head()
 
 # metabolite receptors analysis TODO
 
@@ -124,15 +124,15 @@ list(set(metalinks_translated["hmdb"]) & set(metabolites_filtered_df.columns))
 
 metabolites_filtered = sc.AnnData(metabolites_filtered_df)
 
-mdata = mu.MuData({'rna': rna, 'metabolites': metabolites_filtered})
+mdata_1h = mu.MuData({'rna': rna, 'metabolites': metabolites_filtered})
 # make sure that cell type is accessible
-mdata.obs['celltype'] = mdata.mod['rna'].obs['cell_type'].astype('category')
+mdata_1h.obs['celltype'] = mdata_1h.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
-mdata
+mdata_1h
 
 # Create the object to use for the matbolite-liana analysis
 ## Focus on Transcriptomics Data
-adata = mdata.mod['rna']
+adata = mdata_1h.mod['rna']
 
 
 ## preparing the metabolite-receptor pairs
@@ -174,19 +174,19 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
 # plotting D-glucose and glycine for the inferred metabolites 
 
 
-mdata.mod["metabolites"].obs["cell_type"] = adata.obs['cell_type']
+mdata_1h.mod["metabolites"].obs["cell_type"] = adata.obs['cell_type']
 # add UMAP coordinates to the metabolites data
-mdata.mod["metabolites"].obsm["X_umap"] = mdata.mod["rna"].obsm["X_umap"]
+mdata_1h.mod["metabolites"].obsm["X_umap"] = mdata_1h.mod["rna"].obsm["X_umap"]
 
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
-    sc.pl.umap(mdata.mod['metabolites'], color=['HMDB0000122', 'HMDB0000123', 'cell_type'], cmap='coolwarm')
+    sc.pl.umap(mdata_1h.mod['metabolites'], color=['HMDB0000122', 'HMDB0000123', 'cell_type'], cmap='coolwarm')
 # plotting D-glucose and glycine for the original metabolites
 
 # add scFEA metabolites to meta 
-meta.mod["scFEA"] = mdata.mod["metabolites"]
+meta.mod["scFEA"] = mdata_1h.mod["metabolites"]
 
 # filter the resources to only include the metabolites that are in the scFEA data (column names)
-resource_filtered = resource[resource['hmdb'].isin(mdata.mod["metabolites"].to_df().columns)]
+resource_filtered = resource[resource['hmdb'].isin(mdata_1h.mod["metabolites"].to_df().columns)]
 
 
 #Infer Metabolite-Receptor Interactions
@@ -196,7 +196,7 @@ li.mt.rank_aggregate(adata=meta,
                      # pass our modified resource
                      resource=resource.rename(columns={'hmdb':'ligand'}),
                      # NOTE: Essential arguments when handling multimodal data
-                     mdata_kwargs={
+                     mdata_1h_kwargs={
                      'x_mod': 'scFEA',
                      'y_mod': 'receptor',
                      'x_use_raw':False,
@@ -206,12 +206,12 @@ li.mt.rank_aggregate(adata=meta,
                     },
                   verbose=True
                   )
-# li.mt.rank_aggregate(adata=mdata,
+# li.mt.rank_aggregate(adata=mdata_1h,
 #                      groupby='celltype',
 #                      # pass our modified resource
 #                      resource=resource.rename(columns={'hmdb':'ligand'}),
 #                      # NOTE: Essential arguments when handling multimodal data
-#                      mdata_kwargs={
+#                      mdata_1h_kwargs={
 #                      'x_mod': 'metabolites',
 #                      'y_mod': 'rna',
 #                      'x_use_raw':False,
