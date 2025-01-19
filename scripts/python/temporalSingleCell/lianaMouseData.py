@@ -30,13 +30,13 @@ mdata_1h.obs['celltype'] = mdata_1h.mod['rna'].obs['cell_type'].astype('category
 mdata_1h
 
 # add UMAP coordinates to the RNA data
-sc.pp.neighbors(rna, n_neighbors=10)
-sc.tl.umap(rna)
+sc.pp.neighbors(rna_1h, n_neighbors=10)
+sc.tl.umap(rna_1h)
 
 # show the data
-X = list(map(lambda x: x[0], rna.obsm["X_umap"]))
-Y = list(map(lambda x: x[1], rna.obsm["X_umap"]))
-celltypes = list(rna.obs["cell_type"].values)
+X = list(map(lambda x: x[0], rna_1h.obsm["X_umap"]))
+Y = list(map(lambda x: x[1], rna_1h.obsm["X_umap"]))
+celltypes = list(rna_1h.obs["cell_type"].values)
 
 fig = px.scatter(x=X, y=Y, color=celltypes)
 fig.show()
@@ -124,7 +124,7 @@ list(set(metalinks_translated["hmdb"]) & set(metabolites_filtered_df.columns))
 
 metabolites_filtered = sc.AnnData(metabolites_filtered_df)
 
-mdata_1h = mu.MuData({'rna': rna, 'metabolites': metabolites_filtered})
+mdata_1h = mu.MuData({'rna': rna_1h, 'metabolites': metabolites_filtered})
 # make sure that cell type is accessible
 mdata_1h.obs['celltype'] = mdata_1h.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
