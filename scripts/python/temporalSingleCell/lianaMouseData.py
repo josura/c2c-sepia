@@ -101,10 +101,10 @@ mdata_1h.uns['liana_res'].head()
 
 # metabolite receptors analysis TODO
 
-## control the intersection between pd.unique(metalinks_translated["metabolite"]) and metabolites.to_df().columns
-list(set(metalinks_translated["metabolite"]) & set(metabolites.to_df().columns))
+## control the intersection between pd.unique(metalinks_translated["metabolite"]) and metabolites_1h.to_df().columns
+list(set(metalinks_translated["metabolite"]) & set(metabolites_1h.to_df().columns))
 ## the list is very small, ['Ornithine', 'Glycine', 'Glutathione', 'Deoxyadenosine', 'Hypoxanthine', 'Cholesterol', 'Choline']
-## we need to use other IDs to match the metabolites
+## we need to use other IDs to match the metabolites_1h
 
 name_map_70 = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_70_mouse_fixed.csv", sep=",")  #using the fixed name map for changing the glucose
 name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_metalinks.csv", sep=",")
@@ -113,18 +113,18 @@ name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/py
 name_map_metalinks = name_map_metalinks[name_map_metalinks['HMDB'].notna()]
 name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
 
-# filter the column that are not in the name_map_70 for the metabolites data (match column in the name_map_70)
+# filter the column that are not in the name_map_70 for the metabolites_1h data (match column in the name_map_70)
 ## last column is not in the name_map_70( controlled by observing the data)
-metabolites_filtered_df = metabolites.to_df()[metabolites.to_df().columns[:-1]]
+metabolites_1h_filtered_df = metabolites_1h.to_df()[metabolites_1h.to_df().columns[:-1]]
 ## changing the column names to the HMDB ids
-metabolites_filtered_df.columns = name_map_70['HMDB'].values
+metabolites_1h_filtered_df.columns = name_map_70['HMDB'].values
 
 # control the intersection between pd.unique(metalinks_translated["HMDB"]) and metabolites_filtered_df.columns
-list(set(metalinks_translated["hmdb"]) & set(metabolites_filtered_df.columns))
+list(set(metalinks_translated["hmdb"]) & set(metabolites_1h_filtered_df.columns))
 
-metabolites_filtered = sc.AnnData(metabolites_filtered_df)
+metabolites_1h_filtered = sc.AnnData(metabolites_1h_filtered_df)
 
-mdata_1h = mu.MuData({'rna': rna_1h, 'metabolites': metabolites_filtered})
+mdata_1h = mu.MuData({'rna': rna_1h, 'metabolites': metabolites_1h_filtered})
 # make sure that cell type is accessible
 mdata_1h.obs['celltype'] = mdata_1h.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
@@ -196,7 +196,7 @@ li.mt.rank_aggregate(adata=meta,
                      # pass our modified resource
                      resource=resource.rename(columns={'hmdb':'ligand'}),
                      # NOTE: Essential arguments when handling multimodal data
-                     mdata_1h_kwargs={
+                     mdata_kwargs={
                      'x_mod': 'scFEA',
                      'y_mod': 'receptor',
                      'x_use_raw':False,
@@ -211,7 +211,7 @@ li.mt.rank_aggregate(adata=meta,
 #                      # pass our modified resource
 #                      resource=resource.rename(columns={'hmdb':'ligand'}),
 #                      # NOTE: Essential arguments when handling multimodal data
-#                      mdata_1h_kwargs={
+#                      mdata_kwargs={
 #                      'x_mod': 'metabolites',
 #                      'y_mod': 'rna',
 #                      'x_use_raw':False,
