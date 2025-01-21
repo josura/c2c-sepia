@@ -26,6 +26,7 @@ metabolites_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_met
 metaoblites_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_metabolites_module168_cell1722_20241014-123944.csv"
 metabolites_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_metabolites_module168_cell1240_20241014-171445.csv"
 
+#1h
 rna_1h_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
 rna_1h_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
 metabolites_1h_pd = pd.read_csv(metabolites_1hFile, sep=",", index_col=0)
@@ -259,3 +260,6 @@ results_1h = meta.uns['liana_res']
 results_1h = results_1h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_1h['contactTimes'] = 1
 results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
+
+# 6h
+rna_6h_pd = pd.read_csv(rna_6hFile, sep="\t", index_col=0)
