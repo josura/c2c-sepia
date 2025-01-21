@@ -263,3 +263,6 @@ results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions
 
 # 6h
 rna_6h_pd = pd.read_csv(rna_6hFile, sep="\t", index_col=0)
+rna_6h_metadata_pd = pd.read_csv(rna_6h_metadataFile, sep="\t", index_col=0)
+metabolites_6h_pd = pd.read_csv(metabolites_6hFile, sep=",", index_col=0)
+
