@@ -253,8 +253,9 @@ interactionPlot = li.pl.dotplot(adata = meta,
 interactionPlot.show()
 
 # save the interactions with the following format
-# startType	startNodeName	endType	endNodeName	weight
+# startType	startNodeName	endType	endNodeName	weight contactTimes
 results_1h = meta.uns['liana_res']
 ## change the name of columns source target ligand_complex receptor_complex and scaled_weight
 results_1h = results_1h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
+results_1h['contactTimes'] = 1
 results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
