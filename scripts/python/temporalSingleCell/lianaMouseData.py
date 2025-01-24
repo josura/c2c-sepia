@@ -297,12 +297,10 @@ sc.tl.umap(rna_6h)
 li.mt.rank_aggregate(adata=mdata_6h,
                      groupby='celltype',
                      # pass our modified resource
-                     resource=resource_translated,
+                     resource=resource.rename(columns={'hmdb':'ligand'}),
                      # NOTE: Essential arguments when handling multimodal data
-                     mdata_6h_kwargs={
-                     # Ligand-Receptor pairs are directed so we need to correctly pass
-                     # `RNA` with ligands as `x_mod` and receptors as `y_mod`
-                     'x_mod': 'rna',
+                     mdata_kwargs={
+                     'x_mod': 'metabolites',
                      'y_mod': 'rna',
                      # We use .X from the x_mod
                      'x_use_raw':False,
@@ -312,3 +310,5 @@ li.mt.rank_aggregate(adata=mdata_6h,
                      'x_transform':li.ut.zi_minmax,
                      'y_transform':li.ut.zi_minmax,
                     },
+                    verbose=True
+                    )
