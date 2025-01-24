@@ -266,9 +266,14 @@ rna_6h_pd = pd.read_csv(rna_6hFile, sep="\t", index_col=0)
 rna_6h_metadata_pd = pd.read_csv(rna_6h_metadataFile, sep="\t", index_col=0)
 metabolites_6h_pd = pd.read_csv(metabolites_6hFile, sep=",", index_col=0)
 
+## last column is not in the name_map_70( controlled by observing the data)
+metabolites_6h_filtered_df = metabolites_6h_pd[metabolites_6h_pd.columns[:-1]]
+## changing the column names to the HMDB ids
+metabolites_6h_filtered_df.columns = name_map_70['HMDB'].values
+
 rna_6h = sc.AnnData(rna_6h_pd)
 rna_6h.obs = rna_6h_metadata_pd
-metabolites_6h = sc.AnnData(metabolites_6h_pd)
+metabolites_6h = sc.AnnData(metabolites_6h_filtered_df)
 
 mdata_6h = mu.MuData({'rna': rna_6h, 'metabolites': metabolites_6h})
 # make sure that cell type is accessible
