@@ -275,12 +275,6 @@ rna_6h = sc.AnnData(rna_6h_pd)
 rna_6h.obs = rna_6h_metadata_pd
 metabolites_6h = sc.AnnData(metabolites_6h_filtered_df)
 
-mdata_6h = mu.MuData({'rna': rna_6h, 'metabolites': metabolites_6h})
-# make sure that cell type is accessible
-mdata_6h.obs['celltype'] = mdata_6h.mod['rna'].obs['cell_type'].astype('category')
-# inspect the object
-mdata_6h
-
 # add UMAP coordinates to the RNA data
 sc.pp.neighbors(rna_6h, n_neighbors=10)
 sc.tl.umap(rna_6h)
@@ -297,6 +291,13 @@ sc.tl.umap(rna_6h)
 # No need to obtain MetalinksDB Prior Knowledge, since it is already obtained in the previous step
 
 # No need to translate the resource, since it is already translated in the previous step
+
+mdata_6h = mu.MuData({'rna': rna_6h, 'metabolites': metabolites_6h})
+# make sure that cell type is accessible
+mdata_6h.obs['celltype'] = mdata_6h.mod['rna'].obs['cell_type'].astype('category')
+# inspect the object
+mdata_6h
+
 
 # ligand receptors analysis
 li.mt.rank_aggregate(adata=mdata_6h,
