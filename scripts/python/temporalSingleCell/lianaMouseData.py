@@ -318,3 +318,30 @@ li.mt.rank_aggregate(adata=mdata_6h,
                     },
                     verbose=True
                     )
+
+mdata_6h.uns['liana_res'].head()
+
+interactionPlot = li.pl.dotplot(adata = meta,
+              colour='lr_means',
+              size='cellphone_pvals',
+              inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+              source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
+              target_labels=['AT1' ,'AT2', 'DC', 'NK'],
+              figure_size=(12, 6),
+              # Filter to top 10 acc to magnitude rank
+              top_n=10,
+              orderby='magnitude_rank',
+              orderby_ascending=True,
+              cmap='plasma'
+             )
+
+interactionPlot.show()
+
+# save the interactions with the following format
+# startType	startNodeName	endType	endNodeName	weight contactTimes
+results_6h = mdata_6h.uns['liana_res']
+## change the name of columns source target ligand_complex receptor_complex and scaled_weight
+results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
+results_6h['contactTimes'] = 6
+results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/6h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
+
