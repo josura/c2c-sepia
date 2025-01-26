@@ -349,3 +349,12 @@ results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/6h/interactions
 rna_7h_pd = pd.read_csv(rna_7hFile, sep="\t", index_col=0)
 rna_7h_metadata_pd = pd.read_csv(rna_7h_metadataFile, sep="\t", index_col=0)
 metabolites_7h_pd = pd.read_csv(metaoblites_7hFile, sep=",", index_col=0)
+
+## last column is not in the name_map_70( controlled by observing the data)
+metabolites_7h_filtered_df = metabolites_7h_pd[metabolites_7h_pd.columns[:-1]]
+## changing the column names to the HMDB ids
+metabolites_7h_filtered_df.columns = name_map_70['HMDB'].values
+
+rna_7h = sc.AnnData(rna_7h_pd)
+rna_7h.obs = rna_7h_metadata_pd
+metabolites_7h = sc.AnnData(metabolites_7h_filtered_df)
