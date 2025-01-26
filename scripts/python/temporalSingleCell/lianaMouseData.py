@@ -345,3 +345,4 @@ results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType'
 results_6h['contactTimes'] = 6
 results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/6h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
 
+# 7h
