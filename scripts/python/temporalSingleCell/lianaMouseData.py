@@ -346,3 +346,6 @@ results_6h['contactTimes'] = 6
 results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/6h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
 
 # 7h
+rna_7h_pd = pd.read_csv(rna_7hFile, sep="\t", index_col=0)
+rna_7h_metadata_pd = pd.read_csv(rna_7h_metadataFile, sep="\t", index_col=0)
+metabolites_7h_pd = pd.read_csv(metaoblites_7hFile, sep=",", index_col=0)
