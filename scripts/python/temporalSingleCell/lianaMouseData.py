@@ -358,3 +358,26 @@ metabolites_7h_filtered_df.columns = name_map_70['HMDB'].values
 rna_7h = sc.AnnData(rna_7h_pd)
 rna_7h.obs = rna_7h_metadata_pd
 metabolites_7h = sc.AnnData(metabolites_7h_filtered_df)
+
+# add UMAP coordinates to the RNA data
+sc.pp.neighbors(rna_7h, n_neighbors=10)
+sc.tl.umap(rna_7h)
+
+# show the data
+# X = list(map(lambda x: x[0], rna_7h.obsm["X_umap"]))
+# Y = list(map(lambda x: x[1], rna_7h.obsm["X_umap"]))
+# celltypes = list(rna_7h.obs["cell_type"].values)
+# fig = px.scatter(x=X, y=Y, color=celltypes)
+# fig.show()
+
+# No need to obtain the ligand-receptor resource of interest, since it is already obtained in the previous step
+
+# No need to obtain MetalinksDB Prior Knowledge, since it is already obtained in the previous step
+
+# No need to translate the resource, since it is already translated in the previous step
+
+mdata_7h = mu.MuData({'rna': rna_7h, 'metabolites': metabolites_7h})
+# make sure that cell type is accessible
+mdata_7h.obs['celltype'] = mdata_7h.mod['rna'].obs['cell_type'].astype('category')
+# inspect the object
+mdata_7h
