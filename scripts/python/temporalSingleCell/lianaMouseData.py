@@ -381,3 +381,24 @@ mdata_7h = mu.MuData({'rna': rna_7h, 'metabolites': metabolites_7h})
 mdata_7h.obs['celltype'] = mdata_7h.mod['rna'].obs['cell_type'].astype('category')
 # inspect the object
 mdata_7h
+
+
+# ligand receptors analysis
+li.mt.rank_aggregate(adata=mdata_7h,
+                     groupby='celltype',
+                     # pass our modified resource
+                     resource=resource.rename(columns={'hmdb':'ligand'}),
+                     # NOTE: Essential arguments when handling multimodal data
+                     mdata_kwargs={
+                     'x_mod': 'metabolites',
+                     'y_mod': 'rna',
+                     # We use .X from the x_mod
+                     'x_use_raw':False,
+                     # We use .X from the y_mod
+                     'y_use_raw':False,
+                     # NOTE: we need to ensure that the modalities are correctly transformed
+                     'x_transform':li.ut.zi_minmax,
+                     'y_transform':li.ut.zi_minmax,
+                    },
+                    verbose=True
+                    )
