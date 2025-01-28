@@ -402,3 +402,29 @@ li.mt.rank_aggregate(adata=mdata_7h,
                     },
                     verbose=True
                     )
+
+mdata_7h.uns['liana_res'].head()
+
+interactionPlot = li.pl.dotplot(adata = meta,
+                colour='lr_means',
+                size='cellphone_pvals',
+                inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+                source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
+                target_labels=['AT1' ,'AT2', 'DC', 'NK'],
+                figure_size=(12, 6),
+                # Filter to top 10 acc to magnitude rank
+                top_n=10,
+                orderby='magnitude_rank',
+                orderby_ascending=True,
+                cmap='plasma'
+                 )
+
+interactionPlot.show()
+
+# save the interactions with the following format
+# startType	startNodeName	endType	endNodeName	weight contactTimes
+results_7h = mdata_7h.uns['liana_res']
+## change the name of columns the needed names
+results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
+results_7h['contactTimes'] = 7
+results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/7h/interactions/results_metabolite_7h.tsv", sep="\t", index=False)
