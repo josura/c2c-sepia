@@ -428,3 +428,8 @@ results_7h = mdata_7h.uns['liana_res']
 results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_7h['contactTimes'] = 7
 results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/7h/interactions/results_metabolite_7h.tsv", sep="\t", index=False)
+
+# 10h
+rna_10h_pd = pd.read_csv(rna_10hFile, sep="\t", index_col=0)
+rna_10h_metadata_pd = pd.read_csv(rna_10h_metadataFile, sep="\t", index_col=0)
+metabolites_10h_pd = pd.read_csv(metabolites_10hFile, sep=",", index_col=0)
