@@ -433,3 +433,13 @@ results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/7h/interactions
 rna_10h_pd = pd.read_csv(rna_10hFile, sep="\t", index_col=0)
 rna_10h_metadata_pd = pd.read_csv(rna_10h_metadataFile, sep="\t", index_col=0)
 metabolites_10h_pd = pd.read_csv(metabolites_10hFile, sep=",", index_col=0)
+
+## last column is not in the name_map_70( controlled by observing the data)
+metabolites_10h_filtered_df = metabolites_10h_pd[metabolites_10h_pd.columns[:-1]]
+## changing the column names to the HMDB ids
+metabolites_10h_filtered_df.columns = name_map_70['HMDB'].values
+
+rna_10h = sc.AnnData(rna_10h_pd)
+rna_10h.obs = rna_10h_metadata_pd
+metabolites_10h = sc.AnnData(metabolites_10h_filtered_df)
+
