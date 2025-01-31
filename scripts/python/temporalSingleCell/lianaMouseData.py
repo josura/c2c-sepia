@@ -454,3 +454,16 @@ sc.tl.umap(rna_10h)
 # fig = px.scatter(x=X, y=Y, color=celltypes)
 
 
+# No need to obtain the ligand-receptor resource of interest, since it is already obtained in the previous step
+
+# No need to obtain MetalinksDB Prior Knowledge, since it is already obtained in the previous step
+
+# No need to translate the resource, since it is already translated in the previous step
+
+mdata_10h = mu.MuData({'rna': rna_10h, 'metabolites': metabolites_10h})
+
+# make sure that cell type is accessible
+mdata_10h.obs['celltype'] = mdata_10h.mod['rna'].obs['cell_type'].astype('category')
+
+# inspect the object
+mdata_10h
