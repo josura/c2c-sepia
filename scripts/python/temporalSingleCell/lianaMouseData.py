@@ -443,3 +443,14 @@ rna_10h = sc.AnnData(rna_10h_pd)
 rna_10h.obs = rna_10h_metadata_pd
 metabolites_10h = sc.AnnData(metabolites_10h_filtered_df)
 
+# add UMAP coordinates to the RNA data
+sc.pp.neighbors(rna_10h, n_neighbors=10)
+sc.tl.umap(rna_10h)
+
+# show the data
+# X = list(map(lambda x: x[0], rna_10h.obsm["X_umap"]))
+# Y = list(map(lambda x: x[1], rna_10h.obsm["X_umap"]))
+# celltypes = list(rna_10h.obs["cell_type"].values)
+# fig = px.scatter(x=X, y=Y, color=celltypes)
+
+
