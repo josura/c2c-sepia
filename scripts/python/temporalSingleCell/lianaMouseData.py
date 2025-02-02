@@ -489,3 +489,19 @@ li.mt.rank_aggregate(adata=mdata_10h,
                     )
 
 mdata_10h.uns['liana_res'].head()
+
+interactionPlot = li.pl.dotplot(adata = meta,
+                colour='lr_means',
+                size='cellphone_pvals',
+                inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+                source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
+                target_labels=['AT1' ,'AT2', 'DC', 'NK'],
+                figure_size=(12, 6),
+                # Filter to top 10 acc to magnitude rank
+                top_n=10,
+                orderby='magnitude_rank',
+                orderby_ascending=True,
+                cmap='plasma'
+                 )
+
+interactionPlot.show()
