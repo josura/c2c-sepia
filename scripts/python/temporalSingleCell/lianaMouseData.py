@@ -506,4 +506,10 @@ interactionPlot = li.pl.dotplot(adata = meta,
 
 interactionPlot.show()
 
+results_10h = mdata_10h.uns['liana_res']
+## change the name of columns the needed names
+results_10h = results_10h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
+results_10h['contactTimes'] = 10
+results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/10h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
+
 # intra-cellular communication creation
