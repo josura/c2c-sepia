@@ -505,3 +505,5 @@ interactionPlot = li.pl.dotplot(adata = meta,
                  )
 
 interactionPlot.show()
+
+# intra-cellular communication creation
