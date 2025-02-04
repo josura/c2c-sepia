@@ -111,8 +111,6 @@ li.mt.rank_aggregate(adata=mdata_1h,
 
 mdata_1h.uns['liana_res'].head()
 
-# metabolite receptors analysis TODO
-
 ## control the intersection between pd.unique(metalinks_translated["metabolite"]) and metabolites_1h.to_df().columns
 list(set(metalinks_translated["metabolite"]) & set(metabolites_1h.to_df().columns))
 ## the list is very small, ['Ornithine', 'Glycine', 'Glutathione', 'Deoxyadenosine', 'Hypoxanthine', 'Cholesterol', 'Choline']
@@ -343,7 +341,7 @@ results_6h = mdata_6h.uns['liana_res']
 ## change the name of columns source target ligand_complex receptor_complex and scaled_weight
 results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_6h['contactTimes'] = 6
-results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/6h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
+results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
 
 # 7h
 rna_7h_pd = pd.read_csv(rna_7hFile, sep="\t", index_col=0)
@@ -427,7 +425,7 @@ results_7h = mdata_7h.uns['liana_res']
 ## change the name of columns the needed names
 results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_7h['contactTimes'] = 7
-results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/7h/interactions/results_metabolite_7h.tsv", sep="\t", index=False)
+results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_7h.tsv", sep="\t", index=False)
 
 # 10h
 rna_10h_pd = pd.read_csv(rna_10hFile, sep="\t", index_col=0)
@@ -510,6 +508,6 @@ results_10h = mdata_10h.uns['liana_res']
 ## change the name of columns the needed names
 results_10h = results_10h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_10h['contactTimes'] = 10
-results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/10h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
+results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # intra-cellular communication creation
