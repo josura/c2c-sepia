@@ -403,7 +403,7 @@ li.mt.rank_aggregate(adata=mdata_7h,
 
 mdata_7h.uns['liana_res'].head()
 
-interactionPlot = li.pl.dotplot(adata = meta,
+interactionPlot = li.pl.dotplot(adata = mdata_7h,
                 colour='lr_means',
                 size='cellphone_pvals',
                 inverse_size=True, # we inverse sign since we want small p-values to have large sizes
