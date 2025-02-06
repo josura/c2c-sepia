@@ -531,4 +531,7 @@ results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interaction
 ### this file contains the genes that influence the metabolite module
 moduleMetadataFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_complete_mouse_m168.csv"
 ### this file contains the module info, that is the two metabolites that characterise the interaction(module)
-moduleInfo = "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
+moduleInfoFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
+
+moduleMetadata = pd.read_csv(moduleMetadataFile, sep=",", index_col=0)
+moduleInfo = pd.read_csv(moduleInfoFile, sep=",", index_col=0)
