@@ -319,12 +319,14 @@ li.mt.rank_aggregate(adata=mdata_6h,
 
 mdata_6h.uns['liana_res'].head()
 
+#source available for 6h are ['B', 'Neut', 'MacIII', 'Fibro', 'AT1', 'Endothel', 'T', 'MacII', 'Mon', 'AT2', 'Smooth', 'Matrix']
+#target available for 6h are ['Endothel', 'Matrix', 'AT2', 'Smooth', 'T']
 interactionPlot = li.pl.dotplot(adata = mdata_6h,
               colour='lr_means',
               size='cellphone_pvals',
               inverse_size=True, # we inverse sign since we want small p-values to have large sizes
-              source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
-              target_labels=['AT1' ,'AT2', 'DC', 'NK'],
+              source_labels=['MacII', 'Neut', 'Fibro', 'MacIII'],
+              target_labels=[ 'Endothel','Matrix', 'AT2', 'Smooth', 'T'],
               figure_size=(12, 6),
               # Filter to top 10 acc to magnitude rank
               top_n=10,
@@ -347,6 +349,17 @@ results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions
 rna_7h_pd = pd.read_csv(rna_7hFile, sep="\t", index_col=0)
 rna_7h_metadata_pd = pd.read_csv(rna_7h_metadataFile, sep="\t", index_col=0)
 metabolites_7h_pd = pd.read_csv(metaoblites_7hFile, sep=",", index_col=0)
+
+## controlling if there are nan values or inf values
+metabolites_7h_pd.isnull().values.any()
+rna_7h_pd.isnull().values.any()
+metabolites_7h_pd.isin([np.inf, -np.inf]).values.any()
+rna_7h_pd.isin([np.inf, -np.inf]).values.any()
+
+
+## replacing nan values with 0
+metabolites_7h_pd = metabolites_7h_pd.fillna(0)
+rna_7h_pd = rna_7h_pd.fillna(0)
 
 ## last column is not in the name_map_70( controlled by observing the data)
 metabolites_7h_filtered_df = metabolites_7h_pd[metabolites_7h_pd.columns[:-1]]
@@ -488,7 +501,7 @@ li.mt.rank_aggregate(adata=mdata_10h,
 
 mdata_10h.uns['liana_res'].head()
 
-interactionPlot = li.pl.dotplot(adata = meta,
+interactionPlot = li.pl.dotplot(adata = mdata_10h,
                 colour='lr_means',
                 size='cellphone_pvals',
                 inverse_size=True, # we inverse sign since we want small p-values to have large sizes
