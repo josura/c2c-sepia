@@ -535,3 +535,11 @@ moduleInfoFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.m
 
 moduleMetadata = pd.read_csv(moduleMetadataFile, sep=",", index_col=0)
 moduleInfo = pd.read_csv(moduleInfoFile, sep=",", index_col=0)
+
+# first column in metadata is the name of the module
+# all the other columns are the genes that are in the module, some values are NaN
+# we build a dictionary with the module name as key and the genes as values
+moduleMetadataDict = {}
+for rowNum in range(moduleMetadata.shape[0]):
+    moduleMetadataDict[moduleMetadata.index[rowNum]] = list(moduleMetadata.iloc[rowNum, 1:].dropna())
+
