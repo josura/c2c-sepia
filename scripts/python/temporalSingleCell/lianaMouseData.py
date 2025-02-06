@@ -543,3 +543,11 @@ moduleMetadataDict = {}
 for rowNum in range(moduleMetadata.shape[0]):
     moduleMetadataDict[moduleMetadata.index[rowNum]] = list(moduleMetadata.iloc[rowNum, 1:].dropna())
 
+# add KEGG name from name_map_70 to the moduleInfo for C_in_name and C_out_name
+moduleInfoMerged = moduleInfo.merge(name_map_70[["KEGG","HMDB"]], left_on="C_in_name", right_on="KEGG", how="left")
+moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_in_HMDB"})
+moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
+moduleInfoMerged = moduleInfoMerged.merge(name_map_70[["KEGG","HMDB"]], left_on="C_out_name", right_on="KEGG", how="left")
+moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_out_HMDB"})
+moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
+moduleInfoMerged.index = moduleInfo.index
