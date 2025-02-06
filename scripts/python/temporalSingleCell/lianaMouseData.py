@@ -502,12 +502,14 @@ li.mt.rank_aggregate(adata=mdata_10h,
 
 mdata_10h.uns['liana_res'].head()
 
+# source available for 10h are ['Baso', 'MacI', 'Smooth', 'B', 'Matrix', 'AT1', 'T', 'ILC', 'Neut', 'NK', 'Fibro', 'Clara', 'Endothel', 'Mon', 'AT2', 'MacIII', 'DC', 'MacII']
+# target available for 10h are ['Fibro', 'AT1', 'Clara', 'Baso', 'Matrix', 'Smooth', 'AT2', 'ILC', 'MacI', 'NK', 'T']
 interactionPlot = li.pl.dotplot(adata = mdata_10h,
                 colour='lr_means',
                 size='cellphone_pvals',
                 inverse_size=True, # we inverse sign since we want small p-values to have large sizes
                 source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
-                target_labels=['AT1' ,'AT2', 'DC', 'NK'],
+                target_labels=['AT1' ,'AT2', 'T', 'NK'],
                 figure_size=(12, 6),
                 # Filter to top 10 acc to magnitude rank
                 top_n=10,
