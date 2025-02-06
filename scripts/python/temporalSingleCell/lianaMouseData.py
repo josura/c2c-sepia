@@ -414,6 +414,7 @@ li.mt.rank_aggregate(adata=mdata_7h,
                     verbose=True
                     )
 
+#TODO problems with 7h data
 mdata_7h.uns['liana_res'].head()
 
 interactionPlot = li.pl.dotplot(adata = mdata_7h,
