@@ -551,3 +551,10 @@ moduleInfoMerged = moduleInfoMerged.merge(name_map_70[["KEGG","HMDB"]], left_on=
 moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_out_HMDB"})
 moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
 moduleInfoMerged.index = moduleInfo.index
+
+# create the layer of metabolites for every cell
+# every cell has the same metabolites, and these metabolites
+
+# create the intra-cellular communication file
+## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
+# so maybe it's better to consider only one of the metabolites
