@@ -555,8 +555,9 @@ moduleInfoMerged.index = moduleInfo.index
 # create the layer of metabolites for every cell
 # every cell has the same metabolites, and these metabolites
 
-# the graph should have the following structure
+# the graph for every single cellType should have the following structure
 # Start	End	Type	Subtype	Weight
+celltypes = mdata_1h.obs["celltype"].unique()
 
 
 # create the intra-cellular communication file
