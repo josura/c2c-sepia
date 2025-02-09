@@ -555,6 +555,10 @@ moduleInfoMerged.index = moduleInfo.index
 # create the layer of metabolites for every cell
 # every cell has the same metabolites, and these metabolites
 
+# the graph should have the following structure
+# Start	End	Type	Subtype	Weight
+
+
 # create the intra-cellular communication file
 ## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
 # so maybe it's better to consider only one of the metabolites
