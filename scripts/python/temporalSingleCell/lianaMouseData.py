@@ -557,7 +557,10 @@ moduleInfoMerged.index = moduleInfo.index
 
 # the graph for every single cellType should have the following structure
 # Start	End	Type	Subtype	Weight
+# so changing the names of the columns
+# C_in_HMDB	C_out_HMDB M_id M_name 1 
 celltypes = mdata_1h.obs["celltype"].unique()
+for celltype in celltypes:
 
 
 # create the intra-cellular communication file
