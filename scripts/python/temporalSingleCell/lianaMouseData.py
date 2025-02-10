@@ -534,7 +534,7 @@ moduleMetadataFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_co
 moduleInfoFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
 
 moduleMetadata = pd.read_csv(moduleMetadataFile, sep=",", index_col=0)
-moduleInfo = pd.read_csv(moduleInfoFile, sep=",", index_col=0)
+moduleInfo = pd.read_csv(moduleInfoFile, sep=",")
 
 # first column in metadata is the name of the module
 # all the other columns are the genes that are in the module, some values are NaN
@@ -550,7 +550,6 @@ moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
 moduleInfoMerged = moduleInfoMerged.merge(name_map_70[["KEGG","HMDB"]], left_on="C_out_name", right_on="KEGG", how="left")
 moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_out_HMDB"})
 moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
-moduleInfoMerged.index = moduleInfo.index
 
 # create the layer of metabolites for every cell
 # every cell has the same metabolites, and these metabolites
@@ -561,6 +560,8 @@ moduleInfoMerged.index = moduleInfo.index
 # C_in_HMDB	C_out_HMDB M_id M_name (weight column is not present in the moduleInfoMerged, so the value is 1)
 moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C_out_HMDB":"End", "M_id":"Type", "M_name":"Subtype"})
 moduleInfoTransformed["Weight"] = 1
+
+## select only the relevant rows
 
 # save the moduleInfoTransformed for every cellType
 celltypes = mdata_1h.obs["celltype"].unique()
