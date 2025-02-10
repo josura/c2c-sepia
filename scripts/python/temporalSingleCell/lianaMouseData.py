@@ -526,7 +526,7 @@ results_10h = results_10h.rename(columns={'source':'startType', 'target':'endTyp
 results_10h['contactTimes'] = 10
 results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
 
-# intra-cellular communication creation
+# metabolite layer creation and intra-cellular communication creation
 ## reading module metadata to get the genes that are in the metabolite modules
 ### this file contains the genes that influence the metabolite module
 moduleMetadataFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_complete_mouse_m168.csv"
@@ -565,8 +565,7 @@ moduleInfoTransformed["Weight"] = 1
 # save the moduleInfoTransformed for every cellType
 celltypes = mdata_1h.obs["celltype"].unique()
 for celltype in celltypes:
-    
-
+    moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
 
 
 # create the intra-cellular communication file
