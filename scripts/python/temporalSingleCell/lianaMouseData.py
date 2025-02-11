@@ -257,6 +257,8 @@ results_1h = meta.uns['liana_res']
 ## change the name of columns source target ligand_complex receptor_complex and scaled_weight
 results_1h = results_1h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_1h['contactTimes'] = 1
+## add _metabolites to the startType since it encodes the layer for the metabolites
+results_1h['startType'] = results_1h['startType'] + "_metabolites"
 results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
 
 # 6h
@@ -343,6 +345,8 @@ results_6h = mdata_6h.uns['liana_res']
 ## change the name of columns source target ligand_complex receptor_complex and scaled_weight
 results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_6h['contactTimes'] = 6
+## add _metabolites to the startType since it encodes the layer for the metabolites
+results_6h['startType'] = results_6h['startType'] + "_metabolites"
 results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
 
 # 7h
@@ -439,6 +443,8 @@ results_7h = mdata_7h.uns['liana_res']
 ## change the name of columns the needed names
 results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_7h['contactTimes'] = 7
+## add _metabolites to the startType since it encodes the layer for the metabolites
+results_7h['startType'] = results_7h['startType'] + "_metabolites"
 results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_7h.tsv", sep="\t", index=False)
 
 # 10h
@@ -524,6 +530,8 @@ results_10h = mdata_10h.uns['liana_res']
 ## change the name of columns the needed names
 results_10h = results_10h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
 results_10h['contactTimes'] = 10
+## add _metabolites to the startType since it encodes the layer for the metabolites
+results_10h['startType'] = results_10h['startType'] + "_metabolites"
 results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # metabolite layer creation and intra-cellular communication creation
@@ -561,7 +569,6 @@ moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
 moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C_out_HMDB":"End", "M_id":"Type", "M_name":"Subtype"})
 moduleInfoTransformed["Weight"] = 1
 
-## select only the relevant rows
 
 # save the moduleInfoTransformed for every cellType
 celltypes = mdata_1h.obs["celltype"].unique()
