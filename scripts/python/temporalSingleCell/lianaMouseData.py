@@ -579,6 +579,7 @@ for celltype in celltypes:
 # create the intra-cellular communication file
 ## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
 # so maybe it's better to consider only one of the metabolites
+# so for every entry in the moduleMetadataDict, we start creating the interactions from the genes network to the metabolites network
 ## the format for the interactions should still follow the format
 # StartType	StartNodeName	EndType	EndNodeName	Weight	contactTimes
 ## since there are no contact times, there is no need to add the contact times since the interaction will always be considered
