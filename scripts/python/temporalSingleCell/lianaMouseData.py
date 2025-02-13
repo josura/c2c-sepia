@@ -583,4 +583,7 @@ for celltype in celltypes:
 ## the format for the interactions should still follow the format
 # StartType	StartNodeName	EndType	EndNodeName	Weight	contactTimes
 ## since there are no contact times, there is no need to add the contact times since the interaction will always be considered
-
+moduleInfluence = pd.DataFrame(columns=["StartType", "StartNodeName", "EndType", "EndNodeName", "Weight"])
+for row in moduleInfoTransformed.iterrows():
+    module = row[1]["Type"]
+    print(module)
