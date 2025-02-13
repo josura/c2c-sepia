@@ -590,3 +590,6 @@ for celltype in celltypes:
     for row in moduleInfoTransformed.iterrows():
         module = row[1]["Type"]
         genes = moduleMetadataDict[module]
+        for gene in genes:
+            moduleInfluence = moduleInfluence.append({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["Start"], "Weight":1}, ignore_index=True)
+            #moduleInfluence = moduleInfluence.append({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["End"], "Weight":1}, ignore_index=True)
