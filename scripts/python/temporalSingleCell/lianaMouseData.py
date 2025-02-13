@@ -585,6 +585,8 @@ for celltype in celltypes:
 ## since there are no contact times, there is no need to add the contact times since the interaction will always be considered
 moduleInfluence = pd.DataFrame(columns=["StartType", "StartNodeName", "EndType", "EndNodeName", "Weight"])
 for celltype in celltypes:
+    startType = celltype
+    endType = celltype + "_metabolites"
     for row in moduleInfoTransformed.iterrows():
         module = row[1]["Type"]
-        print(module)
+        genes = moduleMetadataDict[module]
