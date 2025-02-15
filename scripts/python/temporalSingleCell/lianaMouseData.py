@@ -589,6 +589,9 @@ for celltype in celltypes:
     endType = celltype + "_metabolites"
     for row in moduleInfoTransformed.iterrows():
         module = row[1]["Type"]
+        ## control if the module is in the moduleMetadataDict
+        if module not in moduleMetadataDict.keys():
+            continue
         genes = moduleMetadataDict[module]
         for gene in genes:
             moduleInfluence = pd.concat([moduleInfluence, pd.DataFrame({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["Start"], "Weight":1}, index=[0])], ignore_index=True)
