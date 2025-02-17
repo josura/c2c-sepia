@@ -575,6 +575,16 @@ celltypes = mdata_1h.obs["celltype"].unique()
 for celltype in celltypes:
     moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
 
+# save the nodes Information from the name_map_70
+# the format for the nodes should be
+# Id	Name	Type	Aliases
+## the Id is the KEGG id
+## the Name is the HMDB name
+## the Type is the Match 
+## the Aliases are the SMILES
+name_map_70_translated = name_map_70.rename(columns={"KEGG":"Id", "HMDB":"Name", "Match":"Type", "SMILES":"Aliases"})
+for celltype in celltypes:
+    name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
 
 # create the intra-cellular communication file
 ## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
@@ -597,4 +607,6 @@ for celltype in celltypes:
             moduleInfluence = pd.concat([moduleInfluence, pd.DataFrame({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["Start"], "Weight":1}, index=[0])], ignore_index=True)
             #moduleInfluence = moduleInfluence.append({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["End"], "Weight":1}, ignore_index=True)
 
+# remove NaN values
+moduleInfluence = moduleInfluence.dropna()
 moduleInfluence.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/intraCellularCommunication.tsv", sep="\t", index=False)
