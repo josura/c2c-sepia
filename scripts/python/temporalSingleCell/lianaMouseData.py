@@ -587,9 +587,12 @@ for celltype in celltypes:
     name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
 
 # TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
+genes_selected = []
 for celltype in celltypes:
     graph = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype, sep="\t")
-    genes = moduleMetadataDict.values()
+    genes_selected = genes
+    
+
 
 # create the intra-cellular communication file
 ## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
