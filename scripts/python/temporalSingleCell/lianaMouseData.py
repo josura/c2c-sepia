@@ -232,6 +232,8 @@ li.mt.rank_aggregate(adata=meta,
 #                   verbose=True
 #                   )
 
+# TODO filter the interactions that contain only the genes in the target layer
+
 meta.uns['liana_res'].head()
 # celltypes available for source are 'DC', 'AT1', 'T', 'Neut', 'MacIII', 'Mon', 'MacII', 'Fibro', 'B', 'Endothel', 'Baso', 'NK', 'Smooth', 'Clara', 'Matrix', 'AT2'
 # celltypes available for target are 'Clara', 'NK', 'Smooth', 'AT2', 'Matrix', 'Endothel', 'DC', 'Fibro', 'Baso', 'AT1'
