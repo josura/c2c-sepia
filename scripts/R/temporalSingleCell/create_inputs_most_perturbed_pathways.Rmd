@@ -332,6 +332,8 @@ createInputsFilesFromSeuratobject <- function(seurat_obj,cellTypeToNodesMap, out
     for(cellType in cellTypes){
         cellTypeDF <- cellTypeDF[rownames(cellTypeDF) %in% cellTypeToNodesMap[[cellType]],]
     }
+    
+    # TODO remove genes with subscript (.1,.2,etc)
 
     # save each cell type(columns of the dataframe) in a file
     for(i in 1:length(colnames(cellTypeDF))){
