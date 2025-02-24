@@ -123,6 +123,16 @@ name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/py
 name_map_metalinks = name_map_metalinks[name_map_metalinks['HMDB'].notna()]
 name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
 
+
+# TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
+genes_selected = {}
+celltypes = mdata_1h.obs["celltype"].unique()
+for celltype in celltypes:
+    graph_nodes = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+".tsv", sep="\t")
+    genes_selected[celltype] = list(graph_nodes["Name"])
+    
+
+
 # filter the column that are not in the name_map_70 for the metabolites_1h data (match column in the name_map_70)
 ## last column is not in the name_map_70( controlled by observing the data)
 metabolites_1h_filtered_df = metabolites_1h.to_df()[metabolites_1h.to_df().columns[:-1]]
@@ -573,7 +583,6 @@ moduleInfoTransformed["Weight"] = 1
 
 
 # save the moduleInfoTransformed for every cellType
-celltypes = mdata_1h.obs["celltype"].unique()
 for celltype in celltypes:
     moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
 
@@ -610,14 +619,6 @@ for celltype in celltypes:
     celltype_metabolite_node_values = celltype_metabolite_node_values[["name", "value"]]
     celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=True)
 
-# TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
-genes_selected = {}
-for celltype in celltypes:
-    graph_nodes = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+".tsv", sep="\t")
-    genes_selected[celltype] = list(graph_nodes["Name"])
-    
-
-
 # create the intra-cellular communication file
 ## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
 # so maybe it's better to consider only one of the metabolites
@@ -625,6 +626,7 @@ for celltype in celltypes:
 ## the format for the interactions should still follow the format
 # StartType	StartNodeName	EndType	EndNodeName	Weight	contactTimes
 ## since there are no contact times, there is no need to add the contact times since the interaction will always be considered
+# TODO select genes that are in the layer
 moduleInfluence = pd.DataFrame(columns=["StartType", "StartNodeName", "EndType", "EndNodeName", "Weight"])
 for celltype in celltypes:
     startType = celltype
