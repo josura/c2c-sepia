@@ -574,6 +574,8 @@ moduleMetadata = pd.read_csv(moduleMetadataFile, sep=",", index_col=0)
 moduleInfo = pd.read_csv(moduleInfoFile, sep=",")
 # flux data
 fluxes_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
+fluxes_1h["well"] = fluxes_1h.index
+fluxes_1h = fluxes_1h.merge(well_celltype_df_1h, on="well", how="left")
 
 # first column in metadata is the name of the module
 # all the other columns are the genes that are in the module, some values are NaN
@@ -603,6 +605,7 @@ moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C
 ## weights for coarser granularity
 celltypes_fluxrates = {}
 for celltype in celltypes:
+
 
 # save the moduleInfoTransformed for every cellType
 for celltype in celltypes:
