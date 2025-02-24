@@ -590,8 +590,15 @@ for celltype in celltypes:
 
 # create the nodes values for the metabolites by averaging the values of the metabolites for every cell type
 metabolite_node_values = pd.DataFrame(columns=name_map_70["HMDB"].values)
+metabolites_all = mdata_1h.mod["metabolites"].to_df()
+metabolites_all["celltype"] = mdata_1h.obs["celltype"]
 for celltype in celltypes:
-    metabolites_all = mdata_1h.mod["metabolites"].to_df()
+    metabolites = metabolites_all[metabolites_all["celltype"] == celltype]
+    metabolites = metabolites.drop(columns=["celltype"])
+    metabolite_node_values = pd.concat([metabolite_node_values, metabolites.mean().to_frame().transpose()], ignore_index=True)
+
+metabolite_node_values["celltype"] = celltypes
+metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/metabolites_values.tsv", sep="\t", index=False)
 
 # save the nodes values for the metabolites, the nodes are the metabolites, and the values are the values of the metabolites for every cell
 for celltype in celltypes:
