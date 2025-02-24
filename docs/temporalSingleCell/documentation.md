@@ -15,7 +15,7 @@ consistency in the generated inputs should always be paramount since the algorit
   - every time point is considered for the generation of the graphs for every celltype. This means that all the genes should be unioned or intersected to generate the gene layer.
 
 ## flux rate are considered to generate the weights for the metabolite layer
-the flux rate is used to generate the weights for the metabolite layer, the higher the flux rate, the higher the weight. Since the metabolite layer could be dependent on the type of granularity used, for same interactions modules, the weights could be collapsed into one single weight (for coarser granularity) or remain separate (for finer granularity)
+the flux rate is used to generate the weights for the metabolite layer, the higher the flux rate, the higher the weight. Since the metabolite layer could be dependent on the type of granularity used, for same interactions modules, the weights could be collapsed into one single weight (for coarser granularity) or remain separate (for finer granularity). Also, flux rates are given for every cell, so some kind of aggregation should be done to generate the weights for the metabolite layer for the single celltype.
 
 ## selection of highly variable cells and treatment of 7h data or every time point separately
 there are some problems with the 7h data that seems to be related to the low quality of it (there are some Nan or infinite values during the rank aggregate function to establish the interaction between metabolites and genes), the possible approaches are:
