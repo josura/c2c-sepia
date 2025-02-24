@@ -593,6 +593,9 @@ genes_selected = []
 for celltype in celltypes:
     graph = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype, sep="\t")
     genes_selected = genes
+    for row in graph.iterrows():
+        genes_selected = genes_selected + moduleMetadataDict[row[1]["Type"]]
+    genes_selected = list(set(genes_selected))
     
 
 
