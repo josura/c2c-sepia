@@ -604,11 +604,11 @@ for celltype in celltypes:
 # save the nodes values for every cell type in individual files with format:
 # name value
 for celltype in celltypes:
-    celltype_metabolite_node_values = metabolite_node_values[celltype]
+    celltype_metabolite_node_values = pd.DataFrame(metabolite_node_values[celltype])
     celltype_metabolite_node_values["name"] = celltype_metabolite_node_values.index
-    celltype_metabolite_node_values["value"] = celltype_metabolite_node_values.values
+    celltype_metabolite_node_values["value"] = celltype_metabolite_node_values.iloc[:,0]
     celltype_metabolite_node_values = celltype_metabolite_node_values[["name", "value"]]
-    celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=False)
+    celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=True)
 
 # TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
 genes_selected = []
