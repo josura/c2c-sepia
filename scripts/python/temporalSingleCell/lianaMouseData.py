@@ -565,8 +565,11 @@ moduleMetadataFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_co
 ### this file contains the module info, that is the two metabolites that characterise the interaction(module)
 moduleInfoFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.moduleinfo.csv"
 
+# module data
 moduleMetadata = pd.read_csv(moduleMetadataFile, sep=",", index_col=0)
 moduleInfo = pd.read_csv(moduleInfoFile, sep=",")
+# flux data
+fluxes_1h = pd.read_csv(fluxes_1hFile, sep="\t", index_col=0)
 
 # first column in metadata is the name of the module
 # all the other columns are the genes that are in the module, some values are NaN
