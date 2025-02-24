@@ -137,8 +137,6 @@ for celltype in celltypes:
     genes_selected[celltype] = list(graph_nodes["Name"])
     
 
-# TODO add the flux rate as the weight for the metabolite layer
-
 # filter the column that are not in the name_map_70 for the metabolites_1h data (match column in the name_map_70)
 ## last column is not in the name_map_70( controlled by observing the data)
 metabolites_1h_filtered_df = metabolites_1h.to_df()[metabolites_1h.to_df().columns[:-1]]
@@ -560,6 +558,7 @@ results_10h['startType'] = results_10h['startType'] + "_metabolites"
 results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # metabolite layer creation and intra-cellular communication creation
+# TODO add the flux rate as the weight for the metabolite layer
 ## reading module metadata to get the genes that are in the metabolite modules
 ### this file contains the genes that influence the metabolite module
 moduleMetadataFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_complete_mouse_m168.csv"
