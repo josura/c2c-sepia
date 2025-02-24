@@ -603,8 +603,12 @@ moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C
 #moduleInfoTransformed["Weight"] = 1
 # weight is the flux rate, for coarser granularity (metabolites in every module are treated as one in case they are the same), for finer granularity every metabolite is treated as one node in the layer
 ## weights for coarser granularity
+
+fluxes_aggregated_1h = fluxes_1h.drop(columns=["well"]).groupby("celltype").mean()
 celltypes_fluxrates = {}
 for celltype in celltypes:
+    celltypes_fluxrates[celltype] = fluxes_aggregated_1h[fluxes_aggregated_1h.index == celltype]
+    celltypes_fluxrates[celltype] = celltypes_fluxrates[celltype]
 
 
 # save the moduleInfoTransformed for every cellType
