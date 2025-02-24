@@ -589,23 +589,26 @@ for celltype in celltypes:
     name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
 
 # create the nodes values for the metabolites by averaging the values of the metabolites for every cell type
-metabolite_node_values = pd.DataFrame(columns=name_map_70["HMDB"].values)
+metabolite_node_values = {}
 metabolites_all = mdata_1h.mod["metabolites"].to_df()
 metabolites_all["celltype"] = mdata_1h.obs["celltype"]
 for celltype in celltypes:
     metabolites = metabolites_all[metabolites_all["celltype"] == celltype]
     metabolites = metabolites.drop(columns=["celltype"])
-    metabolite_node_values = pd.concat([metabolite_node_values, metabolites.mean().to_frame().transpose()], ignore_index=True)
+    # if the dataset is empty, we add a row of 0s
+    if metabolites.shape[0] == 0:
+        metabolites = pd.DataFrame(0, index=[0], columns=metabolites.columns)
+    metabolites_average = metabolites.mean(axis=0)
+    metabolite_node_values[celltype] = metabolites_average
 
-metabolite_node_values["celltype"] = celltypes
-metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/metabolites_values.tsv", sep="\t", index=False)
-
-# save the nodes values for the metabolites, the nodes are the metabolites, and the values are the values of the metabolites for every cell
+# save the nodes values for every cell type in individual files with format:
+# name value
 for celltype in celltypes:
-    metabolites = mdata_1h.mod["metabolites"].to_df()
-    metabolites.columns = name_map_70["HMDB"].values
-    metabolites.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites_values.tsv", sep="\t", index=False)
-
+    celltype_metabolite_node_values = metabolite_node_values[celltype]
+    celltype_metabolite_node_values["name"] = celltype_metabolite_node_values.index
+    celltype_metabolite_node_values["value"] = celltype_metabolite_node_values.values
+    celltype_metabolite_node_values = celltype_metabolite_node_values[["name", "value"]]
+    celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=False)
 
 # TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
 genes_selected = []
