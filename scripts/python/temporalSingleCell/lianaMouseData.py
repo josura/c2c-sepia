@@ -593,7 +593,7 @@ moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_out_HMDB"})
 moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
 
 # create the layer of metabolites for every cell
-# every cell has the same metabolites, and these metabolites
+# every cell has the same metabolites, and these metabolites could have coarser granularity (metabolites in every module are treated as one in case they are the same), or finer granularity (every metabolite is treated as one node in the layer)
 
 # the graph for every single cellType should have the following structure
 # Start	End	Type	Subtype	Weight
