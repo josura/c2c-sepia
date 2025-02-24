@@ -26,6 +26,11 @@ metabolites_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_met
 metaoblites_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_metabolites_module168_cell1722_20241014-123944.csv"
 metabolites_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_metabolites_module168_cell1240_20241014-171445.csv"
 
+flux_rate_1hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_module168_cell1646_20241014-125146.csv"
+flux_rate_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_module168_cell1037_20241014-125629.csv"
+flux_rate_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_module168_cell1722_20241014-123944.csv"
+flux_rate_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_module168_cell1240_20241014-171445.csv"
+
 #1h
 rna_1h_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
 rna_1h_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
@@ -132,6 +137,7 @@ for celltype in celltypes:
     genes_selected[celltype] = list(graph_nodes["Name"])
     
 
+# TODO add the flux rate as the weight for the metabolite layer
 
 # filter the column that are not in the name_map_70 for the metabolites_1h data (match column in the name_map_70)
 ## last column is not in the name_map_70( controlled by observing the data)
@@ -371,6 +377,13 @@ metabolites_7h_pd.isnull().values.any()
 rna_7h_pd.isnull().values.any()
 metabolites_7h_pd.isin([np.inf, -np.inf]).values.any()
 rna_7h_pd.isin([np.inf, -np.inf]).values.any()
+## conrolling if there are 0 values in the data or low quality cells
+len(rna_7h_pd.isin([0]).values) # a lot of zeros
+len(rna_7h_pd.values)
+len(metabolites_7h_pd.isin([0]).values.any())
+
+## remove the rows that are all zeros for every gene
+rna_7h_pd_filtered = rna_7h_pd.loc[(rna_7h_pd != 0).any(axis=1)]
 
 
 ## replacing nan values with 0
@@ -430,7 +443,7 @@ li.mt.rank_aggregate(adata=mdata_7h,
                     verbose=True
                     )
 
-#TODO problems with 7h data
+#TODO problems with 7h data, try to remove the genes that have a lot of zeros or only zeros, or try to use imputation (magic)
 mdata_7h.uns['liana_res'].head()
 
 interactionPlot = li.pl.dotplot(adata = mdata_7h,
