@@ -135,6 +135,10 @@ celltypes = mdata_1h.obs["celltype"].unique()
 for celltype in celltypes:
     graph_nodes = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+".tsv", sep="\t")
     genes_selected[celltype] = list(graph_nodes["Name"])
+
+well_celltype_df_1h = pd.DataFrame()
+well_celltype_df_1h["celltype"] = mdata_1h.obs["celltype"]
+well_celltype_df_1h["well"] = list(mdata_1h.mod["rna"].to_df().index)
     
 
 # filter the column that are not in the name_map_70 for the metabolites_1h data (match column in the name_map_70)
@@ -569,7 +573,7 @@ moduleInfoFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/scFEA.M171.mouse.m
 moduleMetadata = pd.read_csv(moduleMetadataFile, sep=",", index_col=0)
 moduleInfo = pd.read_csv(moduleInfoFile, sep=",")
 # flux data
-fluxes_1h = pd.read_csv(fluxes_1hFile, sep="\t", index_col=0)
+fluxes_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
 
 # first column in metadata is the name of the module
 # all the other columns are the genes that are in the module, some values are NaN
@@ -594,8 +598,11 @@ moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
 # so changing the names of the columns
 # C_in_HMDB	C_out_HMDB M_id M_name (weight column is not present in the moduleInfoMerged, so the value is 1)
 moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C_out_HMDB":"End", "M_id":"Type", "M_name":"Subtype"})
-moduleInfoTransformed["Weight"] = 1
-
+#moduleInfoTransformed["Weight"] = 1
+# weight is the flux rate, for coarser granularity (metabolites in every module are treated as one in case they are the same), for finer granularity every metabolite is treated as one node in the layer
+## weights for coarser granularity
+celltypes_fluxrates = {}
+for celltype in celltypes:
 
 # save the moduleInfoTransformed for every cellType
 for celltype in celltypes:
