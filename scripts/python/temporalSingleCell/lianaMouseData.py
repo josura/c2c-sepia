@@ -613,7 +613,7 @@ for celltype in celltypes:
 # TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
 genes_selected = []
 for celltype in celltypes:
-    graph = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype, sep="\t")
+    graph = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+".tsv", sep="\t")
     genes_selected = genes
     for row in graph.iterrows():
         genes_selected = genes_selected + moduleMetadataDict[row[1]["Type"]]
