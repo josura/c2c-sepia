@@ -611,13 +611,10 @@ for celltype in celltypes:
     celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=True)
 
 # TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
-genes_selected = []
+genes_selected = {}
 for celltype in celltypes:
     graph_nodes = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+".tsv", sep="\t")
-    genes_selected = genes
-    for row in graph.iterrows():
-        genes_selected = genes_selected + moduleMetadataDict[row[1]["Type"]]
-    genes_selected = list(set(genes_selected))
+    genes_selected[celltype] = list(graph_nodes["Name"])
     
 
 
