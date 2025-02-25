@@ -611,6 +611,7 @@ for celltype in celltypes:
     celltypes_fluxrates[celltype] = celltypes_fluxrates[celltype]
 
 
+
 # save the moduleInfoTransformed for every cellType
 for celltype in celltypes:
     moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
