@@ -608,8 +608,8 @@ fluxes_aggregated_1h = fluxes_1h.drop(columns=["well"]).groupby("celltype").mean
 celltypes_fluxrates = {}
 for celltype in celltypes:
     celltypes_fluxrates[celltype] = fluxes_aggregated_1h[fluxes_aggregated_1h.index == celltype]
-    celltypes_fluxrates[celltype] = celltypes_fluxrates[celltype]
 
+for celltype in celltypes:
 
 
 # save the moduleInfoTransformed for every cellType
