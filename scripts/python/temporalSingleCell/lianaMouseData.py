@@ -609,14 +609,14 @@ celltypes_fluxrates = {}
 for celltype in celltypes:
     selected_fluxes = fluxes_aggregated_1h[fluxes_aggregated_1h.index == celltype]
     celltypes_fluxrates[celltype] = pd.DataFrame(selected_fluxes.values[0], index=selected_fluxes.columns, columns=["Weight"])
-    celltypes_fluxrates[celltype]["Type"] = celltypes_fluxrates[celltype].columns.values[0]
-    # celltypes_fluxrates[celltype] = celltypes_fluxrates[celltype].values[0]
+    celltypes_fluxrates[celltype]["Type"] = selected_fluxes.columns.values
 
 
 # save the moduleInfoTransformed for every cellType
 for celltype in celltypes:
-    # join the moduleInfoTransformed with the flux rates
+    # join the moduleInfoTransformed with the flux rates, fill the NaN values with 0
     moduleInfoTransformed = moduleInfoTransformed.merge(celltypes_fluxrates[celltype], on="Type", how="left")
+    moduleInfoTransformed["Weight"] = moduleInfoTransformed["Weight"].fillna(0)
     moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
     # remove the weight column
     moduleInfoTransformed = moduleInfoTransformed.drop(columns=["Weight"])
