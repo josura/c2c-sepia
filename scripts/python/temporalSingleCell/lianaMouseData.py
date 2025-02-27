@@ -607,13 +607,15 @@ moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C
 fluxes_aggregated_1h = fluxes_1h.drop(columns=["well"]).groupby("celltype").mean()
 celltypes_fluxrates = {}
 for celltype in celltypes:
-    celltypes_fluxrates[celltype] = fluxes_aggregated_1h[fluxes_aggregated_1h.index == celltype]
-
-for celltype in celltypes:
+    selected_fluxes = fluxes_aggregated_1h[fluxes_aggregated_1h.index == celltype]
+    celltypes_fluxrates[celltype] = pd.DataFrame(selected_fluxes.values[0], index=selected_fluxes.columns, columns=["Weight"])
+    celltypes_fluxrates[celltype]["Type"] = celltypes_fluxrates[celltype].columns
+    # celltypes_fluxrates[celltype] = celltypes_fluxrates[celltype].values[0]
 
 
 # save the moduleInfoTransformed for every cellType
 for celltype in celltypes:
+    moduleInfoTransformed["Weight"] = celltypes_fluxrates[celltype]
     moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
 
 # save the nodes Information from the name_map_70
