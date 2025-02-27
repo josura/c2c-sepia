@@ -615,8 +615,11 @@ for celltype in celltypes:
 
 # save the moduleInfoTransformed for every cellType
 for celltype in celltypes:
-    moduleInfoTransformed["Weight"] = celltypes_fluxrates[celltype]
+    # join the moduleInfoTransformed with the flux rates
+    moduleInfoTransformed = moduleInfoTransformed.merge(celltypes_fluxrates[celltype], on="Type", how="left")
     moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
+    # remove the weight column
+    moduleInfoTransformed = moduleInfoTransformed.drop(columns=["Weight"])
 
 # save the nodes Information from the name_map_70
 # the format for the nodes should be
