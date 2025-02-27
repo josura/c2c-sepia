@@ -609,7 +609,7 @@ celltypes_fluxrates = {}
 for celltype in celltypes:
     selected_fluxes = fluxes_aggregated_1h[fluxes_aggregated_1h.index == celltype]
     celltypes_fluxrates[celltype] = pd.DataFrame(selected_fluxes.values[0], index=selected_fluxes.columns, columns=["Weight"])
-    celltypes_fluxrates[celltype]["Type"] = celltypes_fluxrates[celltype].columns
+    celltypes_fluxrates[celltype]["Type"] = celltypes_fluxrates[celltype].columns.values[0]
     # celltypes_fluxrates[celltype] = celltypes_fluxrates[celltype].values[0]
 
 
