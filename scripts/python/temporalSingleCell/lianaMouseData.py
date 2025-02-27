@@ -562,7 +562,6 @@ results_10h['startType'] = results_10h['startType'] + "_metabolites"
 results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # metabolite layer creation and intra-cellular communication creation
-# TODO add the flux rate as the weight for the metabolite layer
 ## reading module metadata to get the genes that are in the metabolite modules
 ### this file contains the genes that influence the metabolite module
 moduleMetadataFile = "/home/josura/Projects/ccc/fluxes/scFEA/data/module_gene_complete_mouse_m168.csv"
