@@ -280,6 +280,8 @@ results_1h['contactTimes'] = 1
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_1h['startType'] = results_1h['startType'] + "_metabolites"
 ## select only the interactions that have the genes in the target layer
+for celltype in celltypes:
+    
 ## save the results
 results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
 
