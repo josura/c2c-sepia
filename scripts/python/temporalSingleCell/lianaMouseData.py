@@ -285,9 +285,9 @@ selection_map = [False for i in range(results_1h.shape[0])]
 for celltype in celltypes:
     genes = genes_selected[celltype]
     selection_map = selection_map | pd.Series(results_1h["endNodeName"].isin(genes))
-results_1h = results_1h[selection_map]
+results_1h_filtered = results_1h[selection_map]
 ## save the results
-results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
+results_1h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
 
 # 6h
 rna_6h_pd = pd.read_csv(rna_6hFile, sep="\t", index_col=0)
