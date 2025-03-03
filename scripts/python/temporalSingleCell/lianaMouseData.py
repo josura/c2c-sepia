@@ -584,6 +584,9 @@ fluxes_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
 fluxes_1h["well"] = fluxes_1h.index
 fluxes_1h = fluxes_1h.merge(well_celltype_df_1h, on="well", how="left")
 
+## control the union of metabolites to see if they are the same length as the name_map
+all_metabolites = set(moduleInfo["C_in_name"]) | set(moduleInfo["C_out_name"])
+
 # first column in metadata is the name of the module
 # all the other columns are the genes that are in the module, some values are NaN
 # we build a dictionary with the module name as key and the genes as values
