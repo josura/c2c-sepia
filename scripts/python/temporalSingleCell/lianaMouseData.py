@@ -284,7 +284,7 @@ results_1h['startType'] = results_1h['startType'] + "_metabolites"
 selection_map = [False for i in range(results_1h.shape[0])]
 for celltype in celltypes:
     genes = genes_selected[celltype]
-    selection_map = selection_map | pd.Series(results_1h["endNodeName"].isin(genes))
+    selection_map = selection_map | (pd.Series(results_1h["endNodeName"].isin(genes)) & pd.Series(results_1h["endType"] == celltype))
 results_1h_filtered = results_1h[selection_map]
 ## save the results
 results_1h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
