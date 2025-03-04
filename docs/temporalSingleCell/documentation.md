@@ -3,6 +3,8 @@
 ## changing some HMDB IDs to match the ones in the database
 Alpha-D-glucose HMDB0003345 -> D-Glucose HMDB0000122   https://hmdb.ca/metabolites/HMDB0000122
 
+## All metabolites are not in the namemap, so we should still generate the rest of the metabolites
+
 ## coarser VS finer granularity in the creation of the metabolite layer
 coarser granularity makes the metabolites in every module collapse into one single metabolite, while finer granularity makes the metabolites in every module remain separate so they will have their names considered to add them in the database used to find the interactions (metalinks should be expanded with these metabolites)
 
