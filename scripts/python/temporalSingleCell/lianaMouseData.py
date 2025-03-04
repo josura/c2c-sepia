@@ -586,6 +586,8 @@ fluxes_1h = fluxes_1h.merge(well_celltype_df_1h, on="well", how="left")
 
 ## control the union of metabolites to see if they are the same length as the name_map
 all_metabolites = set(moduleInfo["C_in_name"]) | set(moduleInfo["C_out_name"])
+for metabolite in all_metabolites:
+    print(metabolite)
 
 # first column in metadata is the name of the module
 # all the other columns are the genes that are in the module, some values are NaN
