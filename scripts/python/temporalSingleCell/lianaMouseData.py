@@ -122,12 +122,13 @@ list(set(metalinks_translated["metabolite"]) & set(metabolites_1h.to_df().column
 ## we need to use other IDs to match the metabolites_1h
 
 name_map_70 = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_70_mouse_fixed.csv", sep=",")  #using the fixed name map for changing the glucose
+name_map_from_modules = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse_fixed.csv", sep=",",quotechar='"')
 name_map_metalinks = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_metalinks.csv", sep=",")
 
 # filter the rows that have NaN value in the HMDB column
 name_map_metalinks = name_map_metalinks[name_map_metalinks['HMDB'].notna()]
 name_map_70 = name_map_70[name_map_70['HMDB'].notna()]
-
+name_map_from_modules = name_map_from_modules[name_map_from_modules['HMDB'].notna()]
 
 # TODO select genes that are available for every celltype graph (since the graphs are created from the ranking of the pathways)
 genes_selected = {}
