@@ -597,13 +597,29 @@ moduleMetadataDict = {}
 for rowNum in range(moduleMetadata.shape[0]):
     moduleMetadataDict[moduleMetadata.index[rowNum]] = list(moduleMetadata.iloc[rowNum, 1:].dropna())
 
-# add KEGG name from name_map_70 to the moduleInfo for C_in_name and C_out_name
+# add KEGG name from name_map_70 to the moduleInfo for C_in_name and C_out_name TODO remove for full namemap
 moduleInfoMerged = moduleInfo.merge(name_map_70[["KEGG","HMDB"]], left_on="C_in_name", right_on="KEGG", how="left")
 moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_in_HMDB"})
 moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
 moduleInfoMerged = moduleInfoMerged.merge(name_map_70[["KEGG","HMDB"]], left_on="C_out_name", right_on="KEGG", how="left")
 moduleInfoMerged = moduleInfoMerged.rename(columns={"HMDB":"C_out_HMDB"})
 moduleInfoMerged = moduleInfoMerged.drop(columns=["KEGG"])
+
+# add KEGG name from name_map_from_modules to the moduleInfo for C_in_name and C_out_name
+moduleInfoMerged_full = moduleInfo.merge(name_map_from_modules[["KEGG","HMDB"]], left_on="C_in_name", right_on="KEGG", how="left")
+moduleInfoMerged_full = moduleInfoMerged_full.rename(columns={"HMDB":"C_in_HMDB"})
+moduleInfoMerged_full = moduleInfoMerged_full.drop(columns=["KEGG"])
+moduleInfoMerged_full = moduleInfoMerged_full.merge(name_map_from_modules[["KEGG","HMDB"]], left_on="C_out_name", right_on="KEGG", how="left")
+moduleInfoMerged_full = moduleInfoMerged_full.rename(columns={"HMDB":"C_out_HMDB"})
+moduleInfoMerged_full = moduleInfoMerged_full.drop(columns=["KEGG"])
+
+# drop the rows that have NaN values in the C_in_HMDB or C_out_HMDB
+moduleInfoMerged = moduleInfoMerged[moduleInfoMerged['C_in_HMDB'].notna()]
+moduleInfoMerged = moduleInfoMerged[moduleInfoMerged['C_out_HMDB'].notna()]
+
+# drop the rows that have NaN values in the C_in_HMDB or C_out_HMDB
+moduleInfoMerged_full = moduleInfoMerged_full[moduleInfoMerged_full['C_in_HMDB'].notna()]
+moduleInfoMerged_full = moduleInfoMerged_full[moduleInfoMerged_full['C_out_HMDB'].notna()]
 
 # create the layer of metabolites for every cell
 # every cell has the same metabolites, and these metabolites could have coarser granularity (metabolites in every module are treated as one in case they are the same), or finer granularity (every metabolite is treated as one node in the layer)
