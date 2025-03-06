@@ -628,7 +628,7 @@ moduleInfoMerged_full = moduleInfoMerged_full[moduleInfoMerged_full['C_out_HMDB'
 # Start	End	Type	Subtype	Weight
 # so changing the names of the columns
 # C_in_HMDB	C_out_HMDB M_id M_name (weight column is not present in the moduleInfoMerged, so the value is 1)
-moduleInfoTransformed = moduleInfoMerged.rename(columns={"C_in_HMDB":"Start", "C_out_HMDB":"End", "M_id":"Type", "M_name":"Subtype"})
+moduleInfoTransformed = moduleInfoMerged_full.rename(columns={"C_in_HMDB":"Start", "C_out_HMDB":"End", "M_id":"Type", "M_name":"Subtype"})
 #moduleInfoTransformed["Weight"] = 1
 # weight is the flux rate, for coarser granularity (metabolites in every module are treated as one in case they are the same), for finer granularity every metabolite is treated as one node in the layer
 ## weights for coarser granularity
