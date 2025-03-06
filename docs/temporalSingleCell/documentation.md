@@ -5,7 +5,8 @@ Alpha-D-glucose HMDB0003345 -> D-Glucose HMDB0000122   https://hmdb.ca/metabolit
 
 ## All metabolites are not in the namemap, so we should still generate the rest of the metabolites
 - changed pyrimidine since it was not in the namemap
-- C00000 is a placeholder for the modules that create the same metabolite as the source module. If these modules are considered, loops are created in the graph, but this type of behaviour is too unstable, at least until we have a coarser granularity in the metabolite layer.
+- CC00000 is a placeholder for the modules that create the same metabolite as the source module. If these modules are considered, loops are created in the graph, but this type of behaviour is too unstable, at least until we have a coarser granularity in the metabolite layer.
+- some metabolites are not really defined and also use placeholders like CC00001, for example Steroid_hormone or Fatty Acid. I don't know how to treat these metabolites.
 
 ## coarser VS finer granularity in the creation of the metabolite layer
 coarser granularity makes the metabolites in every module collapse into one single metabolite, while finer granularity makes the metabolites in every module remain separate so they will have their names considered to add them in the database used to find the interactions (metalinks should be expanded with these metabolites)
