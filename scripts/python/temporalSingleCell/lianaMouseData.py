@@ -658,8 +658,10 @@ for celltype in celltypes:
 ## the Type is the Match 
 ## the Aliases are the SMILES
 name_map_70_translated = name_map_70.rename(columns={"KEGG":"Id", "HMDB":"Name", "Match":"Type", "SMILES":"Aliases"})
+name_map_full_translated = name_map_from_modules.rename(columns={"KEGG":"Id", "HMDB":"Name", "Match":"Type", "SMILES":"Aliases"})
 for celltype in celltypes:
-    name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
+    #name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
+    name_map_full_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
 
 # create the nodes values for the metabolites by averaging the values of the metabolites for every cell type
 metabolite_node_values = {}
