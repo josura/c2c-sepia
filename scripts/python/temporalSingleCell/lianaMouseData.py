@@ -282,7 +282,8 @@ results_1h['contactTimes'] = 1
 results_1h['startType'] = results_1h['startType'] + "_metabolites"
 ## select only the interactions that have the genes in the target layer
 ### create a boolean mask for all the interactions that have the genes in the target layer 
-selection_map = [False for i in range(results_1h.shape[0])]
+selection_map = pd.Series([False for i in range(results_1h.shape[0])])
+selection_map.index = results_1h.index
 for celltype in celltypes:
     genes = genes_selected[celltype]
     selection_map = selection_map | (pd.Series(results_1h["endNodeName"].isin(genes)) & pd.Series(results_1h["endType"] == celltype))
