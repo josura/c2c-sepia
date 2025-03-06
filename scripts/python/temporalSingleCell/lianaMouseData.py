@@ -282,12 +282,19 @@ results_1h['contactTimes'] = 1
 results_1h['startType'] = results_1h['startType'] + "_metabolites"
 ## select only the interactions that have the genes in the target layer
 ### create a boolean mask for all the interactions that have the genes in the target layer 
-selection_map = pd.Series([False for i in range(results_1h.shape[0])])
-selection_map.index = results_1h.index
+# selection_map = pd.Series([False for i in range(results_1h.shape[0])])
+# selection_map.index = results_1h.index
+# for celltype in celltypes:
+#     genes = genes_selected[celltype]
+#     selection_map = selection_map | (pd.Series(results_1h["endNodeName"].isin(genes)) & pd.Series(results_1h["endType"] == celltype))
+# results_1h_filtered = results_1h[selection_map.values]
+## loop over the celltypes and select the genes that are in the target layer
+results_1h_filtered = pd.DataFrame(columns=results_1h.columns)
 for celltype in celltypes:
     genes = genes_selected[celltype]
-    selection_map = selection_map | (pd.Series(results_1h["endNodeName"].isin(genes)) & pd.Series(results_1h["endType"] == celltype))
-results_1h_filtered = results_1h[selection_map]
+    filtered = results_1h[(results_1h["endNodeName"].isin(genes)) & (results_1h["endType"] == celltype)]
+    if filtered.shape[0] > 0:
+        results_1h_filtered = pd.concat([results_1h_filtered, filtered])
 ## save the results
 results_1h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
 
