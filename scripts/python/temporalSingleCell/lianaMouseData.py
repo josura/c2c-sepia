@@ -296,6 +296,7 @@ for celltype in celltypes:
     if filtered.shape[0] > 0:
         results_1h_filtered = pd.concat([results_1h_filtered, filtered])
 ## save the results
+# results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
 results_1h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
 
 # 6h
