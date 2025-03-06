@@ -98,7 +98,7 @@ li.mt.rank_aggregate(adata=mdata_1h,
                      # pass our modified resource
                      resource=resource_translated,
                      # NOTE: Essential arguments when handling multimodal data
-                     mdata_1h_kwargs={
+                     mdata_kwargs={
                      # Ligand-Receptor pairs are directed so we need to correctly pass
                      # `RNA` with ligands as `x_mod` and receptors as `y_mod`
                      'x_mod': 'rna',
