@@ -1,5 +1,8 @@
 # steps taken to generate the data
 
+## pathways generated seems to be lacking of the ligands and the receptors
+the pathways generated are missing almost all of the ligands and receptors, this is a problem since the interactions generated from metabolites and genes are very few (as an example, for the 1h data, the only interaction between cells is between metabolite **HMDB0000067** and the gene **Rora**)
+
 ## changing some HMDB IDs to match the ones in the database
 Alpha-D-glucose HMDB0003345 -> D-Glucose HMDB0000122   https://hmdb.ca/metabolites/HMDB0000122
 
