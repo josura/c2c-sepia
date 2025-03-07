@@ -11,6 +11,7 @@ library(Matrix)
 library(data.table)
 ```
 
+# Defining the input files
 ```{r}
 #the nodes file has the following columns separated by \t: Id	Name	Type	Aliases
 nodesInfoFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/nodes_mmu.txt"
