@@ -60,6 +60,12 @@ pathwayInfo$EdgeEnd <- nodesInfoMap[as.character(pathwayInfo$EdgeEnd),]
 # remove duplicate rows on source,target and weight values
 pathwayInfo <- pathwayInfo[!duplicated(pathwayInfo),]
 ```
+
+# read the resource file
+```{r}
+resource <- read_tsv(resource.LR)
+```
+
 # remove edges that have at least one of the nodes as a COMPOUND (found in the Type column of the nodes file)
 ```{r}
 # get the nodes that are COMPOUND
