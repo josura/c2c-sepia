@@ -22,7 +22,8 @@ metapathwayEdgesFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/edges_mmu
 # ligand receptor resource file
 resource.LR <- "/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/resource_ligand_receptor.tsv"
 ```
-
+# reading the nodes, edges and map files
+## read the nodes file
 ```{r}
 nodesinfo <- read_tsv(nodesInfoFile)
 
@@ -34,6 +35,7 @@ nodesInfoMap$Id <- NULL
 
 ```
 
+## read the edges file
 ```{r}
 
 metaPathwayEdges <- read_tsv(metapathwayEdgesFile)
@@ -47,6 +49,7 @@ metaPathwayEdges <- metaPathwayEdges[metaPathwayEdges$Weight != 0,]
 
 ```
 
+## read the pathway info 
 ```{r}
 pathwayInfo <- read_tsv(pathwayInfoFile)
 # substitute EdgeStart and EdgeEnd with its related names using the nodesInfoMap
