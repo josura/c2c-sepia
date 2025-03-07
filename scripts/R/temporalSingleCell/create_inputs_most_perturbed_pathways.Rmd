@@ -19,6 +19,7 @@ pathwayInfoFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/map_mmu.txt"
 #the edges file has the following columns separated by \t: Source	Target	Type	Subtype	Weight
 metapathwayEdgesFile <- "~/Projects/ccc/datiIdo/inputs/mmu_metapathway/edges_mmu.txt"
 # ligand receptor resource file
+resource.LR <- "/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/resource_ligand_receptor.tsv"
 ```
 
 ```{r}
