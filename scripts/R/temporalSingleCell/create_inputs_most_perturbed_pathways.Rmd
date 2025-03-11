@@ -27,7 +27,7 @@ resource.LR <- "/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingl
 ```{r}
 nodesinfo <- read_tsv(nodesInfoFile)
 
-# create map that maps The Id in nodesInfoFile to the Name in nodesInfoFile, this map will be used to change the source and target in the metapathwayEdgesFile
+## create map that maps The Id in nodesInfoFile to the Name in nodesInfoFile, this map will be used to change the source and target in the metapathwayEdgesFile
 nodesInfoMap <- nodesinfo %>% select(Id, Name) %>% as.data.frame()
 nodesInfoMap <- nodesInfoMap[!duplicated(nodesInfoMap$Id),]
 rownames(nodesInfoMap) <- nodesInfoMap$Id
@@ -39,12 +39,12 @@ nodesInfoMap$Id <- NULL
 ```{r}
 
 metaPathwayEdges <- read_tsv(metapathwayEdgesFile)
-#change the entrez IDs of the sources and the target to the gene names
+## change the entrez IDs of the sources and the target to the gene names
 metaPathwayEdges$Source <- nodesInfoMap[as.character(metaPathwayEdges$Source),]
 metaPathwayEdges$Target <- nodesInfoMap[as.character(metaPathwayEdges$Target),]
-# remove duplicate rows on source,target and weight values
+## remove duplicate rows on source,target and weight values
 metaPathwayEdges <- metaPathwayEdges[!duplicated(metaPathwayEdges),]
-# remove edges with weight equal to 0
+## remove edges with weight equal to 0
 metaPathwayEdges <- metaPathwayEdges[metaPathwayEdges$Weight != 0,]
 
 ```
@@ -52,16 +52,16 @@ metaPathwayEdges <- metaPathwayEdges[metaPathwayEdges$Weight != 0,]
 ## read the pathway info 
 ```{r}
 pathwayInfo <- read_tsv(pathwayInfoFile)
-# substitute EdgeStart and EdgeEnd with its related names using the nodesInfoMap
+## substitute EdgeStart and EdgeEnd with its related names using the nodesInfoMap
 
 pathwayInfo$EdgeStart <- nodesInfoMap[as.character(pathwayInfo$EdgeStart),]
 pathwayInfo$EdgeEnd <- nodesInfoMap[as.character(pathwayInfo$EdgeEnd),]
 
-# remove duplicate rows on source,target and weight values
+## remove duplicate rows on source,target and weight values
 pathwayInfo <- pathwayInfo[!duplicated(pathwayInfo),]
 ```
 
-# read the resource file
+## read the resource file
 ```{r}
 resource <- read_tsv(resource.LR)
 ```
