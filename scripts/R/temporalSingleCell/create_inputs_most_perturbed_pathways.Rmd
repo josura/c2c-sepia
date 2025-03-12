@@ -158,6 +158,9 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
   return(edges)
 }
 ```
+
+### function to create the input graph considering the ligand receptor resource as well (additional nodes)
+
 ### create the input graph for each cell type
 ```{r}
 if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h") == FALSE){
