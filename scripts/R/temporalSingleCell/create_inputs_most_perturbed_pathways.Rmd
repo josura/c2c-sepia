@@ -167,6 +167,9 @@ createInputGraphWithResource <- function(rankedPathwaysPerCellType, metaPathwayE
   # get the nodes of the ranked pathways
   nodes <- pathwayMap[pathwayMap$PathwayId %in% rankedPathways$PathwayId,] %>% select(geneNames) %>% unlist()
   # add the ligand and receptor nodes from the resource
+  ligands <- resource[resource$cell_type == cellType,]$ligand
+  receptors <- resource[resource$cell_type == cellType,]$receptor
+  nodes <- c(nodes,ligands,receptors)
   # make the nodes unique
   nodes <- unique(nodes)
   # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
