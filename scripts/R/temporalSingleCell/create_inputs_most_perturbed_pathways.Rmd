@@ -160,6 +160,11 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
 ```
 
 ### function to create the input graph considering the ligand receptor resource as well (additional nodes)
+```{r}
+createInputGraphWithResource <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType, resource){
+
+}
+```
 
 ### create the input graph for each cell type
 ```{r}
