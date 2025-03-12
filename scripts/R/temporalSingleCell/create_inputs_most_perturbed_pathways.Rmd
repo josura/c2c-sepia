@@ -162,7 +162,17 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
 ### function to create the input graph considering the ligand receptor resource as well (additional nodes)
 ```{r}
 createInputGraphWithResource <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType, resource){
-
+  # get the ranked pathways for the specific cell type
+  rankedPathways <- rankedPathwaysPerCellType[[cellType]]
+  # get the nodes of the ranked pathways
+  nodes <- pathwayMap[pathwayMap$PathwayId %in% rankedPathways$PathwayId,] %>% select(geneNames) %>% unlist()
+  # add the ligand and receptor nodes from the resource
+  # make the nodes unique
+  nodes <- unique(nodes)
+  # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
+  edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
+  # remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target
+  return(edges)
 }
 ```
 
