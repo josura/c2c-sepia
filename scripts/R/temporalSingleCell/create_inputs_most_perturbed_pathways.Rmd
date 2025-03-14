@@ -175,7 +175,8 @@ createInputGraphWithResource <- function(rankedPathwaysPerCellType, metaPathwayE
   nodes <- unique(nodes)
   # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
   edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
-  # remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target
+  # remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target, subtype is COMPOUND
+  edges <- edges[edges$Subtype != "COMPOUND",]
   return(edges)
 }
 ```
