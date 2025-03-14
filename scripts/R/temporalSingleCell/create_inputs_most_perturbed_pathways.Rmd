@@ -466,3 +466,7 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues") == 
 seurat.obj.1h.filtered <- NormalizeData(seurat.obj.1h.filtered) 
 createInputsFilesFromSeuratobject(seurat.obj.1h.filtered,availableNodesMap,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/")
 ```
+
+### create the node values files considering the ligand receptor resource
+```{r}
+```
