@@ -91,6 +91,7 @@ computeAverageExpression <- function(seurat.obj, pathwayGenes, cellType){
  
 ```
 ## compute perturbation for all the pathways
+### load the seaurat oibject and the celltypes
 ```{r}
 # load the data from seurat.obj
 seurat.obj.1h <- readRDS("~/Projects/ccc/datiIdo/seurat_obj.1h.rds")
@@ -175,7 +176,6 @@ createInputGraphWithResource <- function(rankedPathwaysPerCellType, metaPathwayE
   # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
   edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
   # remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target
-  edges <- edges[edges$Source %in% nodes & edges$Target %in% nodes,]
   return(edges)
 }
 ```
