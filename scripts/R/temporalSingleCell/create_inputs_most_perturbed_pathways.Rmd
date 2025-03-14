@@ -205,7 +205,7 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphsWithLR") =
 }
 inputGraphs <- list()
 for (cellType in cellTypes){
-  inputGraphs[[cellType]] <- createInputGraphWithResource(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType)
+  inputGraphs[[cellType]] <- createInputGraphWithResource(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType,resource)
   write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphsWithLR/",cellType,".tsv"), sep = "\t", row.names = FALSE)
 }
 ```
