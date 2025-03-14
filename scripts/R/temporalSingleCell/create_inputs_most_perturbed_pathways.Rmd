@@ -154,8 +154,8 @@ createInputGraph <- function(rankedPathwaysPerCellType, metaPathwayEdges, pathwa
   nodes <- pathwayMap[pathwayMap$PathwayId %in% rankedPathways$PathwayId,] %>% select(geneNames) %>% unlist()
   nodes <- unique(nodes)
   # filter the edges in the metapathwayEdgesFile that have at least one of the nodes in the ranked pathways
-  # TODO remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target
   edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
+  # remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target
   return(edges)
 }
 ```
