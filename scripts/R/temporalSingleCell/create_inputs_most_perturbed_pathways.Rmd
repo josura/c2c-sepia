@@ -366,7 +366,7 @@ createInterationsFile <- function(interactionNetwork,inputGraphs,cellTypes,outpu
     interactionDF.splitted$endNodeName <- sapply(interactionDF.splitted$endNodeName, function(x) {
         paste0(toupper(substring(x, 1, 1)), substring(x, 2))
     })
-    # filter the interactions that are not possible
+    # filter the interactions that are not possible, that is the source and the target are not in the nodes of the source or target graph
     for(irow in 1:nrow(interactionDF.splitted)){
         # get the cell types of the source and the target
         sourceCellType <- interactionDF.splitted$startType[irow]
