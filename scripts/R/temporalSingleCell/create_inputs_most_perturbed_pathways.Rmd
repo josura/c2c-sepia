@@ -292,12 +292,40 @@ saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.rds")
 
 ## initialize variables to be used for the interaction inference considering the ligand receptor resource
 ```{r}
+seurat.obj.1h.filtered.withLR <- NormalizeData(seurat.obj.1h.filtered.withLR)
+data.input <- seurat.obj.1h.filtered.withLR[["RNA"]]$data # normalized data matrix
+Idents(seurat.obj.1h.filtered.withLR) <- "cell_type"
+labels <- Idents(seurat.obj.1h.filtered.withLR)
+meta <- data.frame(labels = labels, row.names = names(labels), samples = seurat.obj.1h.filtered.withLR@meta.data$Amp_batch_ID) # create a dataframe of the cell labels
+
+cellchat <- createCellChat(object = data.input, meta = meta, group.by = "labels")
+# set the used database in the object
+cellchat@DB <- CellChatDB.use
+# subset the expression data of signaling genes for saving computation cost
+cellchat <- subsetData(cellchat) # This step is necessary even if using the whole database
+future::plan("multisession", workers = 4) # do parallel
+
+cellchat <- identifyOverExpressedGenes(cellchat,do.fast = FALSE)
+cellchat <- identifyOverExpressedInteractions(cellchat)
+
+# Compute the communication probability and infer cellular communication network
+cellchat <- computeCommunProb(cellchat, type = "triMean")
+## Users can filter out the cell-cell communication if there are only few cells in certain cell groups. By default, the minimum number of cells required in each cell group for cell-cell communication is 10.
+cellchat <- filterCommunication(cellchat, min.cells = 8)
+df.net <- subsetCommunication(cellchat)
+# save the inferred cellular communication network as an object
+saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.withLR.rds")
 ```
 
 ### loading the inferred network
 ```{r}
 # load the inferred cellular communication network
 df.net <- readRDS("inputGraphs/1h/cellchat_inferred_network.1h.rds")
+```
+### loading the inferred network considering the ligand receptor resource
+```{r}
+# load the inferred cellular communication network
+df.net <- readRDS("inputGraphs/1h/cellchat_inferred_network.1h.withLR.rds")
 ```
 ## filter only the possible interactions between two cell types, considering the source and target nodes in the source and target graphs
 ### function to save the interactions, filtering the interactions that are not possible
