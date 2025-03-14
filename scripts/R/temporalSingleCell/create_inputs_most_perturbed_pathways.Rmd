@@ -197,7 +197,17 @@ for (cellType in cellTypes){
 
 ### create the input graph for each cell type considering the ligand receptor resource
 ```{r}
-
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h", showWarnings = FALSE)
+}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphsWithLR") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphsWithLR", showWarnings = FALSE)
+}
+inputGraphs <- list()
+for (cellType in cellTypes){
+  inputGraphs[[cellType]] <- createInputGraphWithResource(rankedPathwaysPerCellType, metaPathwayEdges, pathwayMap, cellType)
+  write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphsWithLR/",cellType,".tsv"), sep = "\t", row.names = FALSE)
+}
 ```
 
 ### create the nodes for each cell type
