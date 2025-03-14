@@ -287,7 +287,7 @@ cellchat <- computeCommunProb(cellchat, type = "triMean")
 cellchat <- filterCommunication(cellchat, min.cells = 8)
 df.net <- subsetCommunication(cellchat)
 # save the inferred cellular communication network as an object
-saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.rds")
+saveRDS(df.net, file = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/cellchat_inferred_network.1h.rds")
 ```
 
 ## initialize variables to be used for the interaction inference considering the ligand receptor resource
@@ -314,18 +314,18 @@ cellchat <- computeCommunProb(cellchat, type = "triMean")
 cellchat <- filterCommunication(cellchat, min.cells = 8)
 df.net <- subsetCommunication(cellchat)
 # save the inferred cellular communication network as an object
-saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.withLR.rds")
+saveRDS(df.net, file = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/cellchat_inferred_network.1h.withLR.rds")
 ```
 
 ### loading the inferred network
 ```{r}
 # load the inferred cellular communication network
-df.net <- readRDS("inputGraphs/1h/cellchat_inferred_network.1h.rds")
+df.net <- readRDS("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/cellchat_inferred_network.1h.rds")
 ```
 ### loading the inferred network considering the ligand receptor resource
 ```{r}
 # load the inferred cellular communication network
-df.net <- readRDS("inputGraphs/1h/cellchat_inferred_network.1h.withLR.rds")
+df.net <- readRDS("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/cellchat_inferred_network.1h.withLR.rds")
 ```
 ## filter only the possible interactions between two cell types, considering the source and target nodes in the source and target graphs
 ### function to save the interactions, filtering the interactions that are not possible
