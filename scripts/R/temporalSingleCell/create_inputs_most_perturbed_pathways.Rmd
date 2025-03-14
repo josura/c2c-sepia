@@ -259,6 +259,7 @@ seurat.obj.1h.filtered <- seurat.obj.1h[rownames(seurat.obj.1h) %in% unique(unli
 ligands <- resource$ligand
 receptors <- resource$receptor
 nodes <- unique(c(ligands,receptors,unlist(pathwayMap$geneNames)))
+seurat.obj.1h.filtered.withLR <- seurat.obj.1h[rownames(seurat.obj.1h) %in% nodes,]
 ```
 ## initialize variables to be used for the interaction inference 
 ```{r}
