@@ -469,4 +469,11 @@ createInputsFilesFromSeuratobject(seurat.obj.1h.filtered,availableNodesMap,"/hom
 
 ### create the node values files considering the ligand receptor resource
 ```{r}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValuesWithLR") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValuesWithLR", showWarnings = FALSE)
+}
+## normalize the data
+## TODO do an additional step of normalization maybe since the resulting data is very large in the number that comes out
+seurat.obj.1h.filtered.withLR <- NormalizeData(seurat.obj.1h.filtered.withLR)
+createInputsFilesFromSeuratobject(seurat.obj.1h.filtered.withLR,availableNodesMap,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValuesWithLR/")
 ```
