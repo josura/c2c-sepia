@@ -254,7 +254,12 @@ CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "ann
 ```{r}
 seurat.obj.1h.filtered <- seurat.obj.1h[rownames(seurat.obj.1h) %in% unique(unlist(pathwayMap$geneNames)),]
 ```
-
+### filter also considering the ligand and receptor genes
+```{r}
+ligands <- resource$ligand
+receptors <- resource$receptor
+nodes <- unique(c(ligands,receptors,unlist(pathwayMap$geneNames)))
+```
 ## initialize variables to be used for the interaction inference 
 ```{r}
 seurat.obj.1h.filtered <- NormalizeData(seurat.obj.1h.filtered)
