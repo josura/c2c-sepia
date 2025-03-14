@@ -287,6 +287,11 @@ df.net <- subsetCommunication(cellchat)
 # save the inferred cellular communication network as an object
 saveRDS(df.net, file = "inputGraphs/1h/cellchat_inferred_network.1h.rds")
 ```
+
+## initialize variables to be used for the interaction inference considering the ligand receptor resource
+```{r}
+```
+
 ### loading the inferred network
 ```{r}
 # load the inferred cellular communication network
