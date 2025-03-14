@@ -220,6 +220,10 @@ for (cellType in cellTypes){
   write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
+### create the nodes for each cell type considering the ligand receptor resource
+```{r}
+
+```
 ### create the nodes map for each cell type
 ```{r}
 availableNodesMap <- list()
