@@ -395,6 +395,14 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions") =
 createInterationsFile(df.net,inputGraphs,cellTypes,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/")
 ```
 
+### create the interactions file considering the ligand receptor resource
+```{r}
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR", showWarnings = FALSE)
+}
+createInterationsFile(df.net,inputGraphs,cellTypes,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/")
+```
+
 ## create the node values, that is the expression of the genes in the nodes
 ```{r}
 createInputsFilesFromSeuratobject <- function(seurat_obj,cellTypeToNodesMap, outputDir){
