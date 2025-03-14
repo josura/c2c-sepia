@@ -178,6 +178,7 @@ createInputGraphWithResource <- function(rankedPathwaysPerCellType, metaPathwayE
   edges <- metaPathwayEdges[metaPathwayEdges$Source %in% nodes | metaPathwayEdges$Target %in% nodes,]
   # remove compound nodes from the nodes, so don't consider the edges that have a compound node as source or target, subtype is COMPOUND
   edges <- edges[edges$Subtype != "COMPOUND",]
+  # TODO also remove compound nodes as a whole, not only compound edges, since there seems to be some nodes still inside the graphs
   return(edges)
 }
 ```
