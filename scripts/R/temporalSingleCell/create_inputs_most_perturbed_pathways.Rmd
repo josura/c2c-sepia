@@ -194,6 +194,12 @@ for (cellType in cellTypes){
   write.table(inputGraphs[[cellType]], file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/",cellType,".tsv"), sep = "\t", row.names = FALSE)
 }
 ```
+
+### create the input graph for each cell type considering the ligand receptor resource
+```{r}
+
+```
+
 ### create the nodes for each cell type
 ```{r}
 if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes") == FALSE){
