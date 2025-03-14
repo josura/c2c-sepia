@@ -222,7 +222,13 @@ for (cellType in cellTypes){
 ```
 ### create the nodes for each cell type considering the ligand receptor resource
 ```{r}
-
+if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR") == FALSE){
+  dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR", showWarnings = FALSE)
+}
+for (cellType in cellTypes){
+  nodes <- nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),]
+  write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
+}
 ```
 ### create the nodes map for each cell type
 ```{r}
