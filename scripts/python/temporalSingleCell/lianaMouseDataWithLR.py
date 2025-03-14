@@ -134,7 +134,7 @@ name_map_from_modules = name_map_from_modules[name_map_from_modules['HMDB'].notn
 genes_selected = {}
 celltypes = mdata_1h.obs["celltype"].unique()
 for celltype in celltypes:
-    graph_nodes = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+".tsv", sep="\t")
+    graph_nodes = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/"+celltype+".tsv", sep="\t")
     genes_selected[celltype] = list(graph_nodes["Name"])
 
 well_celltype_df_1h = pd.DataFrame()
@@ -296,8 +296,8 @@ for celltype in celltypes:
     if filtered.shape[0] > 0:
         results_1h_filtered = pd.concat([results_1h_filtered, filtered])
 ## save the results
-# results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
-results_1h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_1h.tsv", sep="\t", index=False)
+# results_1h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_1h.tsv", sep="\t", index=False)
+results_1h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_1h.tsv", sep="\t", index=False)
 
 # 6h
 rna_6h_pd = pd.read_csv(rna_6hFile, sep="\t", index_col=0)
@@ -385,7 +385,7 @@ results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType'
 results_6h['contactTimes'] = 6
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_6h['startType'] = results_6h['startType'] + "_metabolites"
-results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_6h.tsv", sep="\t", index=False)
+results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_6h.tsv", sep="\t", index=False)
 
 # 7h
 rna_7h_pd = pd.read_csv(rna_7hFile, sep="\t", index_col=0)
@@ -490,7 +490,7 @@ results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType'
 results_7h['contactTimes'] = 7
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_7h['startType'] = results_7h['startType'] + "_metabolites"
-results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_7h.tsv", sep="\t", index=False)
+results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
 
 # 10h
 rna_10h_pd = pd.read_csv(rna_10hFile, sep="\t", index_col=0)
@@ -577,7 +577,7 @@ results_10h = results_10h.rename(columns={'source':'startType', 'target':'endTyp
 results_10h['contactTimes'] = 10
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_10h['startType'] = results_10h['startType'] + "_metabolites"
-results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/results_metabolite_10h.tsv", sep="\t", index=False)
+results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # metabolite layer creation and intra-cellular communication creation
 ## reading module metadata to get the genes that are in the metabolite modules
@@ -655,7 +655,7 @@ for celltype in celltypes:
     # join the moduleInfoTransformed with the flux rates, fill the NaN values with 0
     moduleInfoTransformed = moduleInfoTransformed.merge(celltypes_fluxrates[celltype], on="Type", how="left")
     moduleInfoTransformed["Weight"] = moduleInfoTransformed["Weight"].fillna(0)
-    moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphs/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
+    moduleInfoTransformed.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/graphsWithLR/"+celltype+"_metabolites.tsv", sep="\t", index=False)    
     # remove the weight column
     moduleInfoTransformed = moduleInfoTransformed.drop(columns=["Weight"])
 
@@ -669,8 +669,8 @@ for celltype in celltypes:
 name_map_70_translated = name_map_70.rename(columns={"KEGG":"Id", "HMDB":"Name", "Match":"Type", "SMILES":"Aliases"})
 name_map_full_translated = name_map_from_modules.rename(columns={"KEGG":"Id", "HMDB":"Name", "Match":"Type", "SMILES":"Aliases"})
 for celltype in celltypes:
-    #name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
-    name_map_full_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/"+celltype+"_metabolites.tsv", sep="\t", index=False)
+    #name_map_70_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/"+celltype+"_metabolites.tsv", sep="\t", index=False)
+    name_map_full_translated.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/"+celltype+"_metabolites.tsv", sep="\t", index=False)
 
 # create the nodes values for the metabolites by averaging the values of the metabolites for every cell type
 metabolite_node_values = {}
@@ -692,7 +692,7 @@ for celltype in celltypes:
     celltype_metabolite_node_values["name"] = celltype_metabolite_node_values.index
     celltype_metabolite_node_values["value"] = celltype_metabolite_node_values.iloc[:,0]
     celltype_metabolite_node_values = celltype_metabolite_node_values[["name", "value"]]
-    celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValues/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=True)
+    celltype_metabolite_node_values.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValuesWithLR/"+celltype+"_metabolites.tsv", sep="\t", index=False, header=True)
 
 # create the intra-cellular communication file
 ## every gene in the module is connected to the two metabolites that characterise the module, although this connection is redundant if both the metabolites are considered,
@@ -718,4 +718,4 @@ for celltype in celltypes:
 
 # remove NaN values
 moduleInfluence = moduleInfluence.dropna()
-moduleInfluence.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactions/intraCellularCommunication.tsv", sep="\t", index=False)
+moduleInfluence.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/intraCellularCommunication.tsv", sep="\t", index=False)
