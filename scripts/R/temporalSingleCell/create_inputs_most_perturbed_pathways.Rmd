@@ -477,3 +477,5 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValuesWithLR
 seurat.obj.1h.filtered.withLR <- NormalizeData(seurat.obj.1h.filtered.withLR)
 createInputsFilesFromSeuratobject(seurat.obj.1h.filtered.withLR,availableNodesMap,"/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodeValuesWithLR/")
 ```
+
+# TODO create the interactions for the other timepoints
