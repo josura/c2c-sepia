@@ -714,8 +714,7 @@ for celltype in celltypes:
         genes = moduleMetadataDict[module]
         for gene in genes:
             moduleInfluence = pd.concat([moduleInfluence, pd.DataFrame({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["Start"], "Weight":1}, index=[0])], ignore_index=True)
-            #moduleInfluence = moduleInfluence.append({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["End"], "Weight":1}, ignore_index=True)
-
+            
 # remove NaN values
 moduleInfluence = moduleInfluence.dropna()
 moduleInfluence.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/intraCellularCommunication.tsv", sep="\t", index=False)
