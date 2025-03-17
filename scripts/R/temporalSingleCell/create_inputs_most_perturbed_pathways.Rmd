@@ -219,8 +219,9 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes") == FALSE
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes", showWarnings = FALSE)
 }
 for (cellType in cellTypes){
-  nodes <- unique(nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),])
-  write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
+  nodes <- unique(nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),]$Name)
+  nodes.df <- nodesinfo[nodesinfo$Name %in% nodes,]
+  write.table(nodes.df, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
 ### create the nodes for each cell type considering the ligand receptor resource
@@ -229,8 +230,10 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR") ==
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR", showWarnings = FALSE)
 }
 for (cellType in cellTypes){
-  nodes <- unique(nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),])
-  write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
+  nodes <- unique(nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),]$Name)
+  nodes.df <- nodesinfo[nodesinfo$Name %in% nodes,]
+  nodes.df = nodes.df[!duplicated(nodes.df$Name),]
+  write.table(nodes.df, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
 ### create the nodes map for each cell type
