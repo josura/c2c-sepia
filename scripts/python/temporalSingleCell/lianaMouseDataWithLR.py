@@ -577,6 +577,8 @@ results_10h = results_10h.rename(columns={'source':'startType', 'target':'endTyp
 results_10h['contactTimes'] = 10
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_10h['startType'] = results_10h['startType'] + "_metabolites"
+## select only the interactions that have the genes in the target layer
+## loop over the celltypes and select the genes that are in the target layer
 results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # metabolite layer creation and intra-cellular communication creation
