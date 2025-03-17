@@ -219,7 +219,7 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes") == FALSE
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes", showWarnings = FALSE)
 }
 for (cellType in cellTypes){
-  nodes <- nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),]
+  nodes <- unique(nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),])
   write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodes/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
@@ -229,7 +229,7 @@ if(dir.exists("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR") ==
   dir.create("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR", showWarnings = FALSE)
 }
 for (cellType in cellTypes){
-  nodes <- nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),]
+  nodes <- unique(nodesinfo[nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Source) | nodesinfo$Name %in% unique(inputGraphs[[cellType]]$Target),])
   write.table(nodes, file = paste0("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/nodesWithLR/",cellType,".tsv"), sep = "\t", row.names = FALSE,quote = FALSE)
 }
 ```
