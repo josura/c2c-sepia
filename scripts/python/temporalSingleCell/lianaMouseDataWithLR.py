@@ -490,7 +490,17 @@ results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType'
 results_7h['contactTimes'] = 7
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_7h['startType'] = results_7h['startType'] + "_metabolites"
-results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
+## select only the interactions that have the genes in the target layer
+## loop over the celltypes and select the genes that are in the target layer
+results_7h_filtered = pd.DataFrame(columns=results_7h.columns)
+for celltype in celltypes:
+    genes = genes_selected[celltype]
+    filtered = results_7h[(results_7h["endNodeName"].isin(genes)) & (results_7h["endType"] == celltype)]
+    if filtered.shape[0] > 0:
+        results_7h_filtered = pd.concat([results_7h_filtered, filtered])
+## save the results
+# results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
+results_7h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
 
 # 10h
 rna_10h_pd = pd.read_csv(rna_10hFile, sep="\t", index_col=0)
@@ -579,7 +589,15 @@ results_10h['contactTimes'] = 10
 results_10h['startType'] = results_10h['startType'] + "_metabolites"
 ## select only the interactions that have the genes in the target layer
 ## loop over the celltypes and select the genes that are in the target layer
-results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_10h.tsv", sep="\t", index=False)
+results_10h_filtered = pd.DataFrame(columns=results_10h.columns)
+for celltype in celltypes:
+    genes = genes_selected[celltype]
+    filtered = results_10h[(results_10h["endNodeName"].isin(genes)) & (results_10h["endType"] == celltype)]
+    if filtered.shape[0] > 0:
+        results_10h_filtered = pd.concat([results_10h_filtered, filtered])
+## save the results
+# results_10h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_10h.tsv", sep="\t", index=False)
+results_10h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_10h.tsv", sep="\t", index=False)
 
 # metabolite layer creation and intra-cellular communication creation
 ## reading module metadata to get the genes that are in the metabolite modules
