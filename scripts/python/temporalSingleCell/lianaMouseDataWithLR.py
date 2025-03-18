@@ -385,7 +385,17 @@ results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType'
 results_6h['contactTimes'] = 6
 ## add _metabolites to the startType since it encodes the layer for the metabolites
 results_6h['startType'] = results_6h['startType'] + "_metabolites"
-results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_6h.tsv", sep="\t", index=False)
+## select only the interactions that have the genes in the target layer
+## loop over the celltypes and select the genes that are in the target layer
+results_6h_filtered = pd.DataFrame(columns=results_6h.columns)
+for celltype in celltypes:
+    genes = genes_selected[celltype]
+    filtered = results_6h[(results_6h["endNodeName"].isin(genes)) & (results_6h["endType"] == celltype)]
+    if filtered.shape[0] > 0:
+        results_6h_filtered = pd.concat([results_6h_filtered, filtered])
+## save the results
+# results_6h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_6h.tsv", sep="\t", index=False)
+results_6h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_6h.tsv", sep="\t", index=False)
 
 # 7h
 rna_7h_pd = pd.read_csv(rna_7hFile, sep="\t", index_col=0)
