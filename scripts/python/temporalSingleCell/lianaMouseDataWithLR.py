@@ -743,6 +743,9 @@ for celltype in celltypes:
             continue
         genes = moduleMetadataDict[module]
         for gene in genes:
+            ## control if the gene is in the genes_selected
+            if gene not in genes_selected[celltype]:
+                continue
             moduleInfluence = pd.concat([moduleInfluence, pd.DataFrame({"StartType":startType, "StartNodeName":gene, "EndType":endType, "EndNodeName":row[1]["Start"], "Weight":1}, index=[0])], ignore_index=True)
             
 # remove NaN values
