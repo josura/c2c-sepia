@@ -18,4 +18,6 @@ for file in os.listdir(iterationMatrixFolder):
         nodeNames = temp_iterationMatrix['nodeNames']
         ## drop the nodeNames column
         temp_iterationMatrix = temp_iterationMatrix.drop('nodeNames', axis=1)
+        ## get the timepoints
+        timepoints = temp_iterationMatrix.columns
         
