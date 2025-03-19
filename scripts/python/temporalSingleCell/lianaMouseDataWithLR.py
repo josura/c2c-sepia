@@ -600,7 +600,7 @@ interactionPlot.show()
 results_10h = mdata_10h.uns['liana_res']
 ## change the name of columns the needed names
 results_10h = results_10h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
-results_10h['contactTimes'] = 10
+results_10h['contactTimes'] = 9 # 10h starts from 9 since the 1h timepoint starts from 0
 ## add -metabolites to the startType since it encodes the layer for the metabolites
 results_10h['startType'] = results_10h['startType'] + "-metabolites"
 ## select only the interactions that have the genes in the target layer
