@@ -33,3 +33,26 @@ for file in os.listdir(iterationMatrixFolder):
         ## add the iteration matrix to the dictionary
         iterationMatrices[file.split('.')[0]] = temp_iterationMatrix
 
+
+# example plotting for the AT1-metabolites iteration matrix
+# get the iteration matrix for the AT1-metabolites
+AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
+# plot the iteration matrix
+## plot it in different subplots of 3 rows and 3 columns to show all the nodes
+current_completed_plots = 0
+while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+    fig, axs = plt.subplots(3, 3)
+    fig.suptitle('AT1-metabolites')
+    for i in range(3):
+        for j in range(3):
+            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+                axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
+                axs[i, j].set_title(AT1_metabolites_iterationMatrix.columns[current_completed_plots])
+                # change the orientation of the x labels to be slighly rotated
+                axs[i, j].tick_params(axis='x', rotation=90)
+                current_completed_plots += 1
+            else:
+                break
+    plt.show()
+
+
