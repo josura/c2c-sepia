@@ -14,5 +14,8 @@ for file in os.listdir(iterationMatrixFolder):
         temp_iterationMatrix = pd.read_csv(iterationMatrixFolder + '/' + file, sep='\t')
         ## drop the last column (useless)
         temp_iterationMatrix = temp_iterationMatrix.drop(temp_iterationMatrix.columns[-1], axis=1)
+        ## first row of the matrix is the node names (nodeNames), the rest of the columns are the timepoints (the names go from 0 to the end of the simulation timepoint)
+        nodeNames = temp_iterationMatrix['nodeNames']
+        ## drop the nodeNames column
+        temp_iterationMatrix = temp_iterationMatrix.drop('nodeNames', axis=1)
         
-
