@@ -277,7 +277,7 @@ interactionPlot.show()
 results_1h = meta.uns['liana_res']
 ## change the name of columns source target ligand_complex receptor_complex and scaled_weight
 results_1h = results_1h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
-results_1h['contactTimes'] = 1
+results_1h['contactTimes'] = 0  # 1h starts from 0 though since that is the first contact point
 ## add -metabolites to the startType since it encodes the layer for the metabolites
 results_1h['startType'] = results_1h['startType'] + "-metabolites"
 ## select only the interactions that have the genes in the target layer
