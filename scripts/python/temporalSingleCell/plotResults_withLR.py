@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 
 # get the outputs(iteration matrices) from the folder
 iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/outputWithLR/iterationMatrices"
@@ -11,7 +12,3 @@ iterationMatrices = {}
 for file in os.listdir(iterationMatrixFolder):
     if file.endswith(".tsv"):
         temp_iterationMatrix = pd.read_csv(iterationMatrixFolder + '/' + file, sep='\t')
-        ## drop the column with all the NaN values
-        temp_iterationMatrix = iterationMatrices[file.split('.')[0]].dropna(axis=1, how='all')
-        iterationMatrices[file.split('.')[0]] = temp_iterationMatrix
-
