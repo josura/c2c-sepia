@@ -384,7 +384,7 @@ interactionPlot.show()
 results_6h = mdata_6h.uns['liana_res']
 ## change the name of columns source target ligand_complex receptor_complex and scaled_weight
 results_6h = results_6h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
-results_6h['contactTimes'] = 6
+results_6h['contactTimes'] = 5  # 6h starts from 5 since the 1h timepoint starts from 0
 ## add -metabolites to the startType since it encodes the layer for the metabolites
 results_6h['startType'] = results_6h['startType'] + "-metabolites"
 ## select only the interactions that have the genes in the target layer
