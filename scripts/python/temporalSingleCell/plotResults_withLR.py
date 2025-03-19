@@ -10,4 +10,8 @@ iterationMatrices = {}
 # get the files in the folder, every single file is a type(the name is specified by the first part of the filename), and the content is the iteration matrix
 for file in os.listdir(iterationMatrixFolder):
     if file.endswith(".tsv"):
-        iterationMatrices[file.split('_')[0]] = pd.read_csv(iterationMatrixFolder + '/' + file, sep='\t')
+        temp_iterationMatrix = pd.read_csv(iterationMatrixFolder + '/' + file, sep='\t')
+        ## drop the column with all the NaN values
+        temp_iterationMatrix = iterationMatrices[file.split('.')[0]].dropna(axis=1, how='all')
+        iterationMatrices[file.split('.')[0]] = temp_iterationMatrix
+
