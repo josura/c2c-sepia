@@ -20,4 +20,10 @@ for file in os.listdir(iterationMatrixFolder):
         temp_iterationMatrix = temp_iterationMatrix.drop('nodeNames', axis=1)
         ## get the timepoints
         timepoints = temp_iterationMatrix.columns
+        ## we need to transpose the matrix so that the columns are the node names and the rows are the timepoints iteration results
+        temp_iterationMatrix = temp_iterationMatrix.transpose()
+        ## set the column names to be the node names
+        temp_iterationMatrix.columns = nodeNames
+        ## set the index to be the timepoints
+        temp_iterationMatrix.index = timepoints
         
