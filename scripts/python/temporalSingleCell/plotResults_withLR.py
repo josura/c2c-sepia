@@ -12,3 +12,7 @@ iterationMatrices = {}
 for file in os.listdir(iterationMatrixFolder):
     if file.endswith(".tsv"):
         temp_iterationMatrix = pd.read_csv(iterationMatrixFolder + '/' + file, sep='\t')
+        ## drop the last column (useless)
+        temp_iterationMatrix = temp_iterationMatrix.drop(temp_iterationMatrix.columns[-1], axis=1)
+        
+
