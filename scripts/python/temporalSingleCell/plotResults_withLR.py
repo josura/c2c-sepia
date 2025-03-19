@@ -26,4 +26,10 @@ for file in os.listdir(iterationMatrixFolder):
         temp_iterationMatrix.columns = nodeNames
         ## set the index to be the timepoints
         temp_iterationMatrix.index = timepoints
-        
+        ## add a column to be the timepoints
+        # temp_iterationMatrix['time'] = timepoints
+        ## change index name to be 'time'
+        temp_iterationMatrix.index.name = 'time'
+        ## add the iteration matrix to the dictionary
+        iterationMatrices[file.split('.')[0]] = temp_iterationMatrix
+
