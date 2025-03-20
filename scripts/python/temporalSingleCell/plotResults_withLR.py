@@ -33,6 +33,9 @@ for file in os.listdir(iterationMatrixFolder):
         ## add the iteration matrix to the dictionary
         iterationMatrices[file.split('.')[0]] = temp_iterationMatrix
 
+# get the namemap for the nodes, translating the metabolite names to the original names
+namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse.csv", sep=',')
+
 
 # example plotting for the AT1-metabolites iteration matrix
 # get the iteration matrix for the AT1-metabolites
