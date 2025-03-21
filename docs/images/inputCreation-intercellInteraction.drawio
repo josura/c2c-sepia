@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0" version="26.1.1">
   <diagram name="Page-1" id="DU-PtAtm8P8fFWaj5Egw">
-    <mxGraphModel dx="3770" dy="1856" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="5545" dy="2955" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -427,7 +427,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="EleWaJk2EbGjWbHfjWon-246" value="&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Gene selected from&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;the gene network related&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;to every celltype&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="-2140" y="285" width="220" height="80" as="geometry" />
+          <mxGeometry x="-1900" y="290" width="220" height="80" as="geometry" />
         </mxCell>
         <mxCell id="EleWaJk2EbGjWbHfjWon-106" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EleWaJk2EbGjWbHfjWon-107" target="EleWaJk2EbGjWbHfjWon-110">
           <mxGeometry relative="1" as="geometry" />
@@ -468,8 +468,14 @@
         </mxCell>
         <mxCell id="EleWaJk2EbGjWbHfjWon-344" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="-1660" y="-150" as="sourcePoint" />
-            <mxPoint x="-2000" y="-150" as="targetPoint" />
+            <mxPoint x="-1657.5" y="-100" as="sourcePoint" />
+            <mxPoint x="-2160" y="-100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EleWaJk2EbGjWbHfjWon-345" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-1657.5" y="280" as="sourcePoint" />
+            <mxPoint x="-2160" y="280" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
