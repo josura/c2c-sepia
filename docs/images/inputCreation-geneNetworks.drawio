@@ -53,11 +53,11 @@
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-21" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;curved=1;dashed=1;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="429" y="999.1700000000001" as="sourcePoint" />
-            <mxPoint x="549" y="999.1700000000001" as="targetPoint" />
+            <mxPoint x="429" y="965.1700000000001" as="sourcePoint" />
+            <mxPoint x="549" y="965.1700000000001" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="xg9zEaj_P02uv0DpQNPk-22" value="1,1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xg9zEaj_P02uv0DpQNPk-21">
+        <mxCell id="xg9zEaj_P02uv0DpQNPk-22" value="n,1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xg9zEaj_P02uv0DpQNPk-21">
           <mxGeometry x="-0.1" y="6" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
@@ -139,8 +139,8 @@
         <mxCell id="xg9zEaj_P02uv0DpQNPk-45" value="&lt;div&gt;FILTERING&lt;/div&gt;&lt;div&gt;AND&lt;/div&gt;&lt;div&gt;PATHWAY SCORE&lt;/div&gt;&lt;div&gt;COMPUTATION&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="299" y="840" width="120" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="xg9zEaj_P02uv0DpQNPk-46" value="&lt;div&gt;TRANSLATION&lt;/div&gt;&lt;div&gt;AND&lt;/div&gt;&lt;div&gt;UNION&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="428" y="1007" width="110" height="60" as="geometry" />
+        <mxCell id="xg9zEaj_P02uv0DpQNPk-46" value="&lt;div&gt;SELECTION,&lt;/div&gt;&lt;div&gt;TRANSLATION&lt;/div&gt;&lt;div&gt;AND&lt;/div&gt;&lt;div&gt;UNION&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="428" y="968" width="110" height="70" as="geometry" />
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-47" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=8;startArrow=halfCircle;startFill=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -157,7 +157,7 @@
         <mxCell id="xg9zEaj_P02uv0DpQNPk-51" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="484" y="1130" as="sourcePoint" />
-            <mxPoint x="484" y="1070" as="targetPoint" />
+            <mxPoint x="484" y="1040" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-52" value="1,n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xg9zEaj_P02uv0DpQNPk-51">
