@@ -52,6 +52,14 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
         for j in range(3):
             if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
                 axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
+                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
+                ## get the original name of the metabolite
+                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
+                if len(original_name_Series) > 0:
+                    original_name = original_name_Series.values[0]
+                else:
+                    original_name = HMDB_id
+                axs[i, j].set_title(original_name)
                 # change the orientation of the x labels to be slighly rotated
                 axs[i, j].tick_params(axis='x', rotation=90)
                 current_completed_plots += 1
