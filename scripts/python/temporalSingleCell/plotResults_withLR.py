@@ -40,9 +40,10 @@ namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/tempor
 namemap = namemap.dropna(subset=['HMDB'])
 
 
-# example plotting for the AT1-metabolites iteration matrix
 # get the iteration matrix for the AT1-metabolites
 AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
+
+# example plotting for the AT1-metabolites iteration matrix
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
 current_completed_plots = 0
@@ -69,4 +70,24 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
     plt.show()
 
 # example plotting for the AT1-metabolites iteration matrix with plotly
-
+# plot the iteration matrix
+## plot it in different subplots of 3 rows and 3 columns to show all the nodes
+current_completed_plots = 0
+while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+    fig = px.line()
+    fig.update_layout(title='AT1-metabolites')
+    for i in range(3):
+        for j in range(3):
+            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
+                ## get the original name of the metabolite
+                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
+                if len(original_name_Series) > 0:
+                    original_name = original_name_Series.values[0]
+                else:
+                    original_name = HMDB_id
+                fig.add_scatter(x=AT1_metabolites_iterationMatrix.index, y=AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]], name=original_name)
+                current_completed_plots += 1
+            else:
+                break
+    fig.show()
