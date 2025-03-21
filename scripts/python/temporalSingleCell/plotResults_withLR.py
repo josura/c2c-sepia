@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 # get the outputs(iteration matrices) from the folder
 iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/outputWithLR/iterationMatrices"
@@ -34,7 +35,7 @@ for file in os.listdir(iterationMatrixFolder):
         iterationMatrices[file.split('.')[0]] = temp_iterationMatrix
 
 # get the namemap for the nodes, translating the metabolite names to the original names
-namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse.csv", sep=',')
+namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse_fixed.csv", sep=',')
 ## drop rows with NaN values on HMDB column
 namemap = namemap.dropna(subset=['HMDB'])
 
@@ -67,4 +68,5 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
                 break
     plt.show()
 
+# example plotting for the AT1-metabolites iteration matrix with plotly
 
