@@ -35,6 +35,8 @@ for file in os.listdir(iterationMatrixFolder):
 
 # get the namemap for the nodes, translating the metabolite names to the original names
 namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse.csv", sep=',')
+## drop rows with NaN values on HMDB column
+namemap = namemap.dropna(subset=['HMDB'])
 
 
 # example plotting for the AT1-metabolites iteration matrix
@@ -50,7 +52,6 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
         for j in range(3):
             if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
                 axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
-                axs[i, j].set_title(AT1_metabolites_iterationMatrix.columns[current_completed_plots])
                 # change the orientation of the x labels to be slighly rotated
                 axs[i, j].tick_params(axis='x', rotation=90)
                 current_completed_plots += 1
