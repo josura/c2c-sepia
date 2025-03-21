@@ -16,7 +16,7 @@
         <mxCell id="EleWaJk2EbGjWbHfjWon-9" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://raw.githubusercontent.com/jinworks/CellChat/refs/heads/main/CellChat_Logo.png;" vertex="1" parent="EleWaJk2EbGjWbHfjWon-8">
           <mxGeometry x="10" y="30.75" width="578.5" height="289.25" as="geometry" />
         </mxCell>
-        <mxCell id="EleWaJk2EbGjWbHfjWon-10" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="EleWaJk2EbGjWbHfjWon-6">
+        <mxCell id="EleWaJk2EbGjWbHfjWon-10" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" target="EleWaJk2EbGjWbHfjWon-6" source="EleWaJk2EbGjWbHfjWon-105">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-760" y="-290" as="sourcePoint" />
             <mxPoint x="-1050" y="-380" as="targetPoint" />
