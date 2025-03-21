@@ -43,6 +43,8 @@ namemap = namemap.dropna(subset=['HMDB'])
 # get the iteration matrix for the AT1-metabolites
 AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
 
+# read the fluxes data with the different time-points
+
 # example plotting for the AT1-metabolites iteration matrix
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
