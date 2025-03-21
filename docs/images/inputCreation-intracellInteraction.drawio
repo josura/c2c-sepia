@@ -291,7 +291,7 @@
         <mxCell id="CCcMtgtyuxy5mzL-O7Zm-96" value="v" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="775" y="668" width="20" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="CCcMtgtyuxy5mzL-O7Zm-97" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="CCcMtgtyuxy5mzL-O7Zm-97" value="Metabolic network" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="20" y="15" width="820" height="735" as="geometry" />
         </mxCell>
         <mxCell id="CCcMtgtyuxy5mzL-O7Zm-98" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CCcMtgtyuxy5mzL-O7Zm-99" target="CCcMtgtyuxy5mzL-O7Zm-102">
@@ -428,7 +428,7 @@
         <mxCell id="CCcMtgtyuxy5mzL-O7Zm-135" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="CCcMtgtyuxy5mzL-O7Zm-129" target="CCcMtgtyuxy5mzL-O7Zm-132">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="CCcMtgtyuxy5mzL-O7Zm-136" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="CCcMtgtyuxy5mzL-O7Zm-136" value="Genes network" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="180" y="1040" width="180" height="290" as="geometry" />
         </mxCell>
       </root>
