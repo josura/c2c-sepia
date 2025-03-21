@@ -630,7 +630,7 @@
             <mxRectangle width="60" height="41" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="EleWaJk2EbGjWbHfjWon-437" value="&lt;div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;metabolite&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;target&lt;/font&gt;&lt;/div&gt;" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" vertex="1" parent="EleWaJk2EbGjWbHfjWon-435">
+        <mxCell id="EleWaJk2EbGjWbHfjWon-437" value="&lt;div&gt;gene&lt;/div&gt;&lt;div&gt;target&lt;/div&gt;" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" vertex="1" parent="EleWaJk2EbGjWbHfjWon-435">
           <mxGeometry x="60" width="60" height="41" as="geometry">
             <mxRectangle width="60" height="41" as="alternateBounds" />
           </mxGeometry>
