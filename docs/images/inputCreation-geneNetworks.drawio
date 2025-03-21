@@ -144,20 +144,20 @@
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-47" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=8;startArrow=halfCircle;startFill=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="264" y="1154" as="sourcePoint" />
-            <mxPoint x="264" y="1210" as="targetPoint" />
+            <mxPoint x="468" y="1180" as="sourcePoint" />
+            <mxPoint x="468" y="1236" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-48" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="334" y="1166" width="26" height="26" as="geometry" />
+          <mxGeometry x="538" y="1192" width="26" height="26" as="geometry" />
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-50" value="LR library" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="224" y="1124" width="150" height="100" as="geometry" />
+          <mxGeometry x="428" y="1150" width="150" height="100" as="geometry" />
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-51" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="280" y="1104" as="sourcePoint" />
-            <mxPoint x="280" y="1044" as="targetPoint" />
+            <mxPoint x="484" y="1130" as="sourcePoint" />
+            <mxPoint x="484" y="1070" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-52" value="1,n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xg9zEaj_P02uv0DpQNPk-51">
@@ -166,7 +166,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="xg9zEaj_P02uv0DpQNPk-53" value="&lt;div&gt;ENRICHMENT WITH&lt;/div&gt;&lt;div&gt;LIGAND RECEPTOR&lt;/div&gt;&lt;div&gt;GENES&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="285" y="1050" width="140" height="60" as="geometry" />
+          <mxGeometry x="340" y="1086" width="140" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
