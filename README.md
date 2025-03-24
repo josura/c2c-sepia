@@ -1,5 +1,5 @@
 # c2c-sepia
-Original project and development for the MASFENON framework(now under migration and development in [here](https://github.com/josura/MASFENON)), used for the perturbation in networks of networks using a MAS(Multi-agent system), enhanced with parallel and distributed processing.
+Original project and development for the MASFENON framework(now under migration and development in [here](https://github.com/josura/MASFENON)), used for the perturbation in networks of networks using a MAS(Multi-agent system), enhanced with parallel and distributed processing. Now a repository of all the experiments and the code used to simulate cell-to-cell dynamics.
 Specifically built for Cell-to-cell communication with enriched pathways, using scRNA-seq data.
 
 ## DEPENDENCIES
