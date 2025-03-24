@@ -44,6 +44,9 @@ namemap = namemap.dropna(subset=['HMDB'])
 AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
 
 # read the fluxes data with the different time-points
+fluxes_1h = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/fluxes.tsv", sep='\t')
+fluxes_6h = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/6h/fluxes.tsv", sep='\t')
+fluxes_10h = pd.read_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/10h/fluxes.tsv", sep='\t')
 
 # example plotting for the AT1-metabolites iteration matrix
 # plot the iteration matrix
