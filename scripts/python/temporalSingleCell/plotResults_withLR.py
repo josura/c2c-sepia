@@ -80,6 +80,11 @@ well_celltype_df_6h["well"] = rna_6h_metadata_pd.index
 metabolites_6h = pd.read_csv(metabolites_6hFile, sep=",", index_col=0)
 metabolites_6h["well"] = metabolites_6h.index
 metabolites_6h = metabolites_6h.merge(well_celltype_df_6h, on="well", how="left")
+metabolites_6h.index = metabolites_6h["well"]
+## drop the well column
+metabolites_6h = metabolites_6h.drop("well", axis=1)
+## averaging the metabolites for the same cell type
+metabolites_6h_averaged = metabolites_6h.groupby(["celltype"]).mean()
 #7h
 rna_7h_metadata_pd = pd.read_csv(rna_7h_metadataFile, sep="\t", index_col=0)
 ## read well data from the seurat obj
