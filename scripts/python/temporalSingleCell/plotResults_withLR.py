@@ -110,7 +110,11 @@ well_celltype_df_10h["well"] = rna_10h_metadata_pd.index
 metabolites_10h = pd.read_csv(metabolites_10hFile, sep=",", index_col=0)
 metabolites_10h["well"] = metabolites_10h.index
 metabolites_10h = metabolites_10h.merge(well_celltype_df_10h, on="well", how="left")
-
+metabolites_10h.index = metabolites_10h["well"]
+## drop the well column
+metabolites_10h = metabolites_10h.drop("well", axis=1)
+## averaging the metabolites for the same cell type
+metabolites_10h_averaged = metabolites_10h.groupby(["celltype"]).mean()
 
 
 # example plotting for the AT1-metabolites iteration matrix
