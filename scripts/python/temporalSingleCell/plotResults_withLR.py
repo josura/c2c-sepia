@@ -61,40 +61,40 @@ rna_1h_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
 well_celltype_df_1h = pd.DataFrame()
 well_celltype_df_1h["celltype"] = rna_1h_metadata_pd["cell_type"]
 well_celltype_df_1h["well"] = rna_1h_metadata_pd.index
-## reading the fluxes and join them with the well information
-fluxes_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
-fluxes_1h["well"] = fluxes_1h.index
-fluxes_1h = fluxes_1h.merge(well_celltype_df_1h, on="well", how="left")
+## reading the metabolites and join them with the well information
+metabolites_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
+metabolites_1h["well"] = metabolites_1h.index
+metabolites_1h = metabolites_1h.merge(well_celltype_df_1h, on="well", how="left")
 #6h
 rna_6h_metadata_pd = pd.read_csv(rna_6h_metadataFile, sep="\t", index_col=0)
 ## read well data from the seurat obj
 well_celltype_df_6h = pd.DataFrame()
 well_celltype_df_6h["celltype"] = rna_6h_metadata_pd["cell_type"]
 well_celltype_df_6h["well"] = rna_6h_metadata_pd.index
-## reading the fluxes and join them with the well information
-fluxes_6h = pd.read_csv(flux_rate_6hFile, sep=",", index_col=0)
-fluxes_6h["well"] = fluxes_6h.index
-fluxes_6h = fluxes_6h.merge(well_celltype_df_6h, on="well", how="left")
+## reading the metabolites and join them with the well information
+metabolites_6h = pd.read_csv(flux_rate_6hFile, sep=",", index_col=0)
+metabolites_6h["well"] = metabolites_6h.index
+metabolites_6h = metabolites_6h.merge(well_celltype_df_6h, on="well", how="left")
 #7h
 rna_7h_metadata_pd = pd.read_csv(rna_7h_metadataFile, sep="\t", index_col=0)
 ## read well data from the seurat obj
 well_celltype_df_7h = pd.DataFrame()
 well_celltype_df_7h["celltype"] = rna_7h_metadata_pd["cell_type"]
 well_celltype_df_7h["well"] = rna_7h_metadata_pd.index
-## reading the fluxes and join them with the well information
-fluxes_7h = pd.read_csv(flux_rate_7hFile, sep=",", index_col=0)
-fluxes_7h["well"] = fluxes_7h.index
-fluxes_7h = fluxes_7h.merge(well_celltype_df_7h, on="well", how="left")
+## reading the metabolites and join them with the well information
+metabolites_7h = pd.read_csv(flux_rate_7hFile, sep=",", index_col=0)
+metabolites_7h["well"] = metabolites_7h.index
+metabolites_7h = metabolites_7h.merge(well_celltype_df_7h, on="well", how="left")
 #10h
 rna_10h_metadata_pd = pd.read_csv(rna_10h_metadataFile, sep="\t", index_col=0)
 ## read well data from the seurat obj
 well_celltype_df_10h = pd.DataFrame()
 well_celltype_df_10h["celltype"] = rna_10h_metadata_pd["cell_type"]
 well_celltype_df_10h["well"] = rna_10h_metadata_pd.index
-## reading the fluxes and join them with the well information
-fluxes_10h = pd.read_csv(flux_rate_10hFile, sep=",", index_col=0)
-fluxes_10h["well"] = fluxes_10h.index
-fluxes_10h = fluxes_10h.merge(well_celltype_df_10h, on="well", how="left")
+## reading the metabolites and join them with the well information
+metabolites_10h = pd.read_csv(flux_rate_10hFile, sep=",", index_col=0)
+metabolites_10h["well"] = metabolites_10h.index
+metabolites_10h = metabolites_10h.merge(well_celltype_df_10h, on="well", how="left")
 
 
 
