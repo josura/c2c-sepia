@@ -62,7 +62,7 @@ well_celltype_df_1h = pd.DataFrame()
 well_celltype_df_1h["celltype"] = rna_1h_metadata_pd["cell_type"]
 well_celltype_df_1h["well"] = rna_1h_metadata_pd.index
 ## reading the metabolites and join them with the well information
-metabolites_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
+metabolites_1h = pd.read_csv(metabolites_1hFile, sep=",", index_col=0)
 metabolites_1h["well"] = metabolites_1h.index
 metabolites_1h = metabolites_1h.merge(well_celltype_df_1h, on="well", how="left")
 #6h
@@ -72,7 +72,7 @@ well_celltype_df_6h = pd.DataFrame()
 well_celltype_df_6h["celltype"] = rna_6h_metadata_pd["cell_type"]
 well_celltype_df_6h["well"] = rna_6h_metadata_pd.index
 ## reading the metabolites and join them with the well information
-metabolites_6h = pd.read_csv(flux_rate_6hFile, sep=",", index_col=0)
+metabolites_6h = pd.read_csv(metabolites_6hFile, sep=",", index_col=0)
 metabolites_6h["well"] = metabolites_6h.index
 metabolites_6h = metabolites_6h.merge(well_celltype_df_6h, on="well", how="left")
 #7h
@@ -82,7 +82,7 @@ well_celltype_df_7h = pd.DataFrame()
 well_celltype_df_7h["celltype"] = rna_7h_metadata_pd["cell_type"]
 well_celltype_df_7h["well"] = rna_7h_metadata_pd.index
 ## reading the metabolites and join them with the well information
-metabolites_7h = pd.read_csv(flux_rate_7hFile, sep=",", index_col=0)
+metabolites_7h = pd.read_csv(metabolites_7hFile, sep=",", index_col=0)
 metabolites_7h["well"] = metabolites_7h.index
 metabolites_7h = metabolites_7h.merge(well_celltype_df_7h, on="well", how="left")
 #10h
@@ -92,7 +92,7 @@ well_celltype_df_10h = pd.DataFrame()
 well_celltype_df_10h["celltype"] = rna_10h_metadata_pd["cell_type"]
 well_celltype_df_10h["well"] = rna_10h_metadata_pd.index
 ## reading the metabolites and join them with the well information
-metabolites_10h = pd.read_csv(flux_rate_10hFile, sep=",", index_col=0)
+metabolites_10h = pd.read_csv(metabolites_10hFile, sep=",", index_col=0)
 metabolites_10h["well"] = metabolites_10h.index
 metabolites_10h = metabolites_10h.merge(well_celltype_df_10h, on="well", how="left")
 
