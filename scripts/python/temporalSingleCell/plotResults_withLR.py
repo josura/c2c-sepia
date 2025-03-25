@@ -55,6 +55,17 @@ rna_6h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-6h-meta
 rna_7h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-7h-metadata.tsv"
 rna_10h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-10h-metadata.tsv"
 
+#1h
+rna_1h_metadata_pd = pd.read_csv(rna_1h_metadataFile, sep="\t", index_col=0)
+## read well data from the seurat obj
+well_celltype_df_1h = pd.DataFrame()
+well_celltype_df_1h["celltype"] = rna_1h_metadata_pd["cell_type"]
+well_celltype_df_1h["well"] = rna_1h_metadata_pd.index
+## reading the fluxes and join them with the well information
+fluxes_1h = pd.read_csv(flux_rate_1hFile, sep=",", index_col=0)
+fluxes_1h["well"] = fluxes_1h.index
+fluxes_1h = fluxes_1h.merge(well_celltype_df_1h, on="well", how="left")
+
 
 # example plotting for the AT1-metabolites iteration matrix
 # plot the iteration matrix
