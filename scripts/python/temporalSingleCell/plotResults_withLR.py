@@ -75,6 +75,17 @@ well_celltype_df_6h["well"] = rna_6h_metadata_pd.index
 fluxes_6h = pd.read_csv(flux_rate_6hFile, sep=",", index_col=0)
 fluxes_6h["well"] = fluxes_6h.index
 fluxes_6h = fluxes_6h.merge(well_celltype_df_6h, on="well", how="left")
+#7h
+rna_7h_metadata_pd = pd.read_csv(rna_7h_metadataFile, sep="\t", index_col=0)
+## read well data from the seurat obj
+well_celltype_df_7h = pd.DataFrame()
+well_celltype_df_7h["celltype"] = rna_7h_metadata_pd["cell_type"]
+well_celltype_df_7h["well"] = rna_7h_metadata_pd.index
+## reading the fluxes and join them with the well information
+fluxes_7h = pd.read_csv(flux_rate_7hFile, sep=",", index_col=0)
+fluxes_7h["well"] = fluxes_7h.index
+fluxes_7h = fluxes_7h.merge(well_celltype_df_7h, on="well", how="left")
+
 
 
 # example plotting for the AT1-metabolites iteration matrix
