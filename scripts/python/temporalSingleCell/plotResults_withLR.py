@@ -49,6 +49,12 @@ flux_rate_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_modul
 flux_rate_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_module168_cell1722_20241014-123944.csv"
 flux_rate_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_module168_cell1240_20241014-171445.csv"
 
+# read the information of the transcriptomics about the cells
+rna_1h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h-metadata.tsv"
+rna_6h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-6h-metadata.tsv"
+rna_7h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-7h-metadata.tsv"
+rna_10h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-10h-metadata.tsv"
+
 
 # example plotting for the AT1-metabolites iteration matrix
 # plot the iteration matrix
