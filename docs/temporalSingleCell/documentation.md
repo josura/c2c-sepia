@@ -24,6 +24,7 @@ consistency in the generated inputs should always be paramount since the algorit
 
 ## flux rate are considered to generate the weights for the metabolite layer
 the flux rate is used to generate the weights for the metabolite layer, the higher the flux rate, the higher the weight. Since the metabolite layer could be dependent on the type of granularity used, for same interactions modules, the weights could be collapsed into one single weight (for coarser granularity) or remain separate (for finer granularity). Also, flux rates are given for every cell, so some kind of aggregation should be done to generate the weights for the metabolite layer for the single celltype.
+A problem is that the flux rates change with timepoints, and for now the networks used are static for the single celltype, so they have the same weight throughout the simulation.
 
 ## selection of highly variable cells and treatment of 7h data or every time point separately
 there are some problems with the 7h data that seems to be related to the low quality of it (there are some Nan or infinite values during the rank aggregate function to establish the interaction between metabolites and genes), the possible approaches are:
