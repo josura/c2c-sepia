@@ -39,10 +39,6 @@ namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/tempor
 ## drop rows with NaN values on HMDB column
 namemap = namemap.dropna(subset=['HMDB'])
 
-
-# get the iteration matrix for the AT1-metabolites
-AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
-
 # read the metabolites data with the different time-points
 metabolites_1hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
 metabolites_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_metabolites_module168_cell1037_20241014-125629.csv"
@@ -155,6 +151,8 @@ metabolites_7h_averaged.columns = original_name_list
 metabolites_10h_averaged.columns = original_name_list
 
 # example plotting for the AT1-metabolites iteration matrix
+## get the iteration matrix for the AT1-metabolites
+AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
 current_completed_plots = 0
