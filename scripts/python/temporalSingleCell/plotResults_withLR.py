@@ -153,3 +153,71 @@ metabolites_1h_averaged.columns = original_name_list
 metabolites_6h_averaged.columns = original_name_list
 metabolites_7h_averaged.columns = original_name_list
 metabolites_10h_averaged.columns = original_name_list
+
+# example plotting for the AT1-metabolites iteration matrix
+# plot the iteration matrix
+## plot it in different subplots of 3 rows and 3 columns to show all the nodes
+current_completed_plots = 0
+while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+    fig, axs = plt.subplots(3, 3)
+    fig.suptitle('AT1-metabolites')
+    for i in range(3):
+        for j in range(3):
+            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+                axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
+                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
+                ## get the original name of the metabolite
+                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
+                if len(original_name_Series) > 0:
+                    original_name = original_name_Series.values[0]
+                else:
+                    original_name = HMDB_id
+                axs[i, j].set_title(original_name)
+                # change the orientation of the x labels to be slighly rotated
+                axs[i, j].tick_params(axis='x', rotation=90)
+                current_completed_plots += 1
+            else:
+                break
+    plt.show()
+
+# example plotting for the AT1-metabolites iteration matrix with plotly
+# plot the iteration matrix
+## plot it in different subplots of 3 rows and 3 columns to show all the nodes
+current_completed_plots = 0
+while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+    fig = px.line()
+    fig.update_layout(title='AT1-metabolites')
+    for i in range(3):
+        for j in range(3):
+            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
+                ## get the original name of the metabolite
+                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
+                if len(original_name_Series) > 0:
+                    original_name = original_name_Series.values[0]
+                else:
+                    original_name = HMDB_id
+                fig.add_scatter(x=AT1_metabolites_iterationMatrix.index, y=AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]], name=original_name)
+                ## plot the real metabolite value as a single point in the plot, specifically for AT1-metabolites
+                valueForMetabolite_1h = 0
+                valueForMetabolite_6h = 0
+                valueForMetabolite_7h = 0
+                valueForMetabolite_10h = 0
+                metabolites_for_AT1_1h = metabolites_1h_averaged[metabolites_1h_averaged.index == 'AT1']
+                if original_name in metabolites_1h_averaged.columns:
+                    valueForMetabolite_1h = metabolites_1h_averaged[original_name].values[0]
+                metabolites_for_AT1_6h = metabolites_6h_averaged[metabolites_6h_averaged.index == 'AT1']
+                if original_name in metabolites_6h_averaged.columns:
+                    valueForMetabolite_6h = metabolites_6h_averaged[original_name].values[0]
+                metabolites_for_AT1_7h = metabolites_7h_averaged[metabolites_7h_averaged.index == 'AT1']
+                if original_name in metabolites_7h_averaged.columns:
+                    valueForMetabolite_7h = metabolites_7h_averaged[original_name].values[0]
+                metabolites_for_AT1_10h = metabolites_10h_averaged[metabolites_10h_averaged.index == 'AT1']
+                if original_name in metabolites_10h_averaged.columns:
+                    valueForMetabolite_10h = metabolites_10h_averaged[original_name].values[0]
+                fig.add_scatter(x=[0, 5, 6, 9], y=[valueForMetabolite_1h, valueForMetabolite_6h, valueForMetabolite_7h, valueForMetabolite_10h], mode='markers', name='Real for ' + original_name)
+                
+                current_completed_plots += 1
+            else:
+                break
+    fig.show()
