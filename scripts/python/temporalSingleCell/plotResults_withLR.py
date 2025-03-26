@@ -46,7 +46,7 @@ AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
 # read the metabolites data with the different time-points
 metabolites_1hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
 metabolites_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_metabolites_module168_cell1037_20241014-125629.csv"
-metaoblites_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_metabolites_module168_cell1722_20241014-123944.csv"
+metabolites_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_metabolites_module168_cell1722_20241014-123944.csv"
 metabolites_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_metabolites_module168_cell1240_20241014-171445.csv"
 
 # read the information of the transcriptomics about the cells at different timepoints
@@ -115,53 +115,3 @@ metabolites_10h.index = metabolites_10h["well"]
 metabolites_10h = metabolites_10h.drop("well", axis=1)
 ## averaging the metabolites for the same cell type
 metabolites_10h_averaged = metabolites_10h.groupby(["celltype"]).mean()
-
-
-# example plotting for the AT1-metabolites iteration matrix
-# plot the iteration matrix
-## plot it in different subplots of 3 rows and 3 columns to show all the nodes
-current_completed_plots = 0
-while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
-    fig, axs = plt.subplots(3, 3)
-    fig.suptitle('AT1-metabolites')
-    for i in range(3):
-        for j in range(3):
-            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
-                axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
-                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
-                ## get the original name of the metabolite
-                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
-                if len(original_name_Series) > 0:
-                    original_name = original_name_Series.values[0]
-                else:
-                    original_name = HMDB_id
-                axs[i, j].set_title(original_name)
-                # change the orientation of the x labels to be slighly rotated
-                axs[i, j].tick_params(axis='x', rotation=90)
-                current_completed_plots += 1
-            else:
-                break
-    plt.show()
-
-# example plotting for the AT1-metabolites iteration matrix with plotly
-# plot the iteration matrix
-## plot it in different subplots of 3 rows and 3 columns to show all the nodes
-current_completed_plots = 0
-while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
-    fig = px.line()
-    fig.update_layout(title='AT1-metabolites')
-    for i in range(3):
-        for j in range(3):
-            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
-                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
-                ## get the original name of the metabolite
-                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
-                if len(original_name_Series) > 0:
-                    original_name = original_name_Series.values[0]
-                else:
-                    original_name = HMDB_id
-                fig.add_scatter(x=AT1_metabolites_iterationMatrix.index, y=AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]], name=original_name)
-                current_completed_plots += 1
-            else:
-                break
-    fig.show()
