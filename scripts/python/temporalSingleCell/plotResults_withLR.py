@@ -181,6 +181,9 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
     plt.show()
 
 # example plotting for the AT1-metabolites iteration matrix with plotly
+## adding the 1h real values to the simulated data, since it's the first timepoint
+### shifting all the timepoints by the minimum interval between them (that is the intra timestep)
+
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
 current_completed_plots = 0
