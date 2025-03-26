@@ -115,3 +115,41 @@ metabolites_10h.index = metabolites_10h["well"]
 metabolites_10h = metabolites_10h.drop("well", axis=1)
 ## averaging the metabolites for the same cell type
 metabolites_10h_averaged = metabolites_10h.groupby(["celltype"]).mean()
+
+# reading the names for the metabolites as ids from this file, since the full names don't match the original names sometimes
+metabolites_names = pd.read_csv("/home/josura/Projects/ccc/fluxes/scFEA/data/cName_complete_mouse_c70_m168.csv", sep=",")
+## there is only one row in the dataframe with the CNAMES for every entry in the row, create a map from the metabolite id to the name
+### first let's change the column names to be the metabolite ids in the average metabolites dataframes
+### let's control if they have the same column names
+if len(metabolites_1h_averaged.columns) == len(metabolites_names.columns):
+    columns_match = True
+    for i in range(len(metabolites_1h_averaged.columns)):
+        if metabolites_1h_averaged.columns[i] != metabolites_names.columns[i]:
+            print("The columns don't match: " + metabolites_1h_averaged.columns[i] + " != " + metabolites_names.columns[i])
+            columns_match = False
+            break
+    if columns_match:
+        metabolites_1h_averaged.columns = metabolites_names.values[0]
+        metabolites_6h_averaged.columns = metabolites_names.values[0]
+        metabolites_7h_averaged.columns = metabolites_names.values[0]
+        metabolites_10h_averaged.columns = metabolites_names.values[0]
+else:
+    print("The columns don't match on the size") 
+### reading the name_map
+namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse_fixed.csv", sep=',')
+### change the column names in the metabolites dataframes to the real original names (the ids are the column called Query, and the original names are in Match)
+original_name_list = []
+for i in range(len(metabolites_1h_averaged.columns)):
+    metaboliteToChange = metabolites_1h_averaged.columns[i]
+    real_name_pd = namemap[namemap["Query"] == metaboliteToChange]["Match"]
+    real_name = metaboliteToChange
+    if len(real_name_pd) > 0:
+        real_name = real_name_pd.values[0]
+    else:
+        print("The metabolite " + metaboliteToChange + " doesn't have a real name")
+    original_name_list.append(real_name)
+
+metabolites_1h_averaged.columns = original_name_list
+metabolites_6h_averaged.columns = original_name_list
+metabolites_7h_averaged.columns = original_name_list
+metabolites_10h_averaged.columns = original_name_list
