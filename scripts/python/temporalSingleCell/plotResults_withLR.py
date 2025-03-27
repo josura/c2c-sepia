@@ -152,7 +152,32 @@ metabolites_10h_averaged.columns = original_name_list
 
 # example plotting for the AT1-metabolites iteration matrix
 ## get the iteration matrix for the AT1-metabolites
-AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites']
+AT1_metabolites_iterationMatrix = iterationMatrices['AT1-metabolites'].copy()
+## adding the 1h real values to the simulated data, since it's the first timepoint
+### shifting all the timepoints by the minimum interval between them (that is the intra timestep)
+timestep = AT1_metabolites_iterationMatrix.index.astype(float)[1] - AT1_metabolites_iterationMatrix.index.astype(float)[0]
+AT1_metabolites_iterationMatrix.index = AT1_metabolites_iterationMatrix.index.astype(float) + timestep
+### adding the 1h real values to the simulated data
+pd_row_to_add = pd.DataFrame(index=[0], columns=AT1_metabolites_iterationMatrix.columns)
+metabolites_for_AT1_1h = metabolites_1h_averaged[metabolites_1h_averaged.index == 'AT1']
+if len(metabolites_for_AT1_1h) > 0:
+    for i in range(len(AT1_metabolites_iterationMatrix.columns)):
+        metaboliteHMDBName = AT1_metabolites_iterationMatrix.columns[i]
+        metaboliteOriginalName = namemap[namemap['HMDB'] == metaboliteHMDBName]['Match']
+        if len(metaboliteOriginalName) > 0:
+            metaboliteName = metaboliteOriginalName.values[0]
+        else:
+            metaboliteName = metaboliteHMDBName
+        ## check if the metabolite is in the metabolites_1h_averaged dataframe
+        ## if it is, add the value to the pd_row_to_add dataframe
+        ## if it is not, add 0
+        if metaboliteName in metabolites_for_AT1_1h.columns:
+            pd_row_to_add[metaboliteHMDBName] = metabolites_for_AT1_1h[metaboliteName].values[0]
+        else:
+            pd_row_to_add[metaboliteHMDBName] = 0
+    pd_row_to_add.index = [0]
+    pd_row_to_add.index.name = 'time'
+    AT1_metabolites_iterationMatrix = pd.concat([pd_row_to_add, AT1_metabolites_iterationMatrix], axis=0)
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
 current_completed_plots = 0
@@ -179,9 +204,6 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
     plt.show()
 
 # example plotting for the AT1-metabolites iteration matrix with plotly
-## adding the 1h real values to the simulated data, since it's the first timepoint
-### shifting all the timepoints by the minimum interval between them (that is the intra timestep)
-
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
 current_completed_plots = 0
