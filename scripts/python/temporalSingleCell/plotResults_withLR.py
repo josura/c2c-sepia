@@ -238,7 +238,8 @@ while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
                 metabolites_for_AT1_10h = metabolites_10h_averaged[metabolites_10h_averaged.index == 'AT1']
                 if original_name in metabolites_10h_averaged.columns:
                     valueForMetabolite_10h = metabolites_10h_averaged[original_name].values[0]
-                fig.add_scatter(x=[0, 5, 6, 9], y=[valueForMetabolite_1h, valueForMetabolite_6h, valueForMetabolite_7h, valueForMetabolite_10h], mode='markers', name='Real for ' + original_name)
+                if not( "v-in" in original_name or "v-out" in original_name ):
+                    fig.add_scatter(x=[0, 5, 6, 9], y=[valueForMetabolite_1h, valueForMetabolite_6h, valueForMetabolite_7h, valueForMetabolite_10h], mode='markers', name='Real for ' + original_name)
                 
                 current_completed_plots += 1
             else:
