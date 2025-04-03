@@ -180,28 +180,28 @@ if len(metabolites_for_AT1_1h) > 0:
     AT1_metabolites_iterationMatrix = pd.concat([pd_row_to_add, AT1_metabolites_iterationMatrix], axis=0)
 # plot the iteration matrix
 ## plot it in different subplots of 3 rows and 3 columns to show all the nodes
-current_completed_plots = 0
-while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
-    fig, axs = plt.subplots(3, 3)
-    fig.suptitle('AT1-metabolites')
-    for i in range(3):
-        for j in range(3):
-            if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
-                axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
-                HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
-                ## get the original name of the metabolite
-                original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
-                if len(original_name_Series) > 0:
-                    original_name = original_name_Series.values[0]
-                else:
-                    original_name = HMDB_id
-                axs[i, j].set_title(original_name)
-                # change the orientation of the x labels to be slighly rotated
-                axs[i, j].tick_params(axis='x', rotation=90)
-                current_completed_plots += 1
-            else:
-                break
-    plt.show()
+# current_completed_plots = 0
+# while current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+#     fig, axs = plt.subplots(3, 3)
+#     fig.suptitle('AT1-metabolites')
+#     for i in range(3):
+#         for j in range(3):
+#             if current_completed_plots < len(AT1_metabolites_iterationMatrix.columns):
+#                 axs[i, j].plot(AT1_metabolites_iterationMatrix.index, AT1_metabolites_iterationMatrix[AT1_metabolites_iterationMatrix.columns[current_completed_plots]])
+#                 HMDB_id = AT1_metabolites_iterationMatrix.columns[current_completed_plots]
+#                 ## get the original name of the metabolite
+#                 original_name_Series = namemap[namemap['HMDB'] == HMDB_id]['Match']
+#                 if len(original_name_Series) > 0:
+#                     original_name = original_name_Series.values[0]
+#                 else:
+#                     original_name = HMDB_id
+#                 axs[i, j].set_title(original_name)
+#                 # change the orientation of the x labels to be slighly rotated
+#                 axs[i, j].tick_params(axis='x', rotation=90)
+#                 current_completed_plots += 1
+#             else:
+#                 break
+#     plt.show()
 
 # example plotting for the AT1-metabolites iteration matrix with plotly
 # plot the iteration matrix
