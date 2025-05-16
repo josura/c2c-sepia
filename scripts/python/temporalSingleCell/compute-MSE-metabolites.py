@@ -127,3 +127,36 @@ metabolites_1h_averaged.columns = original_name_list
 metabolites_6h_averaged.columns = original_name_list
 metabolites_7h_averaged.columns = original_name_list
 metabolites_10h_averaged.columns = original_name_list
+
+# start the loop going through the different experiments, and for each experiment, select the type from the environment variable, and the different timepoints, then compute the MSE for each timepoint (sum of the squared differences between the predicted and the real values for each node in the selected graph)
+for experiment in experiments:
+    print("Computing MSE for experiment: " + experiment)
+    ## control if the file for the iteration matrix exists
+    iterationMatrixSelected_path = os.path.join(outputPath_matrices_all_experiments, experiment,"iterationMatrices", type + ".tsv")
+    iterationMatrixSelected = pd.DataFrame()
+    if( not os.path.exists(iterationMatrixSelected_path)):
+        print("The file " + iterationMatrixSelected_path + " doesn't exist")
+    else:
+        temp_iterationMatrix = pd.read_csv(iterationMatrixSelected_path, sep='\t')
+        ## drop the last column (useless)
+        temp_iterationMatrix = temp_iterationMatrix.drop(temp_iterationMatrix.columns[-1], axis=1)
+        ## first row of the matrix is the node names (nodeNames), the rest of the columns are the timepoints (the names go from 0 to the end of the simulation timepoint)
+        nodeNames = temp_iterationMatrix['nodeNames']
+        ## drop the nodeNames column
+        temp_iterationMatrix = temp_iterationMatrix.drop('nodeNames', axis=1)
+        ## get the timepoints
+        timepoints = temp_iterationMatrix.columns
+        ## we need to transpose the matrix so that the columns are the node names and the rows are the timepoints iteration results
+        temp_iterationMatrix = temp_iterationMatrix.transpose()
+        ## set the column names to be the node names
+        temp_iterationMatrix.columns = nodeNames
+        ## set the index to be the timepoints
+        temp_iterationMatrix.index = timepoints
+        ## add a column to be the timepoints
+        # temp_iterationMatrix['time'] = timepoints
+        ## change index name to be 'time'
+        temp_iterationMatrix.index.name = 'time'
+        ## get the iteration matrix 
+        iterationMatrixSelected = temp_iterationMatrix
+    print("The iteration for "+ experiment+ " matrix has been read")
+        
