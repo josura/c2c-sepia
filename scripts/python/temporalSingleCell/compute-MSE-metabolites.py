@@ -159,4 +159,8 @@ for experiment in experiments:
         ## get the iteration matrix 
         iterationMatrixSelected = temp_iterationMatrix
     print("The iteration for "+ experiment+ " matrix has been read")
+    ## get the corresponding timepoints for the iteration matrix
+    timepoints = iterationMatrixSelected.index
+    ## get the timepoints for the metabolites
+    timepoints_metabolites = [ "5", "6", "9"]
         
