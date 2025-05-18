@@ -163,4 +163,9 @@ for experiment in experiments:
     timepoints = iterationMatrixSelected.index
     ## get the timepoints for the metabolites
     timepoints_metabolites = [ "5", "6", "9"]
+    ## create the variable to store the MSE for each timepoint
+    mse_1h = 0
+    mse_6h = 0
+    mse_7h = 0
+    mse_10h = 0
         
