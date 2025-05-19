@@ -138,6 +138,8 @@ metabolites_6h_averaged.columns = node_name_list
 metabolites_7h_averaged.columns = node_name_list
 metabolites_10h_averaged.columns = node_name_list
 
+# creating the dataframe that store the MSEs for the experiments connected to a specific timepoint
+MSE_6h_df = pd.DataFrame(columns = ["MSE","experiment"])
 # start the loop going through the different experiments, and for each experiment, select the type from the environment variable, and the different timepoints, then compute the MSE for each timepoint (sum of the squared differences between the predicted and the real values for each node in the selected graph)
 for experiment in experiments:
     print("Computing MSE for experiment: " + experiment)
@@ -191,6 +193,9 @@ for experiment in experiments:
             # the column is not present in the simulated data, so no error can be computed
             print("There is no metabolite in the simulation for the (" + metabolites_6h_averaged.columns[i] + ") metabolite")
     mse_6h = mse_6h / metabolites_count
-    print("MSE_6h for the experiment " + experiment + " is: " + str(mse_6h))
+    MSE_6h_df = pd.concat([MSE_6h_df,pd.DataFrame({"MSE": [mse_6h],"experiment":experiment})])
+    #print("MSE_6h for the experiment " + experiment + " is: " + str(mse_6h))
 
+
+print(MSE_6h_df)
         
