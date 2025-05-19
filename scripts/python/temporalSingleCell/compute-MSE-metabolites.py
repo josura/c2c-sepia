@@ -243,3 +243,10 @@ print(MSE_7h_df)
 print("ranked MSE experiment results for 10h")
 MSE_10h_df.sort_values(by="MSE", inplace = True)
 print(MSE_10h_df)
+
+# save the MSE results in the output folder specified in the environment
+output_folder_mse =  os.environ.get("OUTPUT-MSE-FOLDER")
+
+MSE_6h_df.to_csv(output_folder_mse + "/mse_6h.tsv",sep="\t",index = False)
+MSE_7h_df.to_csv(output_folder_mse + "/mse_7h.tsv",sep="\t",index = False)
+MSE_10h_df.to_csv(output_folder_mse + "/mse_10h.tsv",sep="\t",index = False)
