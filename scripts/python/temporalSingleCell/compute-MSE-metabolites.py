@@ -161,10 +161,9 @@ for experiment in experiments:
     print("The iteration for "+ experiment+ " matrix has been read")
     ## get the corresponding timepoints for the iteration matrix
     timepoints = iterationMatrixSelected.index
-    ## get the timepoints for the metabolites
-    timepoints_metabolites = [ "5", "6", "9"]
+    ## get the timepoints for the metabolites, the 1h timepoint is not set since it's the input of the simulation, the timepoints are shifted by one hour and 0.2h (to account for the missing first time point)
+    timepoints_metabolites = [ "4.8", "5.8", "8.8"]
     ## create the variable to store the MSE for each timepoint
-    mse_1h = 0
     mse_6h = 0
     mse_7h = 0
     mse_10h = 0
