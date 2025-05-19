@@ -231,12 +231,15 @@ for experiment in experiments:
     
 
 
-print("MSE experiment results for 6h")
+print("ranked MSE experiment results for 6h")
+MSE_6h_df.sort_values(by="MSE", inplace = True)
 print(MSE_6h_df)
         
 
-print("MSE experiment results for 7h")
+print("ranked MSE experiment results for 7h")
+MSE_7h_df.sort_values(by="MSE", inplace = True)
 print(MSE_7h_df)
 
-print("MSE experiment results for 10h")
+print("ranked MSE experiment results for 10h")
+MSE_10h_df.sort_values(by="MSE", inplace = True)
 print(MSE_10h_df)
