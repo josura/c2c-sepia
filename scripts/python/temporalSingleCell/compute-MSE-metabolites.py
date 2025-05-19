@@ -138,7 +138,7 @@ metabolites_10h_averaged.columns = node_name_list
 for experiment in experiments:
     print("Computing MSE for experiment: " + experiment)
     ## control if the file for the iteration matrix exists
-    iterationMatrixSelected_path = os.path.join(outputPath_matrices_all_experiments, experiment,"iterationMatrices", type + ".tsv")
+    iterationMatrixSelected_path = os.path.join(outputPath_matrices_all_experiments, experiment,"iterationMatrices", type + "-metabolites.tsv")
     iterationMatrixSelected = pd.DataFrame()
     if( not os.path.exists(iterationMatrixSelected_path)):
         print("The file " + iterationMatrixSelected_path + " doesn't exist")
