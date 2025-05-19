@@ -14,6 +14,7 @@ experiments = os.listdir(outputPath_matrices_all_experiments)
 # reading the shared data between the different experiments ( the real data and some other things to make it consistent)
 # get the namemap for the nodes, translating the metabolite names to the original names
 namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse_fixed.csv", sep=',')
+
 ## drop rows with NaN values on HMDB column
 namemap = namemap.dropna(subset=['HMDB'])
 
@@ -109,24 +110,27 @@ if len(metabolites_1h_averaged.columns) == len(metabolites_names.columns):
         metabolites_10h_averaged.columns = metabolites_names.values[0]
 else:
     print("The columns don't match on the size") 
+
+
 ### reading the name_map
-namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse_fixed.csv", sep=',')
 source_namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/KEGG-to-original-names-all.tsv", sep='\t')
+
+
 ### change the column names in the metabolites dataframes to the HMDB names, there needs to be a translation from (source names) -> KEGG ids -> HMDB
 node_name_list = []
 for i in range(len(metabolites_1h_averaged.columns)):
     metaboliteToChange = metabolites_1h_averaged.columns[i]
-    kegg_name_pd = source_namemap[source_namemap["name"] == metaboliteToChange]["KEGG"]
+    # kegg_name_pd = source_namemap[source_namemap["name"] == metaboliteToChange]["KEGG"]
     #real_name_pd = namemap[namemap["Query"] == metaboliteToChange]["Match"]
     final_name = metaboliteToChange
-    if len(kegg_name_pd) > 0:
-        HMDB_name_pd = namemap[namemap["KEGG"] == kegg_name_pd.values[0]]["HMDB"].dropna()
-        if(len(HMDB_name_pd) > 0):
-            final_name = HMDB_name_pd.values[0]
-        else:
-            print("The metabolite " + metaboliteToChange + " doesn't have a HMDB identifier")
+    # if len(kegg_name_pd) > 0:
+    HMDB_name_pd = namemap[namemap["KEGG"] == metaboliteToChange]["HMDB"].dropna()
+    if(len(HMDB_name_pd) > 0):
+        final_name = HMDB_name_pd.values[0]
     else:
-        print("The metabolite " + metaboliteToChange + " doesn't have a real name")
+        print("The metabolite " + metaboliteToChange + " doesn't have a HMDB identifier")
+    # else:
+    #     print("The metabolite " + metaboliteToChange + " doesn't have a real name")
     node_name_list.append(final_name)
 
 metabolites_1h_averaged.columns = node_name_list
@@ -173,4 +177,20 @@ for experiment in experiments:
     mse_6h = 0
     mse_7h = 0
     mse_10h = 0
+    ### computing for the 6h timepoint
+    metabolites_6h_forSelectedType = metabolites_6h_averaged[metabolites_6h_averaged.index == type]
+    iterationMatrix_6h = iterationMatrixSelected[iterationMatrixSelected.index == timepoints_metabolites[0]]
+    metabolites_count = 0
+    for i in range(len(metabolites_6h_averaged.columns)):
+        if metabolites_6h_averaged.columns[i] in iterationMatrix_6h.columns:
+            # the column is present in the simulated data, so we can compute the error for it
+            metabolites_count = metabolites_count + 1
+            error = metabolites_6h_averaged[metabolites_6h_averaged.columns[i]].values[0] - iterationMatrix_6h[metabolites_6h_averaged.columns[i]].values[0]
+            mse_6h = mse_6h + np.square(error)
+        else:
+            # the column is not present in the simulated data, so no error can be computed
+            print("There is no metabolite in the simulation for the (" + metabolites_6h_averaged.columns[i] + ") metabolite")
+    mse_6h = mse_6h / metabolites_count
+    print("MSE_6h for the experiment " + experiment + " is: " + str(mse_6h))
+
         
