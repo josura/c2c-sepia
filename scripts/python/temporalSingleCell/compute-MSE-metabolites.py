@@ -111,8 +111,9 @@ else:
     print("The columns don't match on the size") 
 ### reading the name_map
 namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/name_map_full_mouse_fixed.csv", sep=',')
+source_namemap = pd.read_csv("/home/josura/Projects/ccc/c2c-sepia/scripts/python/temporalSingleCell/KEGG-to-original-names-all.tsv", sep='\t')
 ### change the column names in the metabolites dataframes to the real original names (the ids are the column called Query, and the original names are in Match)
-original_name_list = []
+node_name_list = []
 for i in range(len(metabolites_1h_averaged.columns)):
     metaboliteToChange = metabolites_1h_averaged.columns[i]
     real_name_pd = namemap[namemap["Query"] == metaboliteToChange]["Match"]
@@ -121,12 +122,12 @@ for i in range(len(metabolites_1h_averaged.columns)):
         real_name = real_name_pd.values[0]
     else:
         print("The metabolite " + metaboliteToChange + " doesn't have a real name")
-    original_name_list.append(real_name)
+    node_name_list.append(real_name)
 
-metabolites_1h_averaged.columns = original_name_list
-metabolites_6h_averaged.columns = original_name_list
-metabolites_7h_averaged.columns = original_name_list
-metabolites_10h_averaged.columns = original_name_list
+metabolites_1h_averaged.columns = node_name_list
+metabolites_6h_averaged.columns = node_name_list
+metabolites_7h_averaged.columns = node_name_list
+metabolites_10h_averaged.columns = node_name_list
 
 # start the loop going through the different experiments, and for each experiment, select the type from the environment variable, and the different timepoints, then compute the MSE for each timepoint (sum of the squared differences between the predicted and the real values for each node in the selected graph)
 for experiment in experiments:
