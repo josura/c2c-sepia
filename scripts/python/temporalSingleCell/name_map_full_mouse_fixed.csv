@@ -1,6 +1,6 @@
 "Query","Match","HMDB","PubChem","ChEBI","KEGG","METLIN","SMILES","Comment"
 "G00015","(GlcNAc)4 (Man)3 (Asn)1","METPA1482",NA,NA,"G00015",NA,NA,"1"
-"CC0002","Pyrimidine","HMDB0003361","NA","NA","NA","NA","NA","0"
+"CC0002","Pyrimidine","HMDB0003361","NA","NA","CC0002","NA","NA","0"
 "C00262","Hypoxanthine","HMDB0000157","790","17368","C00262","83","OC1=NC=NC2=C1NC=N2","1"
 "G00008","(Glc)3 (GlcNAc)2 (Man)9 (PP-Dol)1","METPA1476",NA,NA,"G00008",NA,NA,"1"
 "C03021","Protein asparagine","METPA0349",NA,NA,"C03021",NA,NA,"1"
