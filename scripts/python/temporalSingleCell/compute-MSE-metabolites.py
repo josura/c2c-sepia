@@ -213,7 +213,21 @@ for experiment in experiments:
     mse_7h = mse_7h / metabolites_count
     MSE_7h_df = pd.concat([MSE_7h_df,pd.DataFrame({"MSE": [mse_7h],"experiment":experiment})])
 
-    
+    #computing for the 10h timepoint
+    metabolites_10h_forSelectedType = metabolites_10h_averaged[metabolites_10h_averaged.index == type]
+    iterationMatrix_10h = iterationMatrixSelected[iterationMatrixSelected.index == timepoints_metabolites[0]]
+    metabolites_count = 0
+    for i in range(len(metabolites_10h_averaged.columns)):
+        if metabolites_10h_averaged.columns[i] in iterationMatrix_10h.columns:
+            # the column is present in the simulated data, so we can compute the error for it
+            metabolites_count = metabolites_count + 1
+            error = metabolites_10h_averaged[metabolites_10h_averaged.columns[i]].values[0] - iterationMatrix_10h[metabolites_10h_averaged.columns[i]].values[0]
+            mse_10h = mse_10h + np.square(error)
+        #else:
+            # the column is not present in the simulated data, so no error can be computed
+            # print("There is no metabolite in the simulation for the (" + metabolites_10h_averaged.columns[i] + ") metabolite")
+    mse_10h = mse_10h / metabolites_count
+    MSE_10h_df = pd.concat([MSE_10h_df,pd.DataFrame({"MSE": [mse_10h],"experiment":experiment})])
     
 
 
