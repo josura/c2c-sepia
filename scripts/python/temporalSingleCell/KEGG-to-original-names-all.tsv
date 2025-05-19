@@ -1,0 +1,110 @@
+KEGG	name
+G00008	(Glc)3 (GlcNAc)2 (Man)9 (PP-Dol)1
+C03021	Protein asparagine
+C00458	dCTP
+C00128	Cytidine 5'-monophosphate-N-acetylneuraminic acid
+C02218	2-Aminoacrylic acid
+G13088	(Gal)1 (GlcA)1 (GlcNAc)1 (Man)1 (S)1 (Ser/Thr)1
+C00182	Glycogen
+G00019	(GlcNAc)5 (Man)3 (Asn)1
+G13085	(Gal)1 (GlcNAc)1 (Man)1 (Neu5Ac)1 (Ser/Thr)1
+C00106	Uracil
+C00475	Cytidine
+C00526	Deoxyuridine
+C01490	Dermatan
+C03090	5-Phosphoribosylamine
+C00399	Ubiquinone-1
+CC0003	Steroid_hormone
+C00147	Adenine
+C00242	Guanine
+C00048	Glyoxylic acid
+C00178	Thymine
+C00075	Uridine triphosphate
+C00366	Uric acid
+C00008	ADP
+C01103	Orotidylic acid
+C00518	Hyaluronic acid
+C00353	Geranylgeranyl-PP
+G13100	(Gal)1 (GlcNAc)1 (LFuc)1 (Man)1 (Ser/Thr)1
+C03461	2-trans,6-trans-Farnesal
+C02528	Chenodeoxycholic acid
+C00000	same-product
+C02189	[Protein]-L-serine
+C00300	Creatine
+G00022	(GlcNAc)7 (Man)3 (Asn)1
+C00459	Thymidine 5'-triphosphate
+G00164	(Gal)2 (GlcA)2 (GlcNAc)2 (Xyl)1 (Ser)1
+C00078	L-Tryptophan
+C00881	Deoxycytidine
+C00152	L-Asparagine
+G00018	DS 3
+CC0001	Fatty Acid
+C04677	AICAR
+G00009	(Glc)3 (GlcNAc)2 (Man)9 (Asn)1
+G13084	(Gal)1 (GlcNAc)1 (Man)1 (Ser/Thr)1
+G00157	(Gal)2 (GlcA)1 (Xyl)1 (Ser)1
+G00015	(GlcNAc)4 (Man)3 (Asn)1
+CC0002	Pyrimidine
+C00668	G6P
+C00655	XMP
+C00385	Xanthine
+C03862	Dolichyl phosphate D-mannose
+C03406	Argininosuccinate
+C00407	Isoleucine
+C00705	dCDP
+C00401	Chondroitin
+C00750	Spermine
+C00559	Deoxyadenosine
+C00448	(E,E)-Farnesyl-PP
+C00262	Hypoxanthine
+C00158	Citrate
+C00025	Glutamate
+C00105	UMP
+C00187	Cholesterol
+C00036	Oxaloacetate
+C00334	GABA
+C00049	Aspartate
+C00364	dTMP
+C00118	G3P
+C00022	Pyruvate
+C00122	Fumarate
+C00026	2OG
+C00197	3PD
+C00239	dCMP
+C00091	Succinyl-CoA
+C00134	Putrescine
+C00062	Arginine
+C00119	PRPP
+C00077	Ornithine
+C00327	Citrulline
+C00144	GMP
+C00188	Threonine
+C00024	Acetyl-CoA
+C00051	Glutathione
+C00103	Glucose-1-phosphate
+C00099	B-Alanine
+C00065	Serine
+C00114	Choline
+C00123	Leucine
+C00043	UDP-N-acetylglucosamine
+C00149	Malate
+C00267	Glucose
+C00112	CDP
+C00042	Succinate
+C00167	UDP-glucuronic acid
+C00100	Propanoyl-CoA
+C00135	Histidine
+C00064	Glutamine
+C00130	IMP
+C00148	Proline
+C00110	Dolichyl phosphate
+C00020	AMP
+C00365	dUMP
+C00073	Methionine
+C00079	Phenylalanine
+C00256	Lactate
+C00082	Tyrosine
+C00037	Glycine
+C00047	lysine
+C00183	Valine
+C00097	Cysteine
