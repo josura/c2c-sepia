@@ -16,9 +16,11 @@ output_folder_mse
 ## control if the number of arguments is 0, if it is use the environment variable
 if len(sys.argv) == 1:
     output_folder_mse =  os.environ.get("OUTPUT-MSE-FOLDER")
-else if len(sys.argv) > 1:
+elif len(sys.argv) == 2:
     output_folder_mse = sys.argv[1]
-
+else:
+    print("[ERROR]: passing more options than available one, aborting")
+    exit(1)
 # read the different experiments names (the names of the folders inside the outputPath_matrices_all_experiments environment variable)
 experiments = os.listdir(outputPath_matrices_all_experiments)
 
