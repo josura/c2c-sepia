@@ -8,6 +8,17 @@ load_dotenv()
 type = os.environ.get("TYPE")
 outputPath_matrices_all_experiments = os.environ.get("ITERATION-MATRICES-PATH") 
 
+
+
+output_folder_mse
+#output_folder_mse =  os.environ.get("OUTPUT-MSE-FOLDER")
+# read the output folder for the MSE tables from the command line
+## control if the number of arguments is 0, if it is use the environment variable
+if len(sys.argv) == 1:
+    output_folder_mse =  os.environ.get("OUTPUT-MSE-FOLDER")
+else if len(sys.argv) > 1:
+    output_folder_mse = sys.argv[1]
+
 # read the different experiments names (the names of the folders inside the outputPath_matrices_all_experiments environment variable)
 experiments = os.listdir(outputPath_matrices_all_experiments)
 
@@ -244,8 +255,6 @@ print("ranked MSE experiment results for 10h")
 MSE_10h_df.sort_values(by="MSE", inplace = True)
 print(MSE_10h_df)
 
-# save the MSE results in the output folder specified in the environment
-output_folder_mse =  os.environ.get("OUTPUT-MSE-FOLDER")
 
 MSE_6h_df.to_csv(output_folder_mse + "/mse_6h.tsv",sep="\t",index = False)
 MSE_7h_df.to_csv(output_folder_mse + "/mse_7h.tsv",sep="\t",index = False)
