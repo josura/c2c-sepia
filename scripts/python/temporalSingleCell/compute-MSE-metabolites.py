@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import sys
 from dotenv import load_dotenv
 # read the environment variables
 load_dotenv()
@@ -10,7 +11,7 @@ outputPath_matrices_all_experiments = os.environ.get("ITERATION-MATRICES-PATH")
 
 
 
-output_folder_mse
+output_folder_mse = ""
 #output_folder_mse =  os.environ.get("OUTPUT-MSE-FOLDER")
 # read the output folder for the MSE tables from the command line
 ## control if the number of arguments is 0, if it is use the environment variable
