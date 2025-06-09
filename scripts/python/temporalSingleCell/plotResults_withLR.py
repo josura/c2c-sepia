@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 # get the outputs(iteration matrices) from the folder
-iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/outputWithLR/iterationMatrices"
+#iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/outputWithLR/iterationMatrices"
+iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/multipleOutputsWithLR/dissipation_0.339610-propagation_0.058288-conservation_0.350748/iterationMatrices"
 iterationMatrices = {}
 
 
