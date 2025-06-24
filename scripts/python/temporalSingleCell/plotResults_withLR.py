@@ -6,7 +6,8 @@ import plotly.express as px
 
 # get the outputs(iteration matrices) from the folder
 #iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/outputWithLR/iterationMatrices"
-iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/multipleOutputsWithLR/dissipation_0.339610-propagation_0.058288-conservation_0.350748/iterationMatrices"
+#iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/multipleOutputsWithLR/dissipation_0.339610-propagation_0.058288-conservation_0.350748/iterationMatrices"
+iterationMatrixFolder = "/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/finalOutputWithLR/dissipation6h_0.280320-propagation6h_0.015737-conservation6h_0.350748-dissipation7h_0.161740-propagation7h_-0.005539-conservation7h_0.164609-dissipation10h_0.161740-propagation10h_-0.005539-conservation10h_0.164609/iterationMatrices"
 iterationMatrices = {}
 
 
