@@ -11,8 +11,8 @@ from plotly import express as px
 # Load the data
 # prot = sc.read('citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
 # rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
-rna_matriceIPF_filepath = "/tmp/matrice_IPF_agr.txt"
-rna_matriceNormal_filepath = "/tmp/matrice_Normal_agr.txt"
+rna_matriceIPF_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_IPF_agr.txt"
+rna_matriceNormal_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_Normal_agr.txt"
 
 #IPF
 rna_IPF_pd = pd.read_csv(rna_matriceIPF_filepath, sep="\t")
@@ -31,6 +31,11 @@ rna_IPF_pd.columns = rna_gene_names
 rna_IPF_pd = rna_IPF_pd.iloc[1:, :]
 # set the index to an incremental index
 rna_IPF_pd.index = pd.RangeIndex(start=0, stop=rna_IPF_pd.shape[0], step=1)
-# TODO add the metabolites (inferred from the rna data)
+# cast the dataframe to float
+rna_IPF_pd = rna_IPF_pd.astype(float)
+# create the AnnData object
 rna_IPF = sc.AnnData(rna_IPF_pd)
+
+
+
 # TODO create the mdata object with the rna and the inferred metabolites
