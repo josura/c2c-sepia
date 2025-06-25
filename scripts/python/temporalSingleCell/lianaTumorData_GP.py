@@ -24,13 +24,13 @@ rna_cell_names = rna_IPF_pd.columns[1:].values
 rna_cell_names = [name.split(".")[0] for name in rna_cell_names]
 # transpose the dataframe to have the cells as rows and genes as columns, since the column names are repeated, use some incremental index
 rna_IPF_pd_transposed = rna_IPF_pd.T
+## deleting the non transposed dataframe
+del rna_IPF_pd
 # remove the first row which contains the gene names
 rna_IPF_pd_transposed.columns = rna_gene_names
 rna_IPF_pd_transposed = rna_IPF_pd_transposed.iloc[1:, :]
 # set the index to an incremental index
 rna_IPF_pd_transposed.index = pd.RangeIndex(start=0, stop=rna_IPF_pd_transposed.shape[0], step=1)
-## deleting the non transposed dataframe
-del rna_IPF_pd
 # TODO add the metabolites (inferred from the rna data)
 rna_IPF = sc.AnnData(rna_IPF_pd.transposed)
 # TODO create the mdata object with the rna and the inferred metabolites
