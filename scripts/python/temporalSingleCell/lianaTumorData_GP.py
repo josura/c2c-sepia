@@ -25,7 +25,7 @@ rna_cell_names = [name.split(".")[0] for name in rna_cell_names]
 # transpose the dataframe to have the cells as rows and genes as columns, since the column names are repeated, use some incremental index
 rna_IPF_pd = rna_IPF_pd.T
 ## deleting the non transposed dataframe
-del rna_IPF_pd
+#del rna_IPF_pd
 # remove the first row which contains the gene names
 rna_IPF_pd.columns = rna_gene_names
 rna_IPF_pd = rna_IPF_pd.iloc[1:, :]
