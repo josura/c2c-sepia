@@ -35,6 +35,17 @@ rna_IPF_pd.index = pd.RangeIndex(start=0, stop=rna_IPF_pd.shape[0], step=1)
 rna_IPF_pd = rna_IPF_pd.astype(float)
 # create the AnnData object
 rna_IPF = sc.AnnData(rna_IPF_pd)
+rna_IPF.obs["celltype"] = rna_cell_names
+rna_IPF.obs["condition"] = "IPF"
+# create the umap embedding
+sc.pp.neighbors(rna_IPF, n_neighbors=10)
+sc.tl.umap(rna_IPF)
+# show the data
+X = list(map(lambda x: x[0], rna_IPF.obsm["X_umap"]))
+Y = list(map(lambda x: x[1], rna_IPF.obsm["X_umap"]))
+celltypes = list(rna_1h.obs["cell_type"].values)
+
+
 
 
 
