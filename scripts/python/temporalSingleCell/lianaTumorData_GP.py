@@ -11,25 +11,8 @@ from plotly import express as px
 # Load the data
 # prot = sc.read('citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
 # rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
-rna_1hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h.tsv"
-rna_6hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-6h.tsv"
-rna_7hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-7h.tsv"
-rna_10hFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-10h.tsv"
-
-rna_1h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-1h-metadata.tsv"
-rna_6h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-6h-metadata.tsv"
-rna_7h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-7h-metadata.tsv"
-rna_10h_metadataFile = "/home/josura/Projects/ccc/datiIdo/lianaInputs/rna-10h-metadata.tsv"
-
-metabolites_1hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_metabolites_module168_cell1646_20241014-125146.csv" 
-metabolites_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_metabolites_module168_cell1037_20241014-125629.csv"
-metaoblites_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_metabolites_module168_cell1722_20241014-123944.csv"
-metabolites_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_metabolites_module168_cell1240_20241014-171445.csv"
-
-flux_rate_1hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_1h_module168_cell1646_20241014-125146.csv"
-flux_rate_6hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_6h_module168_cell1037_20241014-125629.csv"
-flux_rate_7hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_7h_module168_cell1722_20241014-123944.csv"
-flux_rate_10hFile = "/home/josura/Projects/ccc/fluxes/scFEA/output/scRNA_10h_module168_cell1240_20241014-171445.csv"
+rna_matriceIPF = "/tmp/matrice_IPF_agr.txt"
+rna_matriceNormal = "/tmp/matrice_Normal_agr.txt"
 
 #1h
 rna_1h_pd = pd.read_csv(rna_1hFile, sep="\t", index_col=0)
