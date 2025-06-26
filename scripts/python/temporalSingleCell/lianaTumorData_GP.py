@@ -17,17 +17,17 @@ rna_matriceNormal_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_Normal
 #IPF
 rna_IPF_pd = pd.read_csv(rna_matriceIPF_filepath, sep="\t")
 ## first column is the gene names
-rna_gene_names = rna_IPF_pd.iloc[:, 0].values
+rna_gene_names_IPF = rna_IPF_pd.iloc[:, 0].values
 ## all the other columns are the cellnames 
-rna_cell_names = rna_IPF_pd.columns[1:].values
+rna_cell_names_IPF = rna_IPF_pd.columns[1:].values
 ## remove the subscriptions from the cell names
-rna_cell_names = [name.split(".")[0] for name in rna_cell_names]
+rna_cell_names_IPF = [name.split(".")[0] for name in rna_cell_names_IPF]
 ## transpose the dataframe to have the cells as rows and genes as columns, since the column names are repeated, use some incremental index
 rna_IPF_pd = rna_IPF_pd.T
 ## deleting the non transposed dataframe
 #del rna_IPF_pd
 ## remove the first row which contains the gene names
-rna_IPF_pd.columns = rna_gene_names
+rna_IPF_pd.columns = rna_gene_names_IPF
 rna_IPF_pd = rna_IPF_pd.iloc[1:, :]
 ## set the index to an incremental index
 rna_IPF_pd.index = pd.RangeIndex(start=0, stop=rna_IPF_pd.shape[0], step=1)
@@ -35,7 +35,7 @@ rna_IPF_pd.index = pd.RangeIndex(start=0, stop=rna_IPF_pd.shape[0], step=1)
 rna_IPF_pd = rna_IPF_pd.astype(float)
 ## create the AnnData object
 rna_IPF = sc.AnnData(rna_IPF_pd)
-rna_IPF.obs["celltype"] = rna_cell_names
+rna_IPF.obs["celltype"] = rna_cell_names_IPF
 rna_IPF.obs["condition"] = "IPF"
 ## create the umap embedding
 sc.pp.neighbors(rna_IPF, n_neighbors=10)
@@ -43,12 +43,15 @@ sc.tl.umap(rna_IPF)
 ## show the data
 X = list(map(lambda x: x[0], rna_IPF.obsm["X_umap"]))
 Y = list(map(lambda x: x[1], rna_IPF.obsm["X_umap"]))
-celltypes = list(rna_IPF.obs["celltype"].values)
+celltypes_IPF = list(rna_IPF.obs["celltype"].values)
 
-fig = px.scatter(x=X, y=Y, color=celltypes)
+fig = px.scatter(x=X, y=Y, color=celltypes_IPF)
 fig.show()
 
 # Normal
+rna_Normal_pd = pd.read_csv(rna_matriceNormal_filepath, sep="\t")
+## first column is the gene names
+rna_gene_names_Normal = rna_Normal_pd.iloc[:, 0].values
 
 
 
