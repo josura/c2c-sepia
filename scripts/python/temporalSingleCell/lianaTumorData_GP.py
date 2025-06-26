@@ -45,6 +45,8 @@ X = list(map(lambda x: x[0], rna_IPF.obsm["X_umap"]))
 Y = list(map(lambda x: x[1], rna_IPF.obsm["X_umap"]))
 celltypes = list(rna_IPF.obs["celltype"].values)
 
+fig = px.scatter(x=X, y=Y, color=celltypes)
+fig.show()
 
 
 
