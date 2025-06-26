@@ -43,7 +43,7 @@ sc.tl.umap(rna_IPF)
 # show the data
 X = list(map(lambda x: x[0], rna_IPF.obsm["X_umap"]))
 Y = list(map(lambda x: x[1], rna_IPF.obsm["X_umap"]))
-celltypes = list(rna_1h.obs["cell_type"].values)
+celltypes = list(rna_IPF.obs["celltype"].values)
 
 
 
