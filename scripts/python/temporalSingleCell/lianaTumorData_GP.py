@@ -22,31 +22,33 @@ rna_gene_names = rna_IPF_pd.iloc[:, 0].values
 rna_cell_names = rna_IPF_pd.columns[1:].values
 ## remove the subscriptions from the cell names
 rna_cell_names = [name.split(".")[0] for name in rna_cell_names]
-# transpose the dataframe to have the cells as rows and genes as columns, since the column names are repeated, use some incremental index
+## transpose the dataframe to have the cells as rows and genes as columns, since the column names are repeated, use some incremental index
 rna_IPF_pd = rna_IPF_pd.T
 ## deleting the non transposed dataframe
 #del rna_IPF_pd
-# remove the first row which contains the gene names
+## remove the first row which contains the gene names
 rna_IPF_pd.columns = rna_gene_names
 rna_IPF_pd = rna_IPF_pd.iloc[1:, :]
-# set the index to an incremental index
+## set the index to an incremental index
 rna_IPF_pd.index = pd.RangeIndex(start=0, stop=rna_IPF_pd.shape[0], step=1)
-# cast the dataframe to float
+## cast the dataframe to float
 rna_IPF_pd = rna_IPF_pd.astype(float)
-# create the AnnData object
+## create the AnnData object
 rna_IPF = sc.AnnData(rna_IPF_pd)
 rna_IPF.obs["celltype"] = rna_cell_names
 rna_IPF.obs["condition"] = "IPF"
-# create the umap embedding
+## create the umap embedding
 sc.pp.neighbors(rna_IPF, n_neighbors=10)
 sc.tl.umap(rna_IPF)
-# show the data
+## show the data
 X = list(map(lambda x: x[0], rna_IPF.obsm["X_umap"]))
 Y = list(map(lambda x: x[1], rna_IPF.obsm["X_umap"]))
 celltypes = list(rna_IPF.obs["celltype"].values)
 
 fig = px.scatter(x=X, y=Y, color=celltypes)
 fig.show()
+
+# Normal
 
 
 
