@@ -56,6 +56,11 @@ rna_gene_names_Normal = rna_Normal_pd.iloc[:, 0].values
 rna_cell_names_Normal = rna_Normal_pd.columns[1:].values
 ## remove the subscriptions from the cell names
 rna_cell_names_Normal = [name.split(".")[0] for name in rna_cell_names_Normal]
+## transpose the dataframe to have the cells as rows and genes as columns, since the column names
+# are repeated, use some incremental index
+rna_Normal_pd = rna_Normal_pd.T
+## deleting the non transposed dataframe
+# del rna_Normal_pd
 
 
 
