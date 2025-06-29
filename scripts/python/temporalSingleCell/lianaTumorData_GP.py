@@ -66,7 +66,8 @@ rna_Normal_pd.columns = rna_gene_names_Normal
 rna_Normal_pd = rna_Normal_pd.iloc[1:, :]
 ## set the index to an incremental index
 rna_Normal_pd.index = pd.RangeIndex(start=0, stop=rna_Normal_pd.shape[0], step=1)
-
+## cast the dataframe to float
+rna_Normal_pd = rna_Normal_pd.astype(float)
 
 
 # TODO create the mdata object with the rna and the inferred metabolites
