@@ -68,6 +68,17 @@ rna_Normal_pd = rna_Normal_pd.iloc[1:, :]
 rna_Normal_pd.index = pd.RangeIndex(start=0, stop=rna_Normal_pd.shape[0], step=1)
 ## cast the dataframe to float
 rna_Normal_pd = rna_Normal_pd.astype(float)
+## create the AnnData object
+rna_Normal = sc.AnnData(rna_Normal_pd)
+rna_Normal.obs["celltype"] = rna_cell_names_Normal
+rna_Normal.obs["condition"] = "Normal"
+## create the umap embedding
+sc.pp.neighbors(rna_Normal, n_neighbors=10)
+sc.tl.umap(rna_Normal)
+## show the data
+X = list(map(lambda x: x[0], rna_Normal.obsm["X_umap"]))
+Y = list(map(lambda x: x[1], rna_Normal.obsm["X_umap"]))
+celltypes_Normal = list(rna_Normal.obs["celltype"].values)
 
 
 # TODO create the mdata object with the rna and the inferred metabolites
