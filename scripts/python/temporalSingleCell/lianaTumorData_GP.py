@@ -88,5 +88,23 @@ fig.show()
 # TODO create the mdata object with the rna and the inferred metabolites
 
 
-# METABOLITES ESTIMATION
-# Normal
+#---- METABOLITES ESTIMATION ----#
+
+# Obtain a ligand-receptor resource of interest
+resource = li.rs.select_resource(resource_name='consensus')
+
+## convert to murine symbols from human to mouse, vignette available at: https://liana-py.readthedocs.io/en/latest/notebooks/sma.html
+map_df = li.rs.get_hcop_orthologs(columns=['human_symbol', 'mouse_symbol'],
+                                  min_evidence=3
+                                  ).rename(columns={'human_symbol':'source',
+                                                   'mouse_symbol':'target'})
+
+## Obtain MetalinksDB Prior Knowledge
+metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
+                                      source=['CellPhoneDB', 'Cellinker', 'scConnect', # Ligand-Receptor resources
+                                              'recon', 'hmr', 'rhea', 'hmdb' # Production-Degradation resources
+                                              ],
+                                      types=['pd', 'lr'], # NOTE: we obtain both ligand-receptor and production-degradation sets
+                                     )
+
+## Normal
