@@ -91,8 +91,6 @@ fig.show()
 #---- METABOLITES ESTIMATION ----#
 
 # Obtain a ligand-receptor resource of interest
-resource = li.rs.select_resource(resource_name='consensus')
-
 ## Obtain MetalinksDB Prior Knowledge
 metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
                                       source=['CellPhoneDB', 'Cellinker', 'scConnect', # Ligand-Receptor resources
@@ -100,6 +98,15 @@ metalinks = li.resource.get_metalinks(biospecimen_location='Blood',
                                               ],
                                       types=['pd', 'lr'], # NOTE: we obtain both ligand-receptor and production-degradation sets
                                      )
+
+# Filter the resource to keep only ligand-receptor interactions
+resource = metalinks[metalinks['type']=='lr'].copy()
+resource = resource[['metabolite', 'gene_symbol']]\
+    .rename(columns={'gene_symbol':'receptor'}).drop_duplicates()
+resource.head()
+
+
+
                                      
 
 ## Normal
