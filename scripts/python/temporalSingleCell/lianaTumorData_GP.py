@@ -105,8 +105,11 @@ resource = resource[['metabolite', 'gene_symbol']]\
     .rename(columns={'gene_symbol':'receptor'}).drop_duplicates()
 resource.head()
 
-
-
+# Preparing the production-degradation resource
+pd_net = metalinks[metalinks['type'] == 'pd']
+# we need to aggregate the production-degradation values
+pd_net = pd_net[['metabolite', 'gene_symbol', 'mor']].groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
+pd_net.head()
                                      
 
 ## Normal
