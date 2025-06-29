@@ -136,7 +136,7 @@ meta_IPF.obs['celltype'] = adata.obs['celltype']
 #dataset with two modalities, one for RNA and one for Metabolites. The metabolites are estimated as t-values.
 # visualization 
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
-    sc.pl.umap(meta.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
+    sc.pl.umap(meta_IPF.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
 
 
