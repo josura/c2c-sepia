@@ -106,10 +106,20 @@ resource = resource[['metabolite', 'gene_symbol']]\
 resource.head()
 
 # Preparing the production-degradation resource
-pd_net = metalinks[metalinks['type'] == 'pd']
+prod_degr_net = metalinks[metalinks['type'] == 'pd']
 # we need to aggregate the production-degradation values
-pd_net = pd_net[['metabolite', 'gene_symbol', 'mor']].groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
-pd_net.head()
-                                     
+prod_degr_net = prod_degr_net[['metabolite', 'gene_symbol', 'mor']].groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
+prod_degr_net.head()
+
+# Preparing the transporter resource
+transporter_net = metalinks[metalinks['type'] == 'pd']
+transporter_net = transporter_net[['metabolite', 'gene_symbol', 'transport_direction']].dropna()
+# Note that we treat export as positive and import as negative
+transporter_net['mor'] = transporter_net['transport_direction'].apply(lambda x: 1 if x == 'out' else -1 if x == 'in' else None)
+transporter_net = transporter_net[['metabolite', 'gene_symbol', 'mor']].dropna().groupby(['metabolite', 'gene_symbol']).agg('mean').reset_index()
+transporter_net = transporter_net[transporter_net['mor']!=0]                           
+
+
+
 
 ## Normal
