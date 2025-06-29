@@ -80,5 +80,7 @@ X = list(map(lambda x: x[0], rna_Normal.obsm["X_umap"]))
 Y = list(map(lambda x: x[1], rna_Normal.obsm["X_umap"]))
 celltypes_Normal = list(rna_Normal.obs["celltype"].values)
 
+fig = px.scatter(x=X, y=Y, color=celltypes_Normal)
+fig.show()
 
 # TODO create the mdata object with the rna and the inferred metabolites
