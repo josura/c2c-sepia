@@ -120,6 +120,19 @@ transporter_net = transporter_net[['metabolite', 'gene_symbol', 'mor']].dropna()
 transporter_net = transporter_net[transporter_net['mor']!=0]                           
 
 
+## IPF
+# Estimating the metabolites
+meta_IPF = li.mt.fun.estimate_metalinks(rna=rna_IPF,
+                                    resource,
+                                    pd_net=prod_degr_net,
+                                    t_net=transporter_net, # (Optional)
+                                    use_raw=False,
+                                    # keyword arguments passed to decoupler-py
+                                    source='metabolite', target='gene_symbol',
+                                    weight='mor', min_n=3)
+# pass cell type information
+meta_IPF.obs['celltype'] = adata.obs['celltype']
+
 
 
 ## Normal
