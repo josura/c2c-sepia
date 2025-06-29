@@ -61,6 +61,11 @@ rna_cell_names_Normal = [name.split(".")[0] for name in rna_cell_names_Normal]
 rna_Normal_pd = rna_Normal_pd.T
 ## deleting the non transposed dataframe
 # del rna_Normal_pd
+## remove the first row which contains the gene names
+rna_Normal_pd.columns = rna_gene_names_Normal
+rna_Normal_pd = rna_Normal_pd.iloc[1:, :]
+## set the index to an incremental index
+rna_Normal_pd.index = pd.RangeIndex(start=0, stop=rna_Normal_pd.shape[0], step=1)
 
 
 
