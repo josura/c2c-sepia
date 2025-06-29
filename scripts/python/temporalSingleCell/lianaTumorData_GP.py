@@ -83,6 +83,10 @@ celltypes_Normal = list(rna_Normal.obs["celltype"].values)
 fig = px.scatter(x=X, y=Y, color=celltypes_Normal)
 fig.show()
 
-# TODO combine the two AnnData into one single AnnData object
+# TODO combine the two AnnData into one single AnnData object, although maybe it is better to estimate the metabolites with the two separately and then combine them
 
 # TODO create the mdata object with the rna and the inferred metabolites
+
+
+# METABOLITES ESTIMATION
+# Normal
