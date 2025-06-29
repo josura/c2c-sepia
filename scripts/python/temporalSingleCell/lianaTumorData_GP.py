@@ -52,7 +52,10 @@ fig.show()
 rna_Normal_pd = pd.read_csv(rna_matriceNormal_filepath, sep="\t")
 ## first column is the gene names
 rna_gene_names_Normal = rna_Normal_pd.iloc[:, 0].values
-
+## all the other columns are the cellnames
+rna_cell_names_Normal = rna_Normal_pd.columns[1:].values
+## remove the subscriptions from the cell names
+rna_cell_names_Normal = [name.split(".")[0] for name in rna_cell_names_Normal]
 
 
 
