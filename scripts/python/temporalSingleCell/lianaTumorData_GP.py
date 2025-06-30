@@ -139,7 +139,7 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta_IPF.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
 # infer the metabolites interactions
-li.mt.rank_aggregate(adata=meta,
+li.mt.rank_aggregate(adata=meta_IPF,
                      groupby='celltype',
                      # pass our modified resource
                      resource=resource.rename(columns={'metabolite':'ligand'}),
