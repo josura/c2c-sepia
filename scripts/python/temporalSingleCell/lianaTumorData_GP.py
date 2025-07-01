@@ -165,3 +165,6 @@ meta_Normal = li.mt.fun.estimate_metalinks(rna=rna_Normal,
                                     # keyword arguments passed to decoupler-py
                                     source='metabolite', target='gene_symbol',
                                     weight='mor', min_n=3)
+
+# pass cell type information
+meta_Normal.obs['celltype'] = rna_Normal.obs['celltype']
