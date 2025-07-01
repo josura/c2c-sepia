@@ -131,7 +131,7 @@ meta_IPF = li.mt.fun.estimate_metalinks(rna_IPF,
                                     source='metabolite', target='gene_symbol',
                                     weight='mor', min_n=3)
 # pass cell type information
-meta_IPF.obs['celltype'] = adata.obs['celltype']
+meta_IPF.obs['celltype'] = rna_IPF.obs['celltype']
 
 #dataset with two modalities, one for RNA and one for Metabolites. The metabolites are estimated as t-values.
 # visualization 
