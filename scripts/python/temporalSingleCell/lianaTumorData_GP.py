@@ -166,8 +166,8 @@ interactionPlot = li.pl.dotplot(adata = meta_IPF,
                 colour='lr_means',
                 size='cellphone_pvals',
                 inverse_size=True, # we inverse sign since we want small p-values to have large sizes
-                source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
-                target_labels=['AT1' ,'AT2', 'T', 'NK'],
+                source_labels=list(pd.unique(meta_IPF.uns['liana_res']['source'])),
+                target_labels=list(pd.unique(meta_IPF.uns['liana_res']['target'])),
                 figure_size=(12, 6),
                 # Filter to top 10 acc to magnitude rank
                 top_n=10,
