@@ -156,3 +156,12 @@ li.mt.rank_aggregate(adata=meta_IPF,
                   )
 
 ## Normal
+# Estimating the metabolites
+meta_Normal = li.mt.fun.estimate_metalinks(rna=rna_Normal,
+                                    resource,
+                                    pd_net=prod_degr_net,
+                                    t_net=transporter_net, # (Optional)
+                                    use_raw=False,
+                                    # keyword arguments passed to decoupler-py
+                                    source='metabolite', target='gene_symbol',
+                                    weight='mor', min_n=3)
