@@ -176,7 +176,7 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
 
 
 # infer the metabolites interactions
-li.mt.rank_aggregate(adata=meta_IPF,
+li.mt.rank_aggregate(adata=meta_Normal,
                      groupby='celltype',
                      # pass our modified resource
                      resource=resource.rename(columns={'metabolite':'ligand'}),
