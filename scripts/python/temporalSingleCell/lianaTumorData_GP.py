@@ -122,7 +122,7 @@ transporter_net = transporter_net[transporter_net['mor']!=0]
 
 ## IPF
 # Estimating the metabolites
-meta_IPF = li.mt.fun.estimate_metalinks(rna=rna_IPF,
+meta_IPF = li.mt.fun.estimate_metalinks(rna_IPF,
                                     resource,
                                     pd_net=prod_degr_net,
                                     t_net=transporter_net, # (Optional)
@@ -160,6 +160,8 @@ li.mt.rank_aggregate(adata=meta_IPF,
 meta_IPF.uns['liana_res'].head()
 
 # TODO check sources and targets
+# sources and target for IPF are:
+# sources: 
 interactionPlot = li.pl.dotplot(adata = meta_IPF,
                 colour='lr_means',
                 size='cellphone_pvals',
@@ -179,7 +181,7 @@ interactionPlot.show()
 
 ## Normal
 # Estimating the metabolites
-meta_Normal = li.mt.fun.estimate_metalinks(rna=rna_Normal,
+meta_Normal = li.mt.fun.estimate_metalinks(rna_Normal,
                                     resource,
                                     pd_net=prod_degr_net,
                                     t_net=transporter_net, # (Optional)
