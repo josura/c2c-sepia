@@ -159,16 +159,16 @@ li.mt.rank_aggregate(adata=meta_IPF,
 
 meta_IPF.uns['liana_res'].head()
 
-# TODO check sources and targets
 # sources and target for IPF are:
-# sources: 
+# sources: 'Epithelial_cells', 'none', 'T_cells', 'Pre-B_cell_CD34-', 'NK_cell', 'Tissue_stem_cells', 'B_cell', 'CMP', 'Chondrocytes', 'Endothelial_cells', 'Fibroblasts', 'Smooth_muscle_cells', 'Monocyte', 'DC', 'Macrophage', 'GMP'
+# targets: ['GMP', 'DC', 'CMP', 'Tissue_stem_cells', 'Pre-B_cell_CD34-', 'Monocyte', 'Chondrocytes', 'NK_cell', 'T_cells', 'Smooth_muscle_cells', 'Endothelial_cells', 'Fibroblasts', 'none', 'Macrophage', 'B_cell', 'Epithelial_cells']
 interactionPlot = li.pl.dotplot(adata = meta_IPF,
                 colour='lr_means',
                 size='cellphone_pvals',
                 inverse_size=True, # we inverse sign since we want small p-values to have large sizes
                 source_labels=list(pd.unique(meta_IPF.uns['liana_res']['source'])),
                 target_labels=list(pd.unique(meta_IPF.uns['liana_res']['target'])),
-                figure_size=(12, 6),
+                figure_size=(24, 12),
                 # Filter to top 10 acc to magnitude rank
                 top_n=10,
                 orderby='magnitude_rank',
