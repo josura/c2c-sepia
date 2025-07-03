@@ -235,4 +235,6 @@ interactionPlot = li.pl.dotplot(adata = meta_Normal,
                 orderby_ascending=True,
                 cmap='plasma'
                  )
+
+interactionPlot.show()
                  
