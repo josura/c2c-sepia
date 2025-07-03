@@ -237,4 +237,3 @@ interactionPlot = li.pl.dotplot(adata = meta_Normal,
                  )
 
 interactionPlot.show()
-            
