@@ -218,3 +218,21 @@ li.mt.rank_aggregate(adata=meta_Normal,
 
 #visualization of the inferred metabolites interactions
 meta_Normal.uns['liana_res'].head()
+
+# sources and target for Normal are:
+# sources:
+# targets:
+interactionPlot = li.pl.dotplot(adata = meta_Normal,
+                colour='lr_means',
+                size='cellphone_pvals',
+                inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+                source_labels=list(pd.unique(meta_Normal.uns['liana_res']['source'])),
+                target_labels=list(pd.unique(meta_Normal.uns['liana_res']['target'])),
+                figure_size=(24, 12),
+                # Filter to top 10 acc to magnitude rank
+                top_n=10,
+                orderby='magnitude_rank',
+                orderby_ascending=True,
+                cmap='plasma'
+                 )
+                 
