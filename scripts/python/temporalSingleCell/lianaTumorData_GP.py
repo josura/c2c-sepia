@@ -215,3 +215,6 @@ li.mt.rank_aggregate(adata=meta_Normal,
                     },
                   verbose=True
                   )
+
+#visualization of the inferred metabolites interactions
+meta_Normal.uns['liana_res'].head()
