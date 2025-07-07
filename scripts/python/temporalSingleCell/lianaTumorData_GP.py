@@ -162,6 +162,9 @@ li.mt.rank_aggregate(adata=meta_IPF,
 
 meta_IPF.uns['liana_res'].head()
 
+# Save the inferred interactions in a table
+meta_IPF.uns['liana_res'].to_df().to_csv('inferred_interactions_IPF.csv', sep='\t')
+
 # sources and target for IPF are:
 # sources: 'Epithelial_cells', 'none', 'T_cells', 'Pre-B_cell_CD34-', 'NK_cell', 'Tissue_stem_cells', 'B_cell', 'CMP', 'Chondrocytes', 'Endothelial_cells', 'Fibroblasts', 'Smooth_muscle_cells', 'Monocyte', 'DC', 'Macrophage', 'GMP'
 # targets: ['GMP', 'DC', 'CMP', 'Tissue_stem_cells', 'Pre-B_cell_CD34-', 'Monocyte', 'Chondrocytes', 'NK_cell', 'T_cells', 'Smooth_muscle_cells', 'Endothelial_cells', 'Fibroblasts', 'none', 'Macrophage', 'B_cell', 'Epithelial_cells']
