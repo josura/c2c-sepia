@@ -204,6 +204,8 @@ meta_Normal.obs['celltype'] = rna_Normal.obs['celltype']
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta_Normal.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
+# Save the inferred metabolites in a table
+meta_Normal.mod['metabolite'].to_df().to_csv('inferred_metabolites_Normal.csv', sep='\t')
 
 # infer the metabolites interactions
 li.mt.rank_aggregate(adata=meta_Normal,
