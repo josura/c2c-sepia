@@ -138,6 +138,9 @@ meta_IPF.obs['celltype'] = rna_IPF.obs['celltype']
 with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta_IPF.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
+# Save the inferred metabolites in a table
+meta_IPF.mod['metabolite'].to_df().to_csv('inferred_metabolites_IPF.csv', sep='\t')
+
 # infer the metabolites interactions
 li.mt.rank_aggregate(adata=meta_IPF,
                      groupby='celltype',
