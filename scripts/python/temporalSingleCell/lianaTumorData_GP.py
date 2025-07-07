@@ -142,7 +142,7 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
 meta_IPF_tobesave = meta_IPF.mod['metabolite'].to_df()
 meta_IPF_tobesave['celltype'] = meta_IPF.obs['celltype']
 meta_IPF_tobesave['condition'] = meta_IPF.obs['condition']
-meta_IPF.mod['metabolite'].to_df().to_csv('inferred_metabolites_IPF.csv', sep='\t')
+meta_IPF.mod['metabolite'].to_df().to_csv('inferred_metabolites_IPF.csv', sep='\t', index=False)
 
 # infer the metabolites interactions
 li.mt.rank_aggregate(adata=meta_IPF,
