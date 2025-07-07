@@ -227,6 +227,9 @@ li.mt.rank_aggregate(adata=meta_Normal,
 #visualization of the inferred metabolites interactions
 meta_Normal.uns['liana_res'].head()
 
+# Save the inferred interactions in a table
+meta_Normal.uns['liana_res'].to_df().to_csv('inferred_interactions_Normal.csv', sep='\t')
+
 # sources and target for Normal are:
 # sources:
 # targets:
