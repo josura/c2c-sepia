@@ -232,7 +232,7 @@ li.mt.rank_aggregate(adata=meta_Normal,
 meta_Normal.uns['liana_res'].head()
 
 # Save the inferred interactions in a table
-meta_Normal.uns['liana_res'].to_csv('inferred_interactions_Normal.csv', sep='\t')
+meta_Normal.uns['liana_res'].to_csv('inferred_interactions_Normal.csv', sep='\t',index=False)
 
 # sources and target for Normal are:
 # sources:
