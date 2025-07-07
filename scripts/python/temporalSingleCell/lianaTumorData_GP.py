@@ -139,6 +139,9 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
     sc.pl.umap(meta_IPF.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
 # Save the inferred metabolites in a table
+meta_IPF_tobesave = meta_IPF.mod['metabolite'].to_df()
+meta_IPF_tobesave['celltype'] = meta_IPF.obs['celltype']
+meta_IPF_tobesave['condition'] = meta_IPF.obs['condition']
 meta_IPF.mod['metabolite'].to_df().to_csv('inferred_metabolites_IPF.csv', sep='\t')
 
 # infer the metabolites interactions
