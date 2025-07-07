@@ -141,8 +141,7 @@ with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
 # Save the inferred metabolites in a table
 meta_IPF_tobesave = meta_IPF.mod['metabolite'].to_df()
 meta_IPF_tobesave['celltype'] = meta_IPF.obs['celltype']
-meta_IPF_tobesave['condition'] = meta_IPF.obs['condition']
-meta_IPF.mod['metabolite'].to_df().to_csv('inferred_metabolites_IPF.csv', sep='\t', index=False)
+meta_IPF_tobesave.to_csv('inferred_metabolites_IPF.csv', sep='\t', index=False)
 
 # infer the metabolites interactions
 li.mt.rank_aggregate(adata=meta_IPF,
@@ -166,7 +165,7 @@ li.mt.rank_aggregate(adata=meta_IPF,
 meta_IPF.uns['liana_res'].head()
 
 # Save the inferred interactions in a table
-meta_IPF.uns['liana_res'].to_df().to_csv('inferred_interactions_IPF.csv', sep='\t')
+meta_IPF.uns['liana_res'].to_csv('inferred_interactions_IPF.csv', sep='\t', index=False)
 
 # sources and target for IPF are:
 # sources: 'Epithelial_cells', 'none', 'T_cells', 'Pre-B_cell_CD34-', 'NK_cell', 'Tissue_stem_cells', 'B_cell', 'CMP', 'Chondrocytes', 'Endothelial_cells', 'Fibroblasts', 'Smooth_muscle_cells', 'Monocyte', 'DC', 'Macrophage', 'GMP'
