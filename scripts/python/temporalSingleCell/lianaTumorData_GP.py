@@ -11,7 +11,8 @@ from plotly import express as px
 # Load the data
 # prot = sc.read('citeseq_prot.h5ad', backup_url='https://figshare.com/ndownloader/files/47625196')
 # rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
-rna_matriceIPF_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_IPF_agr.txt"
+# rna_matriceIPF_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_IPF_agr.txt"
+rna_matriceIPF_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_IPF_specifica_agr.txt"
 rna_matriceNormal_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_Normal_agr.txt"
 
 #IPF
