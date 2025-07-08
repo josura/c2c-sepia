@@ -2,3 +2,4 @@
 *.db
 *.gz
 *.txt
+inferred*
