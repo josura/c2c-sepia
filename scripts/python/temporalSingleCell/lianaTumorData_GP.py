@@ -136,7 +136,7 @@ meta_IPF.obs['celltype'] = rna_IPF.obs['celltype']
 
 #dataset with two modalities, one for RNA and one for Metabolites. The metabolites are estimated as t-values.
 # visualization 
-with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
+with plt.rc_context({"figure.figsize": (10, 10), "figure.dpi": (100)}):
     sc.pl.umap(meta_IPF.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
 # Save the inferred metabolites in a table
@@ -204,7 +204,7 @@ meta_Normal.obs['celltype'] = rna_Normal.obs['celltype']
 
 #dataset with two modalities, one for RNA and one for Metabolites. The metabolites are estimated as t-values.
 # visualization
-with plt.rc_context({"figure.figsize": (5, 5), "figure.dpi": (100)}):
+with plt.rc_context({"figure.figsize": (10, 10), "figure.dpi": (100)}):
     sc.pl.umap(meta_Normal.mod['metabolite'], color=['Prostaglandin J2', 'Metanephrine', 'celltype'], cmap='coolwarm')
 
 # Save the inferred metabolites in a table
