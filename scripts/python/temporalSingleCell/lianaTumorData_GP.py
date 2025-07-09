@@ -13,7 +13,8 @@ from plotly import express as px
 # rna = sc.read('citeseq_rna.h5ad', backup_url='https://figshare.com/ndownloader/files/47625193')
 # rna_matriceIPF_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_IPF_agr.txt"
 rna_matriceIPF_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_IPF_specifica_agr.txt"
-rna_matriceNormal_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_Normal_agr.txt"
+# rna_matriceNormal_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_Normal_agr.txt"
+rna_matriceNormal_filepath = "/home/josura/Projects/ccc/datiGrete/matrice_Normal_specifica_agr.txt"
 
 #IPF
 rna_IPF_pd = pd.read_csv(rna_matriceIPF_filepath, sep="\t")
