@@ -1,9 +1,18 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0" version="28.0.0">
   <diagram name="Pagina-1" id="NSsH4z76cLtR3YTKiS3P">
-    <mxGraphModel>
+    <mxGraphModel dx="1134" dy="1025" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="CjxLccdL69G65359pLZG-1" value="SYSTEM OVERVIEW" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="180" width="650" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="CjxLccdL69G65359pLZG-2" value="PROPAGATION DYNAMICS" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="180" width="650" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="CjxLccdL69G65359pLZG-3" value="APPLICATION AND RESULTS" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="180" width="650" height="900" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
