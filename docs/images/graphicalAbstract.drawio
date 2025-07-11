@@ -655,13 +655,22 @@
           <mxGeometry x="-390" y="-569" width="19" height="50" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-4" value="Legend" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-560" y="-604" width="210" height="234" as="geometry" />
+          <mxGeometry x="-540" y="-604" width="180" height="234" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-2" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#FFFF33;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_2;gradientColor=default;" vertex="1" parent="Dr1BXHcws7Od2mhsBEnG-4">
-          <mxGeometry x="170" y="104" width="19" height="50" as="geometry" />
+          <mxGeometry x="150" y="104" width="19" height="50" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-3" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#000000;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_2;" vertex="1" parent="Dr1BXHcws7Od2mhsBEnG-4">
-          <mxGeometry x="170" y="174" width="19" height="50" as="geometry" />
+          <mxGeometry x="150" y="174" width="19" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Dr1BXHcws7Od2mhsBEnG-5" value="HEALTHY NODE" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="Dr1BXHcws7Od2mhsBEnG-4">
+          <mxGeometry x="15" y="54" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Dr1BXHcws7Od2mhsBEnG-6" value="&lt;div&gt;PARTIALLY INFECTED&lt;/div&gt;&lt;div&gt;NODE&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="Dr1BXHcws7Od2mhsBEnG-4">
+          <mxGeometry y="114" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Dr1BXHcws7Od2mhsBEnG-7" value="INFECTED NODE" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="Dr1BXHcws7Od2mhsBEnG-4">
+          <mxGeometry x="15" y="184" width="120" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
