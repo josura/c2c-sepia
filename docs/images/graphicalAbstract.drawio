@@ -373,10 +373,10 @@
           <mxGeometry x="830" y="-350" width="1100" height="1030" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-1" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#FFFF33;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_2;" vertex="1" parent="CjxLccdL69G65359pLZG-2">
-          <mxGeometry x="1070" y="161" width="19" height="50" as="geometry" />
+          <mxGeometry x="1070" y="155" width="19" height="50" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-4" value="Legend" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="CjxLccdL69G65359pLZG-2">
-          <mxGeometry x="920" y="126" width="180" height="234" as="geometry" />
+          <mxGeometry x="920" y="120" width="180" height="234" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-2" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#FFFF33;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_2;gradientColor=default;" vertex="1" parent="Dr1BXHcws7Od2mhsBEnG-4">
           <mxGeometry x="150" y="104" width="19" height="50" as="geometry" />
@@ -401,8 +401,8 @@
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-8" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="CjxLccdL69G65359pLZG-2">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="920" y="290" as="sourcePoint" />
-            <mxPoint x="1100" y="290" as="targetPoint" />
+            <mxPoint x="920" y="284" as="sourcePoint" />
+            <mxPoint x="1100" y="284" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="CjxLccdL69G65359pLZG-3" value="APPLICATION AND RESULTS" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
