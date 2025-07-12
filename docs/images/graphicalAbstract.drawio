@@ -439,7 +439,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-19" value="&lt;font color=&quot;#ffff33&quot;&gt;Type2&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#000000;fillOpacity=20;rotation=-30;" vertex="1" parent="CjxLccdL69G65359pLZG-2">
-          <mxGeometry x="180" y="171.00136482997596" width="44" height="20" as="geometry" />
+          <mxGeometry x="184" y="170.00136482997596" width="44" height="20" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-20" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1.064;entryY=0.76;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="CjxLccdL69G65359pLZG-2" source="Dr1BXHcws7Od2mhsBEnG-34" target="Dr1BXHcws7Od2mhsBEnG-12">
           <mxGeometry relative="1" as="geometry">
