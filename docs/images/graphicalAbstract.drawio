@@ -369,6 +369,12 @@
         <mxCell id="VA8MD_MLpMzxoojGoNO--92" value="v-in:type2_Alice" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=#CC0000;fillOpacity=10;" parent="CjxLccdL69G65359pLZG-1" vertex="1">
           <mxGeometry x="591" y="294" width="113" height="30" as="geometry" />
         </mxCell>
+        <mxCell id="ARAuKWMira_rs8wXKlwx-7" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;fillOpacity=20;" vertex="1" parent="CjxLccdL69G65359pLZG-1">
+          <mxGeometry x="508" y="87" width="192" height="133" as="geometry" />
+        </mxCell>
+        <mxCell id="ARAuKWMira_rs8wXKlwx-9" value="G(&lt;font color=&quot;#cc0000&quot;&gt;Type1)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fillOpacity=20;rotation=39;strokeColor=none;" vertex="1" parent="CjxLccdL69G65359pLZG-1">
+          <mxGeometry x="641" y="110" width="59" height="20" as="geometry" />
+        </mxCell>
         <mxCell id="CjxLccdL69G65359pLZG-2" value="PROPAGATION DYNAMICS" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="830" y="-350" width="1100" height="1030" as="geometry" />
         </mxCell>
@@ -840,6 +846,9 @@
             <mxPoint x="1199" y="221" as="sourcePoint" />
             <mxPoint x="1046" y="111" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="ARAuKWMira_rs8wXKlwx-10" value="&lt;font face=&quot;https://fonts.google.com/share?selection.family=Charm:wght@400;700&quot; data-font-src=&quot;https://fonts.googleapis.com/css?family=https%3A%2F%2Ffonts.google.com%2Fshare%3Fselection.family%3DCharm%3Awght%40400%3B700&quot;&gt;G&lt;/font&gt;(&lt;font color=&quot;#cc0000&quot;&gt;Type1)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fillOpacity=20;rotation=39;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="559.999009773479" y="-410.00358884946013" width="59" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
