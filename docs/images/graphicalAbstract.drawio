@@ -426,7 +426,7 @@
             <mxPoint x="455.25" y="543.001364829976" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Dr1BXHcws7Od2mhsBEnG-16" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#FFFF33;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_2;" parent="CjxLccdL69G65359pLZG-2" vertex="1">
+        <mxCell id="Dr1BXHcws7Od2mhsBEnG-16" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#000000;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_2;" parent="CjxLccdL69G65359pLZG-2" vertex="1">
           <mxGeometry x="180" y="299.00136482997596" width="19" height="50" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-17" value="" style="verticalLabelPosition=bottom;sketch=0;html=1;fillColor=#FFFF33;verticalAlign=top;align=center;pointerEvents=1;shape=mxgraph.cisco_safe.design.actor_1;" parent="CjxLccdL69G65359pLZG-2" vertex="1">
