@@ -506,7 +506,7 @@
           <mxGeometry x="120" y="80" width="630" height="370" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-34" value="v-in:type3_Bob" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=#FFFF33;fillOpacity=10;" parent="LoY8bfZM6bEAvQRY7fZ7-4" vertex="1">
-          <mxGeometry x="441.75" y="283.00136482997596" width="100" height="30" as="geometry" />
+          <mxGeometry x="430" y="260.00136482997596" width="100" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Dr1BXHcws7Od2mhsBEnG-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="LoY8bfZM6bEAvQRY7fZ7-4" source="Dr1BXHcws7Od2mhsBEnG-34" target="Dr1BXHcws7Od2mhsBEnG-34" edge="1">
           <mxGeometry relative="1" as="geometry" />
