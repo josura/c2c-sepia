@@ -744,7 +744,7 @@
           <mxGeometry x="412.75" y="520" width="145.25" height="30" as="geometry" />
         </mxCell>
         <mxCell id="CjxLccdL69G65359pLZG-3" value="APPLICATION AND RESULTS" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1930" y="-350" width="1100" height="1030" as="geometry" />
+          <mxGeometry x="1780" y="-350" width="950" height="1030" as="geometry" />
         </mxCell>
         <mxCell id="CjxLccdL69G65359pLZG-4" value="" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;size=143.25;fillColor=#000000;fillOpacity=20;" parent="1" vertex="1">
           <mxGeometry x="-1361.38" y="-2" width="593.25" height="190" as="geometry" />
