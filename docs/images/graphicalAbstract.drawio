@@ -229,9 +229,9 @@
             <mxPoint x="1037.9999999999995" y="284" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--58" value="0.3t, 6.2t, 9t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;" parent="VA8MD_MLpMzxoojGoNO--57" vertex="1" connectable="0">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--58" value="0.3t, 6.2t, 9t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-80;fontSize=16;" parent="VA8MD_MLpMzxoojGoNO--57" vertex="1" connectable="0">
           <mxGeometry x="-0.1749" y="1" relative="1" as="geometry">
-            <mxPoint x="26" y="-50" as="offset" />
+            <mxPoint x="10" y="-50" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="VA8MD_MLpMzxoojGoNO--59" value="v-out:type1_Max" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=#FFFF33;fillOpacity=10;" parent="CjxLccdL69G65359pLZG-1" vertex="1">
@@ -294,10 +294,10 @@
         <mxCell id="VA8MD_MLpMzxoojGoNO--73" value="v-out:type1_Cass" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=#FFFF33;fillOpacity=10;" parent="CjxLccdL69G65359pLZG-1" vertex="1">
           <mxGeometry x="370.59999999999997" y="631.88" width="100.5" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--74" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;dashed=1;" parent="CjxLccdL69G65359pLZG-1" source="VA8MD_MLpMzxoojGoNO--76" target="VA8MD_MLpMzxoojGoNO--87" edge="1">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--74" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;dashed=1;fontSize=11;" parent="CjxLccdL69G65359pLZG-1" source="VA8MD_MLpMzxoojGoNO--76" target="VA8MD_MLpMzxoojGoNO--87" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--75" value="1t, 3.4t, 8t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-60;" parent="VA8MD_MLpMzxoojGoNO--74" vertex="1" connectable="0">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--75" value="1t, 3.4t, 8t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-70;fontSize=16;" parent="VA8MD_MLpMzxoojGoNO--74" vertex="1" connectable="0">
           <mxGeometry x="-0.0636" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
