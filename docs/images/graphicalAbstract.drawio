@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0" version="28.0.4">
   <diagram name="Pagina-1" id="NSsH4z76cLtR3YTKiS3P">
-    <mxGraphModel dx="2438" dy="2125" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2718" dy="2306" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -229,7 +229,7 @@
             <mxPoint x="1037.9999999999995" y="284" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--58" value="0.3t, 6.2t, 9t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-80;fontSize=16;" parent="VA8MD_MLpMzxoojGoNO--57" vertex="1" connectable="0">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--58" value="0.3t, 6.2t, 9t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-80;fontSize=13;" parent="VA8MD_MLpMzxoojGoNO--57" vertex="1" connectable="0">
           <mxGeometry x="-0.1749" y="1" relative="1" as="geometry">
             <mxPoint x="10" y="-50" as="offset" />
           </mxGeometry>
@@ -242,7 +242,7 @@
             <mxPoint x="885.6199999999999" y="152.00000000000023" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--61" value="2t, 3.2t, 6t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;fontSize=16;" parent="VA8MD_MLpMzxoojGoNO--60" vertex="1" connectable="0">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--61" value="2t, 3.2t, 6t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;fontSize=12;" parent="VA8MD_MLpMzxoojGoNO--60" vertex="1" connectable="0">
           <mxGeometry x="0.2337" y="2" relative="1" as="geometry">
             <mxPoint x="1" y="-102" as="offset" />
           </mxGeometry>
@@ -286,7 +286,7 @@
         <mxCell id="VA8MD_MLpMzxoojGoNO--71" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=classic;dashed=1;" parent="CjxLccdL69G65359pLZG-1" source="VA8MD_MLpMzxoojGoNO--73" target="VA8MD_MLpMzxoojGoNO--92" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--72" value="2.3t, 8t, 9t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-55;fontSize=16;" parent="VA8MD_MLpMzxoojGoNO--71" vertex="1" connectable="0">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--72" value="2.3t, 8t, 9t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-55;fontSize=13;" parent="VA8MD_MLpMzxoojGoNO--71" vertex="1" connectable="0">
           <mxGeometry x="-0.2314" relative="1" as="geometry">
             <mxPoint x="-22" y="30" as="offset" />
           </mxGeometry>
@@ -297,7 +297,7 @@
         <mxCell id="VA8MD_MLpMzxoojGoNO--74" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;dashed=1;fontSize=11;" parent="CjxLccdL69G65359pLZG-1" source="VA8MD_MLpMzxoojGoNO--76" target="VA8MD_MLpMzxoojGoNO--87" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VA8MD_MLpMzxoojGoNO--75" value="1t, 3.4t, 8t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-70;fontSize=16;" parent="VA8MD_MLpMzxoojGoNO--74" vertex="1" connectable="0">
+        <mxCell id="VA8MD_MLpMzxoojGoNO--75" value="1t, 3.4t, 8t" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-70;fontSize=13;" parent="VA8MD_MLpMzxoojGoNO--74" vertex="1" connectable="0">
           <mxGeometry x="-0.0636" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
