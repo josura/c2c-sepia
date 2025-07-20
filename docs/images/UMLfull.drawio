@@ -31,6 +31,20 @@
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-4" value="+ propagateInternal(): void&lt;br&gt;+ dissipate(): void&lt;br&gt;+ conserve(): void&lt;br&gt;+ updateVirtualNodes(): void&amp;nbsp;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="FGZ0TIpVSBCznY_cjHpT-1">
           <mxGeometry y="118" width="230" height="72" as="geometry" />
         </mxCell>
+        <mxCell id="FGZ0TIpVSBCznY_cjHpT-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="A-Axvn4ooI6k1u0fqNma-1" source="A-Axvn4ooI6k1u0fqNma-3" target="FGZ0TIpVSBCznY_cjHpT-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FGZ0TIpVSBCznY_cjHpT-8" value="Contains" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FGZ0TIpVSBCznY_cjHpT-5">
+          <mxGeometry x="-0.4054" y="4" relative="1" as="geometry">
+            <mxPoint y="-6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FGZ0TIpVSBCznY_cjHpT-6" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="A-Axvn4ooI6k1u0fqNma-1">
+          <mxGeometry x="280" y="270" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="FGZ0TIpVSBCznY_cjHpT-7" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="555" y="398" width="30" height="30" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
