@@ -53,7 +53,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-14" value="Node" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="A-Axvn4ooI6k1u0fqNma-1">
-          <mxGeometry x="404" y="516" width="160" height="68" as="geometry" />
+          <mxGeometry x="390" y="460" width="160" height="68" as="geometry" />
         </mxCell>
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-15" value="- nodeID: string&lt;br&gt;- stateValue: float" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="FGZ0TIpVSBCznY_cjHpT-14">
           <mxGeometry y="26" width="160" height="34" as="geometry" />
@@ -163,6 +163,14 @@
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-43" value="Contains" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FGZ0TIpVSBCznY_cjHpT-41">
           <mxGeometry x="-0.0204" y="1" relative="1" as="geometry">
             <mxPoint y="-19" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FGZ0TIpVSBCznY_cjHpT-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="A-Axvn4ooI6k1u0fqNma-1" source="FGZ0TIpVSBCznY_cjHpT-44" target="FGZ0TIpVSBCznY_cjHpT-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="238" y="560" />
+              <mxPoint x="470" y="560" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-44" value="TemporalInteraction" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="A-Axvn4ooI6k1u0fqNma-1">
