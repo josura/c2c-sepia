@@ -73,7 +73,7 @@
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-20" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="FGZ0TIpVSBCznY_cjHpT-18" vertex="1">
           <mxGeometry y="94" width="210" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="FGZ0TIpVSBCznY_cjHpT-21" value="+ method(type): type" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="FGZ0TIpVSBCznY_cjHpT-18" vertex="1">
+        <mxCell id="FGZ0TIpVSBCznY_cjHpT-21" value="+ applyFunction(Function): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="FGZ0TIpVSBCznY_cjHpT-18" vertex="1">
           <mxGeometry y="102" width="210" height="26" as="geometry" />
         </mxCell>
         <mxCell id="FGZ0TIpVSBCznY_cjHpT-22" value="Edge" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="A-Axvn4ooI6k1u0fqNma-1" vertex="1">
