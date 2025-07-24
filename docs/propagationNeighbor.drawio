@@ -16,8 +16,14 @@
         <mxCell id="TYrLCPMJrX0rA2hv0LJ_-2" value="&lt;div&gt;v&lt;sub&gt;k&lt;br&gt;&lt;/sub&gt;&lt;/div&gt;&lt;sub&gt;value:0.5&lt;/sub&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=20;" vertex="1" parent="1">
           <mxGeometry x="110" y="440" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="TYrLCPMJrX0rA2hv0LJ_-4" value="v&lt;sub&gt;s&lt;/sub&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=20;" vertex="1" parent="1">
+        <mxCell id="TYrLCPMJrX0rA2hv0LJ_-4" value="&lt;div&gt;v&lt;sub&gt;s&lt;br&gt;&lt;/sub&gt;&lt;/div&gt;&lt;sub&gt;value:0&lt;/sub&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=20;" vertex="1" parent="1">
           <mxGeometry x="280" y="350" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="TYrLCPMJrX0rA2hv0LJ_-7" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="390" as="sourcePoint" />
+            <mxPoint x="490" y="390" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
