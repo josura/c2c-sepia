@@ -56,6 +56,7 @@ Y = list(map(lambda x: x[1], rna_1h.obsm["X_umap"]))
 celltypes = list(rna_1h.obs["cell_type"].values)
 
 fig = px.scatter(x=X, y=Y, color=celltypes)
+fig.update_layout(title="UMAP of RNA data at 1h")
 fig.show()
 
 # Obtain a ligand-receptor resource of interest
@@ -320,11 +321,12 @@ sc.pp.neighbors(rna_6h, n_neighbors=10)
 sc.tl.umap(rna_6h)
 
 # show the data
-# X = list(map(lambda x: x[0], rna_6h.obsm["X_umap"]))
-# Y = list(map(lambda x: x[1], rna_6h.obsm["X_umap"]))
-# celltypes = list(rna_6h.obs["cell_type"].values)
-# fig = px.scatter(x=X, y=Y, color=celltypes)
-# fig.show()
+X = list(map(lambda x: x[0], rna_6h.obsm["X_umap"]))
+Y = list(map(lambda x: x[1], rna_6h.obsm["X_umap"]))
+celltypes = list(rna_6h.obs["cell_type"].values)
+fig = px.scatter(x=X, y=Y, color=celltypes)
+fig.update_layout(title="UMAP of RNA data at 6h")
+fig.show()
 
 # No need to obtain the ligand-receptor resource of interest, since it is already obtained in the previous step
 
@@ -414,7 +416,7 @@ rna_7h_pd.isin([np.inf, -np.inf]).values.any()
 ## conrolling if there are 0 values in the data or low quality cells
 len(rna_7h_pd.isin([0]).values) # a lot of zeros
 len(rna_7h_pd.values)
-len(metabolites_7h_pd.isin([0]).values.any())
+# len(metabolites_7h_pd.isin([0]).values.any())
 
 ## remove the rows that are all zeros for every gene
 rna_7h_pd_filtered = rna_7h_pd.loc[(rna_7h_pd != 0).any(axis=1)]
@@ -438,11 +440,12 @@ sc.pp.neighbors(rna_7h, n_neighbors=10)
 sc.tl.umap(rna_7h)
 
 # show the data
-# X = list(map(lambda x: x[0], rna_7h.obsm["X_umap"]))
-# Y = list(map(lambda x: x[1], rna_7h.obsm["X_umap"]))
-# celltypes = list(rna_7h.obs["cell_type"].values)
-# fig = px.scatter(x=X, y=Y, color=celltypes)
-# fig.show()
+X = list(map(lambda x: x[0], rna_7h.obsm["X_umap"]))
+Y = list(map(lambda x: x[1], rna_7h.obsm["X_umap"]))
+celltypes = list(rna_7h.obs["cell_type"].values)
+fig = px.scatter(x=X, y=Y, color=celltypes)
+fig.update_layout(title="UMAP of RNA data at 7h")
+fig.show()
 
 # No need to obtain the ligand-receptor resource of interest, since it is already obtained in the previous step
 
@@ -458,65 +461,65 @@ mdata_7h
 
 
 # ligand receptors analysis
-li.mt.rank_aggregate(adata=mdata_7h,
-                     groupby='celltype',
-                     # pass our modified resource
-                     resource=resource.rename(columns={'hmdb':'ligand'}),
-                     # NOTE: Essential arguments when handling multimodal data
-                     mdata_kwargs={
-                     'x_mod': 'metabolites',
-                     'y_mod': 'rna',
-                     # We use .X from the x_mod
-                     'x_use_raw':False,
-                     # We use .X from the y_mod
-                     'y_use_raw':False,
-                     # NOTE: we need to ensure that the modalities are correctly transformed
-                     'x_transform':li.ut.zi_minmax,
-                     'y_transform':li.ut.zi_minmax,
-                    },
-                    verbose=True
-                    )
+# li.mt.rank_aggregate(adata=mdata_7h,
+#                      groupby='celltype',
+#                      # pass our modified resource
+#                      resource=resource.rename(columns={'hmdb':'ligand'}),
+#                      # NOTE: Essential arguments when handling multimodal data
+#                      mdata_kwargs={
+#                      'x_mod': 'metabolites',
+#                      'y_mod': 'rna',
+#                      # We use .X from the x_mod
+#                      'x_use_raw':False,
+#                      # We use .X from the y_mod
+#                      'y_use_raw':False,
+#                      # NOTE: we need to ensure that the modalities are correctly transformed
+#                      'x_transform':li.ut.zi_minmax,
+#                      'y_transform':li.ut.zi_minmax,
+#                     },
+#                     verbose=True
+#                     )
 
 #TODO problems with 7h data, try to remove the genes that have a lot of zeros or only zeros, or try to use imputation (magic)
-mdata_7h.uns['liana_res'].head()
+# mdata_7h.uns['liana_res'].head()
 
-interactionPlot = li.pl.dotplot(adata = mdata_7h,
-                colour='lr_means',
-                size='cellphone_pvals',
-                inverse_size=True, # we inverse sign since we want small p-values to have large sizes
-                source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
-                target_labels=['AT1' ,'AT2', 'DC', 'NK'],
-                figure_size=(12, 6),
-                # Filter to top 10 acc to magnitude rank
-                top_n=10,
-                orderby='magnitude_rank',
-                orderby_ascending=True,
-                cmap='plasma'
-                 )
+# interactionPlot = li.pl.dotplot(adata = mdata_7h,
+#                 colour='lr_means',
+#                 size='cellphone_pvals',
+#                 inverse_size=True, # we inverse sign since we want small p-values to have large sizes
+#                 source_labels=['MacII', 'Neut', 'Baso', 'MacIII'],
+#                 target_labels=['AT1' ,'AT2', 'DC', 'NK'],
+#                 figure_size=(12, 6),
+#                 # Filter to top 10 acc to magnitude rank
+#                 top_n=10,
+#                 orderby='magnitude_rank',
+#                 orderby_ascending=True,
+#                 cmap='plasma'
+#                  )
 
-interactionPlot.show()
+# interactionPlot.show()
 
 # save the interactions with the following format
 # startType	startNodeName	endType	endNodeName	weight contactTimes
-results_7h = mdata_7h.uns['liana_res']
-## change the name of columns the needed names
-results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
-results_7h['contactTimes'] = 6 # 7h starts from 6 since the 1h timepoint starts from 0
-## add -metabolites to the startType since it encodes the layer for the metabolites
-results_7h['startType'] = results_7h['startType'] + "-metabolites"
-## select only the interactions that have the genes in the target layer
-## loop over the celltypes and select the genes that are in the target layer
-results_7h_filtered = pd.DataFrame(columns=results_7h.columns)
-for celltype in celltypes:
-    genes = genes_selected[celltype]
-    filtered = results_7h[(results_7h["endNodeName"].isin(genes)) & (results_7h["endType"] == celltype)]
-    if filtered.shape[0] > 0:
-        results_7h_filtered = pd.concat([results_7h_filtered, filtered])
+# results_7h = mdata_7h.uns['liana_res']
+# ## change the name of columns the needed names
+# results_7h = results_7h.rename(columns={'source':'startType', 'target':'endType', 'ligand_complex':'startNodeName', 'receptor_complex':'endNodeName', 'scaled_weight':'weight'})
+# results_7h['contactTimes'] = 6 # 7h starts from 6 since the 1h timepoint starts from 0
+# ## add -metabolites to the startType since it encodes the layer for the metabolites
+# results_7h['startType'] = results_7h['startType'] + "-metabolites"
+# ## select only the interactions that have the genes in the target layer
+# ## loop over the celltypes and select the genes that are in the target layer
+# results_7h_filtered = pd.DataFrame(columns=results_7h.columns)
+# for celltype in celltypes:
+#     genes = genes_selected[celltype]
+#     filtered = results_7h[(results_7h["endNodeName"].isin(genes)) & (results_7h["endType"] == celltype)]
+#     if filtered.shape[0] > 0:
+#         results_7h_filtered = pd.concat([results_7h_filtered, filtered])
 
 
-## save the results
-# results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
-results_7h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
+# ## save the results
+# # results_7h.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
+# results_7h_filtered.to_csv("/home/josura/Projects/ccc/datiIdo/inputGraphs/1h/interactionsWithLR/results_metabolite_7h.tsv", sep="\t", index=False)
 
 # 10h
 rna_10h_pd = pd.read_csv(rna_10hFile, sep="\t", index_col=0)
@@ -537,10 +540,12 @@ sc.pp.neighbors(rna_10h, n_neighbors=10)
 sc.tl.umap(rna_10h)
 
 # show the data
-# X = list(map(lambda x: x[0], rna_10h.obsm["X_umap"]))
-# Y = list(map(lambda x: x[1], rna_10h.obsm["X_umap"]))
-# celltypes = list(rna_10h.obs["cell_type"].values)
-# fig = px.scatter(x=X, y=Y, color=celltypes)
+X = list(map(lambda x: x[0], rna_10h.obsm["X_umap"]))
+Y = list(map(lambda x: x[1], rna_10h.obsm["X_umap"]))
+celltypes = list(rna_10h.obs["cell_type"].values)
+fig = px.scatter(x=X, y=Y, color=celltypes)
+fig.update_layout(title="UMAP of RNA data at 10h")
+fig.show()
 
 
 # No need to obtain the ligand-receptor resource of interest, since it is already obtained in the previous step
